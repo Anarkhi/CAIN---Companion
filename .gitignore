@@ -1,0 +1,15 @@
+# Reference material & working files (not part of the published site)
+Imagens/
+Referencias/
+NOTREFERENCEYET/
+*.txt
+CATINJECTIONS.json
+CATINJECTIONS2.json
+GFF3CONTENT.json
+GFF4CONTENT.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+*.swp
