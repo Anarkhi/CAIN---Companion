@@ -5098,9 +5098,12 @@ function renderCompendium() {
   var app = document.getElementById('app');
   var tabs = [
     { id: 'agendas', label: currentLang === 'pt' ? 'Agendas' : 'Agendas' },
-    { id: 'blasphemies', label: currentLang === 'pt' ? 'Blasfêmias' : 'Blasphemies' },
-    { id: 'virtues', label: currentLang === 'pt' ? 'Virtudes' : 'Virtues' }
+    { id: 'blasphemies', label: currentLang === 'pt' ? 'Blasfêmias' : 'Blasphemies' }
   ];
+  // Virtues tab only when GFF-1 expansion is enabled
+  if (isExpansionEnabled('gff1')) {
+    tabs.push({ id: 'virtues', label: currentLang === 'pt' ? 'Virtudes' : 'Virtues' });
+  }
 
   // Restore last selected tab (default to first)
   var savedTab = null;
@@ -5145,7 +5148,7 @@ function renderCompendiumTab(tabId) {
   if (tabId === 'agendas') {
     content.innerHTML =
       '<div class="compendium-grid">' +
-        AGENDAS.map(function(a) {
+        AGENDAS.filter(function(a) { return isExpansionActive(a.expansion); }).map(function(a) {
           var items;
           try { items = tAgendaItems(a.id, a); } catch(e) { items = { items: a.agendaItems || [''], bolded: a.boldedItems || [''] }; }
           return '<div class="compendium-card">' +
@@ -5163,7 +5166,7 @@ function renderCompendiumTab(tabId) {
   if (tabId === 'blasphemies') {
     content.innerHTML =
       '<div class="compendium-grid">' +
-        BLASPHEMIES.map(function(bl) {
+        BLASPHEMIES.filter(function(bl) { return isExpansionActive(bl.expansion); }).map(function(bl) {
           var passives = getPassives(bl);
           var img = passives[0] && passives[0].image ? passives[0].image : '';
           var flavorText = bl.flavor || '';
