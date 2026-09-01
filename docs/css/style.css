@@ -2447,3 +2447,108 @@ input[type="number"] {
 @media (max-width: 540px) {
   .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
 }
+
+/* ─── Enemy type chooser & Sin form ─────────────────────────────── */
+
+.enemy-type-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
+}
+
+.enemy-type-choice {
+  text-align: left;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.enemy-type-choice:hover {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+}
+
+.enemy-type-choice h3 {
+  color: var(--text-accent);
+  margin: 0 0 var(--space-sm);
+}
+
+.enemy-type-choice p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.enemy-type-choice-sin:hover {
+  border-color: var(--danger-hover);
+}
+
+.enemy-card-sin {
+  border-left-color: #7a2ab8;
+}
+
+.form-subhead {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-xs);
+  margin: 0 0 var(--space-md);
+  font-size: 1rem;
+}
+
+.sin-domain-block {
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--border-color);
+}
+
+.sin-domain-block .s-domain-name {
+  margin-bottom: var(--space-xs);
+  font-weight: bold;
+}
+
+.sin-form .s-trauma {
+  margin-bottom: var(--space-sm);
+}
+
+.sin-type-picker {
+  margin-top: var(--space-xl);
+}
+
+.sin-type-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.enemy-type-choice.selected {
+  border-color: var(--danger-hover);
+  background: var(--bg-hover);
+}
+
+.domain-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.domain-option-chip {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  padding: var(--space-xs) var(--space-md);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.domain-option-chip:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}

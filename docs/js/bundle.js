@@ -2839,6 +2839,206 @@ function createBlankEnemy() {
   };
 }
 
+// Official sin templates (rulebook pg. 109+). Choosing a type pre-fills these.
+// domainOptions is the official "choose three" list; the GM clicks to fill slots.
+var SIN_TEMPLATES = {
+  ogre: {
+    primaryEmotion: 'Despair',
+    traumas: [
+      'Who or what pushed you into this hole?',
+      'Who or what is keeping you from going over the edge?',
+      'What are you most ashamed of?'
+    ],
+    pressureName: 'Miasma',
+    pressureEffect: "The very presence of an ogre begins to infect an area with a dark Miasma. The weather sours; buildings, objects, roads and constructions degrade as if poorly maintained for years; clouds shroud the sun and thick, sour-smelling fog rolls in; white mold grows over surfaces; technology, phone lines, electricity and internet stop working; architecture becomes maze-like and nonsensical; humans inside the miasma share the ogre's outlook and grow hostile. When the exorcists arrive the miasma covers only part of the area; each time pressure increases it spreads to a new area.",
+    outOfControl: "When pressure fills up completely, the situation gets out of control. The Ogre increases in CAT by +1, and the miasma covers the entire investigation area - no matter where the exorcists go, the miasma follows them for the rest of the mission, even if they leave the area.",
+    traces: "Stumblers (sins): bulbous, misshapen humanoids formed from the ogre's shame and guilt, drawn to warmth. Partly visible to graceless humans, who can be driven catatonic by looking at one. Execution talisman 2 (solo), 4 (group), 6 (massive group). Disintegrate rapidly outside the miasma; slow and uncoordinated (actions taking advantage of this roll +1D); take -1 slash from physical harm. Attacks with misshapen body, rusted metal, spurts of fluid: (1) 4 stress, (2/3) 3, (4+) 2. Complications: grab someone, smother in flesh, infected bite, rupture and threaten to explode, fuse to wall, ear-splitting screaming, devour humans.",
+    tensionMoves: "Attacks with teeth, claws, fetid water, black spew: (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: kill lights, summon mist, spew ceaselessly on someone, bury an exorcist in mud/slime/vomit, pin down an exorcist, release acrid stench, smash walls/floor/ceilings, retreat into darkness, add a bystander, use a domain.",
+    severeAttack: "Pulverize: An ogre can use this on a '1' on the risk roll, once a hunt, striking with overwhelming crushing force. Target an exorcist; other nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die for each 'yes': Is another person aiding you? Can you grab onto something nearby? Do you have a source of bright light or heat? Is the ogre distracted, hindered, or under duress? (For a 'no', someone can make an action roll to rectify it.) Roll the dice: the exorcist and any aiding take 1 stress per die rolled. The target takes the Mangled affliction (all physical activity is hard unless set up/teamwork). If at least one '1' comes up, limbs are torn off (1d3: 1 arm, 2 leg, 3 both legs) and they take an injury. Two or more '1's: also suffer instant death.",
+    domainOptions: [
+      { name: 'Hostile Door Patterns', description: "The world turns against the exorcists. As a complication or tension move, the ogre supernaturally erases entrances, exits, roads, vehicles, or light sources in an area of about CAT+2. These return when the scene passes or the complication is dealt with. Once a hunt, as a tension move, if an exorcist opens any door, the whole group is suddenly in an area of twisting corridors, pitch black darkness, and distant troubling noises - dangerous and hostile. Escaping requires playing out a scene or two." },
+      { name: 'The Unseeing of Things', description: "The miasma becomes permeated with a deep, cloying dark. The ogre is invisible in darkness. It becomes hard to do anything to the ogre unless it is brightly lit or the action doesn't rely on sight." },
+      { name: 'The Grinding of Wheels', description: "The ogre can force exorcists to experience some of the crushing trauma that caused its birth. As a tension move, the ogre picks an exorcist, who is afflicted by Despair. DESPAIR: can only affect one exorcist at once; they permanently gain the agenda item 'push people away' even if losing this affliction." },
+      { name: 'That Awful Flesh', description: "The ogre can regenerate rapidly from injuries. It takes -1 slash on its execution talisman unless damaged by fire, acid, or some other strong chemical or solvent in the same scene." },
+      { name: 'The Inevitable Place of Meat', description: "The touch of the ogre can rapidly rot and decay objects, plant matter, and constructions, dissolving them into mud and slime. The ogre can sink into any sufficiently large pool of mud and reappear in short distance as part of any movement." },
+      { name: 'The Cold That Creeps', description: "The ogre can control mud, water, and ambient temperature to killing effect. Whenever pressure increases, the ogre can change the weather in a CAT+2 area until the end of the hunt, making it extremely hostile (freezing cold, rain, etc). It becomes hard or risky to perform any activity outside in the area that requires concentration, focus, or manual dexterity without sufficient protection." },
+      { name: 'Where You Belong', description: "At the start of a mission the ogre chooses an exorcist and creates a creature (a trace, execution talisman 6+CAT, destroyed permanently if defeated) formed from that exorcist's guilt and shame, secretly asking them 'What do you hate the most about yourself?'. That exorcist's actions are hard against it; it attempts to harm only its target; deals +1 stress against the exorcist it is formed from. Ask the exorcist 'who in this group will let you down?' - any time that person fails an action roll, the afflicted exorcist gains 1 nonlethal stress; if triggered at least once in a session, gain 1 xp at session end." },
+      { name: 'The Agony', description: "At the start of the mission the ogre picks an exorcist, who gains the Sunken affliction for the rest of the mission. The ogre can temporarily cause the miasma to accelerate its effects: exorcists inside start to superficially rot if they spend scenes there (hair falling out, sunken skin, nails falling out); they recover after the mission." }
+    ]
+  },
+  idol: {
+    primaryEmotion: 'Desire',
+    traumas: [
+      'What is your dream?',
+      'Why did you give up on your dream?',
+      'Why do you think you are incapable of being loved?'
+    ],
+    pressureName: 'Cult',
+    pressureEffect: "Idols gather cults around them, adding steadily over time - from mundane admirers to people totally under their spell. A lower category idol pulls in a few dozen people; a higher one hundreds or thousands. While the idol lives, cultists are unflinchingly loyal and follow their higher-ups without question. Every time pressure increases, the Admin secretly chooses an NPC the players have met and adds them to the cult (need not reveal it); that NPC now follows the idol's psychic commands and abandons their former loyalties.",
+    outOfControl: "When pressure fills up, the situation goes out of control. The Idol gains +1 Category and adds every single NPC in the mission area to its cult, including any NPCs the exorcists encounter in the future.",
+    traces: "Cultists (humans): mundane humans pulled under the Idol's supernatural influence - functionally puppets, though they can behave normally when required. Deployed for important missions or to infiltrate groups. Defeating the idol frees them (they have no memory of the time brainwashed). Execution talisman 2 (solo), 4 (group), 6 (large group). Attacks with bare hands, improvised melee: (1) 4 stress, (2/3) 3, (4+) 2. Complications: draw unwanted attention, choke someone out, pull out a gun, draw in bystanders, make a shocking reveal.",
+    tensionMoves: "Attacks with well honed blades, mundane firearms, thin flexible claws, psychic voice commands: (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: rile up a crowd, enthrall someone, blind with glory, overwhelm with emotion, force out secrets, disarm someone, spew out hallucinations, add a bystander, use a domain.",
+    severeAttack: "Marriage: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Are you far from the idol? Do you have love in your life? Does someone aiding you care about you? Is the idol hindered, distracted, or under duress? (For a 'no', someone may act to rectify it.) Roll: the exorcist and any aiding take 1 stress per die. The target must answer 'Who amongst their allies do they desire the most?' If 'nobody'/'myself': the idol inflicts an injury and knocks them unconscious for the scene. If another ally: the idol fuses their flesh together - they can only act with teamwork with each other until they rest, then may stay fused or separate. At least one '1': separating inflicts an injury on each. Two or more '1's: the fusion lasts the rest of the hunt and can't be ended early. After un-fusing, each takes an agenda item from the other's agenda as a bold item.",
+    domainOptions: [
+      { name: 'Toys for Men', description: "The idol can play with the flesh of others like marionettes. Cultists gain +1 segment on their execution talisman (a lone cultist would have 3), moving even while broken. The idol gains a new affliction, COLLECT DOLL: the exorcist loses control of one arm (doll-like); once a scene the idol can interfere with an action, forcing them to take 1 stress or make the action hard." },
+      { name: 'Elevation of the Innumerable Mass', description: "The idol can elevate cult members into minor sins. One Apostle (Sin, execution talisman 4+CAT, supernatural strength and mutated blades) can appear per scene when fighting the idol or its cult. Apostle attacks: (1) 4 stress, (2/3) 3, (4+) 2. It can create a fleshy clone, unleash a flurry, mutate, or move impossibly fast. Exhort (1-3): an ally heals slashes (1: 2, 2-3: 1) and inflicts +1 stress on its next attack." },
+      { name: 'Hold My Darlings', description: "The idol cultivates an insidious bond with its cult. Once a scene, when it would take slashes from an exorcist's action, it can transfer the harm to any cultist(s) present instead (including added NPCs). It can see through the eyes of any cult member and speak through their mouths with its voice." },
+      { name: 'That Pliable Flesh', description: "The idol can twist its form rapidly and shapeshift. As a tension move, reveal that someone the exorcists are talking to is actually the idol (all who witness take 1 nonlethal stress). As a complication, it can shapeshift into an exact copy of an exorcist; until dealt with, when it would take slashes roll a d6 - on 1-2 reduce slashes to 0 and the doubled exorcist takes 2 stress." },
+      { name: 'Slumbering, I Saw a Shape in the Door', description: "The idol enters the minds of exorcists when they let their guard down. Whenever they rest, each makes a 1d6 fortune roll - on a 1 they gain an idol affliction. Once a hunt, as a tension move, the idol may force the exorcists to rest for the next scene (doesn't slash tension, can't progress pressure past 4, all resting rolls are '1'); one exorcist describes disturbing daydreams and gains 1d3 nonlethal stress." },
+      { name: 'Taking the Ears', description: "The idol's voice and psychic presence is overwhelming. As a threat/tension move it can speak to a group of humans; if successful they are added to the cult as a group of cultists (if cultists are present, +2 to their execution talisman instead). Once a scene, as a threat, it can speak an unspeakable word: one exorcist who hears it takes 3d3 stress and the Deafened affliction for the rest of the mission (deaf characters are immune). At mission end, roll 1d6 - on 1-2 permanently deafened but adjusts before next mission." },
+      { name: 'The Glory', description: "The idol can take a form that overwhelms the senses. Once a scene, as a complication with +2 talisman length: non-cultist humans witnessing it instantly go unconscious; exorcists can take 1 stress when acting against it and ignore it, or avert their gaze (making sight-reliant actions hard). Cultists present may re-roll the risk die. One exorcist sees this form as someone dear to them (describe who) and takes 1 nonlethal stress when harming the idol while active." },
+      { name: 'The Strong Scented Lips of a Whispering God', description: "The idol has major connections in the human world (fans, businessmen, politicians), expanding cleanup problems. Cultists are armed with short-ranged firearms and body armor: +1 stress on reactions, +1 execution talisman. Set out an exposure talisman of length 10; each conflict scene slash it 1d3, other loud/violent/high-exposure acts slash 1 (once a scene). At 3+, local authorities try to arrest the exorcists; at 6+, the response is more severe and heavily armed. Exorcists can remove slashes with actions. If it fills before the idol is dealt with, cleanup is catastrophic and the exorcists receive no scrip pay." }
+    ]
+  },
+  hound: {
+    primaryEmotion: 'Vengeance',
+    traumas: [
+      'Who wronged you?',
+      'How were you wronged?',
+      'What are you unwilling to sacrifice?'
+    ],
+    pressureName: 'Grudge',
+    pressureEffect: "A hound harbors a grudge against a specific person or group. When setting up the mission, the Admin designates three specific people as the hound's grudge targets (which can expand to innocent family, friends, or co-workers). When pressure increases, the hound tracks down and attempts to kill one of its targets - if the exorcists are present they can prevent it with a conflict scene, otherwise the target is brutally slain. If all targets are killed, the hound picks an NPC the exorcists have met and adds them as a new target.",
+    outOfControl: "If pressure goes to maximum, the hound gains +1 CAT and adds all NPCs and the exorcists to its grudge.",
+    traces: "Myrmidons (sins): violent echoes arising from the dripping bodily fluids of the Hound or its victims. They shudder uncontrollably and give off bloody acidic steam when enraged, but are short-lived (disintegrate in a few hours). Execution talisman 2 (solo), 4 (group), 6 (massive group). Deal +1 stress to exorcists who already have an injury; rip exorcists in half when inflicting the last injury, causing instant death instead of the brink of death. Attacks with teeth, claws, ear-splitting screaming: (1) 4 stress, (2/3) 3, (4+) 2. Complications: grow spines, rake with claws, snap bones in jaws, grow a new limb or head. Bloody Steam (1-2): steam gets in nearby exorcists' lungs, making speaking or strenuous activity cost 1 stress first.",
+    tensionMoves: "Attacks with needle-like teeth, razor claws, bone spurs, sickle-like blades, blood-soaked weaponry: (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: move faster than the eye can see, set everything on fire, give off massive steam or heat, become enraged, expand with additional blades, increase in size and strength, add a bystander, use a domain.",
+    severeAttack: "Apoplexy: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Do you have a sword (or something like it)? Do you have a shield (or something like it)? Is the hound hindered, distracted, or under duress? Are you calm, collected, and focused? (For a 'no', someone may act to rectify it.) The hound separates the chosen exorcist from the group (hurled into a pocket dimension, smashed through a wall, flung off a freeway) and attacks with fury - roll the dice one at a time, each representing an attack. For every die rolled, the exorcist and anyone aiding gains 1 stress. For every '1' rolled, the target suffers 2 additional stress and has a piece of skin cut away, causing permanent scarring.",
+    domainOptions: [
+      { name: 'A Shuddering Thing Through a Dark Hall', description: "The hound feeds on fear, growing larger and stronger from the terror of weaker wills. Once a scene, if mundane humans are in the local area, as a complication the hound manifests for them and feeds off their fear: until the exorcists calm the humans or remove them, the hound takes -1 slash from all sources and deals +1 stress with reactions. Exorcists attempting to harm it must first spend 1 stress to suppress their fear; they can suppress this permanently by answering 'What is it you are most afraid of?' (but the Admin then rolls two risk dice and picks the lowest for that action)." },
+      { name: "Turning Blades, I Laughed at their Brittleness", description: "The hound's hide becomes incredibly tough and durable, like a beast's. Each time an action would slash its execution talisman, roll 1d6 - on 1-2 reduce all slashes to 1. Its armor has weak spots: any action set up or part of teamwork ignores this effect." },
+      { name: 'The Catching of the Doe', description: "The hound suppresses its nature and becomes a stealthy hunter. At the start of the hunt, pick an exorcist. Once a scene (up to three times a hunt), the Admin may declare that exorcist glimpses the hound following them (real or not), giving 1 nonlethal stress. In any conflict scene, the hound gets a free reaction at the start (roll the risk die), targeting the stalked exorcist if possible." },
+      { name: 'The Annihilation of the Wicked', description: "The hound gains an affinity for firearms, wielding or fusing guns to its form. Its attacks gain CAT+2 range. As a complication with +2 talisman length, it pins an exorcist with bullets/napalm/grenades: that exorcist takes 1 stress after acting until dealt with, or 2 if acting requires moving. As a reaction (1), it can permanently absorb all firearms in a CAT area, disarming everyone and healing 1 slash if it absorbed at least one." },
+      { name: 'The Fattening of Rage', description: "The hound feeds on its Grudge. Once a scene, if it slays a mundane human as part of a reaction, it heals 2 segments. If it has slain at least one grudge target, its execution talisman increases by +2. If it has slain all its original grudge targets, it also inflicts +1 stress with all reactions." },
+      { name: 'Rile Against Heaven', description: "The hound's presence exacerbates rifts between humans and exorcists. Humans never start friendly and are often hostile (Admin may fate-roll: hostile on 1-2). Any two exorcists with a disagreement may declare it boiled over into a fight - for the rest of the hunt they can't participate in teamwork or set each other up; each regains a psyche burst when the other takes an injury or affliction, and both gain +1 xp at mission end." },
+      { name: 'The Measured Weight of Death', description: "The hound gains supernatural resilience bypassed only by specific methods (often drawing on its host's superstitions/mythology, no real logic required). It takes -1 slash on its execution talisman. This can be removed for a scene by exposing it to a specific weakness (often must be discovered): 1. Silver, 2. Iron, 3. Extreme Heat, 4. Extreme Cold, 5. Water, 6. Sunlight." },
+      { name: 'Bloodying the Steel', description: "The hound's rage is infectious. It gains the Infectious Grudge affliction: while afflicted, an exorcist gains +1D on all actions that inflict physical violence but takes +1 stress when they take stress from an external source. Any exorcist can voluntarily take this affliction if harmed by the hound. Mundane weapons are incapable of harming the hound unless extremely strong (like a tank cannon or missile)." }
+    ]
+  },
+  centipede: {
+    primaryEmotion: 'Hatred',
+    traumas: [
+      'What are you trying to escape?',
+      'What do you hate the most about humanity?',
+      'What do you regret the most?'
+    ],
+    pressureName: 'Infestation',
+    pressureEffect: "A centipede's venom, injected into the human bloodstream, causes a psycho-biotic reaction that within about an hour mutates a human into a strong, aggressive, violent monster - a mindless drone under the centipede's control, which can itself produce venom, creating an exponential horde. A human infected chrysalizes and transforms within exactly 44 minutes (an exorcist gains the Centipede Bite affliction instead). There is no cure, but it can be delayed; the only reliable way to end an infestation is to kill the centipede (which makes the venom evaporate, saving infected exorcists and untransformed victims). Each time pressure increases, 10% of the local population is infected and transformed (30% at 3 slashes).",
+    outOfControl: "If pressure reaches maximum, the centipede increases in CAT by +1 and population loss goes up to 90%.",
+    traces: "Infested (sins): mutated humans, essentially minor Form II sins affected by the psycho-biotic poison, forming large animalistic hive swarms the centipede mentally controls. Start human-looking, become more insect-like over time. Execution talisman 1 (solo), 3 (group), 5 (large group), 7 (full horde); only appear in large group/horde at pressure 3+. Slow, clumsy, unintelligent but numerous and resilient; area powers gain +1D against groups. Attacks with mutated claws, teeth, mandibles: (1) 4 stress, (2/3) 3, (4+) 2. Complications: eject venomous spines, knock someone down, alert a bigger horde, explode with caustic bile, jump out from somewhere surprising. Endless (1-2): more infested arrive, +1d3 to the talisman. Infected bite (1): inflict the Centipede Bite affliction. Note: exorcists get one dose of Centipede Antivenom each (mark 1 KP to inject someone in reach).",
+    tensionMoves: "Attacks with dripping fangs, numerous claws, sinuous body, pressurized spit (short range): (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: burrow into ground or walls, spit poisonous webbing, release swarms of flies, spray pools of poison, reveal hidden burrows, collapse the floor, scuttle hidden into darkness, add a bystander, use a domain.",
+    severeAttack: "Vitriol: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Can you move quickly and unencumbered? Is someone aiding you able to push or grab you? Can you forgive the centipede's host? Is the centipede hindered, distracted, or under duress? (For a 'no', someone may act to rectify it.) The centipede shoots a pressurized stream of mutagenic venom, dissolving obstacles and flesh. The exorcist and any aiding take 1 stress per die; the target rolls for a permanent scar. At least one '1': the target suffers an injury. Two or more '1's: the target either suffers instant death (or defies fate), or suffers an injury and rolls three times on the scar table instead.",
+    domainOptions: [
+      { name: 'The Heralds of Venom', description: "The venom in the centipede and its horde becomes boiling and pressurized. The horde can spit venom at short range when inflicting stress; the centipede can spit at extreme range like a sniper rifle. It gains a new affliction, BLINDING AGUE (as a threat or hook): eyes become milky white, the exorcist can't see, making sight-reliant activities hard. At mission end, roll 1d6 - on 1-2 it becomes permanent (adjusts before next mission). Blind exorcists are immune." },
+      { name: 'Crumbling Into the Darkling Womb', description: "The venom becomes an environmental aerosol that degrades everything in the investigation area. Traversing normally safe structures becomes risky or hard as floors fall apart, windows melt, walls collapse. Any mundane kit item pulled out degrades and becomes unusable when the exorcists rest. When pressure increases, 10% of structures are destroyed; if pressure fills up, 90%." },
+      { name: 'The Knights of Decay', description: "The horde gains dangerous, armored infested. When the infested appear, a Juggernaut usually appears (Sin, execution talisman 4; at 3+ pressure increase by CAT+1). Deals +1 stress to exorcists who are alone or afraid; focuses on one target; practically immune to mundane weapons unless its armor is exposed. Attacks with armored bulk, spines, mandibles: (1) 4 stress, (2/3) 3, (4+) 2. Hive shroud (1/2): releases acidic clouds that obscure and burn - all its allies take -1 slash until the Juggernaut is dealt with (doesn't stack)." },
+      { name: 'Gently Rolling Down the Slope of the Abyss', description: "The venom is so potent and fast-spreading it causes catastrophic spread. Double the casualties per pressure (to 20%). At full segments (6), the spread goes outside the quarantine zone, requiring CAIN cleanup and docking the exorcists 2 scrip." },
+      { name: 'My Children Crawl Quietly', description: "The horde gains stealthy infested with chameleonic skin - Stalkers, appearing in pairs (Sin; execution talisman 4 between the two; at 3+ pressure increase by CAT). Blind and easily distracted. As a tension move, the Admin can reveal an uninfected exorcist or NPC who fought the infested has been bitten (Centipede Bite). Attacks with scythe claws, venomous spines: (1) 4 stress, (2/3) 3, (4+) 2. Complications: kidnap someone, drag into darkness, jump/fly on locust wings. Chameleonic Scales (1/2): becomes nearly invisible (hard to fight/find by sight); next reaction deals +1 stress and ends the effect. When players meet an NPC, Admin rolls 1d6 - on 1-3 they've already been bitten and hide it." },
+      { name: 'At the Core, My Rot Unfurls', description: "The Centipede is so fueled by spite it refuses to die, taking a momentarily more powerful form. When its execution talisman is filled up, it instead reduces by 6 and takes a terrifying final form: roll the risk die twice and choose the lower result, it takes -1 slash on its talisman and deals +1 stress with all actions. However, this form is extremely unstable - at the end of the round, after all exorcists have acted, its form destabilizes, instantly defeating it and letting the exorcists finish it off." },
+      { name: 'I Hide My Knife in the Soft Supple Walls', description: "The Centipede sets festering traps, extruding parts of its body or using its infested horde's transformed flesh. As a tension move, the Admin can declare that for the next scene the exorcists enter a trapped area (even one already explored) - moving through becomes risky by default. Traps can inflict 1 stress to one or two exorcists, make an area dangerous/hard to move through, afflict an exorcist, or inflict a hook. In any conflict scene with the Centipede, on a '1' risk result a trap also goes off." },
+      { name: 'Making Friends With the Abattoir', description: "The Centipede gains power from spite. Once a scene, when it or its minions slaughter an innocent or bystander in view of the exorcists, permanently increase its execution clock by 1 (max four times total). Once a hunt, as a tension move, it can reveal a group of human survivors under threat - if the exorcists rest without aiding them, they are slaughtered and the centipede permanently adds +3 segments to its execution clock." }
+    ]
+  },
+  toad: {
+    primaryEmotion: 'Indulgence',
+    traumas: [
+      'What do you deserve that was denied to you?',
+      'While you were starving, who was feasting?',
+      'Where do you draw the line?'
+    ],
+    pressureName: 'Hoard',
+    pressureEffect: "A toad's main desire is to acquire as much material wealth as possible for its host, stealing by various means and storing prizes in its expansive gullet to regurgitate later in its palace. Its larceny starts small but grows out of control (from stealing a fast car, to the fastest car in town, to an entire restaurant staff and all). The toad gains power from its hoard; every time pressure increases, its greed grows: 0-2: high-worth but mundane items (money, cars, guns, medicine, food, fashion, high art); 3-4: unreal amounts of the above; 5+: entire stores, shops, restaurants, yachts, buses, celebrities.",
+    outOfControl: "At 6+, the toad's CAT increases by 1 and it gains the ability to steal conceptual or intangible items like abstract wealth, stocks in a company, light, artistic skill, or happiness.",
+    traces: "Toadspawn (humans): humans who follow the toad or its host through the very real promise of incredible wealth - from regular gangsters to privately hired security, often oblivious, brainwashed, or willfully ignorant. Execution talisman 1 (solo), 4 (group), 6 (large group). Mundane humans with mundane (no less deadly) weaponry; often have access to cars or security vans. Attacks with firearms, close-quarters combat: (1) 4 stress, (2/3) 3, (4+) 2. Complications: fire a stun gun, charge an exorcist, get in a martial arts hold, pin down with gunfire, get in a vehicle, throw a grenade. Threat - call reinforcements (1): add 1d3 to the execution talisman if allowed to follow through.",
+    tensionMoves: "Attacks with crushing punches and kicks, muscular tongue, pressurized blood spray from eyes (short range): (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: leap out of reach on muscular legs or squeeze into a tight space, entangle in traps, reveal hidden explosives, trigger security or alarms, vomit slime or disgorge stomach contents, add a bystander, use a domain.",
+    severeAttack: "Grand Finesse: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Are you accepting of your powers? Are your allies close enough to touch you skin to skin? Are you willing to part with your kit? (If yes, the Toad is distracted stealing every ticked item of gear from you and you mark all your KP; they disappear until the Toad is defeated.) Is the Toad hindered, distracted, or under duress? Roll the dice: the exorcist and any aiding take 1 stress per die. The Toad steals the target's ability to use psychic powers, which coalesce into a psychic shadow (a sin, execution talisman 4, uses reactions to flee); if destroyed or captured it fuses back, ending the effect. At least one '1': the talisman is 6 instead. Two or more '1's: the talisman is 10 instead.",
+    domainOptions: [
+      { name: 'Hotel for One', description: "The toad uses its powerful lungs to suck people into its maw, shunting them into a tiny prison-space inside its gullet. As a complication with +2 talisman length, it can suck in an exorcist it is fighting: they are trapped in a tiny cage-like extra-dimensional room, taking 1 stress before acting until they or their allies break them out (then vomited out). As a tension move, it can kidnap any NPC the exorcists have met off-screen and imprison them mostly unharmed; freeing them requires fighting the Toad." },
+      { name: 'Greasing the Palms', description: "The Toad is artful at lifting items from the exorcists. When an exorcist takes stress from the Toad, they also (Toad chooses one): tick 1 KP (if they have none to spend, +1 more stress), or lose a piece of already-ticked gear for the rest of the hunt instead of ticking KP." },
+      { name: 'The Granting of Gifts', description: "The toad keeps quantities of strange items to regurgitate in an emergency. As a reaction (1-3), it can forcibly regurgitate items up to a combined CAT+1 in size (inflicting stress, a threat, or a complication). Roll randomly for the category: 1. Vehicle (drivable), 2. Explosives, 3. Weapons/ammunition, 4. Narcotics, 5. Material wealth (gold bars, jewels), 6. Alcohol. Then roll 1d3 for size/volume (1: comically smaller -1 stress; 2: expected; 3: unbelievably larger +1 stress)." },
+      { name: 'Wolf Down the Earth', description: "The Toad unhinges its jaw to a void-like space and swallows huge chunks of scenery. It can burrow through solid rock when moving. Once a scene, as a threat, it can attempt to devour a nearby area, obliterating all inanimate matter no matter its toughness (area depends on CAT); one or two exorcists caught take 3d3 stress if the threat executes." },
+      { name: 'Sticky Fingers', description: "As a complication, tension move, or threat, the toad vomits up a thick, nauseating slime reeking of expensive perfume - incredibly sticky or incredibly slippery (toad chooses), carpeting a CAT area. Actions requiring concentration, quick movement, or manual dexterity become hard there; keeping footing is hard (movement rolls two risk dice, picks the lowest); the toad inflicts +1 stress to a target that is slowed, off-balance, immobile, or entangled. The slime dries up when pressure increases." },
+      { name: 'The Artful Dodger', description: "The Toad is careful and crafty, setting up contingency plans. Three times a hunt, when the exorcists take action, the Admin can narrate a flashback of the Toad setting up a contingency, fallback, or trap it now springs. Roll 3d6: for every 3+, the toad may either inflict 1 stress on the triggering exorcist or reduce slashes suffered from the triggering action by 1." },
+      { name: 'Keeper of the Ludic Menagerie', description: "The Toad stores brainwashed humans in its gullet, pulling them out as needed (freed when the toad is defeated, with no memory). It can pull out a human for any mundane servile task (cooking, cleaning, driving), completely obedient and conveniently equipped (a guard with a door key, a taxi driver). As a (1-3) reaction it can pull out a goon, creating a toadspawn trace (execution talisman 1) or +1 to an existing trace. As a threat, it can kidnap a mundane human or NPC present, brainwashing and adding them to its collection." },
+      { name: 'The Great Glittering Adversary', description: "A vile alchemy churns in the toad's gut - it can transform matter into material wealth. By touching any surface or living matter, it turns it into gemstone or gold (as a threat/complication to inflict stress, block the exorcists, or inflict the affliction). Midas Touch (threat or hook): the skin of an arm or leg slowly turns to gemstone/rock from the contact area; actions requiring speed or dexterity become hard; when they finish a rest they take 3 stress, and if it would inflict an injury they instead suffer instant death and turn into a jeweled statue." }
+    ]
+  },
+  lord: {
+    primaryEmotion: 'Fear',
+    traumas: [
+      'What did you lose?',
+      'What is the main thing you would fix about the world?',
+      'Who did you regret leaving behind when you ascended to your Kingdom?'
+    ],
+    pressureName: 'Kingdom',
+    pressureEffect: "The Lord creates a Kingdom, an alternate parasite reality growing outward from its palace that overlaps our own, accessible freely by the lord and its host and squirreled away in impossible spaces (closet doors, hallways, back alleys). It bleeds over and pulls parts of the real world into it, consuming space and the humans inside (who, from the outside, cannot see it). Inside, reality conforms to the host's desires: all they have lost is returned, events/history/humans may be drastically altered, and the host is the absolute ruler who can change the laws of reality (strictures that consume mundane humans and even affect exorcists). Each time pressure increases, the kingdom expands to a new area of the real world, increasingly rapidly.",
+    outOfControl: "If pressure is 6+, the kingdom consumes the whole investigation area and the Lord's CAT increases by +1. A kingdom collapses when the host or the Lord is defeated, ejecting everything brought into it (humans typically have no memory of their time inside).",
+    traces: "Guards (sins): a lord's kingdom always has guards patrolling it - sins taking the form of authority figures or soldiers, completely subservient to the Lord, shaped at its whim (human soldiers with shaded faces, or beast-like demons with medieval weaponry). Execution talisman 2 (solo), 4 (squad), 6 (platoon), 10 (small army). Armed with cruel weaponry and outstanding senses; incapable of existing outside the kingdom. Attacks with cruel close-combat weaponry, fists and kicks: (1) 4 stress, (2/3) 3, (4+) 2. Complications: trap an exorcist and pile on, pull an exorcist away in chains, disable with a painful strike, threaten bystanders as collaborators, call in a prison vehicle, produce a heavy weapon. Sound the Alarm (threat, 1-2): alert the Lord or nearby guards; if more guards show up, +1d3 to the execution talisman.",
+    tensionMoves: "Attacks with shimmering blades, armored gauntlets, shining medieval weaponry, beams of fire (long range): (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: twist the world or landscape, extend the Kingdom, throw false accusations, bind an exorcist in chains, blind with scorching light, extend shining armor plating, raise a glittering shield, add a bystander, use a domain.",
+    severeAttack: "Judgement: Usable on a '1' on the risk roll, once a mission. The lord binds the target with divine chains and begins a summary trial. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes' (rectifying a 'no' may take the form of a verbal argument from any aiding exorcist): Are you innocent of crimes? Are you an honest person? Have you lived a life by your ideals? Is the lord hindered, distracted, or under duress? Roll the dice as the Lord passes judgement, smiting with fire: the exorcist and any aiding take 1 stress per die. For every '1' rolled, the target is forced to confront their inadequacy and additionally gains 1d6 sin (can occur multiple times).",
+    domainOptions: [
+      { name: 'Stricture of Manifestation', description: "The Lord or its host gain increased control over reality inside its Kingdom (as threats or complications): cause any object up to CAT+1 size to coalesce and appear in moments; invert or choose the direction and strength of gravity, or make space curved; change the weather or biome of an area; rearrange the interiors and layouts of buildings, streets, or corridors. As a threat or tension move, it can dismiss any sustained psychic power the exorcists caused (summon, curse). Only works inside the kingdom." },
+      { name: 'Stricture of Superiority', description: "The Lord fights more fiercely the less exorcists play by the rules of the Kingdom. At the start of every round in a conflict scene, the Lord takes one stance (must switch each round): Honorable Fighting (exorcists who participate in teamwork or setup first take 1d3 stress); Grand Melee (exorcists acting without teamwork or setup find it hard); Duel (the Lord chooses an exorcist who deals +1 slash on its talisman, but all other exorcists deal 1 less slash this round)." },
+      { name: 'Stricture of Banishment', description: "The lord can banish exorcists, phasing them out of reality inside the kingdom. As a tension move or threat, it gives the BANISHED affliction: interacting with the physical world inside the kingdom without psychic powers becomes hard (but they can slip through walls and objects like a ghost); when pressure increases they take 1 stress, and if it inflicts an injury they suffer instant death instead and disappear completely." },
+      { name: 'Stricture of Control', description: "The lord's power bleeds over the investigation area like an iron net. The Admin forbids three items from: Swearing; Speaking the name of the Lord or its host; Uncovering skin between ankles, wrists and neck in view of the opposite sex; Drinking/eating/smoking anything not blessed by the Lord; Touching another person skin to skin without the Lord's consent; Entering the palace without praying first. These rules are known instantly upon entering the kingdom. Once a scene, when an exorcist would break one through their actions, they take 2d3 stress. If the Admin misses an occurrence but an exorcist reminds them, that exorcist gains 1 xp (once a session per exorcist)." },
+      { name: 'Stricture of Memory', description: "The lord's power is regressive and nostalgic. Inside its Kingdom it returns everything to a previous era (real or imagined) desirable to its host (European middle ages, Edo Japan, 1950s America, 1st century Judea). Weapons, gear, and technology that wouldn't exist then are converted into similar equivalents or simply don't exist while inside (firearms become crossbows, a GPS becomes a hand-drawn map); if this would affect a roll, the Admin can make it hard. All clothing, hairstyles, etc change to fit, reverting upon exiting." },
+      { name: 'Stricture of Narrative', description: "The lord and its host gain control over reality to the point of reversing causality. Three times a hunt, when an exorcist rolls an action and sees the final result, the lord or its host can declare events did not play out that way (as if narrating a story), completely undoing the outcome. The targeted exorcist gains 1 psyche burst, then either re-rolls the action (second result final) or loses the outcome and gains an additional 1d3 psyche burst." },
+      { name: 'Stricture of Alignment', description: "Whenever pressure increases, the Lord gives a randomly rolled Role affliction to an exorcist inside its kingdom. A Role gives a new temporary agenda item until mission end plus forbidden activities (hard for the afflicted inside the kingdom), and changes their outfit on entering/exiting (one role at a time): 1. Peasant (Agenda: act in extreme deference; Forbidden: acting in defiance of an order); 2. Priest (Agenda: obey the Lord; Forbidden: lying, cheating, taking the Lord's name in vain); 3. Bandit (Agenda: steal something; Forbidden: setup or teamwork); 4. Sage (Agenda: demonstrate erudition; Forbidden: physically demanding activity); 5. Knight (Agenda: protect the residents; Forbidden: striking a woman, lying, cheating, dirty fighting); 6. Noble (Agenda: humiliate your inferiors; Forbidden: deferring to an inferior, dirtying your hands)." },
+      { name: 'Stricture of The Flaming Sword', description: "The Lord has a Guardian, a sin-construct patrolling the Kingdom (an officer of the law, a winged humanoid, or a metallic geometric construct); if destroyed it reforms in the Lord's palace when pressure increases. Guardian (sin): execution talisman 4+CAT; heavily armored and immune to mundane weaponry; moves at CAT+2 speed inside the kingdom (can't exist outside); axiomatic - incapable of deceit and always knows when someone is lying in its presence. Attacks with a long-ranged weapon (extreme range) and brutal melee: (1) 5 stress, (2/3) 3, (4+) 2. Complications: imprison someone in a cage of light, blind with glaring beams, swoop high into the air, summon searing blades, impale with a shining spear." }
+    ]
+  }
+};
+
+/** Factory for a blank Sin (full model, pg. 102-109) */
+function createBlankSin() {
+  return {
+    id: generateId(),
+    kind: 'sin',
+    version: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    name: '',
+    sinType: 'ogre',         // ogre | idol | hound | centipede | toad | lord | other
+    form: 'I',               // I (Severed) | II (Fused) | III (Bound)
+    category: 2,             // CAT
+    primaryEmotion: '',      // e.g. Despair
+    appearance: '',          // appearance & psychophysiology
+    behavior: '',            // how it acts / fights / speaks
+    talismanSegments: 8,     // execution talisman (Sins are typically 8)
+    domains: [               // three domains (core powers)
+      { name: '', description: '' },
+      { name: '', description: '' },
+      { name: '', description: '' }
+    ],
+    traumas: ['', '', ''],   // three trauma questions
+    tensionMoves: '',        // custom tension moves (one per line)
+    severeAttack: '',        // the sin's severe attack
+    pressureName: '',        // name of the pressure mechanic (e.g. Miasma)
+    pressureEffect: '',      // what happens as pressure rises
+    outOfControl: '',        // effect when pressure hits 6+ (beyond +1 CAT)
+    palace: '',              // location/appearance of the palace
+    traces: '',              // lesser sins / minions
+    expansion: 'base'
+  };
+}
+
+/** Build a new sin pre-filled from a template type (or blank if type is 'custom'/unknown) */
+function createSinFromType(typeId) {
+  var s = createBlankSin();
+  var tpl = SIN_TEMPLATES[typeId];
+  if (!tpl) return s; // custom / unknown -> blank
+  s.sinType = typeId;
+  s.primaryEmotion = tpl.primaryEmotion || '';
+  s.traumas = (tpl.traumas && tpl.traumas.length ? tpl.traumas.slice(0, 3) : ['', '', '']);
+  while (s.traumas.length < 3) s.traumas.push('');
+  s.pressureName = tpl.pressureName || '';
+  s.pressureEffect = tpl.pressureEffect || '';
+  s.outOfControl = tpl.outOfControl || '';
+  s.traces = tpl.traces || '';
+  s.tensionMoves = tpl.tensionMoves || '';
+  s.severeAttack = tpl.severeAttack || '';
+  return s;
+}
+
 function getAllEnemies() {
   try {
     var data = localStorage.getItem(ENEMY_STORAGE_KEY);
@@ -5530,7 +5730,8 @@ function renderAdmin() {
 
   app.querySelectorAll('.enemy-card').forEach(function(card) {
     var id = card.dataset.id;
-    card.querySelector('.btn-edit').addEventListener('click', function(e) { e.stopPropagation(); navigate('enemy-edit/' + id); });
+    var kind = card.dataset.kind;
+    card.querySelector('.btn-edit').addEventListener('click', function(e) { e.stopPropagation(); navigate((kind === 'sin' ? 'sin-edit/' : 'enemy-edit/') + id); });
     card.querySelector('.btn-export').addEventListener('click', function(e) {
       e.stopPropagation();
       var en = getEnemy(id); if (en) exportEnemy(en);
@@ -5545,22 +5746,76 @@ function renderAdmin() {
 
 function renderEnemyCard(en) {
   var pt = currentLang === 'pt';
-  return '<div class="enemy-card" data-id="' + en.id + '">' +
+  var isSin = en.kind === 'sin';
+  var body;
+  if (isSin) {
+    var domainCount = (en.domains || []).filter(function(d) { return d.name; }).length;
+    body =
+      '<p><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tSinType(en.sinType) + ' \u2022 ' + (pt ? 'Forma' : 'Form') + ' ' + (en.form || 'I') + '</p>' +
+      (en.primaryEmotion ? '<p><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(en.primaryEmotion) + '</p>' : '') +
+      '<p><span class="label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ':</span> ' + (en.talismanSegments || 8) + '</p>' +
+      '<p><span class="label">' + (pt ? 'Domínios' : 'Domains') + ':</span> ' + domainCount + '/3</p>';
+  } else {
+    body =
+      '<p><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(en.type) + '</p>' +
+      '<p><span class="label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ':</span> ' + (en.talismanSegments || 2) + '</p>' +
+      (en.description ? '<p class="enemy-desc muted">' + escHtml(en.description) + '</p>' : '');
+  }
+  return '<div class="enemy-card' + (isSin ? ' enemy-card-sin' : '') + '" data-id="' + en.id + '" data-kind="' + (en.kind || 'opponent') + '">' +
     '<div class="enemy-card-header">' +
       '<h3 class="enemy-name">' + escHtml(en.name || (pt ? 'Sem nome' : 'Unnamed')) + '</h3>' +
       '<span class="enemy-cat">CAT ' + (en.category || 0) + '</span>' +
     '</div>' +
-    '<div class="enemy-card-body">' +
-      '<p><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(en.type) + '</p>' +
-      '<p><span class="label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ':</span> ' + (en.talismanSegments || 2) + '</p>' +
-      (en.description ? '<p class="enemy-desc muted">' + escHtml(en.description) + '</p>' : '') +
-    '</div>' +
+    '<div class="enemy-card-body">' + body + '</div>' +
     '<div class="enemy-card-actions">' +
       '<button class="btn btn-sm btn-edit">' + (pt ? 'Editar' : 'Edit') + '</button>' +
       '<button class="btn btn-sm btn-export">' + (pt ? 'Exportar' : 'Export') + '</button>' +
       '<button class="btn btn-sm btn-danger btn-delete">' + (pt ? 'Remover' : 'Delete') + '</button>' +
     '</div>' +
   '</div>';
+}
+
+function renderEnemyTypeChooser() {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  app.innerHTML =
+    '<div class="page enemy-form-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (pt ? 'Novo Inimigo' : 'New Enemy') + '</h1>' +
+      '</header>' +
+      '<p class="help-text">' + (pt ? 'Que tipo de inimigo você quer criar?' : 'What kind of enemy do you want to create?') + '</p>' +
+      '<div class="enemy-type-choices">' +
+        '<button class="enemy-type-choice" id="choose-opponent">' +
+          '<h3>' + (pt ? 'Oponente Simples' : 'Simple Opponent') + '</h3>' +
+          '<p class="muted">' + (pt ? 'Humanos, mecânicos ou anomalias. Modelo rápido de 7 passos.' : 'Humans, mechanical or anomalies. Quick 7-step model.') + '</p>' +
+        '</button>' +
+        '<button class="enemy-type-choice enemy-type-choice-sin" id="choose-sin">' +
+          '<h3>' + (pt ? 'Pecado (Sin)' : 'Sin') + '</h3>' +
+          '<p class="muted">' + (pt ? 'Modelo completo: domínios, traumas, movimentos de tensão, pressão e palácio.' : 'Full model: domains, traumas, tension moves, pressure and palace.') + '</p>' +
+        '</button>' +
+      '</div>' +
+      '<div class="sin-type-picker" id="sin-type-picker" style="display:none">' +
+        '<h3 class="form-subhead">' + (pt ? 'Escolha um tipo de Pecado' : 'Choose a Sin type') + '</h3>' +
+        '<p class="help-text">' + (pt ? 'Escolher um tipo pré-preenche emoção, traumas, pressão, movimentos de tensão e ataque severo, e oferece domínios oficiais. Você pode editar tudo.' : 'Picking a type pre-fills emotion, traumas, pressure, tension moves and severe attack, and offers official domains. You can edit everything.') + '</p>' +
+        '<div class="sin-type-choices">' +
+          SIN_TYPES.filter(function(tp) { return tp !== 'other'; }).map(function(tp) {
+            return '<button class="btn btn-secondary sin-type-btn" data-type="' + tp + '">' + tSinType(tp) + '</button>';
+          }).join('') +
+          '<button class="btn btn-secondary sin-type-btn" data-type="custom">' + (pt ? 'Personalizado' : 'Custom') + '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
+  document.getElementById('choose-opponent').addEventListener('click', function() { navigate('opponent-new'); });
+  document.getElementById('choose-sin').addEventListener('click', function() {
+    document.getElementById('sin-type-picker').style.display = 'block';
+    document.getElementById('choose-sin').classList.add('selected');
+  });
+  app.querySelectorAll('.sin-type-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { navigate('sin-new/' + btn.dataset.type); });
+  });
 }
 
 function renderEnemyForm(enemyId) {
@@ -5666,11 +5921,180 @@ function renderEnemyForm(enemyId) {
   });
 }
 
+var SIN_TYPES = ['ogre', 'idol', 'hound', 'centipede', 'toad', 'lord', 'other'];
+
+function tSinType(typeId) {
+  var pt = { ogre: 'Ogro', idol: 'Ídolo', hound: 'Cão', centipede: 'Centopeia', toad: 'Sapo', lord: 'Senhor', other: 'Outro' };
+  var en = { ogre: 'Ogre', idol: 'Idol', hound: 'Hound', centipede: 'Centipede', toad: 'Toad', lord: 'Lord', other: 'Other' };
+  return (currentLang === 'pt' ? pt[typeId] : en[typeId]) || typeId;
+}
+
+function tSinForm(formId) {
+  var pt = { 'I': 'I / Cortado (Severed)', 'II': 'II / Fundido (Fused)', 'III': 'III / Vinculado (Bound)' };
+  var en = { 'I': 'I / Severed', 'II': 'II / Fused', 'III': 'III / Bound' };
+  return (currentLang === 'pt' ? pt[formId] : en[formId]) || formId;
+}
+
+function renderSinForm(sinId, startingType) {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var isEdit = !!sinId;
+  var s = isEdit ? getEnemy(sinId) : (startingType ? createSinFromType(startingType) : createBlankSin());
+  if (!s) { navigate('admin'); return; }
+  // Guard: ensure structure exists on older/edited records
+  if (!s.domains) s.domains = [{ name: '', description: '' }, { name: '', description: '' }, { name: '', description: '' }];
+  if (!s.traumas) s.traumas = ['', '', ''];
+  // Domain options offered for this sin type (official "choose three" list)
+  var domainOptions = (SIN_TEMPLATES[s.sinType] && SIN_TEMPLATES[s.sinType].domainOptions) || [];
+
+  app.innerHTML =
+    '<div class="page enemy-form-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (isEdit ? (pt ? 'Editar Pecado' : 'Edit Sin') : (pt ? 'Novo Pecado' : 'New Sin')) + '</h1>' +
+      '</header>' +
+      '<form class="enemy-form sin-form" id="sin-form">' +
+        // Identity
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Nome' : 'Name') + '</label>' +
+          '<input type="text" id="s-name" value="' + escAttr(s.name) + '" placeholder="' + (pt ? 'Ex: O Minotauro' : 'e.g. The Minotaur') + '">' +
+        '</div>' +
+        '<div class="form-section form-grid-3">' +
+          '<div><label>' + (pt ? 'Tipo' : 'Type') + '</label><select id="s-sinType">' +
+            SIN_TYPES.map(function(tp) { return '<option value="' + tp + '"' + (s.sinType === tp ? ' selected' : '') + '>' + tSinType(tp) + '</option>'; }).join('') +
+          '</select></div>' +
+          '<div><label>' + (pt ? 'Forma' : 'Form') + '</label><select id="s-form">' +
+            ['I', 'II', 'III'].map(function(f) { return '<option value="' + f + '"' + (s.form === f ? ' selected' : '') + '>' + tSinForm(f) + '</option>'; }).join('') +
+          '</select></div>' +
+          '<div><label>' + (pt ? 'Categoria (CAT)' : 'Category (CAT)') + '</label><input type="number" id="s-category" min="0" max="7" value="' + (s.category || 2) + '"></div>' +
+        '</div>' +
+        '<div class="form-section form-grid-2">' +
+          '<div><label>' + (pt ? 'Emoção Primária' : 'Primary Emotion') + '</label><input type="text" id="s-primaryEmotion" value="' + escAttr(s.primaryEmotion) + '" placeholder="' + (pt ? 'Ex: Desespero' : 'e.g. Despair') + '"></div>' +
+          '<div><label>' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + '</label><input type="number" id="s-talismanSegments" min="1" max="8" value="' + (s.talismanSegments || 8) + '"></div>' +
+        '</div>' +
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Aparência e Psicofisiologia' : 'Appearance & Psychophysiology') + '</label>' +
+          '<textarea id="s-appearance" rows="3">' + escHtml(s.appearance) + '</textarea>' +
+          '<label>' + (pt ? 'Comportamento (como luta, fala, etc.)' : 'Behavior (how it fights, speaks, etc.)') + '</label>' +
+          '<textarea id="s-behavior" rows="3">' + escHtml(s.behavior) + '</textarea>' +
+        '</div>' +
+        // Domains
+        '<div class="form-section">' +
+          '<h3 class="form-subhead">' + (pt ? 'Domínios' : 'Domains') + ' <span class="muted">(' + (pt ? '3 poderes centrais' : '3 core powers') + ')</span></h3>' +
+          (domainOptions.length ? '<p class="help-text">' + (pt ? 'Clique em um domínio oficial para preenchê-lo em um espaço vazio:' : 'Click an official domain to fill it into an empty slot:') + '</p>' +
+            '<div class="domain-options">' +
+              domainOptions.map(function(opt, oi) { return '<button type="button" class="domain-option-chip" data-opt="' + oi + '">' + escHtml(opt.name) + '</button>'; }).join('') +
+            '</div>' : '') +
+          [0, 1, 2].map(function(i) {
+            var d = s.domains[i] || { name: '', description: '' };
+            return '<div class="sin-domain-block">' +
+              '<input type="text" class="s-domain-name" data-i="' + i + '" value="' + escAttr(d.name) + '" placeholder="' + (pt ? 'Nome do domínio ' + (i + 1) : 'Domain ' + (i + 1) + ' name') + '">' +
+              '<textarea class="s-domain-desc" data-i="' + i + '" rows="2" placeholder="' + (pt ? 'Descrição e poderes' : 'Description & powers') + '">' + escHtml(d.description) + '</textarea>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        // Traumas
+        '<div class="form-section">' +
+          '<h3 class="form-subhead">' + (pt ? 'Traumas' : 'Traumas') + ' <span class="muted">(' + (pt ? '3 perguntas' : '3 questions') + ')</span></h3>' +
+          [0, 1, 2].map(function(i) {
+            return '<input type="text" class="s-trauma" data-i="' + i + '" value="' + escAttr(s.traumas[i] || '') + '" placeholder="' + (pt ? 'Pergunta de trauma ' + (i + 1) : 'Trauma question ' + (i + 1)) + '">';
+          }).join('') +
+        '</div>' +
+        // Pressure
+        '<div class="form-section form-grid-2">' +
+          '<div><label>' + (pt ? 'Nome da Pressão' : 'Pressure Name') + '</label><input type="text" id="s-pressureName" value="' + escAttr(s.pressureName) + '" placeholder="' + (pt ? 'Ex: Miasma' : 'e.g. Miasma') + '"></div>' +
+          '<div><label>' + (pt ? 'Traços / Lacaios' : 'Traces / Minions') + '</label><input type="text" id="s-traces" value="' + escAttr(s.traces) + '"></div>' +
+        '</div>' +
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Efeito da Pressão (conforme aumenta)' : 'Pressure Effect (as it rises)') + '</label>' +
+          '<textarea id="s-pressureEffect" rows="3">' + escHtml(s.pressureEffect) + '</textarea>' +
+          '<label>' + (pt ? 'Fora de Controle (pressão 6+)' : 'Out of Control (pressure 6+)') + '</label>' +
+          '<textarea id="s-outOfControl" rows="2">' + escHtml(s.outOfControl) + '</textarea>' +
+        '</div>' +
+        // Tension moves, severe attack & palace
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Movimentos de Tensão (um por linha)' : 'Tension Moves (one per line)') + '</label>' +
+          '<textarea id="s-tensionMoves" rows="4">' + escHtml(s.tensionMoves) + '</textarea>' +
+          '<label>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</label>' +
+          '<textarea id="s-severeAttack" rows="3">' + escHtml(s.severeAttack) + '</textarea>' +
+          '<label>' + (pt ? 'Palácio (local e aparência)' : 'Palace (location & appearance)') + '</label>' +
+          '<textarea id="s-palace" rows="3">' + escHtml(s.palace) + '</textarea>' +
+        '</div>' +
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Expansão' : 'Expansion') + '</label>' +
+          '<select id="s-expansion">' +
+            EXPANSIONS.map(function(ex) { return '<option value="' + ex.id + '"' + ((s.expansion || 'base') === ex.id ? ' selected' : '') + '>' + ex.name + '</option>'; }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div class="form-actions">' +
+          '<button type="submit" class="btn btn-primary">' + (pt ? 'Salvar' : 'Save') + '</button>' +
+          '<button type="button" class="btn btn-secondary" id="btn-cancel">' + (pt ? 'Cancelar' : 'Cancel') + '</button>' +
+        '</div>' +
+      '</form>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
+  document.getElementById('btn-cancel').addEventListener('click', function() { navigate('admin'); });
+
+  // Domain option chips: fill the first empty domain slot (or the last if all full)
+  app.querySelectorAll('.domain-option-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      var opt = domainOptions[parseInt(chip.dataset.opt, 10)];
+      if (!opt) return;
+      var nameInputs = app.querySelectorAll('.s-domain-name');
+      var descInputs = app.querySelectorAll('.s-domain-desc');
+      var slot = -1;
+      for (var i = 0; i < nameInputs.length; i++) {
+        if (!nameInputs[i].value.trim()) { slot = i; break; }
+      }
+      if (slot === -1) slot = nameInputs.length - 1; // all full: overwrite last
+      nameInputs[slot].value = opt.name;
+      descInputs[slot].value = opt.description;
+    });
+  });
+
+  document.getElementById('sin-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    s.name = document.getElementById('s-name').value.trim();
+    s.sinType = document.getElementById('s-sinType').value;
+    s.form = document.getElementById('s-form').value;
+    s.category = parseInt(document.getElementById('s-category').value, 10) || 0;
+    s.primaryEmotion = document.getElementById('s-primaryEmotion').value.trim();
+    s.talismanSegments = parseInt(document.getElementById('s-talismanSegments').value, 10) || 4;
+    s.appearance = document.getElementById('s-appearance').value.trim();
+    s.behavior = document.getElementById('s-behavior').value.trim();
+    s.domains = [0, 1, 2].map(function(i) {
+      return {
+        name: document.querySelector('.s-domain-name[data-i="' + i + '"]').value.trim(),
+        description: document.querySelector('.s-domain-desc[data-i="' + i + '"]').value.trim()
+      };
+    });
+    s.traumas = [0, 1, 2].map(function(i) {
+      return document.querySelector('.s-trauma[data-i="' + i + '"]').value.trim();
+    });
+    s.pressureName = document.getElementById('s-pressureName').value.trim();
+    s.pressureEffect = document.getElementById('s-pressureEffect').value.trim();
+    s.outOfControl = document.getElementById('s-outOfControl').value.trim();
+    s.tensionMoves = document.getElementById('s-tensionMoves').value.trim();
+    s.severeAttack = document.getElementById('s-severeAttack').value.trim();
+    s.palace = document.getElementById('s-palace').value.trim();
+    s.traces = document.getElementById('s-traces').value.trim();
+    s.expansion = document.getElementById('s-expansion').value;
+    if (!s.name) { alert(pt ? 'Dê um nome ao pecado.' : 'Please name the sin.'); return; }
+    saveEnemy(s);
+    navigate('admin');
+  });
+}
+
 route('home', renderHome);
 route('compendium', renderCompendium);
 route('admin', renderAdmin);
-route('enemy-new', function() { renderEnemyForm(null); });
+route('enemy-new', renderEnemyTypeChooser);
+route('opponent-new', function() { renderEnemyForm(null); });
 route('enemy-edit', function(id) { renderEnemyForm(id); });
+route('sin-new', function(type) { renderSinForm(null, type); });
+route('sin-edit', function(id) { renderSinForm(id); });
 route('create', renderCreate);
 route('view', renderView);
 route('edit', renderEdit);
