@@ -2853,7 +2853,11 @@ var SIN_TEMPLATES = {
     pressureEffect: "The very presence of an ogre begins to infect an area with a dark Miasma. The weather sours; buildings, objects, roads and constructions degrade as if poorly maintained for years; clouds shroud the sun and thick, sour-smelling fog rolls in; white mold grows over surfaces; technology, phone lines, electricity and internet stop working; architecture becomes maze-like and nonsensical; humans inside the miasma share the ogre's outlook and grow hostile. When the exorcists arrive the miasma covers only part of the area; each time pressure increases it spreads to a new area.",
     outOfControl: "When pressure fills up completely, the situation gets out of control. The Ogre increases in CAT by +1, and the miasma covers the entire investigation area - no matter where the exorcists go, the miasma follows them for the rest of the mission, even if they leave the area.",
     traces: "Stumblers (sins): bulbous, misshapen humanoids formed from the ogre's shame and guilt, drawn to warmth. Partly visible to graceless humans, who can be driven catatonic by looking at one. Execution talisman 2 (solo), 4 (group), 6 (massive group). Disintegrate rapidly outside the miasma; slow and uncoordinated (actions taking advantage of this roll +1D); take -1 slash from physical harm. Attacks with misshapen body, rusted metal, spurts of fluid: (1) 4 stress, (2/3) 3, (4+) 2. Complications: grab someone, smother in flesh, infected bite, rupture and threaten to explode, fuse to wall, ear-splitting screaming, devour humans.",
-    tensionMoves: "Attacks with teeth, claws, fetid water, black spew: (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: kill lights, summon mist, spew ceaselessly on someone, bury an exorcist in mud/slime/vomit, pin down an exorcist, release acrid stench, smash walls/floor/ceilings, retreat into darkness, add a bystander, use a domain.",
+    attacksWith: "Teeth, claws, fetid water, black spew: (1) 5 stress, (2/3) 3, (4+) 2.",
+    complications: "Kill lights, summon mist, spew ceaselessly on someone, bury an exorcist in mud/slime/vomit, pin down an exorcist, release acrid stench, smash walls/floor/ceilings, retreat into darkness, add a bystander, use a domain.",
+    threats: "Grab an exorcist and squeeze the life out of them. Hurl an exorcist through a wall. Collapse architecture. Summon minions. Kill bystanders. Infect with dark pulsing veins. Cause a flash flood or freeze. Blind someone in a miasmatic cloud. Use a domain. Do something dark, crushing, or vile.",
+    afflictions: "1. White Mold: spreading white veins and coughing; subtract 1 from all resting rolls and can't eat, drink, or use consumables.\n2. Frozen Limbs: physical activity, blasphemies, or fine motor skill is hard if it requires more than one limb.\n3. Circling the Drain: cannot benefit from teamwork or setup; permanently add to agenda: give up on something.\n4. Black Lungs: speaking spews black sludge; all communication requiring speech is hard.\n5. Rotting: take 1 irreducible stress each time tension fills; if it inflicts an injury, it inflicts instant death.\n6. The Weight: permanently add to agenda: die.",
+    tensionMoves: "",
     severeAttack: "Pulverize: An ogre can use this on a '1' on the risk roll, once a hunt, striking with overwhelming crushing force. Target an exorcist; other nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die for each 'yes': Is another person aiding you? Can you grab onto something nearby? Do you have a source of bright light or heat? Is the ogre distracted, hindered, or under duress? (For a 'no', someone can make an action roll to rectify it.) Roll the dice: the exorcist and any aiding take 1 stress per die rolled. The target takes the Mangled affliction (all physical activity is hard unless set up/teamwork). If at least one '1' comes up, limbs are torn off (1d3: 1 arm, 2 leg, 3 both legs) and they take an injury. Two or more '1's: also suffer instant death.",
     domainOptions: [
       { name: 'Hostile Door Patterns', description: "The world turns against the exorcists. As a complication or tension move, the ogre supernaturally erases entrances, exits, roads, vehicles, or light sources in an area of about CAT+2. These return when the scene passes or the complication is dealt with. Once a hunt, as a tension move, if an exorcist opens any door, the whole group is suddenly in an area of twisting corridors, pitch black darkness, and distant troubling noises - dangerous and hostile. Escaping requires playing out a scene or two." },
@@ -2877,7 +2881,11 @@ var SIN_TEMPLATES = {
     pressureEffect: "Idols gather cults around them, adding steadily over time - from mundane admirers to people totally under their spell. A lower category idol pulls in a few dozen people; a higher one hundreds or thousands. While the idol lives, cultists are unflinchingly loyal and follow their higher-ups without question. Every time pressure increases, the Admin secretly chooses an NPC the players have met and adds them to the cult (need not reveal it); that NPC now follows the idol's psychic commands and abandons their former loyalties.",
     outOfControl: "When pressure fills up, the situation goes out of control. The Idol gains +1 Category and adds every single NPC in the mission area to its cult, including any NPCs the exorcists encounter in the future.",
     traces: "Cultists (humans): mundane humans pulled under the Idol's supernatural influence - functionally puppets, though they can behave normally when required. Deployed for important missions or to infiltrate groups. Defeating the idol frees them (they have no memory of the time brainwashed). Execution talisman 2 (solo), 4 (group), 6 (large group). Attacks with bare hands, improvised melee: (1) 4 stress, (2/3) 3, (4+) 2. Complications: draw unwanted attention, choke someone out, pull out a gun, draw in bystanders, make a shocking reveal.",
-    tensionMoves: "Attacks with well honed blades, mundane firearms, thin flexible claws, psychic voice commands: (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: rile up a crowd, enthrall someone, blind with glory, overwhelm with emotion, force out secrets, disarm someone, spew out hallucinations, add a bystander, use a domain.",
+    attacksWith: "Well honed blades, mundane firearms, thin flexible claws, psychic voice commands: (1) 5 stress, (2/3) 3, (4+) 2.",
+    complications: "Rile up a crowd, enthrall someone, blind with glory, overwhelm with emotion, force out secrets, disarm someone, spew out hallucinations, add a bystander, use a domain.",
+    threats: "Summon cultists. Cause crippling pain. Overwhelm the senses. Force exorcists to sacrifice something. Expose a weakness. Enthrall an exorcist. Take captives. Inflict a hook. Use a domain. Do something emotionally crushing, manipulative, or shocking.",
+    afflictions: "1. Infatuated: pick an ally; if you act without their setup or teamwork, take 1 stress.\n2. Solipsism: take 2 stress if participating in teamwork or setup.\n3. Violet Somnia: you can roll a resting die any time, but if you do you fall asleep until pressure increases and can't be woken.\n4. Violent Jealousy: pick an ally; gain 1 stress if they roll any '6'; permanently add to agenda: let nobody else outshine you.\n5. Narcissi: powers targeting only yourself gain +1 CAT; powers targeting at least one ally get -1 CAT.\n6. Ring: permanently add to agenda: show someone you are worthy of their attention.",
+    tensionMoves: "",
     severeAttack: "Marriage: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Are you far from the idol? Do you have love in your life? Does someone aiding you care about you? Is the idol hindered, distracted, or under duress? (For a 'no', someone may act to rectify it.) Roll: the exorcist and any aiding take 1 stress per die. The target must answer 'Who amongst their allies do they desire the most?' If 'nobody'/'myself': the idol inflicts an injury and knocks them unconscious for the scene. If another ally: the idol fuses their flesh together - they can only act with teamwork with each other until they rest, then may stay fused or separate. At least one '1': separating inflicts an injury on each. Two or more '1's: the fusion lasts the rest of the hunt and can't be ended early. After un-fusing, each takes an agenda item from the other's agenda as a bold item.",
     domainOptions: [
       { name: 'Toys for Men', description: "The idol can play with the flesh of others like marionettes. Cultists gain +1 segment on their execution talisman (a lone cultist would have 3), moving even while broken. The idol gains a new affliction, COLLECT DOLL: the exorcist loses control of one arm (doll-like); once a scene the idol can interfere with an action, forcing them to take 1 stress or make the action hard." },
@@ -2901,7 +2909,11 @@ var SIN_TEMPLATES = {
     pressureEffect: "A hound harbors a grudge against a specific person or group. When setting up the mission, the Admin designates three specific people as the hound's grudge targets (which can expand to innocent family, friends, or co-workers). When pressure increases, the hound tracks down and attempts to kill one of its targets - if the exorcists are present they can prevent it with a conflict scene, otherwise the target is brutally slain. If all targets are killed, the hound picks an NPC the exorcists have met and adds them as a new target.",
     outOfControl: "If pressure goes to maximum, the hound gains +1 CAT and adds all NPCs and the exorcists to its grudge.",
     traces: "Myrmidons (sins): violent echoes arising from the dripping bodily fluids of the Hound or its victims. They shudder uncontrollably and give off bloody acidic steam when enraged, but are short-lived (disintegrate in a few hours). Execution talisman 2 (solo), 4 (group), 6 (massive group). Deal +1 stress to exorcists who already have an injury; rip exorcists in half when inflicting the last injury, causing instant death instead of the brink of death. Attacks with teeth, claws, ear-splitting screaming: (1) 4 stress, (2/3) 3, (4+) 2. Complications: grow spines, rake with claws, snap bones in jaws, grow a new limb or head. Bloody Steam (1-2): steam gets in nearby exorcists' lungs, making speaking or strenuous activity cost 1 stress first.",
-    tensionMoves: "Attacks with needle-like teeth, razor claws, bone spurs, sickle-like blades, blood-soaked weaponry: (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: move faster than the eye can see, set everything on fire, give off massive steam or heat, become enraged, expand with additional blades, increase in size and strength, add a bystander, use a domain.",
+    attacksWith: "Needle-like teeth, razor claws, bone spurs, sickle-like blades, blood-soaked weaponry: (1) 5 stress, (2/3) 3, (4+) 2.",
+    complications: "Move faster than the eye can see, set everything on fire, give off massive steam or heat, become enraged, expand with additional blades, increase in size and strength, add a bystander, use a domain.",
+    threats: "Cause massive collateral damage. Attempt to tear someone in half. Rip apart humans. Spit torrents of boiling blood. Hurl someone through a roof or wall. Cut everything into ribbons. Inflict a hook. Use a domain. Do something violent, obliterating, or manic.",
+    afflictions: "1. Blood Rage: roll +1D when inflicting harm, violence, or physical force, but take 2 stress to take any other type of action.\n2. Bleeding Eyes: you may gain a psyche burst by taking 1d3 stress.\n3. Ganglia Fever: feverish and hot; roll one less resting die.\n4. Boiling Resentment: at mission end, if you inflicted physical violence on a human you may erase 2d3 sin; if you do, permanently add to agenda: make a human pay for their crimes.\n5. Blood Scent: when any exorcist suffers an injury you may gain a psyche burst; if done at least once in a mission, permanently add to agenda: taste blood.\n6. The Urge: permanently add to agenda: kill.",
+    tensionMoves: "",
     severeAttack: "Apoplexy: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Do you have a sword (or something like it)? Do you have a shield (or something like it)? Is the hound hindered, distracted, or under duress? Are you calm, collected, and focused? (For a 'no', someone may act to rectify it.) The hound separates the chosen exorcist from the group (hurled into a pocket dimension, smashed through a wall, flung off a freeway) and attacks with fury - roll the dice one at a time, each representing an attack. For every die rolled, the exorcist and anyone aiding gains 1 stress. For every '1' rolled, the target suffers 2 additional stress and has a piece of skin cut away, causing permanent scarring.",
     domainOptions: [
       { name: 'A Shuddering Thing Through a Dark Hall', description: "The hound feeds on fear, growing larger and stronger from the terror of weaker wills. Once a scene, if mundane humans are in the local area, as a complication the hound manifests for them and feeds off their fear: until the exorcists calm the humans or remove them, the hound takes -1 slash from all sources and deals +1 stress with reactions. Exorcists attempting to harm it must first spend 1 stress to suppress their fear; they can suppress this permanently by answering 'What is it you are most afraid of?' (but the Admin then rolls two risk dice and picks the lowest for that action)." },
@@ -2925,7 +2937,11 @@ var SIN_TEMPLATES = {
     pressureEffect: "A centipede's venom, injected into the human bloodstream, causes a psycho-biotic reaction that within about an hour mutates a human into a strong, aggressive, violent monster - a mindless drone under the centipede's control, which can itself produce venom, creating an exponential horde. A human infected chrysalizes and transforms within exactly 44 minutes (an exorcist gains the Centipede Bite affliction instead). There is no cure, but it can be delayed; the only reliable way to end an infestation is to kill the centipede (which makes the venom evaporate, saving infected exorcists and untransformed victims). Each time pressure increases, 10% of the local population is infected and transformed (30% at 3 slashes).",
     outOfControl: "If pressure reaches maximum, the centipede increases in CAT by +1 and population loss goes up to 90%.",
     traces: "Infested (sins): mutated humans, essentially minor Form II sins affected by the psycho-biotic poison, forming large animalistic hive swarms the centipede mentally controls. Start human-looking, become more insect-like over time. Execution talisman 1 (solo), 3 (group), 5 (large group), 7 (full horde); only appear in large group/horde at pressure 3+. Slow, clumsy, unintelligent but numerous and resilient; area powers gain +1D against groups. Attacks with mutated claws, teeth, mandibles: (1) 4 stress, (2/3) 3, (4+) 2. Complications: eject venomous spines, knock someone down, alert a bigger horde, explode with caustic bile, jump out from somewhere surprising. Endless (1-2): more infested arrive, +1d3 to the talisman. Infected bite (1): inflict the Centipede Bite affliction. Note: exorcists get one dose of Centipede Antivenom each (mark 1 KP to inject someone in reach).",
-    tensionMoves: "Attacks with dripping fangs, numerous claws, sinuous body, pressurized spit (short range): (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: burrow into ground or walls, spit poisonous webbing, release swarms of flies, spray pools of poison, reveal hidden burrows, collapse the floor, scuttle hidden into darkness, add a bystander, use a domain.",
+    attacksWith: "Dripping fangs, numerous claws, sinuous body, pressurized spit (short range): (1) 5 stress, (2/3) 3, (4+) 2.",
+    complications: "Burrow into ground or walls, spit poisonous webbing, release swarms of flies, spray pools of poison, reveal hidden burrows, collapse the floor, scuttle hidden into darkness, add a bystander, use a domain.",
+    threats: "Summon the horde. Rip into an exorcist. Unveil rows of hypnotic eyespots. Explode a caustic bubo. Dissolve something with acid. Commit a massacre. Inflict a hook. Use a domain. Do something messy, spiteful, or dripping with venom.",
+    afflictions: "1. Seethe: pick another exorcist; for every '6' they roll on an action, gain 1 nonlethal stress.\n2. Limb Necrosis: a limb swells and rots (1-2 arm, 3-4 leg, 5-6 hand/foot); activity requiring it is hard.\n3. Acid Degradation: mark off 1d3 KP immediately, then 1 more when you rest.\n4. Alienation: permanently add to agenda: ignore a plea for aid.\n5. Hive Brain: hallucination from aerosol poison; complicated mental activity such as research or investigation is hard.\n6. Let it End: permanently add to agenda: kill needlessly.",
+    tensionMoves: "",
     severeAttack: "Vitriol: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Can you move quickly and unencumbered? Is someone aiding you able to push or grab you? Can you forgive the centipede's host? Is the centipede hindered, distracted, or under duress? (For a 'no', someone may act to rectify it.) The centipede shoots a pressurized stream of mutagenic venom, dissolving obstacles and flesh. The exorcist and any aiding take 1 stress per die; the target rolls for a permanent scar. At least one '1': the target suffers an injury. Two or more '1's: the target either suffers instant death (or defies fate), or suffers an injury and rolls three times on the scar table instead.",
     domainOptions: [
       { name: 'The Heralds of Venom', description: "The venom in the centipede and its horde becomes boiling and pressurized. The horde can spit venom at short range when inflicting stress; the centipede can spit at extreme range like a sniper rifle. It gains a new affliction, BLINDING AGUE (as a threat or hook): eyes become milky white, the exorcist can't see, making sight-reliant activities hard. At mission end, roll 1d6 - on 1-2 it becomes permanent (adjusts before next mission). Blind exorcists are immune." },
@@ -2949,7 +2965,11 @@ var SIN_TEMPLATES = {
     pressureEffect: "A toad's main desire is to acquire as much material wealth as possible for its host, stealing by various means and storing prizes in its expansive gullet to regurgitate later in its palace. Its larceny starts small but grows out of control (from stealing a fast car, to the fastest car in town, to an entire restaurant staff and all). The toad gains power from its hoard; every time pressure increases, its greed grows: 0-2: high-worth but mundane items (money, cars, guns, medicine, food, fashion, high art); 3-4: unreal amounts of the above; 5+: entire stores, shops, restaurants, yachts, buses, celebrities.",
     outOfControl: "At 6+, the toad's CAT increases by 1 and it gains the ability to steal conceptual or intangible items like abstract wealth, stocks in a company, light, artistic skill, or happiness.",
     traces: "Toadspawn (humans): humans who follow the toad or its host through the very real promise of incredible wealth - from regular gangsters to privately hired security, often oblivious, brainwashed, or willfully ignorant. Execution talisman 1 (solo), 4 (group), 6 (large group). Mundane humans with mundane (no less deadly) weaponry; often have access to cars or security vans. Attacks with firearms, close-quarters combat: (1) 4 stress, (2/3) 3, (4+) 2. Complications: fire a stun gun, charge an exorcist, get in a martial arts hold, pin down with gunfire, get in a vehicle, throw a grenade. Threat - call reinforcements (1): add 1d3 to the execution talisman if allowed to follow through.",
-    tensionMoves: "Attacks with crushing punches and kicks, muscular tongue, pressurized blood spray from eyes (short range): (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: leap out of reach on muscular legs or squeeze into a tight space, entangle in traps, reveal hidden explosives, trigger security or alarms, vomit slime or disgorge stomach contents, add a bystander, use a domain.",
+    attacksWith: "Crushing punches and kicks, muscular tongue, pressurized blood spray from eyes (short range): (1) 5 stress, (2/3) 3, (4+) 2.",
+    complications: "Leap out of reach on muscular legs or squeeze into a tight space, entangle in traps, reveal hidden explosives, trigger security or alarms, vomit slime or disgorge stomach contents, add a bystander, use a domain.",
+    threats: "Summon bodyguards. Steal something from the exorcists. Collapse or throw something from the environment. Set off a bomb. Kick someone with powerful legs. Swallow something or someone whole. Inflict a hook. Use a domain. Do something crafty, flashy, or shocking.",
+    afflictions: "1. Absent Minded: whenever you roll a '1' on risk, mark 1 KP.\n2. Wasting Sickness: reduce max stress by 1 each time you rest; if reduced to 0, suffer instant death.\n3. Starvation: all actions are hard until you or an ally mark 1 KP and let you eat something; resets after you rest.\n4. Itchy Fingers: once a scene, stealing anything gives 1 psyche burst and 1d3 sin; permanently add to agenda: steal.\n5. Dreaming Desire: when pressure increases, spend 1 psyche burst to daydream about things you want or take 2 stress.\n6. The Want: permanently add to agenda: take more than you need.",
+    tensionMoves: "",
     severeAttack: "Grand Finesse: Usable on a '1' on the risk roll, once a mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes': Are you accepting of your powers? Are your allies close enough to touch you skin to skin? Are you willing to part with your kit? (If yes, the Toad is distracted stealing every ticked item of gear from you and you mark all your KP; they disappear until the Toad is defeated.) Is the Toad hindered, distracted, or under duress? Roll the dice: the exorcist and any aiding take 1 stress per die. The Toad steals the target's ability to use psychic powers, which coalesce into a psychic shadow (a sin, execution talisman 4, uses reactions to flee); if destroyed or captured it fuses back, ending the effect. At least one '1': the talisman is 6 instead. Two or more '1's: the talisman is 10 instead.",
     domainOptions: [
       { name: 'Hotel for One', description: "The toad uses its powerful lungs to suck people into its maw, shunting them into a tiny prison-space inside its gullet. As a complication with +2 talisman length, it can suck in an exorcist it is fighting: they are trapped in a tiny cage-like extra-dimensional room, taking 1 stress before acting until they or their allies break them out (then vomited out). As a tension move, it can kidnap any NPC the exorcists have met off-screen and imprison them mostly unharmed; freeing them requires fighting the Toad." },
@@ -2973,7 +2993,11 @@ var SIN_TEMPLATES = {
     pressureEffect: "The Lord creates a Kingdom, an alternate parasite reality growing outward from its palace that overlaps our own, accessible freely by the lord and its host and squirreled away in impossible spaces (closet doors, hallways, back alleys). It bleeds over and pulls parts of the real world into it, consuming space and the humans inside (who, from the outside, cannot see it). Inside, reality conforms to the host's desires: all they have lost is returned, events/history/humans may be drastically altered, and the host is the absolute ruler who can change the laws of reality (strictures that consume mundane humans and even affect exorcists). Each time pressure increases, the kingdom expands to a new area of the real world, increasingly rapidly.",
     outOfControl: "If pressure is 6+, the kingdom consumes the whole investigation area and the Lord's CAT increases by +1. A kingdom collapses when the host or the Lord is defeated, ejecting everything brought into it (humans typically have no memory of their time inside).",
     traces: "Guards (sins): a lord's kingdom always has guards patrolling it - sins taking the form of authority figures or soldiers, completely subservient to the Lord, shaped at its whim (human soldiers with shaded faces, or beast-like demons with medieval weaponry). Execution talisman 2 (solo), 4 (squad), 6 (platoon), 10 (small army). Armed with cruel weaponry and outstanding senses; incapable of existing outside the kingdom. Attacks with cruel close-combat weaponry, fists and kicks: (1) 4 stress, (2/3) 3, (4+) 2. Complications: trap an exorcist and pile on, pull an exorcist away in chains, disable with a painful strike, threaten bystanders as collaborators, call in a prison vehicle, produce a heavy weapon. Sound the Alarm (threat, 1-2): alert the Lord or nearby guards; if more guards show up, +1d3 to the execution talisman.",
-    tensionMoves: "Attacks with shimmering blades, armored gauntlets, shining medieval weaponry, beams of fire (long range): (1) 5 stress, (2/3) 3, (4+) 2.\nComplications: twist the world or landscape, extend the Kingdom, throw false accusations, bind an exorcist in chains, blind with scorching light, extend shining armor plating, raise a glittering shield, add a bystander, use a domain.",
+    attacksWith: "Shimmering blades, armored gauntlets, shining medieval weaponry, beams of fire (long range): (1) 5 stress, (2/3) 3, (4+) 2.",
+    complications: "Twist the world or landscape, extend the Kingdom, throw false accusations, bind an exorcist in chains, blind with scorching light, extend shining armor plating, raise a glittering shield, add a bystander, use a domain.",
+    threats: "Smite with fire. Pass judgement from the heavens. Hurl into a psychic prison. Force an exorcist to confront their own crimes. Grasp with an armored fist. Impale with holy spikes. Inflict a hook. Use a domain. Do something righteous, scathing, or dominating.",
+    afflictions: "1. Reality Control: must spend 1 stress to tick any amount of KP in the kingdom.\n2. Pain of Loss: forced to psychically experience the Lord's host's catastrophe; when the lord or its host is harmed, also take 1 nonlethal stress; ends if you take an injury.\n3. Kingdom Infection: mark off 1 KP when pressure increases, then manifest something comforting and small (a treat or book).\n4. Hitchhiker: always count as in the Kingdom for the Lord's powers.\n5. Welcome Home: gain +1 max psyche burst in the kingdom and regain max psyche burst when resting there, but can't use blasphemies outside; permanently add to agenda: neglect your responsibilities.\n6. Justiciar: permanently add to agenda: punish wickedness.",
+    tensionMoves: "",
     severeAttack: "Judgement: Usable on a '1' on the risk roll, once a mission. The lord binds the target with divine chains and begins a summary trial. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 6d6, then remove one die per 'yes' (rectifying a 'no' may take the form of a verbal argument from any aiding exorcist): Are you innocent of crimes? Are you an honest person? Have you lived a life by your ideals? Is the lord hindered, distracted, or under duress? Roll the dice as the Lord passes judgement, smiting with fire: the exorcist and any aiding take 1 stress per die. For every '1' rolled, the target is forced to confront their inadequacy and additionally gains 1d6 sin (can occur multiple times).",
     domainOptions: [
       { name: 'Stricture of Manifestation', description: "The Lord or its host gain increased control over reality inside its Kingdom (as threats or complications): cause any object up to CAT+1 size to coalesce and appear in moments; invert or choose the direction and strength of gravity, or make space curved; change the weather or biome of an area; rearrange the interiors and layouts of buildings, streets, or corridors. As a threat or tension move, it can dismiss any sustained psychic power the exorcists caused (summon, curse). Only works inside the kingdom." },
@@ -3009,7 +3033,15 @@ function createBlankSin() {
       { name: '', description: '' },
       { name: '', description: '' }
     ],
-    traumas: ['', '', ''],   // three trauma questions
+    traumas: [               // three trauma questions + the Admin's answers
+      { question: '', answer: '' },
+      { question: '', answer: '' },
+      { question: '', answer: '' }
+    ],
+    attacksWith: '',         // "Attacks with" line
+    complications: '',       // complications list
+    threats: '',             // threats list
+    afflictions: '',         // afflictions (numbered list, freeform)
     tensionMoves: '',        // custom tension moves (one per line)
     severeAttack: '',        // the sin's severe attack
     pressureName: '',        // name of the pressure mechanic (e.g. Miasma)
@@ -3028,12 +3060,17 @@ function createSinFromType(typeId) {
   if (!tpl) return s; // custom / unknown -> blank
   s.sinType = typeId;
   s.primaryEmotion = tpl.primaryEmotion || '';
-  s.traumas = (tpl.traumas && tpl.traumas.length ? tpl.traumas.slice(0, 3) : ['', '', '']);
-  while (s.traumas.length < 3) s.traumas.push('');
+  // Templates store trauma questions as strings; map into question/answer pairs
+  var tq = tpl.traumas && tpl.traumas.length ? tpl.traumas.slice(0, 3) : [];
+  s.traumas = [0, 1, 2].map(function(i) { return { question: tq[i] || '', answer: '' }; });
   s.pressureName = tpl.pressureName || '';
   s.pressureEffect = tpl.pressureEffect || '';
   s.outOfControl = tpl.outOfControl || '';
   s.traces = tpl.traces || '';
+  s.attacksWith = tpl.attacksWith || '';
+  s.complications = tpl.complications || '';
+  s.threats = tpl.threats || '';
+  s.afflictions = tpl.afflictions || '';
   s.tensionMoves = tpl.tensionMoves || '';
   s.severeAttack = tpl.severeAttack || '';
   return s;
@@ -5697,6 +5734,122 @@ function escHtml(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// Render a row of clickable talisman slashes. Clicking a slash sets the count
+// to that index+1; clicking the currently-last filled slash clears it (toggle down).
+function renderClickableTalisman(current, max, kind) {
+  var html = '<div class="combat-talisman" data-kind="' + kind + '">';
+  for (var i = 0; i < max; i++) {
+    html += '<span class="combat-slash ' + (i < current ? 'filled' : '') + '" data-kind="' + kind + '" data-i="' + i + '">\u2571</span>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderEnemyCombat(enemyId) {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var en = getEnemy(enemyId);
+  if (!en) { navigate('admin'); return; }
+  var isSin = en.kind === 'sin';
+  var execMax = en.talismanSegments || (isSin ? 8 : 2);
+  var execCur = en.execSlashes || 0;
+  var pressMax = 6;
+  var pressCur = en.pressureSlashes || 0;
+
+  var quickRef = '';
+  if (isSin) {
+    var domains = (en.domains || []).filter(function(d) { return d.name || d.description; });
+    quickRef =
+      (en.primaryEmotion ? '<p class="combat-meta"><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(en.primaryEmotion) + '</p>' : '') +
+      (en.attacksWith ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.attacksWith).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (en.complications ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.complications).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (domains.length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios' : 'Domains') + '</h3>' +
+        domains.map(function(d) { return '<div class="combat-ref-block"><strong>' + escHtml(d.name) + '</strong>' + (d.description ? '<p>' + escHtml(d.description) + '</p>' : '') + '</div>'; }).join('') + '</div>' : '') +
+      (en.threats ? '<div class="combat-section"><h3>' + (pt ? 'Ameaças' : 'Threats') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.threats).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (en.severeAttack ? '<div class="combat-section"><h3>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.severeAttack) + '</p></div></div>' : '') +
+      (en.afflictions ? '<div class="combat-section"><h3>' + (pt ? 'Aflições' : 'Afflictions') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.afflictions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (en.tensionMoves ? '<div class="combat-section"><h3>' + (pt ? 'Movimentos de Tensão' : 'Tension Moves') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.tensionMoves).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      ((en.traumas || []).some(function(x) { return x && (typeof x === 'string' ? x : (x.question || x.answer)); }) ? '<div class="combat-section"><h3>' + (pt ? 'Traumas' : 'Traumas') + '</h3>' +
+        en.traumas.filter(function(x) { return x && (typeof x === 'string' ? x : (x.question || x.answer)); }).map(function(x) {
+          if (typeof x === 'string') return '<div class="combat-ref-block"><p>' + escHtml(x) + '</p></div>';
+          return '<div class="combat-ref-block"><strong>' + escHtml(x.question) + '</strong>' + (x.answer ? '<p>' + escHtml(x.answer) + '</p>' : '') + '</div>';
+        }).join('') + '</div>' : '') +
+      (en.traces ? '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.traces) + '</p></div></div>' : '') +
+      (en.palace ? '<div class="combat-section"><h3>' + (pt ? 'Palácio' : 'Palace') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.palace) + '</p></div></div>' : '');
+  } else {
+    quickRef =
+      (en.description ? '<p class="combat-meta muted">' + escHtml(en.description) + '</p>' : '') +
+      (en.facts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.facts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (en.reactions ? '<div class="combat-section"><h3>' + (pt ? 'Reações' : 'Reactions') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.reactions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
+        '<p class="combat-meta">' + (pt ? 'Base' : 'Base') + ': ' + (en.stress != null ? en.stress : 2) + ' \u2022 ' + (pt ? 'risco' : 'risk') + ' 2-3: ' + (en.stressRisk23 != null ? en.stressRisk23 : 3) + ' \u2022 ' + (pt ? 'risco' : 'risk') + ' 1: ' + (en.stressRisk1 != null ? en.stressRisk1 : 4) + '</p>' +
+      '</div>';
+  }
+
+  app.innerHTML =
+    '<div class="page enemy-combat-page' + (isSin ? ' combat-sin' : '') + '"' + (isSin && en.color ? '' : '') + '>' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + escHtml(en.name || (pt ? 'Sem nome' : 'Unnamed')) + ' <span class="subtitle">CAT ' + (en.category || 0) + '</span></h1>' +
+      '</header>' +
+      '<div class="combat-talismans">' +
+        '<div class="combat-talisman-group">' +
+          '<div class="combat-talisman-label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ' <span class="combat-count" id="exec-count">' + execCur + '/' + execMax + '</span>' +
+            '<span class="combat-size-ctrl"><button class="combat-size-btn" id="exec-minus" title="' + (pt ? 'Diminuir tamanho' : 'Decrease size') + '">\u2212</button>' +
+            '<button class="combat-size-btn" id="exec-plus" title="' + (pt ? 'Aumentar tamanho' : 'Increase size') + '">+</button></span>' +
+          '</div>' +
+          renderClickableTalisman(execCur, execMax, 'exec') +
+          (isSin ? '<p class="combat-hint muted">' + (pt ? 'Normalmente 8+CAT+Pressão. Aos 4 slashes fora do palácio, o Sin recua e cura 1d3 (2d3 se cheio).' : 'Typically 8+CAT+Pressure. At 4 slashes outside its palace, the Sin retreats and heals 1d3 (2d3 if full).') + '</p>' : '') +
+        '</div>' +
+        (isSin ?
+          '<div class="combat-talisman-group">' +
+            '<div class="combat-talisman-label">' + (pt ? 'Pressão' : 'Pressure') + ' <span class="combat-count" id="press-count">' + pressCur + '/' + pressMax + '</span></div>' +
+            renderClickableTalisman(pressCur, pressMax, 'press') +
+            (en.pressureName ? '<p class="combat-hint"><span class="label">' + escHtml(en.pressureName) + '.</span> ' + (en.pressureEffect ? escHtml(en.pressureEffect) : '') + '</p>' : '') +
+            (en.outOfControl ? '<p class="combat-hint combat-ooc' + (pressCur >= pressMax ? ' active' : '') + '"><strong>' + (pt ? 'Fora de Controle (6+)' : 'Out of Control (6+)') + ':</strong> ' + escHtml(en.outOfControl) + '</p>' : '') +
+          '</div>' : '') +
+        '<button class="btn btn-sm btn-secondary" id="btn-reset-talismans">' + (pt ? 'Zerar talismãs' : 'Reset talismans') + '</button>' +
+      '</div>' +
+      '<div class="combat-ref">' + quickRef + '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
+
+  // Talisman slash clicks: set to index+1, or clear if clicking the last-filled
+  app.querySelectorAll('.combat-slash').forEach(function(slash) {
+    slash.addEventListener('click', function() {
+      var kind = slash.dataset.kind;
+      var i = parseInt(slash.dataset.i, 10);
+      var cur = kind === 'exec' ? (en.execSlashes || 0) : (en.pressureSlashes || 0);
+      var next = (i + 1 === cur) ? i : (i + 1); // toggle down if clicking current top
+      if (kind === 'exec') en.execSlashes = next; else en.pressureSlashes = next;
+      saveEnemy(en);
+      renderEnemyCombat(enemyId);
+    });
+  });
+
+  // Resize the execution talisman on the fly (min 1, max 20)
+  document.getElementById('exec-plus').addEventListener('click', function() {
+    en.talismanSegments = Math.min(20, (en.talismanSegments || execMax) + 1);
+    saveEnemy(en);
+    renderEnemyCombat(enemyId);
+  });
+  document.getElementById('exec-minus').addEventListener('click', function() {
+    en.talismanSegments = Math.max(1, (en.talismanSegments || execMax) - 1);
+    if ((en.execSlashes || 0) > en.talismanSegments) en.execSlashes = en.talismanSegments;
+    saveEnemy(en);
+    renderEnemyCombat(enemyId);
+  });
+
+  document.getElementById('btn-reset-talismans').addEventListener('click', function() {
+    en.execSlashes = 0;
+    en.pressureSlashes = 0;
+    saveEnemy(en);
+    renderEnemyCombat(enemyId);
+  });
+}
+
 function renderAdmin() {
   var app = document.getElementById('app');
   var enemies = getAllEnemies();
@@ -5741,6 +5894,8 @@ function renderAdmin() {
       var en = getEnemy(id);
       if (confirm((currentLang === 'pt' ? 'Remover ' : 'Delete ') + (en ? en.name : '') + '?')) { deleteEnemy(id); renderAdmin(); }
     });
+    // Clicking the card (outside the action buttons) opens the live combat sheet
+    card.addEventListener('click', function() { navigate('enemy-combat/' + id); });
   });
 }
 
@@ -5943,7 +6098,13 @@ function renderSinForm(sinId, startingType) {
   if (!s) { navigate('admin'); return; }
   // Guard: ensure structure exists on older/edited records
   if (!s.domains) s.domains = [{ name: '', description: '' }, { name: '', description: '' }, { name: '', description: '' }];
-  if (!s.traumas) s.traumas = ['', '', ''];
+  // Normalize traumas: support legacy string arrays and ensure 3 question/answer pairs
+  if (!s.traumas) s.traumas = [];
+  s.traumas = [0, 1, 2].map(function(i) {
+    var t = s.traumas[i];
+    if (typeof t === 'string') return { question: t, answer: '' };
+    return { question: (t && t.question) || '', answer: (t && t.answer) || '' };
+  });
   // Domain options offered for this sin type (official "choose three" list)
   var domainOptions = (SIN_TEMPLATES[s.sinType] && SIN_TEMPLATES[s.sinType].domainOptions) || [];
 
@@ -5993,11 +6154,15 @@ function renderSinForm(sinId, startingType) {
             '</div>';
           }).join('') +
         '</div>' +
-        // Traumas
+        // Traumas (question + answer)
         '<div class="form-section">' +
-          '<h3 class="form-subhead">' + (pt ? 'Traumas' : 'Traumas') + ' <span class="muted">(' + (pt ? '3 perguntas' : '3 questions') + ')</span></h3>' +
+          '<h3 class="form-subhead">' + (pt ? 'Traumas' : 'Traumas') + ' <span class="muted">(' + (pt ? '3 perguntas e respostas' : '3 questions & answers') + ')</span></h3>' +
           [0, 1, 2].map(function(i) {
-            return '<input type="text" class="s-trauma" data-i="' + i + '" value="' + escAttr(s.traumas[i] || '') + '" placeholder="' + (pt ? 'Pergunta de trauma ' + (i + 1) : 'Trauma question ' + (i + 1)) + '">';
+            var tr = (s.traumas && s.traumas[i]) || { question: '', answer: '' };
+            return '<div class="sin-trauma-block">' +
+              '<input type="text" class="s-trauma-q" data-i="' + i + '" value="' + escAttr(tr.question || '') + '" placeholder="' + (pt ? 'Pergunta de trauma ' + (i + 1) : 'Trauma question ' + (i + 1)) + '">' +
+              '<input type="text" class="s-trauma-a" data-i="' + i + '" value="' + escAttr(tr.answer || '') + '" placeholder="' + (pt ? 'Resposta (estabelece o trauma)' : 'Answer (establishes the trauma)') + '">' +
+            '</div>';
           }).join('') +
         '</div>' +
         // Pressure
@@ -6011,10 +6176,18 @@ function renderSinForm(sinId, startingType) {
           '<label>' + (pt ? 'Fora de Controle (pressão 6+)' : 'Out of Control (pressure 6+)') + '</label>' +
           '<textarea id="s-outOfControl" rows="2">' + escHtml(s.outOfControl) + '</textarea>' +
         '</div>' +
-        // Tension moves, severe attack & palace
+        // Attacks / complications / tension moves / severe attack / palace
         '<div class="form-section">' +
+          '<label>' + (pt ? 'Ataca Com' : 'Attacks With') + '</label>' +
+          '<textarea id="s-attacksWith" rows="2">' + escHtml(s.attacksWith || '') + '</textarea>' +
+          '<label>' + (pt ? 'Complicações' : 'Complications') + '</label>' +
+          '<textarea id="s-complications" rows="3">' + escHtml(s.complications || '') + '</textarea>' +
+          '<label>' + (pt ? 'Ameaças' : 'Threats') + '</label>' +
+          '<textarea id="s-threats" rows="3">' + escHtml(s.threats || '') + '</textarea>' +
+          '<label>' + (pt ? 'Aflições (lista numerada)' : 'Afflictions (numbered list)') + '</label>' +
+          '<textarea id="s-afflictions" rows="6">' + escHtml(s.afflictions || '') + '</textarea>' +
           '<label>' + (pt ? 'Movimentos de Tensão (um por linha)' : 'Tension Moves (one per line)') + '</label>' +
-          '<textarea id="s-tensionMoves" rows="4">' + escHtml(s.tensionMoves) + '</textarea>' +
+          '<textarea id="s-tensionMoves" rows="3">' + escHtml(s.tensionMoves) + '</textarea>' +
           '<label>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</label>' +
           '<textarea id="s-severeAttack" rows="3">' + escHtml(s.severeAttack) + '</textarea>' +
           '<label>' + (pt ? 'Palácio (local e aparência)' : 'Palace (location & appearance)') + '</label>' +
@@ -6071,11 +6244,18 @@ function renderSinForm(sinId, startingType) {
       };
     });
     s.traumas = [0, 1, 2].map(function(i) {
-      return document.querySelector('.s-trauma[data-i="' + i + '"]').value.trim();
+      return {
+        question: document.querySelector('.s-trauma-q[data-i="' + i + '"]').value.trim(),
+        answer: document.querySelector('.s-trauma-a[data-i="' + i + '"]').value.trim()
+      };
     });
     s.pressureName = document.getElementById('s-pressureName').value.trim();
     s.pressureEffect = document.getElementById('s-pressureEffect').value.trim();
     s.outOfControl = document.getElementById('s-outOfControl').value.trim();
+    s.attacksWith = document.getElementById('s-attacksWith').value.trim();
+    s.complications = document.getElementById('s-complications').value.trim();
+    s.threats = document.getElementById('s-threats').value.trim();
+    s.afflictions = document.getElementById('s-afflictions').value.trim();
     s.tensionMoves = document.getElementById('s-tensionMoves').value.trim();
     s.severeAttack = document.getElementById('s-severeAttack').value.trim();
     s.palace = document.getElementById('s-palace').value.trim();
@@ -6095,6 +6275,7 @@ route('opponent-new', function() { renderEnemyForm(null); });
 route('enemy-edit', function(id) { renderEnemyForm(id); });
 route('sin-new', function(type) { renderSinForm(null, type); });
 route('sin-edit', function(id) { renderSinForm(id); });
+route('enemy-combat', function(id) { renderEnemyCombat(id); });
 route('create', renderCreate);
 route('view', renderView);
 route('edit', renderEdit);
