@@ -5094,6 +5094,9 @@ function handleAdvanceOption(opt, char, characterId) {
 // PAGE: COMPENDIUM
 // ════════════════════════════════════════════════════════════════════
 
+// Tracks an open detail sub-view within the compendium: { type: 'agenda'|'blasphemy', id: '...' } or null
+var compendiumDetail = null;
+
 function renderCompendium() {
   var app = document.getElementById('app');
   var tabs = [
@@ -5125,7 +5128,7 @@ function renderCompendium() {
     '</div>';
 
   renderLangToggle();
-  document.getElementById('btn-back').addEventListener('click', function() { navigate('home'); });
+  document.getElementById('btn-back').addEventListener('click', function() { compendiumDetail = null; navigate('home'); });
 
   // Tab switching
   app.querySelectorAll('.compendium-tab').forEach(function(tab) {
@@ -5137,11 +5140,21 @@ function renderCompendium() {
     });
   });
 
-  // Render saved/default tab
-  renderCompendiumTab(savedTab);
+  // Restore an open detail sub-view (e.g. after a language toggle), else render the tab
+  if (compendiumDetail && compendiumDetail.type === 'agenda' && isExpansionActive((AGENDAS.find(function(a){return a.id===compendiumDetail.id;})||{}).expansion)) {
+    renderAgendaDetail(compendiumDetail.id);
+  } else if (compendiumDetail && compendiumDetail.type === 'blasphemy' && isExpansionActive((BLASPHEMIES.find(function(b){return b.id===compendiumDetail.id;})||{}).expansion)) {
+    renderBlasphemyDetail(compendiumDetail.id);
+  } else if (compendiumDetail && compendiumDetail.type === 'virtue' && isExpansionEnabled('gff1')) {
+    renderVirtueDetail(compendiumDetail.id);
+  } else {
+    compendiumDetail = null;
+    renderCompendiumTab(savedTab);
+  }
 }
 
 function renderCompendiumTab(tabId) {
+  compendiumDetail = null;
   var content = document.getElementById('compendium-content');
   if (!content) return;
 
@@ -5151,16 +5164,19 @@ function renderCompendiumTab(tabId) {
         AGENDAS.filter(function(a) { return isExpansionActive(a.expansion); }).map(function(a) {
           var items;
           try { items = tAgendaItems(a.id, a); } catch(e) { items = { items: a.agendaItems || [''], bolded: a.boldedItems || [''] }; }
-          return '<div class="compendium-card">' +
+          return '<div class="compendium-card compendium-card-clickable" data-agenda-id="' + a.id + '">' +
             (a.image ? '<img class="compendium-card-img" src="' + a.image + '" alt="' + a.name + '">' : '') +
             '<h3 class="compendium-card-name">' + tAgenda(a.id) + '</h3>' +
             '<div class="compendium-card-body">' +
-              (items.items[0] ? '<p class="item-normal">\u25BA ' + items.items[0] + '</p>' : '') +
-              (items.bolded[0] ? '<p class="item-bolded">\u25BA <strong>' + items.bolded[0] + '</strong></p>' : '') +
+              '<p class="item-normal">\u25BA ' + (items.items[0] || '') + '</p>' +
+              '<p class="item-bolded">\u25BA <strong>' + (items.bolded[0] || '') + '</strong></p>' +
             '</div>' +
           '</div>';
         }).join('') +
       '</div>';
+    content.querySelectorAll('.compendium-card-clickable').forEach(function(card) {
+      card.addEventListener('click', function() { renderAgendaDetail(card.dataset.agendaId); });
+    });
   }
 
   if (tabId === 'blasphemies') {
@@ -5172,7 +5188,7 @@ function renderCompendiumTab(tabId) {
           var flavorText = bl.flavor || '';
           if (currentLang === 'pt' && PT_CONTENT.flavors && PT_CONTENT.flavors[bl.id]) flavorText = PT_CONTENT.flavors[bl.id];
           var desc = (currentLang === 'pt' && PT_CONTENT.blasphemyDescs && PT_CONTENT.blasphemyDescs[bl.id]) ? PT_CONTENT.blasphemyDescs[bl.id] : bl.description;
-          return '<div class="compendium-card">' +
+          return '<div class="compendium-card compendium-card-clickable" data-blas-id="' + bl.id + '">' +
             (img ? '<img class="compendium-card-img" src="' + img + '" alt="' + bl.name + '">' : '') +
             '<h3 class="compendium-card-name">' + tBlas(bl.id) + '</h3>' +
             '<p class="compendium-card-desc">' + desc + '</p>' +
@@ -5180,37 +5196,23 @@ function renderCompendiumTab(tabId) {
           '</div>';
         }).join('') +
       '</div>';
+    content.querySelectorAll('.compendium-card-clickable').forEach(function(card) {
+      card.addEventListener('click', function() { renderBlasphemyDetail(card.dataset.blasId); });
+    });
   }
 
   if (tabId === 'virtues') {
     content.innerHTML =
       '<div class="virtue-grid">' +
         VIRTUES.map(function(v) {
-          var hb = v.highBlasphemy;
           var pt = currentLang === 'pt' ? (PT_CONTENT.virtues || {}) : null;
-
           var desc = (pt && pt.compendiumDescs && pt.compendiumDescs[v.id]) ? pt.compendiumDescs[v.id] : v.compendiumDesc;
           var likes = (pt && pt.likes && pt.likes[v.id]) ? pt.likes[v.id] : v.likes;
           var dislikes = (pt && pt.dislikes && pt.dislikes[v.id]) ? pt.dislikes[v.id] : v.dislikes;
           var favFood = (pt && pt.favoriteFoods && pt.favoriteFoods[v.id]) ? pt.favoriteFoods[v.id] : v.favoriteFood;
-          var hbName = (pt && pt.highBlasphemyNames && pt.highBlasphemyNames[v.id]) ? pt.highBlasphemyNames[v.id] : hb.name;
-          var hbDesc = stripCatTags((pt && pt.highBlasphemyDescs && pt.highBlasphemyDescs[v.id]) ? pt.highBlasphemyDescs[v.id] : hb.description);
-          var terms = (pt && pt.termsOfLaw && hb.termsOfLaw) ? pt.termsOfLaw : hb.termsOfLaw;
-          var games = (pt && pt.games && hb.games) ? pt.games : hb.games;
-
-          // Second high blasphemy (e.g. Faith's Immaculate Defiance of Heaven)
-          var hb2 = v.highBlasphemy2;
-          var hb2Html = '';
-          if (hb2) {
-            var hb2Name = (pt && pt.highBlasphemy2Names && pt.highBlasphemy2Names[v.id]) ? pt.highBlasphemy2Names[v.id] : hb2.name;
-            var hb2Desc = stripCatTags((pt && pt.highBlasphemyDescs && pt.highBlasphemyDescs[v.id + '2']) ? pt.highBlasphemyDescs[v.id + '2'] : hb2.description);
-            hb2Html = '<div class="power-display power-display-alt"><strong>' + hb2Name + '</strong>' + (hb2.tags && hb2.tags.length ? '<span class="tags">[' + hb2.tags.join(', ') + ']</span>' : '') +
-              (hb2.irreversible ? '<p class="virtue-irreversible-warn">\u26A0 ' + (currentLang === 'pt' ? 'Essa escolha é IRREVERSÍVEL. Uma vez tomada, não pode ser desfeita.' : 'This choice is IRREVERSIBLE. Once taken, it cannot be undone.') + '</p>' : '') +
-              '<p>' + hb2Desc + '</p></div>';
-          }
 
           var vColorStyle = v.color ? ' style="--vc:' + v.color + '"' : '';
-          return '<div class="virtue-card" data-id="' + v.id + '"' + vColorStyle + '>' +
+          return '<div class="virtue-card virtue-card-clickable" data-virtue-id="' + v.id + '"' + vColorStyle + '>' +
             (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + v.name + '">' : '') +
             '<div class="virtue-card-header">' +
               '<h3 class="virtue-name">' + v.name + '</h3>' +
@@ -5223,19 +5225,155 @@ function renderCompendiumTab(tabId) {
                 '<p><strong>' + (currentLang === 'pt' ? 'Não gosta de' : 'Dislikes') + ':</strong> ' + (dislikes || []).join(', ') + '</p>' +
                 (favFood ? '<p><strong>' + (currentLang === 'pt' ? 'Comida favorita' : 'Favorite Food') + ':</strong> ' + favFood + '</p>' : '') +
               '</div>' +
-              '<div class="virtue-high-blasphemy">' +
-                '<h4 class="virtue-hb-label">' + (currentLang === 'pt' ? 'Alta Blasfêmia' : 'High Blasphemy') + '</h4>' +
-                '<div class="power-display"><strong>' + hbName + '</strong>' + (hb.tags && hb.tags.length ? '<span class="tags">[' + hb.tags.join(', ') + ']</span>' : '') + '<p>' + hbDesc + '</p>' +
-                  (terms ? '<div class="virtue-terms"><strong>' + (currentLang === 'pt' ? 'Termos da Lei' : 'Terms of Law') + '</strong><ol>' + terms.map(function(term) { return '<li>' + term + '</li>'; }).join('') + '</ol></div>' : '') +
-                  (games ? '<div class="virtue-terms"><strong>' + (currentLang === 'pt' ? 'Jogos' : 'Games') + '</strong><ul>' + games.map(function(g) { return '<li>' + g + '</li>'; }).join('') + '</ul></div>' : '') +
-                '</div>' +
-                hb2Html +
-              '</div>' +
             '</div>' +
           '</div>';
         }).join('') +
       '</div>';
+    content.querySelectorAll('.virtue-card-clickable').forEach(function(card) {
+      card.addEventListener('click', function() { renderVirtueDetail(card.dataset.virtueId); });
+    });
   }
+}
+
+/** Detail view for a single virtue (shown when a card is clicked) */
+function renderVirtueDetail(virtueId) {
+  var content = document.getElementById('compendium-content');
+  if (!content) return;
+  var v = VIRTUES.find(function(x) { return x.id === virtueId; });
+  if (!v) { renderCompendiumTab('virtues'); return; }
+  compendiumDetail = { type: 'virtue', id: virtueId };
+
+  var hb = v.highBlasphemy;
+  var pt = currentLang === 'pt' ? (PT_CONTENT.virtues || {}) : null;
+
+  var desc = (pt && pt.compendiumDescs && pt.compendiumDescs[v.id]) ? pt.compendiumDescs[v.id] : v.compendiumDesc;
+  var likes = (pt && pt.likes && pt.likes[v.id]) ? pt.likes[v.id] : v.likes;
+  var dislikes = (pt && pt.dislikes && pt.dislikes[v.id]) ? pt.dislikes[v.id] : v.dislikes;
+  var favFood = (pt && pt.favoriteFoods && pt.favoriteFoods[v.id]) ? pt.favoriteFoods[v.id] : v.favoriteFood;
+  var strictures = (pt && pt.strictures && pt.strictures[v.id]) ? pt.strictures[v.id] : v.strictures;
+  var hbName = (pt && pt.highBlasphemyNames && pt.highBlasphemyNames[v.id]) ? pt.highBlasphemyNames[v.id] : hb.name;
+  var hbDesc = stripCatTags((pt && pt.highBlasphemyDescs && pt.highBlasphemyDescs[v.id]) ? pt.highBlasphemyDescs[v.id] : hb.description);
+  var terms = (pt && pt.termsOfLaw && hb.termsOfLaw) ? pt.termsOfLaw : hb.termsOfLaw;
+  var games = (pt && pt.games && hb.games) ? pt.games : hb.games;
+
+  // Bond abilities (translated per level when available)
+  var bondPt = (pt && pt.bondAbilities && pt.bondAbilities[v.id]) ? pt.bondAbilities[v.id] : null;
+  var bondsHtml = (v.bondAbilities || []).map(function(ba, idx) {
+    var d = (bondPt && bondPt[idx]) ? bondPt[idx] : ba.description;
+    return '<div class="virtue-bond-block"><strong>' + (currentLang === 'pt' ? 'Nível' : 'Level') + ' ' + ba.level + '</strong><p>' + d + '</p></div>';
+  }).join('');
+
+  // Second high blasphemy (e.g. Faith's Immaculate Defiance of Heaven)
+  var hb2 = v.highBlasphemy2;
+  var hb2Html = '';
+  if (hb2) {
+    var hb2Name = (pt && pt.highBlasphemy2Names && pt.highBlasphemy2Names[v.id]) ? pt.highBlasphemy2Names[v.id] : hb2.name;
+    var hb2Desc = stripCatTags((pt && pt.highBlasphemyDescs && pt.highBlasphemyDescs[v.id + '2']) ? pt.highBlasphemyDescs[v.id + '2'] : hb2.description);
+    hb2Html = '<div class="power-display power-display-alt"><strong>' + hb2Name + '</strong>' + (hb2.tags && hb2.tags.length ? '<span class="tags">[' + hb2.tags.join(', ') + ']</span>' : '') +
+      (hb2.irreversible ? '<p class="virtue-irreversible-warn">\u26A0 ' + (currentLang === 'pt' ? 'Essa escolha é IRREVERSÍVEL. Uma vez tomada, não pode ser desfeita.' : 'This choice is IRREVERSIBLE. Once taken, it cannot be undone.') + '</p>' : '') +
+      '<p>' + hb2Desc + '</p></div>';
+  }
+
+  var vColorStyle = v.color ? ' style="--vc:' + v.color + '"' : '';
+  content.innerHTML =
+    '<div class="compendium-detail">' +
+      '<button class="btn btn-sm btn-back" id="detail-back">\u2190 ' + (currentLang === 'pt' ? 'Todas as Virtudes' : 'All Virtues') + '</button>' +
+      '<div class="virtue-card"' + vColorStyle + '>' +
+        (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + v.name + '">' : '') +
+        '<div class="virtue-card-header">' +
+          '<h3 class="virtue-name">' + v.name + '</h3>' +
+          '<p class="virtue-title">' + v.title + '</p>' +
+        '</div>' +
+        '<div class="virtue-card-body">' +
+          (desc ? '<p class="virtue-desc">' + desc + '</p>' : '') +
+          '<div class="virtue-profile">' +
+            '<p><strong>' + (currentLang === 'pt' ? 'Gosta de' : 'Likes') + ':</strong> ' + (likes || []).join(', ') + '</p>' +
+            '<p><strong>' + (currentLang === 'pt' ? 'Não gosta de' : 'Dislikes') + ':</strong> ' + (dislikes || []).join(', ') + '</p>' +
+            (favFood ? '<p><strong>' + (currentLang === 'pt' ? 'Comida favorita' : 'Favorite Food') + ':</strong> ' + favFood + '</p>' : '') +
+          '</div>' +
+          (strictures ? '<div class="virtue-profile"><p><strong>' + (currentLang === 'pt' ? 'Restrição' : 'Stricture') + ':</strong> ' + strictures + '</p></div>' : '') +
+          (bondsHtml ? '<h4 class="virtue-hb-label">' + (currentLang === 'pt' ? 'Habilidades de Vínculo' : 'Bond Abilities') + '</h4>' + bondsHtml : '') +
+          '<div class="virtue-high-blasphemy">' +
+            '<h4 class="virtue-hb-label">' + (currentLang === 'pt' ? 'Alta Blasfêmia' : 'High Blasphemy') + '</h4>' +
+            '<div class="power-display"><strong>' + hbName + '</strong>' + (hb.tags && hb.tags.length ? '<span class="tags">[' + hb.tags.join(', ') + ']</span>' : '') + '<p>' + hbDesc + '</p>' +
+              (terms ? '<div class="virtue-terms"><strong>' + (currentLang === 'pt' ? 'Termos da Lei' : 'Terms of Law') + '</strong><ol>' + terms.map(function(term) { return '<li>' + term + '</li>'; }).join('') + '</ol></div>' : '') +
+              (games ? '<div class="virtue-terms"><strong>' + (currentLang === 'pt' ? 'Jogos' : 'Games') + '</strong><ul>' + games.map(function(g) { return '<li>' + g + '</li>'; }).join('') + '</ul></div>' : '') +
+            '</div>' +
+            hb2Html +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('detail-back').addEventListener('click', function() { renderCompendiumTab('virtues'); });
+}
+
+/** Detail view for a single agenda (shown when a card is clicked) */
+function renderAgendaDetail(agendaId) {
+  var content = document.getElementById('compendium-content');
+  if (!content) return;
+  var a = AGENDAS.find(function(x) { return x.id === agendaId; });
+  if (!a) { renderCompendiumTab('agendas'); return; }
+  compendiumDetail = { type: 'agenda', id: agendaId };
+
+  var items;
+  try { items = tAgendaItems(a.id, a); } catch(e) { items = { items: a.agendaItems || [''], bolded: a.boldedItems || [''] }; }
+
+  content.innerHTML =
+    '<div class="compendium-detail">' +
+      '<button class="btn btn-sm btn-back" id="detail-back">\u2190 ' + (currentLang === 'pt' ? 'Todas as Agendas' : 'All Agendas') + '</button>' +
+      '<div class="compendium-detail-card">' +
+        (a.image ? '<img class="compendium-detail-img" src="' + a.image + '" alt="' + a.name + '">' : '') +
+        '<h2 class="compendium-detail-name">' + tAgenda(a.id) + '</h2>' +
+        '<div class="compendium-detail-items">' +
+          '<p class="item-normal">\u25BA ' + (items.items[0] || '') + '</p>' +
+          '<p class="item-bolded">\u25BA <strong>' + (items.bolded[0] || '') + '</strong></p>' +
+        '</div>' +
+        (a.restriction ? '<p class="agenda-restriction muted">' + tAgendaRestriction(a.id, a.restriction) + '</p>' : '') +
+        '<h3 class="compendium-detail-section">' + (currentLang === 'pt' ? 'Habilidades' : 'Abilities') + '</h3>' +
+        a.abilities.map(function(ab) {
+          return '<div class="compendium-ability-block"><strong>' + ab.name + '</strong><p>' + tAbilDesc(ab.id, ab.description) + '</p></div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('detail-back').addEventListener('click', function() { renderCompendiumTab('agendas'); });
+}
+
+/** Detail view for a single blasphemy (shown when a card is clicked) */
+function renderBlasphemyDetail(blasId) {
+  var content = document.getElementById('compendium-content');
+  if (!content) return;
+  var bl = BLASPHEMIES.find(function(x) { return x.id === blasId; });
+  if (!bl) { renderCompendiumTab('blasphemies'); return; }
+  compendiumDetail = { type: 'blasphemy', id: blasId };
+
+  var passives = getPassives(bl);
+  var img = passives[0] && passives[0].image ? passives[0].image : '';
+  var flavorText = bl.flavor || '';
+  if (currentLang === 'pt' && PT_CONTENT.flavors && PT_CONTENT.flavors[bl.id]) flavorText = PT_CONTENT.flavors[bl.id];
+  var desc = (currentLang === 'pt' && PT_CONTENT.blasphemyDescs && PT_CONTENT.blasphemyDescs[bl.id]) ? PT_CONTENT.blasphemyDescs[bl.id] : bl.description;
+
+  content.innerHTML =
+    '<div class="compendium-detail">' +
+      '<button class="btn btn-sm btn-back" id="detail-back">\u2190 ' + (currentLang === 'pt' ? 'Todas as Blasfêmias' : 'All Blasphemies') + '</button>' +
+      '<div class="compendium-detail-card">' +
+        (img ? '<img class="compendium-detail-img" src="' + img + '" alt="' + bl.name + '">' : '') +
+        '<h2 class="compendium-detail-name">' + tBlas(bl.id) + '</h2>' +
+        '<p class="compendium-card-desc">' + desc + '</p>' +
+        (flavorText ? '<p class="compendium-card-flavor"><em>' + flavorText + '</em></p>' : '') +
+        passives.map(function(p) {
+          return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + p.name + '">' : '') +
+            '<div class="passive-display"><strong>' + t('passive') + ' \u2014 ' + p.name + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</div>';
+        }).join('') +
+        '<h3 class="compendium-detail-section">' + (currentLang === 'pt' ? 'Poderes' : 'Powers') + '</h3>' +
+        bl.powers.map(function(pw) {
+          return '<div class="power-display"><strong>' + pw.name + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + '<p>' + tPowerDesc(pw.id, pw.description) + '</p></div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('detail-back').addEventListener('click', function() { renderCompendiumTab('blasphemies'); });
 }
 
 route('home', renderHome);

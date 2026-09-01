@@ -2235,3 +2235,99 @@ input[type="number"] {
 .virtue-profile strong {
   color: var(--text-primary);
 }
+
+/* ─── Compendium: clickable cards & detail view ─────────────────── */
+
+.compendium-card-clickable {
+  cursor: pointer;
+}
+
+.compendium-card-clickable:hover {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+}
+
+.compendium-detail {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.compendium-detail-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-top: var(--space-md);
+}
+
+.compendium-detail-img {
+  display: block;
+  max-width: 240px;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 0 auto var(--space-md);
+}
+
+.compendium-detail-name {
+  color: var(--text-accent);
+  text-align: center;
+  margin: 0 0 var(--space-md);
+}
+
+.compendium-detail-items {
+  margin-bottom: var(--space-md);
+}
+
+.compendium-detail-section {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--space-xs);
+  margin: var(--space-lg) 0 var(--space-md);
+}
+
+.compendium-ability-block {
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--border-color);
+}
+
+.compendium-ability-block strong {
+  color: var(--text-accent);
+}
+
+.compendium-ability-block p {
+  margin: var(--space-xs) 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ─── Compendium: clickable virtue cards & bond blocks ──────────── */
+
+.virtue-card-clickable {
+  cursor: pointer;
+}
+
+.virtue-card-clickable:hover {
+  border-color: var(--vc, var(--accent));
+  background: var(--bg-hover);
+}
+
+.virtue-bond-block {
+  margin-bottom: var(--space-sm);
+  padding-left: var(--space-sm);
+  border-left: 2px solid var(--vc, var(--border-color));
+}
+
+.virtue-bond-block strong {
+  color: var(--vc, var(--text-accent));
+  font-size: 0.9rem;
+}
+
+.virtue-bond-block p {
+  margin: 2px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
