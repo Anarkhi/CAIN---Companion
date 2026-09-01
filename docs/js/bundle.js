@@ -3090,7 +3090,149 @@ var OFFICIAL_ENEMIES = [
   { officialId: 'toad', bestiaryGroup: 'sin', name: 'Toad', sinTemplate: 'toad', category: 2, expansion: 'base',
     description: 'An indulgent sin that hoards material wealth by any means. Emotion: Indulgence.' },
   { officialId: 'lord', bestiaryGroup: 'sin', name: 'Lord', sinTemplate: 'lord', category: 2, expansion: 'base',
-    description: 'A fearful sin that builds a parasitic Kingdom where it rules reality. Emotion: Fear.' }
+    description: 'A fearful sin that builds a parasitic Kingdom where it rules reality. Emotion: Fear.' },
+  // Drifters (Anomalies) — base game (pg. 149-151)
+  {
+    officialId: 'pest', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Pest', type: 'anomaly', category: 1,
+    talismanSize: 'medium', talismanSegments: 2, expansion: 'base',
+    description: 'A broad category of drifter - a common manifestation that could be categorized as animal-like, the fauna of a place beyond human understanding. Execution: 2 (solo), 5 (group).',
+    facts: 'Tends to break conventional reality around it, changing things like light refraction, gravity, space. May create sucking holes, reflective surfaces, crystalline splinters, etc.\nConsumes inanimate matter like glass, paper, or stone.',
+    attacksWith: 'Whipping tendrils, extreme forces: (1) 4 stress, (2/3) 3 stress, (4+) 2 stress.',
+    complications: 'Kill all the lights, impale with strands, warp space in some way, suck the oxygen out of a room.',
+    threat: '',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'poltergeist', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Poltergeist', type: 'anomaly', category: 1,
+    talismanSize: 'medium', talismanSegments: 3, expansion: 'base',
+    description: 'A barely visible shape in the darkness. Execution: 3.',
+    facts: 'May adopt a human face or form; never looks right.\nCan mimic speech, sometimes comprehensible. Sometimes appears to tell the future. Do not listen to it.',
+    attacksWith: 'Telekinetic shove, thrown objects, ghostly flames: (1) 4 stress, (2/3) 3 stress, (4+) 2 stress.',
+    complications: 'Speak something into someone\'s ear, emerge suddenly from darkness, disappear completely.',
+    threat: '(1-2) Feed: Deal 1d6 stress, but also reduce the target\'s sin by the same amount. Once per scene only.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'titan', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Titan', type: 'anomaly', category: 5,
+    talismanSize: 'long', talismanSegments: 10, expansion: 'base',
+    description: 'An incredibly large drifter, usually thirty to forty meters or larger at the shoulder. Sometimes anthropomorphic, sometimes animalistic. Has a tenuous relation to reality and may occasionally phase through matter. Large enough to cause shocking destruction. Execution: 10.',
+    facts: 'So large it is immune to small arms fire and doesn\'t seem to regard humans much at all.\nBarely intelligent. Lumbers along slowly with little regard for obstacles.',
+    attacksWith: 'Casual swats of an appendage, an unintentional footstep: (1) 3d3+1 stress, (2/3) 1d3+1 stress, (4+) 2 stress.',
+    complications: 'Speed up, suddenly notice the exorcists, become irate or enraged, cause massive collateral damage.',
+    threat: '(1-2) Swat insect: the titan attempts a slow but real blow against the last exorcist to deal stress to it, dealing 3d3 stress. If it inflicts an injury, it inflicts instant death.',
+    stress: 4, stressRisk23: 2, stressRisk1: 2
+  },
+  {
+    officialId: 'pale_man', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Pale Man', type: 'anomaly', category: 2,
+    talismanSize: 'long', talismanSegments: 5, expansion: 'base',
+    description: 'An intelligent drifter that seems interested in the psychically sensitive and is drawn to them like an insect to flame. Prefers to observe from a distance. Completely peaceful if left alone; fights like an animal if provoked or approached in any way, with no regard for its own safety. Execution: 5.',
+    facts: 'Watches at a distance.\nDon\'t look at it for too long.',
+    attacksWith: 'Bone-cracking limbs, terrifying jaws: (1) 4 stress, (2/3) 3 stress, (4+) 2 stress.',
+    complications: 'Retreat into darkness, wail loud enough to shatter glass, lick an exorcist with a numbing tongue.',
+    threat: 'Shrieking Rage (1): deal +1 more slash and take +1 more slash on talismans for the rest of combat. This effect stacks.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'gatherer', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Gatherer', type: 'anomaly', category: 2,
+    talismanSize: 'medium', talismanSegments: 2, expansion: 'base',
+    description: 'A bulbous humanoid that exhibits the unusual behavior of collecting and enveloping humans alive to carry them off to parts unknown. Sometimes appears in groups. Execution: 2 (solo), 5 (group), 7 (horde).',
+    facts: 'Has a fleshy, saclike structure it stores fresh humans in, carrying them off.\nCapable of communicating subsonically.',
+    attacksWith: 'Extended spines, acid spray, subsonic vibrations: (1) 4 stress, (2/3) 3 stress, (4+) 2 stress.',
+    complications: 'Disgorge stomach contents, impale with arm blades, vomit acidic bile.',
+    threat: '(1) Kidnap: grab an exorcist and shove them into its fleshy interior. That exorcist finds it hard to do anything and is practically immobilized. They go comatose and suffer an injury if the Gatherer is not defeated or they are not freed at the end of 3 rounds (counting this one).',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  // Drifters (Anomalies) — GFF-2 expansion
+  {
+    officialId: 'hairy_man', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Hairy Man', type: 'anomaly', category: 1,
+    talismanSize: 'medium', talismanSegments: 4, expansion: 'gff2',
+    description: 'TMID 004. Appears in mostly woodland or rural settings. "Hair" is thick and profuse; humanlike digitation. Has no digestive system and regurgitates the hair and bones of prey, using a pharyngeal jaw to "eat". Capable of mimicking human speech. Execution: 4 (solo), 8 (pair).',
+    facts: 'Follows at a distance, prefers to pick off lone prey.\nHunts, mutilates, and masticates wildlife or livestock and regurgitates the remnants.\nCan mimic human speech.',
+    attacksWith: 'Claws, pharyngeal jaw.',
+    complications: '',
+    threat: 'Ambush: As a tension move, the Admin may inform the exorcists they are being stalked. If nothing is done to mitigate this, any time they enter a conflict scene for the rest of the hunt there is a 50% chance (roll 1d6) a Hairy Man attacks and tries to drag one of them off.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'skin_light', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Skin Light', type: 'anomaly', category: 0,
+    talismanSize: 'short', talismanSegments: 1, expansion: 'gff2',
+    description: 'TMID 820. Multicolored bubble lit from an unseen light; made of transparent, softly "breathing" skin. Reproduces via a grisly process. Appears to lack sapience. Execution: 1 (solo), 3 (small group), 8 (cluster).',
+    facts: 'Appears only at night. Floats in place.\nAttracted to the heat generated by living beings and attempts to fuse with them.',
+    attacksWith: 'Fusing contact: (1) 3 stress and Fuse hook, (2/3) 3 stress, (4+) 2 stress.',
+    complications: '',
+    threat: 'Fuse: As a threat or on a \'1\' reaction roll, the Skin Light fuses to an exorcist with exposed skin. This kills the drifter but gives the exorcist the Fuse hook (0/3): skin bubbles and blisters, using tools/weapons is hard; if it fills, take 2d6 stress as skin rips away to form a new Skin Light, permanently scarring them.',
+    stress: 3, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'spindley', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Spindley (Road Wraith)', type: 'anomaly', category: 2,
+    talismanSize: 'long', talismanSegments: 8, expansion: 'gff2',
+    description: 'TMID 113. The "Road Wraith". Appears in areas with high occurrences of car accidents and road injuries. Often responsible for motorist disappearances; uses high sprinting speed to follow cars for miles, usually those driving alone late at night. Execution: 8 (solo).',
+    facts: 'Only found alone, pacing up and down a road at night or underground.\nExtremely aggressive once encountered but rarely leaves roads.',
+    attacksWith: 'High-speed strikes.',
+    complications: '',
+    threat: 'Road Killer: While standing on a road, deals +2 stress with all reactions and its speed increases by +2 CAT. Takes 1 slash on its talisman at the end of any round in a conflict scene where it is not standing on a road, and eventually disintegrates.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'twin', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Twin', type: 'anomaly', category: 1,
+    talismanSize: 'medium', talismanSegments: 4, expansion: 'gff2',
+    description: 'TMID 127. May be mistaken for a homeless person or vagrant when inactive; skin looks like old rags of flesh. Passive when undisturbed and often seems in pain. Congregates in subterranean areas (sewers, subways). The "lesser" twin is smaller and fused to the "main" body; it continually mumbles, reportedly sometimes stating facts about future (usually tragic) events. Execution: 4 (solo), 8 (pair).',
+    facts: 'Quiet and relatively docile if unprovoked.\nCongregates in subterranean areas.',
+    attacksWith: 'Pull and crush.',
+    complications: 'If bothered, attempts to pull its provoker into the cavity in its body, where its other limbs are stored.',
+    threat: 'Mumble: Exorcists that take any action within hand\'s reach of the Twin can overhear its mumbling. If they don\'t have good ear protection or can\'t block sound, they take 1 stress (ignoring reductions) at the end of their action.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'walker', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Walker', type: 'anomaly', category: 3,
+    talismanSize: 'long', talismanSegments: 10, expansion: 'gff2',
+    description: 'TMID 074. 6-8m tall. Only appears in inclement weather and fades away when the weather stops. Head terminates in brachial structures with no discernible purpose that whip side to side. Strong enough to snap trees and poles. Loud trumpeting vocalization often gives away its location; no observable vocal cords or mouth. Execution: 10 (solo).',
+    facts: 'Poor senses; can mostly be avoided if kept at range.\nWalks slowly and aimlessly when passive, very fast when active.',
+    attacksWith: 'Massive brachial limbs: (1) 7 stress, (2/3) 5 stress, (4+) 2 stress.',
+    complications: '',
+    threat: 'Fade Away: If not in inclement weather (rain/fog/snow/mist), returns where it came from, fading away at the end of any round (in a conflict scene). Returns if the weather returns.',
+    stress: 7, stressRisk23: 5, stressRisk1: 2
+  },
+  {
+    officialId: 'cracked_man', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Cracked Man', type: 'anomaly', category: 1,
+    talismanSize: 'medium', talismanSegments: 4, expansion: 'gff2',
+    description: 'TMID 285. Found most often in abandoned places that once had many children - homes, schools, childcare centers. Execution: 4 (solo), 8 (small group).',
+    facts: 'Violent and extraordinarily belligerent once found.\nWhen it encounters doors or windows, it spends a long time figuring out how to open them.',
+    attacksWith: 'Flailing limbs: (1) 5 stress, (2/3) 4 stress, (4+) 3 stress.',
+    complications: '',
+    threat: 'Split (1-2): a body part starts to split off, weeping ichor. It becomes able to act with the body part at a distance, and increases its execution talisman by +2 if the threat is executed.',
+    stress: 5, stressRisk23: 4, stressRisk1: 3
+  },
+  {
+    officialId: 'dog', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Dog', type: 'anomaly', category: 2,
+    talismanSize: 'long', talismanSegments: 7, expansion: 'gff2',
+    description: 'TMID 997. 1-1.5m at the shoulder; adopts a quadrupedal gait but can also stand on two feet. Lacks defined digits but can easily operate doors to enter buildings or cars. Responsible for ~1.5% of disappearances in and around parking lots in North America. Execution: 7 (solo).',
+    facts: 'Appears to mostly be a scavenger. Attracted to parked cars.\nFreakishly strong: +2 CAT in feats of strength.',
+    attacksWith: 'Powerful bite and claws: (1) 4 stress and the Bends affliction, (2/3) 3 stress, (4+) 2 stress.',
+    complications: '',
+    threat: 'The Bends: Affliction, inflicted on a \'1\' reaction or with a threat. The exorcist finds it increasingly difficult to walk with a bipedal gait (physical activities are hard while walking this way). Feet and limbs slowly distort and become digitigrade if untreated after the mission. Very painful.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'neighbor', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Neighbor', type: 'anomaly', category: 1,
+    talismanSize: 'medium', talismanSegments: 4, expansion: 'gff2',
+    description: 'TMID 282. Free-floating entity that appears in numbers whenever there is a mass casualty event, especially psychically caused - the vultures of the psychic sea. Viewed up close, 60-85% of observers report seeing a badly mutilated version of their own body floating before them. Execution: 4 (solo), 7 (small group).',
+    facts: 'Capable of flight. Drifts at a distance for some time. Seems mostly curious.\nIntangible: takes -1 slash from physical harm (weapons, physical objects, etc).',
+    attacksWith: 'Psychic lashing.',
+    complications: '',
+    threat: 'Deathmask: Deals +2 stress with reactions to exorcists that already have an injury. They see their own face.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'worm_body', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Worm Body', type: 'anomaly', category: 1,
+    talismanSize: 'medium', talismanSegments: 3, expansion: 'gff2',
+    description: 'TMID 048. Could be mistaken for a tall person at a distance. Only observed in neglected properties, especially residential. The entire entity appears made of writhing, splitting worms. Execution: 3 (solo), 6 (group), 10 (large group).',
+    facts: 'Attracted to breathing creatures, following exhalations. Limited other senses.',
+    attacksWith: 'Swarming worms: (1) 2 stress and Worm hook, (2/3) 1 stress and Worm hook, (4+) 1 stress.',
+    complications: '',
+    threat: 'Worm: Hook, inflicted with a threat or when inflicting stress. A worm has burrowed into your body; recover -1 stress from any resting die per tick. If the hook fills, roll 1d6: (1-3) suffer instant death (may resist as normal); (4-6) clear all slashes and infect another exorcist with this hook (if none uninfected, infect an NPC, otherwise suffer instant death).',
+    stress: 2, stressRisk23: 1, stressRisk1: 1
+  }
 ];
 
 // Resolve an official entry into a full enemy object (handles sinTemplate refs)
