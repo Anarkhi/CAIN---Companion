@@ -2811,6 +2811,104 @@ function importCharacter() {
 }
 
 // ════════════════════════════════════════════════════════════════════
+// STORAGE: Enemies (Admin / GM content)
+// ════════════════════════════════════════════════════════════════════
+
+var ENEMY_STORAGE_KEY = 'cain_companion_enemies';
+
+/** Factory for a blank simple opponent (7-step model, pg. 146) */
+function createBlankEnemy() {
+  return {
+    id: generateId(),
+    kind: 'opponent',        // 'opponent' (simple) — future: 'sin'
+    version: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    name: '',
+    description: '',
+    type: 'human',           // sin | human | exorcist | mechanical | anomaly
+    category: 0,             // CAT
+    talismanSize: 'short',   // short(2) | medium(3-5) | long(6-8) — descriptive
+    talismanSegments: 2,     // actual number of segments
+    facts: '',               // general capabilities (freeform, one per line)
+    reactions: '',           // reactions (freeform)
+    stress: 2,               // base stress inflicted
+    stressRisk23: 3,         // stress on a 2-3 risk result
+    stressRisk1: 4,          // stress on a '1' risk result
+    expansion: 'base'        // base | gff1 | gff2 | gff3 | gff4
+  };
+}
+
+function getAllEnemies() {
+  try {
+    var data = localStorage.getItem(ENEMY_STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) { return []; }
+}
+
+function getEnemy(id) {
+  return getAllEnemies().find(function(en) { return en.id === id; }) || null;
+}
+
+function saveEnemy(enemy) {
+  var enemies = getAllEnemies();
+  var index = enemies.findIndex(function(en) { return en.id === enemy.id; });
+  enemy.updatedAt = new Date().toISOString();
+  if (index >= 0) { enemies[index] = enemy; } else { enemies.push(enemy); }
+  localStorage.setItem(ENEMY_STORAGE_KEY, JSON.stringify(enemies));
+}
+
+function deleteEnemy(id) {
+  var enemies = getAllEnemies().filter(function(en) { return en.id !== id; });
+  localStorage.setItem(ENEMY_STORAGE_KEY, JSON.stringify(enemies));
+}
+
+function exportEnemy(enemy) {
+  var blob = new Blob([JSON.stringify(enemy, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = (enemy.name || 'enemy') + '_cain_enemy.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportAllEnemies() {
+  var enemies = getAllEnemies();
+  var blob = new Blob([JSON.stringify(enemies, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'cain_all_enemies.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importEnemy() {
+  return new Promise(function(resolve, reject) {
+    var input = document.createElement('input');
+    input.type = 'file'; input.accept = '.json';
+    input.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) { reject(new Error('No file selected')); return; }
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          var data = JSON.parse(event.target.result);
+          if (Array.isArray(data)) {
+            data.forEach(function(en) { if (en.id && en.name !== undefined) saveEnemy(en); });
+            resolve(data);
+          } else if (data.id && data.name !== undefined) {
+            saveEnemy(data); resolve(data);
+          } else { reject(new Error('Invalid enemy file format')); }
+        } catch (err) { reject(new Error('Failed to parse JSON file')); }
+      };
+      reader.onerror = function() { reject(new Error('Failed to read file')); };
+      reader.readAsText(file);
+    });
+    input.click();
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
 // ROUTER
 // ════════════════════════════════════════════════════════════════════
 
@@ -2851,6 +2949,7 @@ function renderHome() {
       '<div class="actions-bar">' +
         '<button class="btn btn-primary" id="btn-create">' + t('nav_newExorcist') + '</button>' +
         '<button class="btn btn-secondary" id="btn-compendium">' + (currentLang === 'pt' ? 'Compêndio' : 'Compendium') + '</button>' +
+        '<button class="btn btn-secondary" id="btn-admin">' + (currentLang === 'pt' ? 'Admin' : 'Admin') + '</button>' +
         '<button class="btn btn-secondary" id="btn-import">' + t('nav_import') + '</button>' +
         (characters.length > 0 ? '<button class="btn btn-secondary" id="btn-export-all">' + t('nav_exportAll') + '</button>' : '') +
       '</div>' +
@@ -2863,6 +2962,7 @@ function renderHome() {
   renderLangToggle();
   document.getElementById('btn-create').addEventListener('click', function() { navigate('create'); });
   document.getElementById('btn-compendium').addEventListener('click', function() { navigate('compendium'); });
+  document.getElementById('btn-admin').addEventListener('click', function() { navigate('admin'); });
   var btnImport = document.getElementById('btn-import');
   if (btnImport) btnImport.addEventListener('click', function() {
     importCharacter().then(function() { renderHome(); }).catch(function(e) { alert(e.message); });
@@ -5376,8 +5476,201 @@ function renderBlasphemyDetail(blasId) {
   document.getElementById('detail-back').addEventListener('click', function() { renderCompendiumTab('blasphemies'); });
 }
 
+// ════════════════════════════════════════════════════════════════════
+// PAGE: ADMIN (GM tools) — Phase 1: simple opponents
+// ════════════════════════════════════════════════════════════════════
+
+var ENEMY_TYPES = ['human', 'sin', 'exorcist', 'mechanical', 'anomaly'];
+
+function tEnemyType(typeId) {
+  var pt = { human: 'Humano', sin: 'Pecado', exorcist: 'Exorcista', mechanical: 'Mecânico', anomaly: 'Anomalia' };
+  var en = { human: 'Human', sin: 'Sin', exorcist: 'Exorcist', mechanical: 'Mechanical', anomaly: 'Anomaly' };
+  return (currentLang === 'pt' ? pt[typeId] : en[typeId]) || typeId;
+}
+
+/** Escape a value for safe use inside an HTML attribute */
+function escAttr(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+/** Escape a value for safe use as HTML text */
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderAdmin() {
+  var app = document.getElementById('app');
+  var enemies = getAllEnemies();
+  var pt = currentLang === 'pt';
+
+  app.innerHTML =
+    '<div class="page admin-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (pt ? 'Admin' : 'Admin') + ' <span class="subtitle">' + (pt ? 'Ferramentas do Mestre' : 'GM Tools') + '</span></h1>' +
+      '</header>' +
+      '<div class="actions-bar">' +
+        '<button class="btn btn-primary" id="btn-new-enemy">' + (pt ? '+ Novo Inimigo' : '+ New Enemy') + '</button>' +
+        '<button class="btn btn-secondary" id="btn-import-enemy">' + (pt ? 'Importar' : 'Import') + '</button>' +
+        (enemies.length > 0 ? '<button class="btn btn-secondary" id="btn-export-enemies">' + (pt ? 'Exportar Tudo' : 'Export All') + '</button>' : '') +
+      '</div>' +
+      (enemies.length === 0 ?
+        '<div class="empty-state"><p>' + (pt ? 'Nenhum inimigo criado ainda.' : 'No enemies created yet.') + '</p><p class="muted">' + (pt ? 'Crie oponentes para usar em suas sessões.' : 'Create opponents to use in your sessions.') + '</p></div>' :
+        '<div class="enemy-list">' + enemies.map(renderEnemyCard).join('') + '</div>'
+      ) +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('home'); });
+  document.getElementById('btn-new-enemy').addEventListener('click', function() { navigate('enemy-new'); });
+  document.getElementById('btn-import-enemy').addEventListener('click', function() {
+    importEnemy().then(function() { renderAdmin(); }).catch(function(e) { alert(e.message); });
+  });
+  var expBtn = document.getElementById('btn-export-enemies');
+  if (expBtn) expBtn.addEventListener('click', exportAllEnemies);
+
+  app.querySelectorAll('.enemy-card').forEach(function(card) {
+    var id = card.dataset.id;
+    card.querySelector('.btn-edit').addEventListener('click', function(e) { e.stopPropagation(); navigate('enemy-edit/' + id); });
+    card.querySelector('.btn-export').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var en = getEnemy(id); if (en) exportEnemy(en);
+    });
+    card.querySelector('.btn-delete').addEventListener('click', function(e) {
+      e.stopPropagation();
+      var en = getEnemy(id);
+      if (confirm((currentLang === 'pt' ? 'Remover ' : 'Delete ') + (en ? en.name : '') + '?')) { deleteEnemy(id); renderAdmin(); }
+    });
+  });
+}
+
+function renderEnemyCard(en) {
+  var pt = currentLang === 'pt';
+  return '<div class="enemy-card" data-id="' + en.id + '">' +
+    '<div class="enemy-card-header">' +
+      '<h3 class="enemy-name">' + escHtml(en.name || (pt ? 'Sem nome' : 'Unnamed')) + '</h3>' +
+      '<span class="enemy-cat">CAT ' + (en.category || 0) + '</span>' +
+    '</div>' +
+    '<div class="enemy-card-body">' +
+      '<p><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(en.type) + '</p>' +
+      '<p><span class="label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ':</span> ' + (en.talismanSegments || 2) + '</p>' +
+      (en.description ? '<p class="enemy-desc muted">' + escHtml(en.description) + '</p>' : '') +
+    '</div>' +
+    '<div class="enemy-card-actions">' +
+      '<button class="btn btn-sm btn-edit">' + (pt ? 'Editar' : 'Edit') + '</button>' +
+      '<button class="btn btn-sm btn-export">' + (pt ? 'Exportar' : 'Export') + '</button>' +
+      '<button class="btn btn-sm btn-danger btn-delete">' + (pt ? 'Remover' : 'Delete') + '</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function renderEnemyForm(enemyId) {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var isEdit = !!enemyId;
+  var en = isEdit ? getEnemy(enemyId) : createBlankEnemy();
+  if (!en) { navigate('admin'); return; }
+
+  app.innerHTML =
+    '<div class="page enemy-form-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (isEdit ? (pt ? 'Editar Inimigo' : 'Edit Enemy') : (pt ? 'Novo Inimigo' : 'New Enemy')) + '</h1>' +
+      '</header>' +
+      '<form class="enemy-form" id="enemy-form">' +
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Nome' : 'Name') + '</label>' +
+          '<input type="text" id="f-name" value="' + escAttr(en.name) + '" placeholder="' + (pt ? 'Ex: Guarda de Segurança' : 'e.g. Security Guard') + '">' +
+          '<label>' + (pt ? 'Descrição' : 'Description') + '</label>' +
+          '<textarea id="f-description" rows="2" placeholder="' + (pt ? 'Breve descrição' : 'Brief description') + '">' + escHtml(en.description) + '</textarea>' +
+        '</div>' +
+        '<div class="form-section form-grid-2">' +
+          '<div>' +
+            '<label>' + (pt ? 'Tipo' : 'Type') + '</label>' +
+            '<select id="f-type">' +
+              ENEMY_TYPES.map(function(tp) { return '<option value="' + tp + '"' + (en.type === tp ? ' selected' : '') + '>' + tEnemyType(tp) + '</option>'; }).join('') +
+            '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label>' + (pt ? 'Categoria (CAT)' : 'Category (CAT)') + '</label>' +
+            '<input type="number" id="f-category" min="0" max="7" value="' + (en.category || 0) + '">' +
+          '</div>' +
+        '</div>' +
+        '<div class="form-section form-grid-2">' +
+          '<div>' +
+            '<label>' + (pt ? 'Tamanho do Talismã' : 'Talisman Size') + '</label>' +
+            '<select id="f-talismanSize">' +
+              '<option value="short"' + (en.talismanSize === 'short' ? ' selected' : '') + '>' + (pt ? 'Curto (2)' : 'Short (2)') + '</option>' +
+              '<option value="medium"' + (en.talismanSize === 'medium' ? ' selected' : '') + '>' + (pt ? 'Médio (3-5)' : 'Medium (3-5)') + '</option>' +
+              '<option value="long"' + (en.talismanSize === 'long' ? ' selected' : '') + '>' + (pt ? 'Longo (6-8)' : 'Long (6-8)') + '</option>' +
+            '</select>' +
+          '</div>' +
+          '<div>' +
+            '<label>' + (pt ? 'Segmentos do Talismã' : 'Talisman Segments') + '</label>' +
+            '<input type="number" id="f-talismanSegments" min="1" max="8" value="' + (en.talismanSegments || 2) + '">' +
+          '</div>' +
+        '</div>' +
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Fatos / Capacidades (um por linha)' : 'Facts / Capabilities (one per line)') + '</label>' +
+          '<textarea id="f-facts" rows="4" placeholder="' + (pt ? 'Ex: Bem armado e alerta' : 'e.g. Well armed and alert') + '">' + escHtml(en.facts) + '</textarea>' +
+          '<label>' + (pt ? 'Reações' : 'Reactions') + '</label>' +
+          '<textarea id="f-reactions" rows="3" placeholder="' + (pt ? 'Ex: Ataca com cassetetes, dispara arma' : 'e.g. Attacks with batons, fires a weapon') + '">' + escHtml(en.reactions) + '</textarea>' +
+        '</div>' +
+        '<div class="form-section form-grid-3">' +
+          '<div>' +
+            '<label>' + (pt ? 'Estresse base' : 'Base stress') + '</label>' +
+            '<input type="number" id="f-stress" min="0" value="' + (en.stress != null ? en.stress : 2) + '">' +
+          '</div>' +
+          '<div>' +
+            '<label>' + (pt ? 'Estresse (risco 2-3)' : 'Stress (risk 2-3)') + '</label>' +
+            '<input type="number" id="f-stressRisk23" min="0" value="' + (en.stressRisk23 != null ? en.stressRisk23 : 3) + '">' +
+          '</div>' +
+          '<div>' +
+            '<label>' + (pt ? 'Estresse (risco 1)' : 'Stress (risk 1)') + '</label>' +
+            '<input type="number" id="f-stressRisk1" min="0" value="' + (en.stressRisk1 != null ? en.stressRisk1 : 4) + '">' +
+          '</div>' +
+        '</div>' +
+        '<div class="form-section">' +
+          '<label>' + (pt ? 'Expansão' : 'Expansion') + '</label>' +
+          '<select id="f-expansion">' +
+            EXPANSIONS.map(function(ex) { return '<option value="' + ex.id + '"' + ((en.expansion || 'base') === ex.id ? ' selected' : '') + '>' + ex.name + '</option>'; }).join('') +
+          '</select>' +
+        '</div>' +
+        '<div class="form-actions">' +
+          '<button type="submit" class="btn btn-primary">' + (pt ? 'Salvar' : 'Save') + '</button>' +
+          '<button type="button" class="btn btn-secondary" id="btn-cancel">' + (pt ? 'Cancelar' : 'Cancel') + '</button>' +
+        '</div>' +
+      '</form>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
+  document.getElementById('btn-cancel').addEventListener('click', function() { navigate('admin'); });
+
+  document.getElementById('enemy-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    en.name = document.getElementById('f-name').value.trim();
+    en.description = document.getElementById('f-description').value.trim();
+    en.type = document.getElementById('f-type').value;
+    en.category = parseInt(document.getElementById('f-category').value, 10) || 0;
+    en.talismanSize = document.getElementById('f-talismanSize').value;
+    en.talismanSegments = parseInt(document.getElementById('f-talismanSegments').value, 10) || 2;
+    en.facts = document.getElementById('f-facts').value.trim();
+    en.reactions = document.getElementById('f-reactions').value.trim();
+    en.stress = parseInt(document.getElementById('f-stress').value, 10) || 0;
+    en.stressRisk23 = parseInt(document.getElementById('f-stressRisk23').value, 10) || 0;
+    en.stressRisk1 = parseInt(document.getElementById('f-stressRisk1').value, 10) || 0;
+    en.expansion = document.getElementById('f-expansion').value;
+    if (!en.name) { alert(pt ? 'Dê um nome ao inimigo.' : 'Please name the enemy.'); return; }
+    saveEnemy(en);
+    navigate('admin');
+  });
+}
+
 route('home', renderHome);
 route('compendium', renderCompendium);
+route('admin', renderAdmin);
+route('enemy-new', function() { renderEnemyForm(null); });
+route('enemy-edit', function(id) { renderEnemyForm(id); });
 route('create', renderCreate);
 route('view', renderView);
 route('edit', renderEdit);

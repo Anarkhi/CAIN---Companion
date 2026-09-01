@@ -2331,3 +2331,119 @@ input[type="number"] {
   font-size: 0.85rem;
   line-height: 1.5;
 }
+
+/* ─── Admin / Enemies (GM tools) ────────────────────────────────── */
+
+.enemy-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-lg);
+}
+
+.enemy-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--danger);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  transition: border-color 0.15s;
+}
+
+.enemy-card:hover {
+  border-color: var(--border-hover);
+}
+
+.enemy-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.enemy-name {
+  color: var(--text-accent);
+  margin: 0;
+}
+
+.enemy-cat {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.enemy-card-body {
+  font-size: 0.9rem;
+}
+
+.enemy-card-body p {
+  margin: var(--space-xs) 0;
+  color: var(--text-secondary);
+}
+
+.enemy-card-body .label {
+  color: var(--text-muted);
+}
+
+.enemy-desc {
+  font-style: italic;
+  margin-top: var(--space-sm) !important;
+}
+
+.enemy-card-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+/* Enemy form */
+.enemy-form .form-section {
+  margin-bottom: var(--space-lg);
+}
+
+.enemy-form label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: var(--space-sm) 0 var(--space-xs);
+}
+
+.enemy-form input[type="text"],
+.enemy-form input[type="number"],
+.enemy-form select,
+.enemy-form textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.enemy-form textarea {
+  resize: vertical;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+@media (max-width: 540px) {
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+}
