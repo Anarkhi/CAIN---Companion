@@ -2707,3 +2707,28 @@ input[type="number"] {
   background: rgba(122, 42, 184, 0.15);
   border-color: #7a2ab8;
 }
+
+/* ─── Official bestiary ─────────────────────────────────────────── */
+
+.official-bestiary {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-color);
+}
+
+.official-bestiary-title {
+  color: var(--text-accent);
+  margin-bottom: var(--space-xs);
+}
+
+.official-card {
+  border-left-color: var(--accent);
+}
+
+.official-card.enemy-card-sin {
+  border-left-color: #7a2ab8;
+}
+
+.bestiary-content {
+  margin-top: var(--space-md);
+}

@@ -2831,10 +2831,13 @@ function createBlankEnemy() {
     talismanSize: 'short',   // short(2) | medium(3-5) | long(6-8) — descriptive
     talismanSegments: 2,     // actual number of segments
     facts: '',               // general capabilities (freeform, one per line)
-    reactions: '',           // reactions (freeform)
-    stress: 2,               // base stress inflicted
-    stressRisk23: 3,         // stress on a 2-3 risk result
-    stressRisk1: 4,          // stress on a '1' risk result
+    attacksWith: '',         // "Attacks with" line
+    complications: '',       // complications
+    threat: '',              // threat reaction(s)
+    reactions: '',           // legacy freeform reactions (kept for old records)
+    stress: 4,               // (1) worst result — highest stress
+    stressRisk23: 3,         // (2-3) middle result
+    stressRisk1: 2,          // (4+) best result — lowest stress
     expansion: 'base'        // base | gff1 | gff2 | gff3 | gff4
   };
 }
@@ -3011,6 +3014,96 @@ var SIN_TEMPLATES = {
     ]
   }
 };
+
+// Official pre-made opponents from the rulebook (pg. 146-151). Read-only; can be
+// duplicated into the GM's editable bestiary.
+var OFFICIAL_ENEMIES = [
+  {
+    officialId: 'security', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Security', type: 'human', category: 0,
+    talismanSize: 'short', talismanSegments: 2, expansion: 'base',
+    description: 'Execution talisman: 2 (solo), 4 (group), 6 (large group). Graceless humans, blissfully unaware of the world of psychic phenomena, dispatched to deal with disturbances or guard facilities.',
+    facts: 'General human capabilities.\nUsually alert and can raise some kind of alarm.\nMost mundane humans are incapacitated by any amount of stress and usually instantly killed by 4+ stress; go catatonic if they directly witness a sin. (These are made of tougher stuff.)',
+    attacksWith: 'Batons, close quarters combat techniques.',
+    complications: 'Fire a stun gun, punch an alarm, pull out a firearm, pin down an exorcist.',
+    threat: '(1-2) Beatdown: inflict Broken Arm or Broken Leg affliction (activities using the affected limb are hard).',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'mercenaries', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Mercenaries', type: 'human', category: 0,
+    talismanSize: 'medium', talismanSegments: 2, expansion: 'base',
+    description: 'Execution talisman: 2 (solo), 5 (squad), 8 (platoon). Graceless human mercenaries, highly skilled, sometimes hired by sin hosts or world governments for defense or wetwork.',
+    facts: 'Well armed and compensated.\nArmored well against small arms and has thermal and night vision.',
+    attacksWith: 'Disciplined gunfire (long range).',
+    complications: 'Throw a stun grenade, take heavy cover, throw down a barrage of suppressing fire.',
+    threat: '(1-2) Flechette Shot: take a disabling shot at an exorcist; deal 3 stress and inflict the Shredded affliction (take 1 stress on any 1-2 risk roll involving physical activity).',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'illuminati', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Illuminati', type: 'human', category: 0,
+    talismanSize: 'short', talismanSegments: 1, expansion: 'base',
+    description: 'Execution talisman: 1 (solo), 3 (group), 5 (large group). Brainwashed or fanatical humans formed around the manipulation and worship of sins, often puppeted by shadowy organizations or a sin themselves.',
+    facts: 'Often hide their faces under masks.',
+    attacksWith: 'Overwhelming but crude attacks.',
+    complications: 'Corner an exorcist, attack with fervor (+1 stress), start chanting ominously (1 slash taken).',
+    threat: '(1-2) Sacrifice: pin down an exorcist (hard to do anything, can\'t move, +1 stress). Set out a 3 talisman to end the grab, and a 3 "sacrifice" talisman that fills after every exorcist action; when it fills, the target suffers 6 stress and the effect ends.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'binder', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Binder', type: 'exorcist', category: 3,
+    talismanSize: 'medium', talismanSegments: 4, expansion: 'base',
+    description: 'Exorcist. CAT 0-6 depending on strength. Execution talisman: 1+CAT (rank and file), 4+CAT (upper rank), 7+CAT (elites). A rogue exorcist, self-taught or organized, manifesting wilder and sometimes more powerful blasphemies than CAIN training allows. CAIN demands they be subdued and submit on pain of execution.',
+    facts: 'Uses blasphemies that mirror the exorcists\', but stranger and wilder.\nMay work in formation with other binders or control a mass produced sin.',
+    attacksWith: 'Psychic bursts of power and mundane weaponry (both short range).',
+    complications: '',
+    threat: '',
+    stress: 5, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'mass_produced_sin', kind: 'opponent', bestiaryGroup: 'sin', name: 'Mass Produced Sin', type: 'sin', category: 2,
+    talismanSize: 'medium', talismanSegments: 3, expansion: 'base',
+    description: 'Sin. CAT 0-4 depending on strength. Execution talisman: 3 (solo), 5 (group), 7 (large group). A weak sin produced through unspeakable methods by shadowy PMCs or secret government projects, sometimes from human stock.',
+    facts: 'Barely intelligent, but armed with brute strength.\nHas a control unit implanted in it; destroying it usually makes the sin berserk.\nOptional typing: Type A (Shock troop - close combat against it is hard; smashes through buildings). Type B (Infiltration - can go invisible as a complication, sight-reliant actions hard). Type C (Control - can control mundane humans present to body-block -1 stress or attack +1 stress while active).',
+    attacksWith: 'Brute strength, corruptive fluids.',
+    complications: 'Spew black corruptive fluid, ear-splitting screaming, hurl an exorcist through a wall or floor.',
+    threat: '(1-2) Berserk: break the control unit and go berserk, dripping ichor, dealing +1 stress and +1 sin with reactions for the rest of combat. Once only.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'imago', kind: 'opponent', bestiaryGroup: 'sin', name: 'Imago', type: 'sin', category: 3,
+    talismanSize: 'long', talismanSegments: 8, expansion: 'base',
+    description: 'Sin. CAT 1-5 based on the exorcist. Execution talisman: 6+CAT. A nascent true sin, created when an exorcist suffers sin overflow and gives up. More intelligent, spiteful, and vengeful based on their past; hunted with extreme prejudice by CAIN.',
+    facts: 'Acts based on the worst impulses of the exorcist it was created from.\nNearly always has a strong instinct to flee and become stronger, maturing into a true sin and creating a palace (triggering a new hunt). Usually fights to run away.\nBasic form (chosen by the transformed exorcist) gives cues: Ogre/Idol/Hound/Centipede/Toad/Lord type.',
+    attacksWith: 'Claws, teeth, dripping appendages, psychic powers: (1) 5 stress +2 sin, (2/3) 3 stress +1 sin, (4+) 2 stress.',
+    complications: 'Make appeals to the exorcists\' humanity, show a little of their former self, demonstrate a surprising new ability, outpace the exorcists.',
+    threat: '(1-2) Flee: flee the scene to pupate and become a full sin, perpetuating the cycle.',
+    stress: 5, stressRisk23: 3, stressRisk1: 2
+  },
+  // Full Sins built from SIN_TEMPLATES. 'sinTemplate' means resolve via createSinFromType.
+  { officialId: 'ogre', bestiaryGroup: 'sin', name: 'Ogre', sinTemplate: 'ogre', category: 2, expansion: 'base',
+    description: 'A common sin type born from a sense of inadequacy and despair. Emotion: Despair.' },
+  { officialId: 'idol', bestiaryGroup: 'sin', name: 'Idol', sinTemplate: 'idol', category: 2, expansion: 'base',
+    description: 'A sin born from unfulfilled desire and the craving to be loved. Gathers a cult. Emotion: Desire.' },
+  { officialId: 'hound', bestiaryGroup: 'sin', name: 'Hound', sinTemplate: 'hound', category: 2, expansion: 'base',
+    description: 'A vengeful sin that hunts down the targets of its grudge. Emotion: Vengeance.' },
+  { officialId: 'centipede', bestiaryGroup: 'sin', name: 'Centipede', sinTemplate: 'centipede', category: 2, expansion: 'base',
+    description: 'A hateful sin that spreads a mutagenic venom, building a horde. Emotion: Hatred.' },
+  { officialId: 'toad', bestiaryGroup: 'sin', name: 'Toad', sinTemplate: 'toad', category: 2, expansion: 'base',
+    description: 'An indulgent sin that hoards material wealth by any means. Emotion: Indulgence.' },
+  { officialId: 'lord', bestiaryGroup: 'sin', name: 'Lord', sinTemplate: 'lord', category: 2, expansion: 'base',
+    description: 'A fearful sin that builds a parasitic Kingdom where it rules reality. Emotion: Fear.' }
+];
+
+// Resolve an official entry into a full enemy object (handles sinTemplate refs)
+function resolveOfficialEnemy(o) {
+  if (o.sinTemplate) {
+    var s = createSinFromType(o.sinTemplate);
+    s.name = o.name;
+    s.category = o.category != null ? o.category : s.category;
+    s.expansion = o.expansion || 'base';
+    return s;
+  }
+  return JSON.parse(JSON.stringify(o));
+}
 
 /** Factory for a blank Sin (full model, pg. 102-109) */
 function createBlankSin() {
@@ -5780,9 +5873,12 @@ function renderEnemyCombat(enemyId) {
     quickRef =
       (en.description ? '<p class="combat-meta muted">' + escHtml(en.description) + '</p>' : '') +
       (en.facts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.facts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (en.attacksWith ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.attacksWith).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (en.complications ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.complications).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (en.threat ? '<div class="combat-section"><h3>' + (pt ? 'Ameaça' : 'Threat') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.threat).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
       (en.reactions ? '<div class="combat-section"><h3>' + (pt ? 'Reações' : 'Reactions') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.reactions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
       '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
-        '<p class="combat-meta">' + (pt ? 'Base' : 'Base') + ': ' + (en.stress != null ? en.stress : 2) + ' \u2022 ' + (pt ? 'risco' : 'risk') + ' 2-3: ' + (en.stressRisk23 != null ? en.stressRisk23 : 3) + ' \u2022 ' + (pt ? 'risco' : 'risk') + ' 1: ' + (en.stressRisk1 != null ? en.stressRisk1 : 4) + '</p>' +
+        '<p class="combat-meta">(1): ' + (en.stress != null ? en.stress : 2) + ' \u2022 (2-3): ' + (en.stressRisk23 != null ? en.stressRisk23 : 3) + ' \u2022 (4+): ' + (en.stressRisk1 != null ? en.stressRisk1 : 2) + '</p>' +
       '</div>';
   }
 
@@ -5850,6 +5946,62 @@ function renderEnemyCombat(enemyId) {
   });
 }
 
+function renderOfficialView(officialId) {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var src = OFFICIAL_ENEMIES.find(function(x) { return x.officialId === officialId; });
+  if (!src) { navigate('admin'); return; }
+  var o = resolveOfficialEnemy(src);
+
+  var body;
+  if (o.kind === 'sin') {
+    var domains = (o.domains || []).filter(function(d) { return d.name || d.description; });
+    body =
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tSinType(o.sinType) + ' \u2022 ' + (pt ? 'Forma' : 'Form') + ' ' + (o.form || 'I') + ' \u2022 CAT ' + (o.category || 0) + ' \u2022 ' + (pt ? 'Talismã' : 'Talisman') + ' ' + (o.talismanSegments || 8) + '</p>' +
+      (o.primaryEmotion ? '<p class="combat-meta"><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(o.primaryEmotion) + '</p>' : '') +
+      (o.attacksWith ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.attacksWith).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (o.complications ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.complications).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (o.threats ? '<div class="combat-section"><h3>' + (pt ? 'Ameaças' : 'Threats') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.threats).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (domains.length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios' : 'Domains') + '</h3>' + domains.map(function(d) { return '<div class="combat-ref-block"><strong>' + escHtml(d.name) + '</strong>' + (d.description ? '<p>' + escHtml(d.description) + '</p>' : '') + '</div>'; }).join('') + '</div>' : '') +
+      (o.severeAttack ? '<div class="combat-section"><h3>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.severeAttack) + '</p></div></div>' : '') +
+      (o.afflictions ? '<div class="combat-section"><h3>' + (pt ? 'Aflições' : 'Afflictions') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.afflictions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      ((o.traumas || []).some(function(x) { return x && (x.question || x.answer); }) ? '<div class="combat-section"><h3>' + (pt ? 'Traumas' : 'Traumas') + '</h3>' + o.traumas.filter(function(x) { return x && x.question; }).map(function(x) { return '<div class="combat-ref-block"><strong>' + escHtml(x.question) + '</strong></div>'; }).join('') + '</div>' : '') +
+      (o.pressureName ? '<div class="combat-section"><h3>' + (pt ? 'Pressão' : 'Pressure') + ': ' + escHtml(o.pressureName) + '</h3>' + (o.pressureEffect ? '<div class="combat-ref-block"><p>' + escHtml(o.pressureEffect) + '</p></div>' : '') + (o.outOfControl ? '<div class="combat-ref-block"><p><strong>' + (pt ? 'Fora de Controle' : 'Out of Control') + ':</strong> ' + escHtml(o.outOfControl) + '</p></div>' : '') + '</div>' : '') +
+      (o.traces ? '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.traces) + '</p></div></div>' : '');
+  } else {
+    body =
+      (o.description ? '<p class="combat-meta muted">' + escHtml(o.description) + '</p>' : '') +
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(o.type) + ' \u2022 <span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> ' + (o.talismanSegments || 2) + '</p>' +
+      (o.facts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.facts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (o.attacksWith ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.attacksWith).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (o.complications ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.complications).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (o.threat ? '<div class="combat-section"><h3>' + (pt ? 'Ameaça' : 'Threat') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.threat).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (o.reactions ? '<div class="combat-section"><h3>' + (pt ? 'Reações' : 'Reactions') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.reactions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
+        '<p class="combat-meta">(1): ' + (o.stress != null ? o.stress : 2) + ' \u2022 (2-3): ' + (o.stressRisk23 != null ? o.stressRisk23 : 3) + ' \u2022 (4+): ' + (o.stressRisk1 != null ? o.stressRisk1 : 2) + '</p>' +
+      '</div>';
+  }
+
+  app.innerHTML =
+    '<div class="page enemy-combat-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Bestiário' : 'Bestiary') + '</button>' +
+        '<h1 class="title">' + escHtml(o.name) + '</h1>' +
+      '</header>' +
+      '<div class="actions-bar">' +
+        '<button class="btn btn-primary" id="btn-dup">' + (pt ? 'Duplicar para meu bestiário' : 'Duplicate to my bestiary') + '</button>' +
+      '</div>' +
+      '<div class="combat-ref">' + body + '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('bestiary'); });
+  document.getElementById('btn-dup').addEventListener('click', function() {
+    duplicateOfficialEnemy(officialId);
+    navigate('admin');
+  });
+}
+
 function renderAdmin() {
   var app = document.getElementById('app');
   var enemies = getAllEnemies();
@@ -5865,6 +6017,7 @@ function renderAdmin() {
         '<button class="btn btn-primary" id="btn-new-enemy">' + (pt ? '+ Novo Inimigo' : '+ New Enemy') + '</button>' +
         '<button class="btn btn-secondary" id="btn-import-enemy">' + (pt ? 'Importar' : 'Import') + '</button>' +
         (enemies.length > 0 ? '<button class="btn btn-secondary" id="btn-export-enemies">' + (pt ? 'Exportar Tudo' : 'Export All') + '</button>' : '') +
+        '<button class="btn btn-secondary" id="btn-bestiary">' + (pt ? 'Bestiário' : 'Bestiary') + '</button>' +
       '</div>' +
       (enemies.length === 0 ?
         '<div class="empty-state"><p>' + (pt ? 'Nenhum inimigo criado ainda.' : 'No enemies created yet.') + '</p><p class="muted">' + (pt ? 'Crie oponentes para usar em suas sessões.' : 'Create opponents to use in your sessions.') + '</p></div>' :
@@ -5880,6 +6033,7 @@ function renderAdmin() {
   });
   var expBtn = document.getElementById('btn-export-enemies');
   if (expBtn) expBtn.addEventListener('click', exportAllEnemies);
+  document.getElementById('btn-bestiary').addEventListener('click', function() { navigate('bestiary'); });
 
   app.querySelectorAll('.enemy-card').forEach(function(card) {
     var id = card.dataset.id;
@@ -5897,6 +6051,108 @@ function renderAdmin() {
     // Clicking the card (outside the action buttons) opens the live combat sheet
     card.addEventListener('click', function() { navigate('enemy-combat/' + id); });
   });
+}
+
+// Clone an official entry into the GM's editable bestiary
+function duplicateOfficialEnemy(officialId) {
+  var src = OFFICIAL_ENEMIES.find(function(o) { return o.officialId === officialId; });
+  if (!src) return null;
+  var copy = resolveOfficialEnemy(src);
+  delete copy.officialId;
+  delete copy.sinTemplate;
+  delete copy.bestiaryGroup;
+  copy.id = generateId();
+  copy.version = 1;
+  copy.createdAt = new Date().toISOString();
+  copy.updatedAt = new Date().toISOString();
+  copy.execSlashes = 0;
+  copy.pressureSlashes = 0;
+  saveEnemy(copy);
+  return copy;
+}
+
+function renderBestiary() {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var tabs = [
+    { id: 'mundane', label: pt ? 'Mundanos' : 'Mundane' },
+    { id: 'anomaly', label: pt ? 'Anomalias' : 'Anomalies' },
+    { id: 'sin', label: pt ? 'Pecados' : 'Sins' }
+  ];
+  var savedTab = null;
+  try { savedTab = localStorage.getItem('bestiaryTab'); } catch (e) {}
+  if (!savedTab || !tabs.some(function(t) { return t.id === savedTab; })) savedTab = tabs[0].id;
+
+  app.innerHTML =
+    '<div class="page admin-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (pt ? 'Bestiário' : 'Bestiary') + ' <span class="subtitle">' + (pt ? 'Inimigos oficiais' : 'Official enemies') + '</span></h1>' +
+      '</header>' +
+      '<p class="help-text">' + (pt ? 'Inimigos do livro de regras. Clique para ver, ou duplique para a sua lista de inimigos.' : 'Rulebook enemies. Click to view, or duplicate into your enemy list.') + '</p>' +
+      '<nav class="compendium-tabs">' +
+        tabs.map(function(tab) {
+          return '<button class="compendium-tab' + (tab.id === savedTab ? ' active' : '') + '" data-tab="' + tab.id + '">' + tab.label + '</button>';
+        }).join('') +
+      '</nav>' +
+      '<div class="bestiary-content" id="bestiary-content"></div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
+
+  app.querySelectorAll('.compendium-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      app.querySelectorAll('.compendium-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      try { localStorage.setItem('bestiaryTab', tab.dataset.tab); } catch (e) {}
+      renderBestiaryGroup(tab.dataset.tab);
+    });
+  });
+
+  renderBestiaryGroup(savedTab);
+}
+
+function renderBestiaryGroup(group) {
+  var content = document.getElementById('bestiary-content');
+  if (!content) return;
+  var pt = currentLang === 'pt';
+  var list = OFFICIAL_ENEMIES.filter(function(o) {
+    return isExpansionActive(o.expansion) && (o.bestiaryGroup || 'mundane') === group;
+  });
+
+  if (list.length === 0) {
+    content.innerHTML = '<div class="empty-state"><p class="muted">' + (pt ? 'Nada aqui ainda.' : 'Nothing here yet.') + '</p></div>';
+    return;
+  }
+  content.innerHTML = '<div class="enemy-list">' + list.map(renderOfficialCard).join('') + '</div>';
+
+  content.querySelectorAll('.official-card').forEach(function(card) {
+    var oid = card.dataset.oid;
+    card.querySelector('.btn-duplicate').addEventListener('click', function(e) {
+      e.stopPropagation();
+      duplicateOfficialEnemy(oid);
+      alert(pt ? 'Adicionado à sua lista de inimigos.' : 'Added to your enemy list.');
+    });
+    card.addEventListener('click', function() { navigate('official-view/' + oid); });
+  });
+}
+
+function renderOfficialCard(o) {
+  var pt = currentLang === 'pt';
+  var typeLabel = o.sinTemplate ? tSinType(o.sinTemplate) : tEnemyType(o.type);
+  return '<div class="enemy-card official-card' + (o.sinTemplate || o.type === 'sin' ? ' enemy-card-sin' : '') + '" data-oid="' + o.officialId + '">' +
+    '<div class="enemy-card-header">' +
+      '<h3 class="enemy-name">' + escHtml(o.name) + '</h3>' +
+      '<span class="enemy-cat">' + typeLabel + '</span>' +
+    '</div>' +
+    '<div class="enemy-card-body">' +
+      (o.description ? '<p class="enemy-desc muted">' + escHtml(o.description) + '</p>' : '') +
+    '</div>' +
+    '<div class="enemy-card-actions">' +
+      '<button class="btn btn-sm btn-duplicate">' + (pt ? 'Duplicar' : 'Duplicate') + '</button>' +
+    '</div>' +
+  '</div>';
 }
 
 function renderEnemyCard(en) {
@@ -6022,21 +6278,27 @@ function renderEnemyForm(enemyId) {
         '<div class="form-section">' +
           '<label>' + (pt ? 'Fatos / Capacidades (um por linha)' : 'Facts / Capabilities (one per line)') + '</label>' +
           '<textarea id="f-facts" rows="4" placeholder="' + (pt ? 'Ex: Bem armado e alerta' : 'e.g. Well armed and alert') + '">' + escHtml(en.facts) + '</textarea>' +
-          '<label>' + (pt ? 'Reações' : 'Reactions') + '</label>' +
-          '<textarea id="f-reactions" rows="3" placeholder="' + (pt ? 'Ex: Ataca com cassetetes, dispara arma' : 'e.g. Attacks with batons, fires a weapon') + '">' + escHtml(en.reactions) + '</textarea>' +
+          '<label>' + (pt ? 'Ataca Com' : 'Attacks With') + '</label>' +
+          '<textarea id="f-attacksWith" rows="2" placeholder="' + (pt ? 'Ex: Cassetetes, combate corpo a corpo' : 'e.g. Batons, close combat') + '">' + escHtml(en.attacksWith || '') + '</textarea>' +
+          '<label>' + (pt ? 'Complicações' : 'Complications') + '</label>' +
+          '<textarea id="f-complications" rows="2" placeholder="' + (pt ? 'Ex: Dispara arma, aciona alarme' : 'e.g. Fire a weapon, trip an alarm') + '">' + escHtml(en.complications || '') + '</textarea>' +
+          '<label>' + (pt ? 'Ameaça' : 'Threat') + '</label>' +
+          '<textarea id="f-threat" rows="2" placeholder="' + (pt ? 'Ex: (1-2) Efeito especial' : 'e.g. (1-2) Special effect') + '">' + escHtml(en.threat || '') + '</textarea>' +
+          (en.reactions ? '<label>' + (pt ? 'Reações (legado)' : 'Reactions (legacy)') + '</label>' +
+            '<textarea id="f-reactions" rows="2">' + escHtml(en.reactions) + '</textarea>' : '') +
         '</div>' +
         '<div class="form-section form-grid-3">' +
           '<div>' +
-            '<label>' + (pt ? 'Estresse base' : 'Base stress') + '</label>' +
+            '<label>' + (pt ? 'Estresse (1) pior' : 'Stress (1) worst') + '</label>' +
             '<input type="number" id="f-stress" min="0" value="' + (en.stress != null ? en.stress : 2) + '">' +
           '</div>' +
           '<div>' +
-            '<label>' + (pt ? 'Estresse (risco 2-3)' : 'Stress (risk 2-3)') + '</label>' +
+            '<label>' + (pt ? 'Estresse (2-3)' : 'Stress (2-3)') + '</label>' +
             '<input type="number" id="f-stressRisk23" min="0" value="' + (en.stressRisk23 != null ? en.stressRisk23 : 3) + '">' +
           '</div>' +
           '<div>' +
-            '<label>' + (pt ? 'Estresse (risco 1)' : 'Stress (risk 1)') + '</label>' +
-            '<input type="number" id="f-stressRisk1" min="0" value="' + (en.stressRisk1 != null ? en.stressRisk1 : 4) + '">' +
+            '<label>' + (pt ? 'Estresse (4+) melhor' : 'Stress (4+) best') + '</label>' +
+            '<input type="number" id="f-stressRisk1" min="0" value="' + (en.stressRisk1 != null ? en.stressRisk1 : 2) + '">' +
           '</div>' +
         '</div>' +
         '<div class="form-section">' +
@@ -6065,7 +6327,11 @@ function renderEnemyForm(enemyId) {
     en.talismanSize = document.getElementById('f-talismanSize').value;
     en.talismanSegments = parseInt(document.getElementById('f-talismanSegments').value, 10) || 2;
     en.facts = document.getElementById('f-facts').value.trim();
-    en.reactions = document.getElementById('f-reactions').value.trim();
+    en.attacksWith = document.getElementById('f-attacksWith').value.trim();
+    en.complications = document.getElementById('f-complications').value.trim();
+    en.threat = document.getElementById('f-threat').value.trim();
+    var reactEl = document.getElementById('f-reactions');
+    if (reactEl) en.reactions = reactEl.value.trim();
     en.stress = parseInt(document.getElementById('f-stress').value, 10) || 0;
     en.stressRisk23 = parseInt(document.getElementById('f-stressRisk23').value, 10) || 0;
     en.stressRisk1 = parseInt(document.getElementById('f-stressRisk1').value, 10) || 0;
@@ -6276,6 +6542,8 @@ route('enemy-edit', function(id) { renderEnemyForm(id); });
 route('sin-new', function(type) { renderSinForm(null, type); });
 route('sin-edit', function(id) { renderSinForm(id); });
 route('enemy-combat', function(id) { renderEnemyCombat(id); });
+route('official-view', function(id) { renderOfficialView(id); });
+route('bestiary', renderBestiary);
 route('create', renderCreate);
 route('view', renderView);
 route('edit', renderEdit);
