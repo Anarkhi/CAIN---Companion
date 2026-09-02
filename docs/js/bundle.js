@@ -3791,41 +3791,87 @@ function updateSkillUI() {
   }
 }
 
+function getSelectionLayout() {
+  try { return localStorage.getItem('selectionLayout') || 'grid'; } catch (e) { return 'grid'; }
+}
+function setSelectionLayout(mode) {
+  try { localStorage.setItem('selectionLayout', mode); } catch (e) {}
+}
+
+/** Build the layout toggle (grid/list) HTML */
+function layoutToggleHtml() {
+  var layout = getSelectionLayout();
+  var pt = currentLang === 'pt';
+  return '<div class="layout-toggle">' +
+    '<button class="layout-btn' + (layout === 'grid' ? ' active' : '') + '" data-layout="grid">' + (pt ? 'Grade' : 'Grid') + '</button>' +
+    '<button class="layout-btn' + (layout === 'list' ? ' active' : '') + '" data-layout="list">' + (pt ? 'Lista' : 'List') + '</button>' +
+  '</div>';
+}
+
+/** Bind the layout toggle buttons; onChange re-renders the step */
+function bindLayoutToggle(container, onChange) {
+  container.querySelectorAll('.layout-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      setSelectionLayout(btn.dataset.layout);
+      onChange();
+    });
+  });
+}
+
 function renderAgendaStep(container) {
+  var layout = getSelectionLayout();
   container.innerHTML =
     '<div class="form-section"><h3>' + t('chooseAgenda') + '</h3><p class="help-text">' + t('agendaHelp') + '</p>' +
-      '<div class="agenda-list" id="agenda-list">' +
-        AGENDAS.map(function(a) {
-          var items = tAgendaItems(a.id, a);
-          return '<div class="agenda-card ' + (createChar.agenda.id === a.id ? 'selected' : '') + '" data-id="' + a.id + '">' +
-            (a.image ? '<img class="agenda-img" src="' + a.image + '" alt="' + a.name + '">' : '') +
-            '<h4>' + tAgenda(a.id) + '</h4>' +
-            '<div class="agenda-items"><p class="item-normal">\u25BA ' + items.items[0] + '</p><p class="item-bolded">\u25BA <strong>' + items.bolded[0] + '</strong></p></div>' +
-            (a.restriction ? '<p class="agenda-restriction muted">' + tAgendaRestriction(a.id, a.restriction) + '</p>' : '') +
-          '</div>';
-        }).join('') +
+      layoutToggleHtml() +
+      '<div class="agenda-list layout-' + layout + '" id="agenda-list">' +
+        (function() {
+          var list = AGENDAS.filter(function(a) { return isExpansionActive(a.expansion); });
+          var cols = layout === 'grid' ? 2 : 1;
+          var selIdx = -1;
+          var cards = list.map(function(a, i) {
+            var items = tAgendaItems(a.id, a);
+            var selected = createChar.agenda.id === a.id;
+            if (selected) selIdx = i;
+            return '<div class="agenda-card ' + (selected ? 'selected' : '') + '" data-id="' + a.id + '">' +
+              (a.image ? '<img class="agenda-img" src="' + a.image + '" alt="' + a.name + '">' : '') +
+              '<h4>' + tAgenda(a.id) + '</h4>' +
+              '<div class="agenda-items"><p class="item-normal">\u25BA ' + items.items[0] + '</p><p class="item-bolded">\u25BA <strong>' + items.bolded[0] + '</strong></p></div>' +
+              (a.restriction ? '<p class="agenda-restriction muted">' + tAgendaRestriction(a.id, a.restriction) + '</p>' : '') +
+            '</div>';
+          });
+          if (selIdx >= 0) {
+            // Insert the inline panel at the end of the selected card's row
+            var insertAt = Math.min((Math.floor(selIdx / cols) + 1) * cols, cards.length);
+            cards.splice(insertAt, 0, '<div class="inline-choices" id="ability-inline"><h4>' + t('chooseAbility') + '</h4><div id="ability-list"></div>' +
+              '<button class="btn btn-primary btn-next-inline" ' + (createChar.agenda.abilities.length === 0 ? 'disabled' : '') + '>' + t('nextBlasphemy') + '</button></div>');
+          }
+          return cards.join('');
+        })() +
       '</div>' +
     '</div>' +
-    '<div class="form-section" id="ability-section" style="display:' + (createChar.agenda.id ? 'block' : 'none') + '"><h3>' + t('chooseAbility') + '</h3><div id="ability-list"></div></div>' +
     '<button class="btn btn-primary btn-next" id="btn-next" ' + (!createChar.agenda.id ? 'disabled' : '') + '>' + t('nextBlasphemy') + '</button>';
+
+  bindLayoutToggle(container, function() { renderAgendaStep(container); });
 
   container.querySelectorAll('.agenda-card').forEach(function(card) {
     card.addEventListener('click', function() {
-      createChar.agenda.id = card.dataset.id;
-      createChar.agenda.abilities = [];
-      container.querySelectorAll('.agenda-card').forEach(function(c) { c.classList.remove('selected'); });
-      card.classList.add('selected');
-      renderAgendaAbilities(createChar.agenda.id);
-      document.getElementById('ability-section').style.display = 'block';
+      if (createChar.agenda.id !== card.dataset.id) {
+        createChar.agenda.id = card.dataset.id;
+        createChar.agenda.abilities = [];
+      }
       saveCreateState();
+      renderAgendaStep(container); // re-render to move the inline panel under this card
     });
   });
 
-  document.getElementById('btn-next').addEventListener('click', function() {
+  var goNextAgenda = function() {
     if (!createChar.agenda.id) { alert(t('selectAgenda')); return; }
     if (createChar.agenda.abilities.length === 0) { alert(t('selectAbility')); return; }
     createStep++; saveCreateState(); renderCreateStep();
-  });
+  };
+  document.getElementById('btn-next').addEventListener('click', goNextAgenda);
+  var inlineNextA = container.querySelector('.btn-next-inline');
+  if (inlineNextA) inlineNextA.addEventListener('click', goNextAgenda);
 
   if (createChar.agenda.id) renderAgendaAbilities(createChar.agenda.id);
 }
@@ -3843,7 +3889,8 @@ function renderAgendaAbilities(agendaId) {
       createChar.agenda.abilities = [card.dataset.id];
       el.querySelectorAll('.ability-card').forEach(function(c) { c.classList.remove('selected'); });
       card.classList.add('selected');
-      document.getElementById('btn-next').removeAttribute('disabled');
+      var nb = document.getElementById('btn-next'); if (nb) nb.removeAttribute('disabled');
+      var ni = document.querySelector('.btn-next-inline'); if (ni) ni.removeAttribute('disabled');
       saveCreateState();
     });
   });
@@ -3852,36 +3899,53 @@ function renderAgendaAbilities(agendaId) {
 function renderBlasphemyStep(container) {
   var selBlas = createChar.blasphemies[0] ? createChar.blasphemies[0].id : '';
   var selPowers = createChar.blasphemies[0] ? createChar.blasphemies[0].powers : [];
+  var layout = getSelectionLayout();
 
   container.innerHTML =
     '<div class="form-section"><h3>' + t('chooseBlasphemy') + '</h3><p class="help-text">' + t('blasphemyHelp') + '</p>' +
-      '<div class="blasphemy-list" id="blasphemy-list">' +
-        BLASPHEMIES.filter(function(b) { return isExpansionActive(b.expansion); }).map(function(b) {
-          return '<div class="blasphemy-card ' + (selBlas === b.id ? 'selected' : '') + '" data-id="' + b.id + '">' +
-            '<h4>' + tBlas(b.id) + '</h4><p class="muted">' + tBlasDesc(b.id, b.description) + '</p>' +
-            renderPassivesCard(b) + '</div>';
-        }).join('') +
+      layoutToggleHtml() +
+      '<div class="blasphemy-list layout-' + layout + '" id="blasphemy-list">' +
+        (function() {
+          var list = BLASPHEMIES.filter(function(b) { return isExpansionActive(b.expansion); });
+          var cols = layout === 'grid' ? 2 : 1;
+          var selIdx = -1;
+          var cards = list.map(function(b, i) {
+            var selected = selBlas === b.id;
+            if (selected) selIdx = i;
+            return '<div class="blasphemy-card ' + (selected ? 'selected' : '') + '" data-id="' + b.id + '">' +
+              '<h4>' + tBlas(b.id) + '</h4><p class="muted">' + tBlasDesc(b.id, b.description) + '</p>' +
+              renderPassivesCard(b) + '</div>';
+          });
+          if (selIdx >= 0) {
+            var insertAt = Math.min((Math.floor(selIdx / cols) + 1) * cols, cards.length);
+            cards.splice(insertAt, 0, '<div class="inline-choices" id="powers-inline"><h4>' + t('choosePowers') + '</h4><div id="powers-list"></div><p class="validation-msg" id="powers-validation"></p>' +
+              '<button class="btn btn-primary btn-next-inline" ' + (selPowers.length !== 2 ? 'disabled' : '') + '>' + t('nextReview') + '</button></div>');
+          }
+          return cards.join('');
+        })() +
       '</div>' +
     '</div>' +
-    '<div class="form-section" id="powers-section" style="display:' + (selBlas ? 'block' : 'none') + '"><h3>' + t('choosePowers') + '</h3><div id="powers-list"></div><p class="validation-msg" id="powers-validation"></p></div>' +
     '<button class="btn btn-primary btn-next" id="btn-next" ' + (selPowers.length !== 2 ? 'disabled' : '') + '>' + t('nextReview') + '</button>';
+
+  bindLayoutToggle(container, function() { renderBlasphemyStep(container); });
 
   container.querySelectorAll('.blasphemy-card').forEach(function(card) {
     card.addEventListener('click', function() {
-      createChar.blasphemies = [{ id: card.dataset.id, powers: [] }];
-      container.querySelectorAll('.blasphemy-card').forEach(function(c) { c.classList.remove('selected'); });
-      card.classList.add('selected');
-      renderPowerChoices(card.dataset.id);
-      document.getElementById('powers-section').style.display = 'block';
-      document.getElementById('btn-next').setAttribute('disabled', '');
+      if (!createChar.blasphemies[0] || createChar.blasphemies[0].id !== card.dataset.id) {
+        createChar.blasphemies = [{ id: card.dataset.id, powers: [] }];
+      }
       saveCreateState();
+      renderBlasphemyStep(container); // re-render to move the inline panel under this card
     });
   });
 
-  document.getElementById('btn-next').addEventListener('click', function() {
+  var goNextBlas = function() {
     if (!createChar.blasphemies[0] || createChar.blasphemies[0].powers.length !== 2) { alert(t('selectPowers')); return; }
     createStep++; saveCreateState(); renderCreateStep();
-  });
+  };
+  document.getElementById('btn-next').addEventListener('click', goNextBlas);
+  var inlineNextB = container.querySelector('.btn-next-inline');
+  if (inlineNextB) inlineNextB.addEventListener('click', goNextBlas);
 
   if (selBlas) renderPowerChoices(selBlas);
 }
@@ -3908,10 +3972,12 @@ function renderPowerChoices(blasId) {
       // Update visuals
       el.querySelectorAll('.power-card').forEach(function(c) { c.classList.toggle('selected', pws.indexOf(c.dataset.id) >= 0); });
       var msg = document.getElementById('powers-validation');
-      msg.textContent = pws.length + '/2 powers selected';
+      msg.textContent = pws.length + '/2 ' + (currentLang === 'pt' ? 'poderes selecionados' : 'powers selected');
       msg.className = 'validation-msg ' + (pws.length === 2 ? 'success' : 'warning');
-      if (pws.length === 2) document.getElementById('btn-next').removeAttribute('disabled');
-      else document.getElementById('btn-next').setAttribute('disabled', '');
+      var nb = document.getElementById('btn-next');
+      var ni = document.querySelector('.btn-next-inline');
+      if (pws.length === 2) { if (nb) nb.removeAttribute('disabled'); if (ni) ni.removeAttribute('disabled'); }
+      else { if (nb) nb.setAttribute('disabled', ''); if (ni) ni.setAttribute('disabled', ''); }
       saveCreateState();
     });
   });
@@ -5341,7 +5407,7 @@ function renderSwapAgenda(characterId) {
       (canSwap ? '<section class="sheet-section">' +
         '<h3>' + t('swap_choose_new') + '</h3>' +
         '<div class="agenda-list" id="swap-agenda-list">' +
-          AGENDAS.filter(function(a) { return a.id !== (char.agenda || {}).id; }).map(function(a) {
+          AGENDAS.filter(function(a) { return a.id !== (char.agenda || {}).id && isExpansionActive(a.expansion); }).map(function(a) {
             var items = tAgendaItems(a.id, a);
             return '<div class="agenda-card" data-id="' + a.id + '">' +
               (a.image ? '<img class="agenda-img" src="' + a.image + '" alt="' + a.name + '">' : '') +
@@ -5750,7 +5816,7 @@ function handleAdvanceOption(opt, char, characterId) {
     case 'swap-survivor':
       actionTitle.textContent = t('adv_swap_survivor');
       var html6 = '<p class="muted">' + t('adv_swap_survivor_info') + '</p>';
-      AGENDAS.filter(function(a) { return a.id !== 'survivor'; }).forEach(function(a) {
+      AGENDAS.filter(function(a) { return a.id !== 'survivor' && isExpansionActive(a.expansion); }).forEach(function(a) {
         html6 += '<div class="advance-choice" data-agenda="' + a.id + '"><h4>' + tAgenda(a.id) + '</h4></div>';
       });
       actionContent.innerHTML = html6;

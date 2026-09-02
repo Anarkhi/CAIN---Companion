@@ -483,6 +483,58 @@ input[type="number"] {
   gap: var(--space-md);
 }
 
+/* Layout modes for the selection lists */
+.agenda-list.layout-grid, .blasphemy-list.layout-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+.agenda-list.layout-list, .blasphemy-list.layout-list {
+  grid-template-columns: 1fr;
+}
+
+/* Inline ability/power panel shown right under the selected card */
+.inline-choices {
+  grid-column: 1 / -1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  margin: calc(-1 * var(--space-xs)) 0 var(--space-sm);
+}
+.inline-choices h4 {
+  color: var(--text-accent);
+  margin: 0 0 var(--space-sm);
+  font-size: 0.95rem;
+}
+.btn-next-inline {
+  margin-top: var(--space-md);
+}
+
+/* Layout toggle */
+.layout-toggle {
+  display: flex;
+  gap: var(--space-xs);
+  justify-content: flex-end;
+  margin-bottom: var(--space-sm);
+}
+.layout-toggle button {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: var(--radius);
+  padding: var(--space-xs) var(--space-md);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.layout-toggle button.active {
+  border-color: var(--accent);
+  color: var(--text-accent);
+}
+
+@media (max-width: 560px) {
+  .agenda-list.layout-grid, .blasphemy-list.layout-grid { grid-template-columns: 1fr; }
+}
+
 .agenda-card, .blasphemy-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
