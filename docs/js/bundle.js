@@ -107,6 +107,9 @@ var LOCALES = {
     // Quirks (GFF-4.1)
     quirks_none: 'No blasphemies with available quirks.', quirks_current: 'Current', quirks_default: 'Default (no quirk)',
     quirks_apply: 'Apply Quirk', quirks_remove: 'Remove Quirk',
+    quirk_swap_template: 'You may swap {0} for {1}.',
+    quirk_add_template: '{0} is an addition to {1}.',
+    quirk_swap_fanning: 'You may swap Deadeye for Fanning.',
     // Edit page
     edit_agenda: 'Agenda', edit_blasphemies: 'Blasphemies', edit_powers: 'Powers', edit_sinmarks: 'Sin Marks',
     edit_no_agenda: 'No agenda selected.', edit_change_agenda: 'Change Agenda', edit_add_blas: 'Add Blasphemy',
@@ -250,6 +253,9 @@ var LOCALES = {
     // Quirks (GFF-4.1)
     quirks_none: 'Nenhuma blasfêmia com peculiaridades disponíveis.', quirks_current: 'Atual', quirks_default: 'Padrão (sem peculiaridade)',
     quirks_apply: 'Aplicar Peculiaridade', quirks_remove: 'Remover Peculiaridade',
+    quirk_swap_template: 'Você pode trocar {0} por {1}.',
+    quirk_add_template: '{0} é um acréscimo a {1}.',
+    quirk_swap_fanning: 'Você pode trocar Deadeye por Fanning.',
     // Edit page
     edit_agenda: 'Agenda', edit_blasphemies: 'Blasfêmias', edit_powers: 'Poderes', edit_sinmarks: 'Marcas de Pecado',
     edit_no_agenda: 'Nenhuma agenda selecionada.', edit_change_agenda: 'Trocar Agenda', edit_add_blas: 'Adicionar Blasfêmia',
@@ -1450,7 +1456,7 @@ const QUIRKS = {
     replaces: 'gunpowder_the_arsenal',
     expansion: 'thegreatwar',
     options: [
-      { id: 'fanning', name: 'Fanning', image: 'img/quirks/fanning.png', type: 'replace', keepPassiveName: true, description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>FANNING</b>: You fire the manifested weapon using your psychic focus - roll PSYCHE for the shots. You forgo careful aim for overwhelming volume of fire. When you take a shot, you may spend 1 additional psyche burst to fire again at the same or another target as part of the same action (up to CAT extra shots, one for each burst spent)." }
+      { id: 'fanning', name: 'Fanning', image: 'img/quirks/fanning.png', type: 'replace', keepPassiveName: true, swapNote: 'quirk_swap_fanning', description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>FANNING</b>: You fire the manifested weapon using your psychic focus - roll PSYCHE for the shots. You forgo careful aim for overwhelming volume of fire. When you take a shot, you may spend 1 additional psyche burst to fire again at the same or another target as part of the same action (up to CAT extra shots, one for each burst spent)." }
     ]
   }
 };
@@ -5188,13 +5194,24 @@ function renderQuirks(characterId) {
               '<div class="sk-page sk-page-5" style="display:none"><br><em>' + (skPt ? 'É por isso que os negam a nós.' : 'That is why they deny them to us.') + '</em><br><br><b style="font-size:1.2em">' + (skPt ? 'NOSSOS SONHOS ORBITARÃO A TERRA PARA SEMPRE' : 'OUR DREAMS WILL ORBIT THE EARTH FOREVER') + '</b></div>' +
               '<div class="sk-page sk-page-6" style="display:none"><span class="sk-glitch">' + (skPt ? 'Você pode também' : 'You may also') + '</span></div>' +
               '<div class="sk-page sk-page-7"' + (isActive ? '' : ' style="display:none"') + '><b>' + (skPt ? 'INVOCAR O' : 'SUMMON THE') + '</b><br><b style="font-size:2.2em;line-height:1.1">' + (skPt ? 'REI DAS<br>DEZ MIL ESPADAS' : 'TEN THOUSAND<br>SWORD KING') + '</b><br><br><p class="quirk-desc">' + tPassiveDesc(quirk.id, quirk.description) + '</p>' +
+                (quirk.image ? '<img class="sword-king-img" src="' + quirk.image + '" alt="' + quirk.name + '">' : '') +
+                '<p class="quirk-swap-note">' + t('quirk_add_template').replace('{0}', quirk.name).replace('{1}', defaultPassive.name) + '</p>' +
                 '<button class="btn btn-sm quirk-toggle" data-blas="' + blRef.id + '" data-quirk="' + quirk.id + '">' + (isActive ? t('quirks_remove') : t('quirks_apply')) + '</button></div>' +
             '</div>' +
           '</div>';
           return;
         }
 
+        var swapNoteHtml = '';
+        if (quirk.swapNote) {
+          swapNoteHtml = '<p class="quirk-swap-note">' + t(quirk.swapNote) + '</p>';
+        } else if (quirk.type === 'replace' && defaultPassive) {
+          swapNoteHtml = '<p class="quirk-swap-note">' + t('quirk_swap_template').replace('{0}', defaultPassive.name).replace('{1}', quirk.name) + '</p>';
+        } else if ((quirk.type === 'add' || quirk.type === 'add_free') && defaultPassive) {
+          swapNoteHtml = '<p class="quirk-swap-note">' + t('quirk_add_template').replace('{0}', quirk.name).replace('{1}', defaultPassive.name) + '</p>';
+        }
         html += '<div class="quirk-card' + (isActive ? ' active' : '') + '">' +
+          swapNoteHtml +
           (quirk.image ? '<img class="quirk-img" src="' + quirk.image + '" alt="' + quirk.name + '">' : '') +
           '<div class="quirk-header"><strong>' + quirk.name + '</strong> <span class="tags">' + typeLabel + '</span></div>' +
           '<div class="quirk-desc">' + tPassiveDesc(quirk.id, quirk.description) + '</div>' +

@@ -1990,6 +1990,15 @@ input[type="number"] {
   color: var(--text-primary);
 }
 
+.sword-king-img {
+  display: block;
+  width: 600px;
+  max-width: 100%;
+  height: auto;
+  margin: var(--space-md) auto 0;
+  border-radius: 6px;
+}
+
 /* Sanctum base reference box */
 .sanctum-base-box {
   background: var(--bg-input);
@@ -2248,6 +2257,13 @@ input[type="number"] {
 
 .quirk-card.active .quirk-img {
   opacity: 1;
+}
+
+.quirk-swap-note {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--accent);
+  margin-bottom: var(--space-sm);
 }
 
 .virtue-desc {
