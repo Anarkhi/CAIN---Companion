@@ -156,7 +156,7 @@ var LOCALES = {
     // Blasphemy names
     bl_tension: 'Tension', bl_ardence: 'Ardence', bl_flux: 'Flux', bl_vector: 'Vector',
     bl_gate: 'Gate', bl_smother: 'Smother', bl_whisper: 'Whisper', bl_edit: 'Edit',
-    bl_bind: 'Bind', bl_palace: 'Palace', bl_jaunt: 'Jaunt', bl_sympathy: 'Sympathy', bl_tongue: 'Tongue', bl_playlist: 'Track', bl_wire: 'Wire', bl_mother: 'Mother'
+    bl_bind: 'Bind', bl_palace: 'Palace', bl_jaunt: 'Jaunt', bl_sympathy: 'Sympathy', bl_tongue: 'Tongue', bl_playlist: 'Track', bl_wire: 'Wire', bl_mother: 'Mother', bl_gunpowder: 'Gunpowder'
   },
   pt: {
     app_title: 'CAIN', app_subtitle: 'Companheiro', app_tagline: 'Limpe a mancha.',
@@ -299,7 +299,7 @@ var LOCALES = {
     // Blasphemy names
     bl_tension: 'Tensão', bl_ardence: 'Ardor', bl_flux: 'Fluxo', bl_vector: 'Vetor',
     bl_gate: 'Portão', bl_smother: 'Sufoco', bl_whisper: 'Sussurro', bl_edit: 'Edit',
-    bl_bind: 'Vínculo', bl_palace: 'Palácio', bl_jaunt: 'Assombração', bl_sympathy: 'Simpatia', bl_tongue: 'Língua', bl_playlist: 'Track', bl_wire: 'Fio', bl_mother: 'Mãe'
+    bl_bind: 'Vínculo', bl_palace: 'Palácio', bl_jaunt: 'Assombração', bl_sympathy: 'Simpatia', bl_tongue: 'Língua', bl_playlist: 'Track', bl_wire: 'Fio', bl_mother: 'Mãe', bl_gunpowder: 'Pólvora'
   }
 };
 
@@ -403,8 +403,11 @@ function getEffectivePassives(bl, char) {
     if (quirk.type === 'replace') {
       // Replace only the targeted passive (by quirkData.replaces), keep others
       var targetPassiveId = quirkData.replaces;
+      var replaced = basePassives.find(function(p) { return p.id === targetPassiveId; });
       result = result.filter(function(p) { return p.id !== targetPassiveId; });
-      result.unshift({ id: quirk.id, name: quirk.name, image: quirk.image, description: quirk.description });
+      // Optionally keep the original passive's name (e.g. Gunpowder keeps "The Arsenal")
+      var effName = (quirk.keepPassiveName && replaced) ? replaced.name : quirk.name;
+      result.unshift({ id: quirk.id, name: effName, image: quirk.image, description: quirk.description });
     } else if (quirk.type === 'add' || quirk.type === 'add_free') {
       // Add quirk as additional passive-like entry (but NOT if it grants a power instead)
       if (!quirk.grantsPower) {
@@ -722,7 +725,8 @@ var EXPANSIONS = [
   { id: 'gff1', name: 'GFF-1', description: 'Virtue bond system. 6 mentor NPCs with unique high blasphemies.', descriptionPt: 'Sistema de Vínculos. 6 NPCs mentores com Altas Blasfêmias Únicas.' },
   { id: 'gff2', name: 'GFF-2', description: 'New Drifters for the GM.', descriptionPt: 'Novos Andarilhos para o GM.' },
   { id: 'gff3', name: 'GFF-3', description: 'New agendas (Cradle, Doll, Broken) and blasphemies (Tongue, Track, Wire, Mother).', descriptionPt: 'Novas agendas (Berço, Boneca, Quebrado) e blasfêmias (Língua, Track, Fio, Mãe).' },
-  { id: 'gff4', name: 'GFF-4.1', description: 'Blasphemy Quirks - alternate passives and mutations for blasphemies.', descriptionPt: 'Peculiaridades de Blasfêmias - passivas alternativas e mutações para blasfêmias.' }
+  { id: 'gff4', name: 'GFF-4.1', description: 'Blasphemy Quirks - alternate passives and mutations for blasphemies.', descriptionPt: 'Peculiaridades de Blasfêmias - passivas alternativas e mutações para blasfêmias.' },
+  { id: 'thegreatwar', name: 'The Great War', description: 'Homebrew expansion. Adds the Gunpowder blasphemy — command the firearms of a bygone age.', descriptionPt: 'Expansão homebrew. Adiciona a blasfêmia Pólvora (Gunpowder) — comande as armas de fogo de uma era passada.' }
 ];
 
 /** Get active expansion IDs from localStorage */
@@ -795,10 +799,19 @@ function recalcExpansionTags(char) {
     var agendaData = AGENDAS.find(function(a) { return a.id === char.agenda.id; });
     if (agendaData && agendaData.expansion && needed.indexOf(agendaData.expansion) === -1) needed.push(agendaData.expansion);
   }
-  // GFF-4.1: needed if character has any quirks applied
+  // GFF-4.1: the Quirk mechanic itself requires GFF-4. A specific quirk may also
+  // belong to another expansion (e.g. Fanning is from The Great War), which the
+  // character then also needs.
   if (char.quirks) {
     var hasQuirks = Object.keys(char.quirks).some(function(k) { return char.quirks[k].length > 0; });
     if (hasQuirks && needed.indexOf('gff4') === -1) needed.push('gff4');
+    Object.keys(char.quirks).forEach(function(blId) {
+      if (!char.quirks[blId] || !char.quirks[blId].length) return;
+      var quirkData = QUIRKS[blId];
+      if (quirkData && quirkData.expansion && needed.indexOf(quirkData.expansion) === -1) {
+        needed.push(quirkData.expansion);
+      }
+    });
   }
   char.expansions = needed;
 }
@@ -1013,7 +1026,8 @@ var PT_CONTENT = {
     tongue: 'Sua palavra é lei.',
     playlist: 'Testando, um dois, um dois.',
     wire: 'São como veias, se você parar pra pensar. Você até consegue ouvir o batimento cardíaco.',
-    mother: 'ELA NÃO SAI DA MINHA CABEÇA.'
+    mother: 'ELA NÃO SAI DA MINHA CABEÇA.',
+    gunpowder: 'Manifestar e comandar as armas de fogo de uma era passada, alimentadas por pólvora psíquica.'
   },
   // Blasphemy flavor texts
   flavors: {
@@ -1032,7 +1046,8 @@ var PT_CONTENT = {
     tongue: "...enraizado no centro de linguagem do cérebro, sugerindo conexões com manifestações registradas de 'fala extática' e 'linguagem divina'.<br><br>Manifestar blasfêmias de Tongue requer condicionamento especial de terapia da fala X285 e sistema de contenção 25 de acordo com o Código Castle para evitar exposição acidental. Pode ser necessário manter silêncio por longos períodos de tempo. Sua língua também pode ficar 'preta como piche' ou 'preta como tinta', ou se tornar bifurcada. Isso é normal.",
     playlist: 'Fato: Os objetos amaldiçoados avulsos ou residuais criados por este poder são curados no arquivo 52 da Temerity. A coleção é bastante extensa e tem seguidores bastante fervorosos entre certas subseções da equipe da CAIN.',
     wire: 'Fato: FIO foi descoberto pela CAIN apenas nos últimos dois anos, mas a organização o compreende razoavelmente bem. Usuários podem desenvolver a habilidade de "ouvir" linhas telefônicas e sinais elétricos. Modificação corporal involuntária através deste poder é comum. Não se alarme. Retornará ao normal em 1-2 horas.',
-    mother: "...esforços contínuos para conter Mother estão mostrando eficácia reduzida (tão alta quanto [CENSURADO] ano após ano). Portanto, o diretor do OS Alhambra faz uma recomendação firme para implementar doutrina 8 ([CENSURADO]) dadas as condições operacionais atuais.<br><br>07-04-1998<br><br>Pedido negado. A eficácia HOP dos ativos infectados de Mother supera seu risco potencial, apesar da antipatia crescente da Casa em relação a ela. Continuaremos a coletá-los e treiná-los quando possível, e despachar execução instantânea quando não for possível recuperar ativos com segurança.<br><br>Assim na terra, como no céu.<br><br>O menor primeiro, <b style=\"font-size:1.1em\">F. ESPADA</b><br><br>Diretor do Castle F. Espada"
+    mother: "...esforços contínuos para conter Mother estão mostrando eficácia reduzida (tão alta quanto [CENSURADO] ano após ano). Portanto, o diretor do OS Alhambra faz uma recomendação firme para implementar doutrina 8 ([CENSURADO]) dadas as condições operacionais atuais.<br><br>07-04-1998<br><br>Pedido negado. A eficácia HOP dos ativos infectados de Mother supera seu risco potencial, apesar da antipatia crescente da Casa em relação a ela. Continuaremos a coletá-los e treiná-los quando possível, e despachar execução instantânea quando não for possível recuperar ativos com segurança.<br><br>Assim na terra, como no céu.<br><br>O menor primeiro, <b style=\"font-size:1.1em\">F. ESPADA</b><br><br>Diretor do Castle F. Espada",
+    gunpowder: "\"Com pontaria e pólvora suficientes, um homem já governou o mundo. Talvez você o faça mais uma vez.\"<br><br>Fato: Pólvora só pode manifestar armas de fogo concebidas pela primeira vez entre 25 de fevereiro de 1836 e 1 de julho de 1916. Nenhuma arma concebida antes ou depois dessas datas jamais foi manifestada com sucesso."
   },
   // Blasphemy passive descriptions
   passives: {
@@ -1083,7 +1098,9 @@ var PT_CONTENT = {
     hollow: "Você se especializa nos remanescentes incorpóreos de psique.<br><br>Pode usar o poder Geist sem gastar pulso psíquico, uma vez entre descansos.<br><br>Se tiver apenas um passageiro do poder Passenger, ele agora pode usar poderes psíquicos usando seu corpo, e você pode usar poderes normalmente. Quando usarem um poder, você sofre efeitos ou consequências como se tivesse usado, mas eles gastam recursos (pecado, pulsos, etc). Estes poderes terminam imediatamente se o passageiro sair.",
     silver_sight: "Você é completamente cego, mas permanentemente se beneficia do poder Threads desta blasfêmia e o ganha gratuitamente. Pode sobrepor com outros poderes. Como está acostumado a ver assim, ações contra coisas vivas não são difíceis para você, mas outras ações que requerem visão são. Se participar de trabalho em equipe ou ganhar setup, pode ignorar esta restrição além dos benefícios normais de trabalho em equipe ou setup.<br><br>Além disso, sua sensibilidade extrema à graça permite sentir imediatamente (com alguma imprecisão) se alguém em uma área 1/2 CAT [HALF_CAT:area] centrada em você tem sensibilidade psíquica, e quanta, ou se há seres sobrenaturais em área similar, quão perto estão, e quão fortes são.",
     locus: "Você se especializa em um objeto particular, mas tem aversão a outros. Escolha um objeto da lista de ressonâncias. É automaticamente ressonante com ele, mas role dois outros itens aleatoriamente. Tem antipatia com esses objetos e considera ações difíceis quando estiver tocando, vestindo, ou ao alcance da mão deles.<br><br>Pode trocar este foco e re-rolar suas antipatias no início de cada caçada, ou quando descansar.<br><br><b>Ressonâncias</b> (Role 1d3, depois 1d6):<table class=\"virtue-rupture-table\"><tbody><tr><td class=\"rupture-duration\">11</td><td class=\"rupture-cost\">Telefones</td><td class=\"rupture-duration\">21</td><td class=\"rupture-cost\">Bolas</td><td class=\"rupture-duration\">31</td><td class=\"rupture-cost\">Cordas</td></tr><tr><td class=\"rupture-duration\">12</td><td class=\"rupture-cost\">Luzes</td><td class=\"rupture-duration\">22</td><td class=\"rupture-cost\">Armas de Fogo</td><td class=\"rupture-duration\">32</td><td class=\"rupture-cost\">Martelos</td></tr><tr><td class=\"rupture-duration\">13</td><td class=\"rupture-cost\">Facas</td><td class=\"rupture-duration\">23</td><td class=\"rupture-cost\">Canecas</td><td class=\"rupture-duration\">33</td><td class=\"rupture-cost\">Carros</td></tr><tr><td class=\"rupture-duration\">14</td><td class=\"rupture-cost\">Chaves</td><td class=\"rupture-duration\">24</td><td class=\"rupture-cost\">Computadores</td><td class=\"rupture-duration\">34</td><td class=\"rupture-cost\">Portas</td></tr><tr><td class=\"rupture-duration\">15</td><td class=\"rupture-cost\">Livros</td><td class=\"rupture-duration\">25</td><td class=\"rupture-cost\">Sapatos</td><td class=\"rupture-duration\">35</td><td class=\"rupture-cost\">Bolsas</td></tr><tr><td class=\"rupture-duration\">16</td><td class=\"rupture-cost\">Tacos de Beisebol</td><td class=\"rupture-duration\">26</td><td class=\"rupture-cost\">Ferramentas Elétricas</td><td class=\"rupture-duration\">36</td><td class=\"rupture-cost\">Luvas</td></tr></tbody></table>",
-    mothers_love: "Sua cepa de Mother é menos detectável, e você parece mais humano. Duas vezes por caçada, pode ouvir os sussurros de Mother (pergunte ao GM o que Ela está dizendo) ao usar uma blasfêmia deste poder.<br><br>Se seguir o conselho ou direção dela, pode usar aquele poder sem gastar pulso psíquico, ganha +1D em rolagens de PSIQUE, +1 CAT, e todos os custos de pecado são reduzidos a 1 pela duração.<br><br>Porém, usar o poder se torna arriscado se não era, e o dado de risco se torna '1' automaticamente."
+    mothers_love: "Sua cepa de Mother é menos detectável, e você parece mais humano. Duas vezes por caçada, pode ouvir os sussurros de Mother (pergunte ao GM o que Ela está dizendo) ao usar uma blasfêmia deste poder.<br><br>Se seguir o conselho ou direção dela, pode usar aquele poder sem gastar pulso psíquico, ganha +1D em rolagens de PSIQUE, +1 CAT, e todos os custos de pecado são reduzidos a 1 pela duração.<br><br>Porém, usar o poder se torna arriscado se não era, e o dado de risco se torna '1' automaticamente.",
+    gunpowder_the_arsenal: "Você pode manifestar uma única arma de fogo mundana do período (concebida entre 25 de fev de 1836 e 1 de jul de 1916) em suas mãos, formada de pólvora psíquica. Não custa PK e se reforma mesmo se perdida, derrubada ou destruída por meios mundanos. Pode dispensá-la à vontade. Funciona como uma arma de fogo CAT 0 comum de seu tipo e nunca fica sem munição por meios mundanos, mas apenas você pode dispará-la - ela sempre emperra para qualquer outro.<br><br><b>DEADEYE</b>: Ao disparar a arma manifestada, você pode sofrer até metade do CAT [HALF_CAT:magnitude] de estresse não-letal. O tiro se torna sobrenatural, e para cada estresse sofrido desta forma, o CAT do tiro aumenta em +1 (socando pólvora e chumbo extras). Isso pode empurrar os efeitos de um tiro muito além do que a arma deveria ser capaz - os canos chamuscam e racham.",
+    fanning: "Você pode manifestar uma única arma de fogo mundana do período (concebida entre 25 de fev de 1836 e 1 de jul de 1916) em suas mãos, formada de pólvora psíquica. Não custa PK e se reforma mesmo se perdida, derrubada ou destruída por meios mundanos. Pode dispensá-la à vontade. Funciona como uma arma de fogo CAT 0 comum de seu tipo e nunca fica sem munição por meios mundanos, mas apenas você pode dispará-la - ela sempre emperra para qualquer outro.<br><br><b>FANNING</b>: Você abre mão da mira cuidadosa por um volume avassalador de fogo. Ao disparar, pode gastar 1 pulso psíquico adicional para disparar novamente no mesmo ou em outro alvo como parte da mesma ação (até CAT disparos extras, um para cada pulso gasto). Você troca a precisão do Deadeye por uma saraivada de chumbo."
   },
   // Power descriptions
   powers: {
@@ -1168,7 +1185,12 @@ var PT_CONTENT = {
     mother_polyp: "Você remove inofensivamente mas grotescamente e posiciona um ou ambos os seus olhos, ou sua boca (ou qualquer combinação) em um humano, exorcista, anomalia ou superfície plana que possa tocar. Para alvos relutantes ou desavisados, role PSIQUE e apenas gaste pulso e ative este poder em sucesso.<br><br>Pode ver e falar normalmente pelo seu olho e boca, mas eles desaparecem do seu rosto pela duração. Você sofre qualquer estresse que seu olho ou boca sofreriam como consequência de suas ações com eles, e retornam ao seu rosto quando encerrar este poder ou após sofrerem dano.<br><br>Adicionalmente, qualquer número de vezes enquanto ativo, pode sofrer 1 de estresse para usar um poder de blasfêmia de qualquer olho ou boca ao alcance CAT+2 [CAT+2:distance] como se estivesse lá, gastando pulso normalmente. Ganhe +1D se isso te conceder vantagem.",
     mother_knot: "Passiva: Quando ganhar qualquer quantidade de estresse, pode capturar sua energia negativa sem gastar pulso, aparecendo como um nó elevado na sua pele. Reduza estresse sofrido em 2 para cada nó ganho. Pode capturar até 3 nós. No fim de qualquer cena em que tenha um ou mais nós, role 1d6. Quando um nó estoura, sofra 2 de estresse irredutível.<br>•  Em 1-3, sofra 1d3 de estresse e estoure um nó.<br>•  Em 4-5, sofra 1 de estresse e estoure um nó.<br>•  Em 6, não sofra estresse e estoure um nó.",
     mother_colony: "Ganhe 1d3 de estresse, então você ou aliado ao alcance ganha um escudo carnoso que absorve 2 de estresse de dano externo. Se um personagem já tiver tal escudo, aumente em +2, mas também sofra 1d3 de estresse.",
-    mother_coil: "Seu membro descasca sua carne e pele, então chicoteia um alvo a curta distância como um chicote, causando dano ou puxando-o alguma distância. Role PSIQUE para seus efeitos.<br>•  Ganhe +1D se tiver 3 ou menos caixas de estresse restantes.<br>•  Ganhe +2 CAT se tiver sofrido inundação de pecado nesta missão."
+    mother_coil: "Seu membro descasca sua carne e pele, então chicoteia um alvo a curta distância como um chicote, causando dano ou puxando-o alguma distância. Role PSIQUE para seus efeitos.<br>•  Ganhe +1D se tiver 3 ou menos caixas de estresse restantes.<br>•  Ganhe +2 CAT se tiver sofrido inundação de pecado nesta missão.",
+    gunpowder_true_shot: "Você mira com cuidado e dispara um único projétil de pólvora psíquica, impossivelmente preciso, em um alvo a alcance CAT [CAT:distance]. Sempre causa pelo menos 1 corte (mesmo em falha). Role PSIQUE para efeito adicional, gastando o pulso ao disparar.<br>•  Ganhe +1D se não se moveu nesta rodada e na anterior (mira firme).<br>•  Ganhe +1D ao atirar para desarmar, incapacitar ou destruir um objeto específico ao invés de matar.<br><br>Após usar este poder, perca seu uso até descansar.",
+    gunpowder_powder_keg: "Você conjura pólvora negra bruta - de uma fina camada a um grande estoque - em até CAT [CAT:size] em volume, em um ponto que possa tocar ou em suas mãos. Comporta-se como pólvora real: pode ser derramada, empacotada, traçada como um rastilho, ou embalada em um recipiente. Inflama-se de qualquer faísca, chama, ou seus próprios tiros. Se explodida, a explosão cobre uma área CAT [CAT:area].<br><br>Ganhe ou conceda +1D quando você ou qualquer aliado agir para aproveitar este poder.",
+    gunpowder_grapeshot: "Você arremessa ou dispara um explosivo manifestado - uma granada de cabo, uma bomba de pólvora negra, um aglomerado de chumbo grosso - explodindo em uma área de até metade do CAT [HALF_CAT:area]. Role PSIQUE para seus efeitos, gastando um pulso apenas em sucesso.<br>•  Tudo na área é afetado, incluindo aliados.<br>•  Ganhe +1D contra grupos aglomerados ou posições fortificadas.<br>•  O primeiro sucesso causa 2 cortes (ou 2 de estresse).",
+    gunpowder_fog_of_war: "Você expele uma nuvem espessa e acre de fumaça de pólvora preenchendo uma área de até CAT [CAT:area]. A visão através dela é quase impossível para qualquer um exceto você - você sempre enxerga claramente através da sua própria fumaça.<br>•  Torna-se difícil mirar ou rastrear qualquer um dentro da fumaça pela visão.<br>•  Ganhe ou conceda +1D para se mover, se esconder ou reposicionar dentro dela.<br>•  Qualquer Pecado ou ser sobrenatural penetra parcialmente esta fumaça, mas enquanto agir com sentidos dependentes de visão dentro dela, suas reações causam -1 de estresse.<br>•  A fumaça sufoca os pulmões dos vivos: um humano ou exorcista que permanecer nela por uma cena inteira sofre 1 de estresse não-letal ao fim da cena.<br><br>Ela se dispersa se a cena terminar, se você a dispensar, ou se um forte vento ou efeito de vácuo a soprar. Não pode simplesmente ser atravessada a pé por um inimigo sem deixar a área.",
+    gunpowder_iron_curtain: "Você firma os pés e manifesta uma linha de fogo flutuante ao seu redor - rifles, revólveres e chumbo de canhão, carregada com cargas iguais a CAT+1 [CALC:CAT+1]. Enquanto mantiver sua posição (não sair do seu lugar), pode gastar cargas:<br>•  Gaste 1 carga: quando tomar uma ação para disparar (um tiro ou poder de tiro), a linha dispara junto com você no mesmo alvo. Se sua ação tiver pelo menos um sucesso, causa 2 cortes adicionais.<br>•  Gaste 1 carga: fogo de cobertura - quando você ou um aliado visível rolar o dado de risco, role-o duas vezes e você escolhe qual resultado manter.<br><br>A linha se dissipa quando suas cargas acabam, se você sair do seu lugar, quando a cena termina, ou ao descansar."
   },
   // Virtue translations (GFF-1)
   virtues: {
@@ -1422,6 +1444,13 @@ const QUIRKS = {
     expansion: 'gff4',
     options: [
       { id: 'mothers_love', name: "Mother's Love", image: 'img/quirks/mothers_love.png', type: 'replace', uses: 'hunt', maxUses: 2, description: "Your strain of Mother is less detectable, and you look more human. Twice a hunt, you may listen to the whispers of Mother (ask the GM what She is saying) when using a blasphemy from this power.<br><br>If you follow her advice or direction, you may use that power without spending a psyche burst, it gains +1D on any PSYCHE rolls, +1 CAT, and all sin costs from that power are reduced to 1 for its duration.<br><br>However, using the power becomes risky if it wasn't already, and the risk die becomes a '1' automatically." }
+    ]
+  },
+  gunpowder: {
+    replaces: 'gunpowder_the_arsenal',
+    expansion: 'thegreatwar',
+    options: [
+      { id: 'fanning', name: 'Fanning', image: 'img/quirks/fanning.png', type: 'replace', keepPassiveName: true, description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>FANNING</b>: You forgo careful aim for overwhelming volume of fire. When you take a shot, you may spend 1 additional psyche burst to fire again at the same or another target as part of the same action (up to CAT extra shots, one for each burst spent). You trade the precision of Deadeye for a hail of lead." }
     ]
   }
 };
@@ -2391,6 +2420,57 @@ const BLASPHEMIES = [
       { id: 'mother_knot', name: 'Knot', tags: ['Entire Hunt', 'Self'], burst: 'none', description: "Passive: When you gain any amount of stress, you can capture its negative energy without spending a burst, appearing as a raised knot in your skin. Reduce stress suffered by 2 for each knot gained. You can capture up to 3 knots. At the end of any scene in which you have one or more knots, roll 1d6. When a knot bursts, you take 2 irreducible stress.<br>•  On a 1-3, take 1d3 stress and burst a knot.<br>•  On a 4-5, take 1 stress and burst a knot.<br>•  On a 6, take no stress and burst a knot." },
       { id: 'mother_colony', name: 'Colony', tags: ['Self', 'Ally', 'Short'], burst: 'none', description: "Gain 1d3 stress, then you or an ally in range gains a fleshy shield that absorbs 2 stress from external harm. If a character already has such a shield, increase it by +2, but they also take 1d3 stress." },
       { id: 'mother_coil', name: 'Coil', tags: ['Instant', 'Short'], burst: 'required', description: "Your limb peels apart its flesh and skin, then lashes at a target in short range like a whip, dealing harm or pulling them some distance. Roll PSYCHE for its effects.<br>•  Gain +1D if you have 3 or fewer stress boxes remaining.<br>•  Gain +2 CAT if you have sin overflowed this mission." }
+    ]
+  },
+  {
+    id: 'gunpowder',
+    name: 'Gunpowder',
+    expansion: 'thegreatwar',
+    flavor: "\"With enough aim and powder, a man used to rule the world. Maybe you'll do it once more.\"<br><br>Fact: Gunpowder can only manifest firearms first conceived between February 25, 1836 and July 1, 1916. No weapon conceived before or after these dates has ever been successfully manifested.",
+    description: 'Manifest and command the firearms of a bygone age, fueled by psychic powder.',
+    passive: {
+      id: 'gunpowder_the_arsenal',
+      name: 'The Arsenal',
+      image: 'img/passives/gunpowder_the_arsenal.jpg',
+      description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>DEADEYE</b>: When you fire the manifested weapon, you may take up to half CAT [HALF_CAT:magnitude] nonlethal stress. The shot becomes supernatural, and for each stress taken this way, the shot's CAT increases by +1 (packing in extra powder and shot). This can push a shot's effects well past what the weapon should be capable of - barrels scorch and split."
+    },
+    powers: [
+      {
+        id: 'gunpowder_true_shot',
+        name: 'True Shot',
+        tags: ['Instant', 'CAT range'],
+        burst: 'required',
+        uses: 'rest',
+        description: "You take careful aim and fire a single, impossibly precise psychic-powder round at a target in CAT range [CAT:distance]. It always inflicts at least 1 slash (even on a failure). Roll PSYCHE for additional effect, spending the burst as you fire.<br>•  Gain +1D if you did not move this round and the previous one (steadied aim).<br>•  Gain +1D when shooting to disarm, disable, or destroy a specific object rather than to kill.<br><br>After using this power, lose its use until you rest."
+      },
+      {
+        id: 'gunpowder_powder_keg',
+        name: 'Powder Keg',
+        tags: ['Until Rest', 'Transmute', 'Adjacent'],
+        burst: 'required',
+        description: "You conjure raw black powder - from a fine dusting to a heavy cache - up to CAT [CAT:size] in volume, at a point you can touch or in your hands. It behaves as real gunpowder: it can be poured, packed, trailed as a fuse line, or packed into a container. It ignites from any spark, flame, or your own shots. If blown up, the explosion covers a CAT area [CAT:area].<br><br>Gain or grant +1D when you or any ally next acts to take advantage of this power."
+      },
+      {
+        id: 'gunpowder_grapeshot',
+        name: 'Grapeshot',
+        tags: ['Instant', 'Short'],
+        burst: 'required',
+        description: "You lob or fire a manifested explosive - a stick grenade, a black-powder bomb, a cluster of grapeshot - bursting in an area up to half CAT [HALF_CAT:area]. Roll PSYCHE for its effects, only spending a burst on success.<br>•  Everything in the area is affected, including allies.<br>•  Gain +1D against clustered groups or fortified positions.<br>•  The first success inflicts 2 slashes (or 2 stress)."
+      },
+      {
+        id: 'gunpowder_fog_of_war',
+        name: 'Fog of War',
+        tags: ['1 Scene', 'Charm', 'Short'],
+        burst: 'required',
+        description: "You belch out a thick, acrid cloud of powder-smoke filling an area up to CAT [CAT:area]. Vision through it is nearly impossible for anyone but you - you can always see clearly through your own smoke.<br>•  It becomes hard to target or track anyone inside the smoke by sight.<br>•  Gain or grant +1D to move, hide, or reposition within it.<br>•  Any Sin or supernatural being partially pierces this smoke, but while acting on sight-reliant senses inside it, its reactions inflict -1 stress.<br>•  The smoke chokes the lungs of the living: a human or exorcist that lingers in it for a whole scene takes 1 nonlethal stress at the end of the scene.<br><br>It disperses if the scene ends, if you dismiss it, or if a strong wind or vacuum effect blows it away. It cannot simply be walked out of by an enemy without leaving the area."
+      },
+      {
+        id: 'gunpowder_iron_curtain',
+        name: 'Iron Curtain',
+        tags: ['1 Scene', 'Summon'],
+        burst: 'required',
+        description: "You plant your feet and manifest a hovering firing line around you - rifles, revolvers, and cannon-shot, loaded with charges equal to CAT+1 [CALC:CAT+1]. While you hold your position (do not move from your spot), you may spend charges:<br>•  Spend 1 charge: when you take an action to fire (a shot or shooting power), the line fires alongside you at the same target. If your action has at least one success, it inflicts 2 additional slashes.<br>•  Spend 1 charge: lay down covering fire - when you or a visible ally rolls the risk die, roll it twice and you choose which result to keep.<br><br>The line dissipates when its charges run out, if you move from your spot, when the scene ends, or on rest."
+      }
     ]
   }
 ];
@@ -3776,7 +3856,7 @@ function renderBlasphemyStep(container) {
   container.innerHTML =
     '<div class="form-section"><h3>' + t('chooseBlasphemy') + '</h3><p class="help-text">' + t('blasphemyHelp') + '</p>' +
       '<div class="blasphemy-list" id="blasphemy-list">' +
-        BLASPHEMIES.map(function(b) {
+        BLASPHEMIES.filter(function(b) { return isExpansionActive(b.expansion); }).map(function(b) {
           return '<div class="blasphemy-card ' + (selBlas === b.id ? 'selected' : '') + '" data-id="' + b.id + '">' +
             '<h4>' + tBlas(b.id) + '</h4><p class="muted">' + tBlasDesc(b.id, b.description) + '</p>' +
             renderPassivesCard(b) + '</div>';
@@ -4922,9 +5002,14 @@ function renderQuirks(characterId) {
 
   var charQuirks = char.quirks || {};
 
-  // Build list of character's blasphemies that have quirk options
+  // Build list of character's blasphemies that have quirk options.
+  // Quirks are a GFF-4 mechanic; a quirk group may also require its own expansion.
   var blasWithQuirks = (char.blasphemies || []).filter(function(blRef) {
-    return QUIRKS[blRef.id];
+    var qd = QUIRKS[blRef.id];
+    if (!qd) return false;
+    if (!isExpansionEnabled('gff4')) return false;
+    if (qd.expansion && !isExpansionActive(qd.expansion)) return false;
+    return true;
   });
 
   var html = '<div class="page quirks-page">' +
@@ -5543,7 +5628,7 @@ function handleAdvanceOption(opt, char, characterId) {
     case 'new-blasphemy':
       actionTitle.textContent = t('adv_new_blasphemy');
       var currentBlas = (char.blasphemies || []).map(function(b) { return b.id; });
-      var availBlas = BLASPHEMIES.filter(function(b) { return currentBlas.indexOf(b.id) === -1; });
+      var availBlas = BLASPHEMIES.filter(function(b) { return currentBlas.indexOf(b.id) === -1 && isExpansionActive(b.expansion); });
       var html2 = '<p class="muted">' + t('adv_new_blasphemy_warn') + '</p>';
       availBlas.forEach(function(bl) {
         html2 += '<div class="advance-choice" data-blas="' + bl.id + '"><h4>' + tBlas(bl.id) + '</h4><p class="muted">' + tBlasDesc(bl.id, bl.description) + '</p>' + renderPassivesCard(bl) + '</div>';
