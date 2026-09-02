@@ -3584,10 +3584,10 @@ function renderHome() {
       '</header>' +
       '<div class="actions-bar">' +
         '<button class="btn btn-primary" id="btn-create">' + t('nav_newExorcist') + '</button>' +
-        '<button class="btn btn-secondary" id="btn-compendium">' + (currentLang === 'pt' ? 'Compêndio' : 'Compendium') + '</button>' +
-        '<button class="btn btn-secondary" id="btn-admin">' + (currentLang === 'pt' ? 'Admin' : 'Admin') + '</button>' +
         '<button class="btn btn-secondary" id="btn-import">' + t('nav_import') + '</button>' +
         (characters.length > 0 ? '<button class="btn btn-secondary" id="btn-export-all">' + t('nav_exportAll') + '</button>' : '') +
+        '<button class="btn btn-secondary" id="btn-compendium">' + (currentLang === 'pt' ? 'Compêndio' : 'Compendium') + '</button>' +
+        '<button class="btn btn-secondary" id="btn-admin">' + (currentLang === 'pt' ? 'Admin' : 'Admin') + '</button>' +
       '</div>' +
       (characters.length === 0 ?
         '<div class="empty-state"><p>' + t('home_empty') + '</p><p class="muted">' + t('home_emptySub') + '</p></div>' :
