@@ -2823,3 +2823,162 @@ input[type="number"] {
   border-radius: 1px;
   margin: 0 1px;
 }
+
+/* ─── Compendium: Reference tab ─────────────────────────────────── */
+
+.reference-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-lg);
+}
+
+.reference-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.reference-subhead {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin: var(--space-md) 0 var(--space-xs);
+}
+
+.reference-list {
+  margin: 0;
+  padding-left: 1.3em;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.reference-list strong {
+  color: var(--text-accent);
+}
+
+/* ─── Hunt Tracker (GM) ─────────────────────────────────────────── */
+
+.hunt-section {
+  margin-top: var(--space-xl);
+}
+
+.hunt-section-title {
+  color: var(--text-accent);
+  margin-bottom: var(--space-sm);
+}
+
+.hunt-party {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+.party-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.party-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.party-card-header h4 {
+  color: var(--text-accent);
+  margin: 0;
+}
+
+.party-line {
+  margin: var(--space-xs) 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.party-line .label { color: var(--text-muted); }
+
+.party-stats {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+
+.btn-view-sheet {
+  margin-top: var(--space-sm);
+}
+
+.hunt-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.hunt-pick-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: var(--radius);
+  padding: var(--space-xs) var(--space-md);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.hunt-pick-btn.active {
+  border-color: var(--accent);
+  color: var(--text-accent);
+  background: var(--bg-hover);
+}
+
+/* ─── Session kit: quick-deploy & KP tags ───────────────────────── */
+
+.kit-quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.kit-quick-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-right: var(--space-xs);
+}
+
+.kit-quick-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: 999px;
+  padding: var(--space-xs) var(--space-md);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.kit-quick-btn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.kit-kp-tag {
+  color: var(--text-accent);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.kit-kp-input {
+  width: 3.5em;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: var(--space-sm);
+  text-align: center;
+}

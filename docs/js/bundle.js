@@ -2776,6 +2776,14 @@ function getPsycheValue(category) {
   return Math.ceil(category / 2);
 }
 
+// Standard-issue base kit (pg 33) — quick-deploy items with their KP cost
+var BASE_KIT = [
+  { name: 'Uniform', namePt: 'Uniforme', kp: 0, description: 'Standard issue uniform, collar, shoes, button pin.', descriptionPt: 'Uniforme padrão, colarinho, sapatos, broche.' },
+  { name: 'Notebook & Pen', namePt: 'Caderno e Caneta', kp: 1, description: 'Notebook and pen.', descriptionPt: 'Caderno e caneta.' },
+  { name: 'Matchbook', namePt: 'Fósforos', kp: 1, description: 'Matchbook (20 matches), clean handkerchief.', descriptionPt: 'Caixa de fósforos (20), lenço limpo.' },
+  { name: 'Service Weapons', namePt: 'Armas de Serviço', kp: 2, description: 'CAT 0 firearm, ammunition, and melee weapon.', descriptionPt: 'Arma de fogo CAT 0, munição e arma branca.' }
+];
+
 /** Get effective max kit points (base + bonuses from passives like Pocket) */
 function getEffectiveMaxKP(char) {
   var base = char.maxKitPoints || 5;
@@ -2895,6 +2903,26 @@ function importCharacter() {
 // ════════════════════════════════════════════════════════════════════
 
 var ENEMY_STORAGE_KEY = 'cain_companion_enemies';
+var HUNT_STORAGE_KEY = 'cain_companion_hunt';
+
+/** Get the current hunt tracker state (tension, pressure, party) */
+function getHuntState() {
+  try {
+    var data = localStorage.getItem(HUNT_STORAGE_KEY);
+    var h = data ? JSON.parse(data) : null;
+    if (!h) h = {};
+  } catch (e) { h = {}; }
+  if (h.tension == null) h.tension = 0;
+  if (h.tensionMax == null) h.tensionMax = 6;
+  if (h.pressure == null) h.pressure = 0;
+  if (h.pressureMax == null) h.pressureMax = 6;
+  if (!Array.isArray(h.party)) h.party = [];
+  return h;
+}
+
+function saveHuntState(h) {
+  localStorage.setItem(HUNT_STORAGE_KEY, JSON.stringify(h));
+}
 
 /** Factory for a blank simple opponent (7-step model, pg. 146) */
 function createBlankEnemy() {
@@ -4079,6 +4107,7 @@ function renderView(characterId) {
           '<div class="state-box"><label>' + t('pathos') + '</label><span class="state-value large">' + char.pathos + ' / 3</span></div>' +
           '<div class="state-box"><label>' + t('sin') + '</label><span class="state-value large ' + (char.sin >= char.sinOverflowCap ? 'danger' : '') + '">' + char.sin + ' / ' + char.sinOverflowCap + '</span></div>' +
           '<div class="state-box"><label>' + t('xp') + '</label><span class="state-value large">' + char.experience + ' / 4</span></div>' +
+          '<div class="state-box"><label>' + t('session_advances') + '</label><span class="state-value large">' + (char.advances || 0) + '</span></div>' +
         '</div></section>' +
         // Agenda
         '<section class="sheet-section"><h3>' + t('agenda') + ': ' + (agenda ? tAgenda(agenda.id) : '\u2014') + '</h3>' +
@@ -4122,7 +4151,7 @@ function renderView(characterId) {
           '<p><strong>' + t('kitPoints') + ':</strong> ' + (char.session ? (getEffectiveMaxKP(char) - (char.session.kitPointsUsed || 0)) + ' / ' + getEffectiveMaxKP(char) : char.kitPoints + ' / ' + getEffectiveMaxKP(char)) + '</p>' +
           '<p><strong>' + t('firearm') + ':</strong> ' + char.weapons.firearm.name + ' (CAT ' + char.weapons.firearm.category + ')</p>' +
           '<p><strong>' + t('melee') + ':</strong> ' + char.weapons.melee.name + ' (CAT ' + char.weapons.melee.category + ')</p>' +
-          (char.session && char.session.itemsDeployed && char.session.itemsDeployed.length > 0 ? '<div class="items-deployed-view"><h4>' + t('session_items') + '</h4>' + char.session.itemsDeployed.map(function(item) { return '<div class="kit-item-deployed"><strong>' + escHtml(item.name) + '</strong>' + (item.description ? ' — <span class="muted">' + escHtml(item.description) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '') +
+          (char.session && char.session.itemsDeployed && char.session.itemsDeployed.length > 0 ? '<div class="items-deployed-view"><h4>' + t('session_items') + '</h4>' + char.session.itemsDeployed.map(function(item) { return '<div class="kit-item-deployed"><strong>' + escHtml(item.name) + '</strong>' + (item.kp ? ' <span class="kit-kp-tag">' + item.kp + ' KP</span>' : '') + (item.description ? ' — <span class="muted">' + escHtml(item.description) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '') +
         '</section>' +
         // Notes
         '<section class="sheet-section"><h3>' + t('notes') + '</h3><p class="notes-display">' + (char.notes ? escHtml(char.notes) : '<span class="muted">' + t('noNotes') + '</span>') + '</p></section>' +
@@ -4570,10 +4599,16 @@ function renderSession(characterId) {
             '<button class="btn btn-tiny" id="kp-inc">+</button>' +
           '</div>' +
         '</div>' +
+        '<div class="kit-quick-row">' +
+          '<span class="kit-quick-label">' + (currentLang === 'pt' ? 'Kit rápido:' : 'Quick kit:') + '</span>' +
+          BASE_KIT.map(function(k, i) {
+            return '<button class="kit-quick-btn" data-kit="' + i + '">' + (currentLang === 'pt' ? k.namePt : k.name) + ' <span class="kit-kp-tag">' + k.kp + ' KP</span></button>';
+          }).join('') +
+        '</div>' +
         '<div id="session-items">' +
           s.itemsDeployed.map(function(item, i) {
             return '<div class="session-item-row" data-idx="' + i + '">' +
-              '<div class="session-item-info"><strong>' + escHtml(item.name) + '</strong>' + (item.description ? '<p class="muted">' + escHtml(item.description) + '</p>' : '') + '</div>' +
+              '<div class="session-item-info"><strong>' + escHtml(item.name) + '</strong>' + (item.kp ? ' <span class="kit-kp-tag">' + item.kp + ' KP</span>' : '') + (item.description ? '<p class="muted">' + escHtml(item.description) + '</p>' : '') + '</div>' +
               '<button class="btn btn-tiny btn-danger item-remove">\u00D7</button>' +
             '</div>';
           }).join('') +
@@ -4581,6 +4616,7 @@ function renderSession(characterId) {
         '<div class="session-add-row">' +
           '<input type="text" id="new-item-name" placeholder="' + t('session_item_placeholder') + '" style="flex:1">' +
           '<input type="text" id="new-item-desc" placeholder="' + t('session_desc_placeholder') + '" style="flex:2">' +
+          '<input type="number" id="new-item-kp" min="0" max="9" value="0" title="KP" class="kit-kp-input">' +
           '<button class="btn btn-small" id="btn-add-item">+</button>' +
         '</div>' +
       '</section>' +
@@ -4890,16 +4926,46 @@ function renderSession(characterId) {
     });
   });
 
-  // Items
+  // Items — custom add (with optional KP cost that auto-deducts)
   document.getElementById('btn-add-item').addEventListener('click', function() {
     var name = document.getElementById('new-item-name').value.trim();
     var desc = document.getElementById('new-item-desc').value.trim();
-    if (name) { s.itemsDeployed.push({ name: name, description: desc }); saveAndRerender(); }
+    var kp = parseInt(document.getElementById('new-item-kp').value, 10) || 0;
+    if (!name) return;
+    if (kp > 0 && (s.kitPointsUsed + kp) > getEffectiveMaxKP(char)) {
+      alert(currentLang === 'pt' ? 'Pontos de Kit insuficientes.' : 'Not enough Kit Points.');
+      return;
+    }
+    s.itemsDeployed.push({ name: name, description: desc, kp: kp });
+    if (kp > 0) s.kitPointsUsed += kp;
+    saveAndRerender();
   });
   app.querySelectorAll('.item-remove').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var idx = parseInt(btn.closest('.session-item-row').dataset.idx);
-      s.itemsDeployed.splice(idx, 1); saveAndRerender();
+      var removed = s.itemsDeployed[idx];
+      if (removed && removed.kp) s.kitPointsUsed = Math.max(0, s.kitPointsUsed - removed.kp);
+      s.itemsDeployed.splice(idx, 1);
+      saveAndRerender();
+    });
+  });
+
+  // Quick kit — deploy a base-kit item, auto-spending its KP
+  app.querySelectorAll('.kit-quick-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var k = BASE_KIT[parseInt(btn.dataset.kit, 10)];
+      if (!k) return;
+      if (k.kp > 0 && (s.kitPointsUsed + k.kp) > getEffectiveMaxKP(char)) {
+        alert(currentLang === 'pt' ? 'Pontos de Kit insuficientes.' : 'Not enough Kit Points.');
+        return;
+      }
+      s.itemsDeployed.push({
+        name: currentLang === 'pt' ? k.namePt : k.name,
+        description: currentLang === 'pt' ? k.descriptionPt : k.description,
+        kp: k.kp
+      });
+      if (k.kp > 0) s.kitPointsUsed += k.kp;
+      saveAndRerender();
     });
   });
 
@@ -5880,6 +5946,8 @@ function renderCompendium() {
   if (isExpansionEnabled('gff1')) {
     tabs.push({ id: 'virtues', label: currentLang === 'pt' ? 'Virtudes' : 'Virtues' });
   }
+  // Reference tab (scrip, kit, weapons) — always available
+  tabs.push({ id: 'reference', label: currentLang === 'pt' ? 'Referência' : 'Reference' });
 
   // Restore last selected tab (default to first)
   var savedTab = null;
@@ -6005,6 +6073,57 @@ function renderCompendiumTab(tabId) {
     content.querySelectorAll('.virtue-card-clickable').forEach(function(card) {
       card.addEventListener('click', function() { renderVirtueDetail(card.dataset.virtueId); });
     });
+  }
+
+  if (tabId === 'reference') {
+    var pt = currentLang === 'pt';
+    content.innerHTML =
+      '<div class="reference-content">' +
+
+      // Scrip economy
+      '<div class="compendium-card reference-card">' +
+        '<h3 class="compendium-card-name">' + (pt ? 'Scrip (Economia)' : 'Scrip (Economy)') + '</h3>' +
+        '<p>' + (pt ? 'Scrip é a moeda paga por missões. Deve ser gasto entre missões, em expansões de kit e melhorias de armas.' : 'Scrip is the currency paid out for missions. It must be spent between missions, on kit expansions and weapon upgrades.') + '</p>' +
+        '<h4 class="reference-subhead">' + (pt ? 'Pagamento por missão' : 'Payout per mission') + '</h4>' +
+        '<ul class="reference-list">' +
+          '<li><strong>+5</strong> — ' + (pt ? 'Execução bem-sucedida do Pecado' : 'Successful Sin execution') + '</li>' +
+          '<li><strong>+3</strong> — ' + (pt ? 'Pecado poupado (ou nenhum pecado detectado)' : 'Sin spared (or no sin detected)') + '</li>' +
+          '<li><strong>-1</strong> — ' + (pt ? 'Falha / encobrimento necessário' : 'Failure / necessary coverup') + '</li>' +
+          '<li><strong>+3</strong> — ' + (pt ? 'Ao gastar um Avanço (advance)' : 'When cashing an Advance') + '</li>' +
+          '<li><strong>+1</strong> — ' + (pt ? 'por exorcista morto recuperado / por XP de fim de sessão (ver ficha)' : 'per dead exorcist recovered / per end-of-session xp (see sheet)') + '</li>' +
+        '</ul>' +
+      '</div>' +
+
+      // Base kit
+      '<div class="compendium-card reference-card">' +
+        '<h3 class="compendium-card-name">' + (pt ? 'Kit Base' : 'Base Kit') + '</h3>' +
+        '<p>' + (pt ? 'Você começa com 5 Pontos de Kit (KP), que representam sua capacidade e inventário. Reduz -1 por ferimento. Puxe itens a qualquer momento, contanto que tenha pontos. O kit reseta entre missões.' : 'You start with 5 Kit Points (KP), representing your capacity and inventory. -1 per injury. Pull out items any time, as long as you have points. Kit resets between missions.') + '</p>' +
+        '<ul class="reference-list">' +
+          '<li><strong>0 KP</strong> — ' + (pt ? 'Uniforme padrão, colarinho, sapatos, broche' : 'Standard issue uniform, collar, shoes, button pin') + '</li>' +
+          '<li><strong>1 KP</strong> — ' + (pt ? 'Caderno e caneta' : 'Notebook and pen') + '</li>' +
+          '<li><strong>1 KP</strong> — ' + (pt ? 'Caixa de fósforos (20) e lenço limpo' : 'Matchbook (20 matches) and clean handkerchief') + '</li>' +
+          '<li><strong>2 KP</strong> — ' + (pt ? 'Armas de serviço: arma de fogo CAT 0, munição e arma branca' : 'Service weapons: a CAT 0 firearm, ammunition, and melee weapon') + '</li>' +
+        '</ul>' +
+        '<p class="muted">' + (pt ? 'Itens encontrados numa missão podem ser usados (marque KP normalmente), mas não podem ser mantidos entre missões.' : 'Items found on a mission can be used (mark KP as usual), but cannot be kept between missions.') + '</p>' +
+      '</div>' +
+
+      // Weapons & upgrades
+      '<div class="compendium-card reference-card">' +
+        '<h3 class="compendium-card-name">' + (pt ? 'Armas e Melhorias' : 'Weapons & Upgrades') + '</h3>' +
+        '<p>' + (pt ? 'As armas de serviço (arma de fogo + arma branca) começam em CAT 0. Você pode melhorá-las gastando scrip entre missões.' : 'Service weapons (firearm + melee) start at CAT 0. You can upgrade them by spending scrip between missions.') + '</p>' +
+        '<ul class="reference-list">' +
+          '<li>' + (pt ? 'Melhorar +1 CAT: <strong>3 scrip</strong>' : 'Upgrade +1 CAT: <strong>3 scrip</strong>') + '</li>' +
+          '<li>' + (pt ? 'CAT máximo de uma arma: <strong>CAT 3</strong>' : 'Maximum weapon CAT: <strong>CAT 3</strong>') + '</li>' +
+        '</ul>' +
+      '</div>' +
+
+      // Kit expansion (placeholder until user provides the list)
+      '<div class="compendium-card reference-card">' +
+        '<h3 class="compendium-card-name">' + (pt ? 'Expansão de Kit' : 'Kit Expansion') + '</h3>' +
+        '<p class="muted">' + (pt ? 'Itens compráveis com scrip (catálogo). Em breve.' : 'Scrip-purchasable items (catalog). Coming soon.') + '</p>' +
+      '</div>' +
+
+      '</div>';
   }
 }
 
@@ -6382,6 +6501,7 @@ function renderAdmin() {
         '<button class="btn btn-secondary" id="btn-import-enemy">' + (pt ? 'Importar' : 'Import') + '</button>' +
         (enemies.length > 0 ? '<button class="btn btn-secondary" id="btn-export-enemies">' + (pt ? 'Exportar Tudo' : 'Export All') + '</button>' : '') +
         '<button class="btn btn-secondary" id="btn-bestiary">' + (pt ? 'Bestiário' : 'Bestiary') + '</button>' +
+        '<button class="btn btn-secondary" id="btn-hunt">' + (pt ? 'Caçada' : 'Hunt Tracker') + '</button>' +
       '</div>' +
       (enemies.length === 0 ?
         '<div class="empty-state"><p>' + (pt ? 'Nenhum inimigo criado ainda.' : 'No enemies created yet.') + '</p><p class="muted">' + (pt ? 'Crie oponentes para usar em suas sessões.' : 'Create opponents to use in your sessions.') + '</p></div>' :
@@ -6398,6 +6518,7 @@ function renderAdmin() {
   var expBtn = document.getElementById('btn-export-enemies');
   if (expBtn) expBtn.addEventListener('click', exportAllEnemies);
   document.getElementById('btn-bestiary').addEventListener('click', function() { navigate('bestiary'); });
+  document.getElementById('btn-hunt').addEventListener('click', function() { navigate('hunt'); });
 
   app.querySelectorAll('.enemy-card').forEach(function(card) {
     var id = card.dataset.id;
@@ -6898,6 +7019,131 @@ function renderSinForm(sinId, startingType) {
   });
 }
 
+// ════════════════════════════════════════════════════════════════════
+// PAGE: HUNT TRACKER (GM) — hunt-wide tension/pressure + party roster
+// ════════════════════════════════════════════════════════════════════
+
+function renderHunt() {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var h = getHuntState();
+  var allChars = getAllCharacters();
+
+  // Party roster cards (selected characters), quick reference
+  var partyChars = h.party.map(function(id) { return getCharacter(id); }).filter(function(c) { return c; });
+
+  app.innerHTML =
+    '<div class="page hunt-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (pt ? 'Caçada' : 'Hunt Tracker') + '</h1>' +
+      '</header>' +
+
+      // Hunt-wide talismans
+      '<div class="combat-talismans">' +
+        '<div class="combat-talisman-group">' +
+          '<div class="combat-talisman-label">' + (pt ? 'Tensão' : 'Tension') + ' <span class="combat-count">' + h.tension + '/' + h.tensionMax + '</span></div>' +
+          renderClickableTalisman(h.tension, h.tensionMax, 'tension') +
+          '<p class="combat-hint muted">' + (pt ? 'Enche durante a caçada. Ao encher, aumenta a Pressão.' : 'Fills during the hunt. When full, pressure increases.') + '</p>' +
+        '</div>' +
+        '<div class="combat-talisman-group">' +
+          '<div class="combat-talisman-label">' + (pt ? 'Pressão' : 'Pressure') + ' <span class="combat-count">' + h.pressure + '/' + h.pressureMax + '</span></div>' +
+          renderClickableTalisman(h.pressure, h.pressureMax, 'pressure') +
+          '<p class="combat-hint muted">' + (pt ? 'No 6, a situação sai de controle (efeito de cada Sin).' : 'At 6, the situation goes out of control (per each Sin).') + '</p>' +
+        '</div>' +
+        '<button class="btn btn-sm btn-secondary" id="btn-reset-hunt">' + (pt ? 'Zerar caçada' : 'Reset hunt') + '</button>' +
+      '</div>' +
+
+      // Party roster
+      '<section class="hunt-section">' +
+        '<h2 class="hunt-section-title">' + (pt ? 'Grupo' : 'Party') + '</h2>' +
+        (partyChars.length === 0 ?
+          '<p class="muted">' + (pt ? 'Nenhum exorcista adicionado. Selecione abaixo.' : 'No exorcists added. Select below.') + '</p>' :
+          '<div class="hunt-party">' + partyChars.map(renderPartyCard).join('') + '</div>'
+        ) +
+      '</section>' +
+
+      // Add/remove party members
+      '<section class="hunt-section">' +
+        '<h3 class="hunt-section-title">' + (pt ? 'Adicionar exorcistas salvos' : 'Add saved exorcists') + '</h3>' +
+        (allChars.length === 0 ?
+          '<p class="muted">' + (pt ? 'Nenhum personagem salvo neste navegador.' : 'No characters saved in this browser.') + '</p>' :
+          '<div class="hunt-picker">' + allChars.map(function(c) {
+            var inParty = h.party.indexOf(c.id) !== -1;
+            return '<button class="hunt-pick-btn' + (inParty ? ' active' : '') + '" data-id="' + c.id + '">' +
+              (inParty ? '\u2713 ' : '+ ') + escHtml(c.name || (pt ? 'Sem nome' : 'Unnamed')) + ' <span class="muted">CAT ' + (c.category || 1) + '</span></button>';
+          }).join('') + '</div>'
+        ) +
+      '</section>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
+
+  // Talisman clicks (tension / pressure)
+  app.querySelectorAll('.combat-slash').forEach(function(slash) {
+    slash.addEventListener('click', function() {
+      var kind = slash.dataset.kind;
+      var i = parseInt(slash.dataset.i, 10);
+      var cur = kind === 'tension' ? h.tension : h.pressure;
+      var next = (i + 1 === cur) ? i : (i + 1);
+      if (kind === 'tension') h.tension = next; else h.pressure = next;
+      saveHuntState(h);
+      renderHunt();
+    });
+  });
+
+  document.getElementById('btn-reset-hunt').addEventListener('click', function() {
+    if (confirm(pt ? 'Zerar tensão e pressão desta caçada?' : 'Reset this hunt\'s tension and pressure?')) {
+      h.tension = 0; h.pressure = 0;
+      saveHuntState(h);
+      renderHunt();
+    }
+  });
+
+  // Party add/remove toggles
+  app.querySelectorAll('.hunt-pick-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = btn.dataset.id;
+      var idx = h.party.indexOf(id);
+      if (idx === -1) h.party.push(id); else h.party.splice(idx, 1);
+      saveHuntState(h);
+      renderHunt();
+    });
+  });
+
+  // Open a party member's sheet (read-only view)
+  app.querySelectorAll('.btn-view-sheet').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      navigate('view/' + btn.dataset.id);
+    });
+  });
+}
+
+/** Compact quick-reference card for a party member on the hunt tracker */
+function renderPartyCard(c) {
+  var pt = currentLang === 'pt';
+  var agendaName = c.agenda && c.agenda.id ? tAgenda(c.agenda.id) : '\u2014';
+  var blasNames = c.blasphemies && c.blasphemies.length ? c.blasphemies.map(function(b) { return tBlas(b.id); }).join(', ') : '\u2014';
+  var maxStress = (typeof getEffectiveMaxStress === 'function') ? getEffectiveMaxStress(c) : (c.maxStress || 6);
+  return '<div class="party-card" data-id="' + c.id + '">' +
+    '<div class="party-card-header">' +
+      '<h4>' + escHtml(c.name || (pt ? 'Sem nome' : 'Unnamed')) + '</h4>' +
+      '<span class="enemy-cat">CAT ' + (c.category || 1) + '</span>' +
+    '</div>' +
+    '<p class="party-line"><span class="label">' + (pt ? 'Agenda' : 'Agenda') + ':</span> ' + agendaName + '</p>' +
+    '<p class="party-line"><span class="label">' + (pt ? 'Blasfêmia' : 'Blasphemy') + ':</span> ' + blasNames + '</p>' +
+    '<p class="party-line party-stats">' +
+      '<span>' + (pt ? 'Estr.' : 'Stress') + ' ' + (c.stress || 0) + '/' + maxStress + '</span> \u2022 ' +
+      '<span>' + (pt ? 'Fer.' : 'Inj.') + ' ' + (c.injuries || 0) + '</span> \u2022 ' +
+      '<span>PB ' + (c.psycheBursts != null ? c.psycheBursts : (c.maxPsycheBursts || 3)) + '/' + (c.maxPsycheBursts || 3) + '</span> \u2022 ' +
+      '<span>' + (pt ? 'Pecado' : 'Sin') + ' ' + (c.sin || 0) + '</span>' +
+    '</p>' +
+    '<button class="btn btn-sm btn-view-sheet" data-id="' + c.id + '">' + (pt ? 'Abrir ficha' : 'Open sheet') + '</button>' +
+  '</div>';
+}
+
 route('home', renderHome);
 route('compendium', renderCompendium);
 route('admin', renderAdmin);
@@ -6909,6 +7155,7 @@ route('sin-edit', function(id) { renderSinForm(id); });
 route('enemy-combat', function(id) { renderEnemyCombat(id); });
 route('official-view', function(id) { renderOfficialView(id); });
 route('bestiary', renderBestiary);
+route('hunt', renderHunt);
 route('create', renderCreate);
 route('view', renderView);
 route('edit', renderEdit);
