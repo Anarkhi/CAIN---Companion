@@ -2761,3 +2761,13 @@ input[type="number"] {
   border-radius: var(--radius);
   margin-top: var(--space-sm);
 }
+
+/* Redacted / censored text bar (CAIN case-file style) */
+.redacted {
+  display: inline-block;
+  height: 1em;
+  vertical-align: text-bottom;
+  background: var(--text-secondary);
+  border-radius: 1px;
+  margin: 0 1px;
+}
