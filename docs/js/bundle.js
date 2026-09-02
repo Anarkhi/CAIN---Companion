@@ -3020,6 +3020,7 @@ var SIN_TEMPLATES = {
 var OFFICIAL_ENEMIES = [
   {
     officialId: 'security', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Security', type: 'human', category: 0,
+    image: 'img/enemies/security.png',
     talismanSize: 'short', talismanSegments: 2, expansion: 'base',
     description: 'Execution talisman: 2 (solo), 4 (group), 6 (large group). Graceless humans, blissfully unaware of the world of psychic phenomena, dispatched to deal with disturbances or guard facilities.',
     facts: 'General human capabilities.\nUsually alert and can raise some kind of alarm.\nMost mundane humans are incapacitated by any amount of stress and usually instantly killed by 4+ stress; go catatonic if they directly witness a sin. (These are made of tougher stuff.)',
@@ -3030,6 +3031,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'mercenaries', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Mercenaries', type: 'human', category: 0,
+    image: 'img/enemies/mercenaries.png',
     talismanSize: 'medium', talismanSegments: 2, expansion: 'base',
     description: 'Execution talisman: 2 (solo), 5 (squad), 8 (platoon). Graceless human mercenaries, highly skilled, sometimes hired by sin hosts or world governments for defense or wetwork.',
     facts: 'Well armed and compensated.\nArmored well against small arms and has thermal and night vision.',
@@ -3040,6 +3042,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'illuminati', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Illuminati', type: 'human', category: 0,
+    image: 'img/enemies/illuminati.png',
     talismanSize: 'short', talismanSegments: 1, expansion: 'base',
     description: 'Execution talisman: 1 (solo), 3 (group), 5 (large group). Brainwashed or fanatical humans formed around the manipulation and worship of sins, often puppeted by shadowy organizations or a sin themselves.',
     facts: 'Often hide their faces under masks.',
@@ -3050,6 +3053,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'binder', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Binder', type: 'exorcist', category: 3,
+    image: 'img/enemies/binder.png',
     talismanSize: 'medium', talismanSegments: 4, expansion: 'base',
     description: 'Exorcist. CAT 0-6 depending on strength. Execution talisman: 1+CAT (rank and file), 4+CAT (upper rank), 7+CAT (elites). A rogue exorcist, self-taught or organized, manifesting wilder and sometimes more powerful blasphemies than CAIN training allows. CAIN demands they be subdued and submit on pain of execution.',
     facts: 'Uses blasphemies that mirror the exorcists\', but stranger and wilder.\nMay work in formation with other binders or control a mass produced sin.',
@@ -3060,6 +3064,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'mass_produced_sin', kind: 'opponent', bestiaryGroup: 'sin', name: 'Mass Produced Sin', type: 'sin', category: 2,
+    image: 'img/enemies/mass_produced_sin.png',
     talismanSize: 'medium', talismanSegments: 3, expansion: 'base',
     description: 'Sin. CAT 0-4 depending on strength. Execution talisman: 3 (solo), 5 (group), 7 (large group). A weak sin produced through unspeakable methods by shadowy PMCs or secret government projects, sometimes from human stock.',
     facts: 'Barely intelligent, but armed with brute strength.\nHas a control unit implanted in it; destroying it usually makes the sin berserk.\nOptional typing: Type A (Shock troop - close combat against it is hard; smashes through buildings). Type B (Infiltration - can go invisible as a complication, sight-reliant actions hard). Type C (Control - can control mundane humans present to body-block -1 stress or attack +1 stress while active).',
@@ -3070,6 +3075,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'imago', kind: 'opponent', bestiaryGroup: 'sin', name: 'Imago', type: 'sin', category: 3,
+    image: 'img/enemies/imago.png',
     talismanSize: 'long', talismanSegments: 8, expansion: 'base',
     description: 'Sin. CAT 1-5 based on the exorcist. Execution talisman: 6+CAT. A nascent true sin, created when an exorcist suffers sin overflow and gives up. More intelligent, spiteful, and vengeful based on their past; hunted with extreme prejudice by CAIN.',
     facts: 'Acts based on the worst impulses of the exorcist it was created from.\nNearly always has a strong instinct to flee and become stronger, maturing into a true sin and creating a palace (triggering a new hunt). Usually fights to run away.\nBasic form (chosen by the transformed exorcist) gives cues: Ogre/Idol/Hound/Centipede/Toad/Lord type.',
@@ -3080,20 +3086,57 @@ var OFFICIAL_ENEMIES = [
   },
   // Full Sins built from SIN_TEMPLATES. 'sinTemplate' means resolve via createSinFromType.
   { officialId: 'ogre', bestiaryGroup: 'sin', name: 'Ogre', sinTemplate: 'ogre', category: 2, expansion: 'base',
-    description: 'A common sin type born from a sense of inadequacy and despair. Emotion: Despair.' },
+    image: 'img/enemies/ogre.png', examplesImage: 'img/enemies/ogre_examples.png',
+    description: 'A common sin type born from a sense of inadequacy and despair. Emotion: Despair.',
+    examples: [
+      { name: 'The Minotaur', story: 'Possessed subject O76, post mortem, Form III. O76 worked at a major financial firm and had been suffering from workplace hazing culture and harassment for five years and seven months. Upon manifestation the company building was converted into a maze trapping 153 humans inside; hunters were able to execute and exfiltrate with only a 30% casualty rate.' },
+      { name: 'Bucephalus', story: 'Subject O33, Form II, fused with a CAT 4 ogre after release from her job for numerous workplace tardiness infractions due to an extreme morning commute. Continued to roam highways; family called in a subject of concern and exorcists were sent. A section of highway 3 miles in diameter became a miasma zone and was put under quarantine; exorcists located the palace inside a parked car and executed around 0200, 30 hours after infiltration. 155 civilian casualties, no exorcists KIA, mission deemed largely successful.' },
+      { name: 'Blue Ogre', story: 'Subject O167, Form I, semi-rural region. Exorcists called after the murders of three high schoolers with a supernatural cause suspected. The subject had failed to enter university, engage in employment, or attract any romantic relationships and had concealed these facts from his family out of shame for multiple years. Manifestation eliminated but no execution recorded, subject MIA. Exorcists were disciplined.' }
+    ] },
   { officialId: 'idol', bestiaryGroup: 'sin', name: 'Idol', sinTemplate: 'idol', category: 2, expansion: 'base',
-    description: 'A sin born from unfulfilled desire and the craving to be loved. Gathers a cult. Emotion: Desire.' },
+    image: 'img/enemies/idol.png', examplesImage: 'img/enemies/idol_examples.png',
+    description: 'A sin born from unfulfilled desire and the craving to be loved. Gathers a cult. Emotion: Desire.',
+    examples: [
+      { name: 'Bloody Prince', story: 'Form I, manifested to subject I887, a formerly popular idol group member. Sidelined by her talent agency, with later-substantiated allegations of abuse and stalking by management. Online speculation as to her disappearance prompted investigation by SEER into a cabaret club. Further records erased.' },
+      { name: 'Our Friend', story: 'Form II, fused to a failed middle-aged businessman. The subject was recently divorced and estranged from his adult children. He started the populous cult "Church of Family", promising close family connections and revival through community events. It flourished for many years as a large and prosperous organization until detected by SEER after multiple kidnapping cases. Time to execution 3 hrs 35 minutes, 52 casualties. Deprogramming extensive.' },
+      { name: 'The Laughing Man', story: 'Form III manifestation, controlled by a binder (deceased, executed in captivity). A popular online cult following would vote on targets for "prank" video production posted on the dark web, often choosing individuals of prestige and power, including celebrities. Located by SEER after a kidnapping and the death of a well-known actor. Palace located attached to the laptop of the subject and executed after 9 hours.' }
+    ] },
   { officialId: 'hound', bestiaryGroup: 'sin', name: 'Hound', sinTemplate: 'hound', category: 2, expansion: 'base',
-    description: 'A vengeful sin that hunts down the targets of its grudge. Emotion: Vengeance.' },
+    image: 'img/enemies/hound.png', examplesImage: 'img/enemies/hound_examples.png',
+    description: 'A vengeful sin that hunts down the targets of its grudge. Emotion: Vengeance.',
+    examples: [
+      { name: 'Dullahan', story: 'Form II, possessing the decapitated corpse of subject H09, a whistleblower for a major arms manufacturing company. First, second, and third teams sent KIA. Advanced to CAT 5, deemed high priority; Virtues were defrosted and dispatched via orbital rail. Time to execution 22 minutes, 2279 casualties. The city required 3 months of reconstruction and reprogramming.' },
+      { name: 'Scather', story: 'Form I, CAT 3, manifested after subject H198 reached catastrophic levels of medical debt due to a chronic illness. The subject traveled to a conference center specifically to release the sin in order to exact revenge; the center was locked down for 48 hours due to the incident. Executed with 25 casualties, one exorcist KIA.' },
+      { name: 'Manhunter', story: 'Form I, CAT 1, manifested in adolescent subject H19 (later recruited) after suffering repeated schoolyard harassment. Repeated reports of a "haunted" closed factory building after dark drew interest from local teenagers and triggered standard SEER protocols. Executed after a lengthy hunt; CASTLE team 23 KIA but no exorcist casualties.' }
+    ] },
   { officialId: 'centipede', bestiaryGroup: 'sin', name: 'Centipede', sinTemplate: 'centipede', category: 2, expansion: 'base',
-    description: 'A hateful sin that spreads a mutagenic venom, building a horde. Emotion: Hatred.' },
+    image: 'img/enemies/centipede.png', examplesImage: 'img/enemies/centipede_examples.png',
+    description: 'A hateful sin that spreads a mutagenic venom, building a horde. Emotion: Hatred.',
+    examples: [
+      { name: 'C284', story: 'Form I, manifested in subject C284 (awaiting indoctrination) after losing his housing and employment for the third time. Tunnels were quarantined after disappearances and disturbing reports of "monsters" by locals. Exorcists dispatched to investigate located the palace in a sewer and executed after 1 day 13 hours with acceptable civilian casualties. Traumatic reconditioning necessary for all team members.' },
+      { name: 'Calamity IV', story: 'Form II. Notable in CAIN archives for a major incident. Manifested and fused with subject C623 (partly deceased and in TEMERITY custody). The subject lost a court battle over her patent rights for a potential broad-spectrum cancer-fighting drug after announcing her intention to make it free. 10 exorcist teams including Virtues dispatched, ~11,000 casualties. Time to execution 2 days 6 hours 35 minutes. Required previously unprecedented deployment of broad-spectrum SERAPH memory modification.' },
+      { name: 'C155', story: 'Form I, manifested in subject C155 after failures, building debts, and rival gang activity in his narcotic distribution business. Warehouses in a city district were quarantined, trapping approximately 120 humans including bystanders, armed warehouse guards, police officers, and gang members for 30 hours. Two exorcists KIA. Executed.' }
+    ] },
   { officialId: 'toad', bestiaryGroup: 'sin', name: 'Toad', sinTemplate: 'toad', category: 2, expansion: 'base',
-    description: 'An indulgent sin that hoards material wealth by any means. Emotion: Indulgence.' },
+    image: 'img/enemies/toad.png', examplesImage: 'img/enemies/toad_examples.png',
+    description: 'An indulgent sin that hoards material wealth by any means. Emotion: Indulgence.',
+    examples: [
+      { name: 'Pockets', story: 'Form I, CAT 1. Manifested in a rare cooperative arrangement by a host acting as a "lone wolf" cat burglar after repeated conflicts with repossession companies and repeat incarceration. Accumulated a treasure hoard of estimated worth in the hundreds of millions in eight days, including thirty-five luxury vehicles, mostly kept inside a palace located in the garage of the host\'s apartment residence. No record of execution; the manifestation was dispersed. Exorcists disciplined.' },
+      { name: 'Dracul', story: 'Form III, CAT 3. A variant Form III that bound itself to its owner, a host in an unwilling marriage to a well-known billionaire (deceased). It gradually formed an advanced palace and treasure vault in the billionaire\'s penthouse apartment building and took over operations of his holdings, including hiring a private mercenary company. Executed. Time to execution 2 days 34 minutes, no losses, 25 casualties. Notable: net losses from the company led to a minor stock market drop.' },
+      { name: 'Mr Worldwide', story: 'Form II. Manifested in host T777 (deceased) after he experienced extreme gambling loss and was evicted from his residence. Over three months the host formed a criminal syndicate that attained complete control over a casino and pulled power from its operations. Attained CAT 4 before execution. Time to execution 6 hrs 55 minutes; three exorcists KIA.' }
+    ] },
   { officialId: 'lord', bestiaryGroup: 'sin', name: 'Lord', sinTemplate: 'lord', category: 2, expansion: 'base',
-    description: 'A fearful sin that builds a parasitic Kingdom where it rules reality. Emotion: Fear.' },
+    image: 'img/enemies/lord.png', examplesImage: 'img/enemies/lord_examples.png',
+    description: 'A fearful sin that builds a parasitic Kingdom where it rules reality. Emotion: Fear.',
+    examples: [
+      { name: 'Decurion', story: 'Form I. Manifested in host L99 after his discharge from the military, subsequent to multiple diagnoses of a disorder following campaigns. The Kingdom manifested as a perfect recreation of his childhood hometown in the mountains, where L99 was a beloved member of the church and community who had never gone to war. Executed (time to execution ~500 mins, 50 casualties).' },
+      { name: 'Baldur', story: 'Form III. Manifested from host L545, who was then able to bind it. Took the form of a basset hound. The Kingdom manifested as a typical 1930s city noir narrative where the host was a hardboiled detective in search of his missing wife. In reality, the host\'s wife had been deceased for 6 months due to advanced bone cancer. Executed. Time to execution 2 days 2 hrs 34 mins. L545 taken under observation.' },
+      { name: 'Pale Queen', story: 'Form II. Manifested and fused with host L44, who had retreated into a world of video game playing after a sports injury left her without the use of her legs. The Kingdom manifested as a typical pseudo-medieval video game fantasy world, which consumed up to 60% of a city before dispersal by the dispatched team. 3 exorcists KIA, reinforcements sent by helicopter. Executed. Time to execution 9 hours 54 minutes.' }
+    ] },
   // Drifters (Anomalies) — base game (pg. 149-151)
   {
     officialId: 'pest', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Pest', type: 'anomaly', category: 1,
+    image: 'img/enemies/pest.png',
     talismanSize: 'medium', talismanSegments: 2, expansion: 'base',
     description: 'A broad category of drifter - a common manifestation that could be categorized as animal-like, the fauna of a place beyond human understanding. Execution: 2 (solo), 5 (group).',
     facts: 'Tends to break conventional reality around it, changing things like light refraction, gravity, space. May create sucking holes, reflective surfaces, crystalline splinters, etc.\nConsumes inanimate matter like glass, paper, or stone.',
@@ -3104,6 +3147,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'poltergeist', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Poltergeist', type: 'anomaly', category: 1,
+    image: 'img/enemies/poltergeist.png',
     talismanSize: 'medium', talismanSegments: 3, expansion: 'base',
     description: 'A barely visible shape in the darkness. Execution: 3.',
     facts: 'May adopt a human face or form; never looks right.\nCan mimic speech, sometimes comprehensible. Sometimes appears to tell the future. Do not listen to it.',
@@ -3114,6 +3158,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'titan', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Titan', type: 'anomaly', category: 5,
+    image: 'img/enemies/titan.png',
     talismanSize: 'long', talismanSegments: 10, expansion: 'base',
     description: 'An incredibly large drifter, usually thirty to forty meters or larger at the shoulder. Sometimes anthropomorphic, sometimes animalistic. Has a tenuous relation to reality and may occasionally phase through matter. Large enough to cause shocking destruction. Execution: 10.',
     facts: 'So large it is immune to small arms fire and doesn\'t seem to regard humans much at all.\nBarely intelligent. Lumbers along slowly with little regard for obstacles.',
@@ -3124,6 +3169,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'pale_man', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Pale Man', type: 'anomaly', category: 2,
+    image: 'img/enemies/pale_man.png',
     talismanSize: 'long', talismanSegments: 5, expansion: 'base',
     description: 'An intelligent drifter that seems interested in the psychically sensitive and is drawn to them like an insect to flame. Prefers to observe from a distance. Completely peaceful if left alone; fights like an animal if provoked or approached in any way, with no regard for its own safety. Execution: 5.',
     facts: 'Watches at a distance.\nDon\'t look at it for too long.',
@@ -3134,6 +3180,7 @@ var OFFICIAL_ENEMIES = [
   },
   {
     officialId: 'gatherer', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Gatherer', type: 'anomaly', category: 2,
+    image: 'img/enemies/gatherer.png',
     talismanSize: 'medium', talismanSegments: 2, expansion: 'base',
     description: 'A bulbous humanoid that exhibits the unusual behavior of collecting and enveloping humans alive to carry them off to parts unknown. Sometimes appears in groups. Execution: 2 (solo), 5 (group), 7 (horde).',
     facts: 'Has a fleshy, saclike structure it stores fresh humans in, carrying them off.\nCapable of communicating subsonically.',
@@ -3242,6 +3289,9 @@ function resolveOfficialEnemy(o) {
     s.name = o.name;
     s.category = o.category != null ? o.category : s.category;
     s.expansion = o.expansion || 'base';
+    if (o.image) s.image = o.image;
+    if (o.examplesImage) s.examplesImage = o.examplesImage;
+    if (o.examples) s.examples = o.examples;
     return s;
   }
   return JSON.parse(JSON.stringify(o));
@@ -6133,7 +6183,15 @@ function renderOfficialView(officialId) {
       '<div class="actions-bar">' +
         '<button class="btn btn-primary" id="btn-dup">' + (pt ? 'Duplicar para meu bestiário' : 'Duplicate to my bestiary') + '</button>' +
       '</div>' +
-      '<div class="combat-ref">' + body + '</div>' +
+      (o.image ? '<img class="enemy-detail-img" src="' + o.image + '" alt="' + escAttr(o.name) + '">' : '') +
+      '<div class="combat-ref">' + body +
+        ((o.examplesImage || (o.examples && o.examples.length)) ? '<div class="combat-section"><h3>' + (pt ? 'Exemplos' : 'Examples') + '</h3>' +
+          (o.examplesImage ? '<img class="enemy-examples-img" src="' + o.examplesImage + '" alt="' + escAttr(o.name) + ' examples">' : '') +
+          ((o.examples && o.examples.length) ? o.examples.map(function(ex) {
+            return '<div class="combat-ref-block"><strong>' + escHtml(ex.name) + '</strong>' + (ex.story ? '<p>' + escHtml(ex.story) + '</p>' : '') + '</div>';
+          }).join('') : '') +
+        '</div>' : '') +
+      '</div>' +
     '</div>';
 
   renderLangToggle();
@@ -6284,6 +6342,7 @@ function renderOfficialCard(o) {
   var pt = currentLang === 'pt';
   var typeLabel = o.sinTemplate ? tSinType(o.sinTemplate) : tEnemyType(o.type);
   return '<div class="enemy-card official-card' + (o.sinTemplate || o.type === 'sin' ? ' enemy-card-sin' : '') + '" data-oid="' + o.officialId + '">' +
+    (o.image ? '<img class="enemy-card-img" src="' + o.image + '" alt="' + escAttr(o.name) + '">' : '') +
     '<div class="enemy-card-header">' +
       '<h3 class="enemy-name">' + escHtml(o.name) + '</h3>' +
       '<span class="enemy-cat">' + typeLabel + '</span>' +
