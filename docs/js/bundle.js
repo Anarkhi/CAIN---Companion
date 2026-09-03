@@ -45,6 +45,7 @@ var LOCALES = {
     agenda: 'Agenda', abilities: 'Abilities', blasphemies: 'Blasphemies',
     blastDesc: 'Spend a psyche burst and roll PSYCHE to produce a weaponized form of concentrated psychic energy in melee or short range. The specific look and feel of this basic exorcist skill varies between exorcists. The strength of this blast scales with CAT. When your exorcist produces a blast, they might: Imbue a slash of a blade or a shot with a ranged weapon with psychic energy; Shoot an invisible ball of force from their fingers; Fire scathing lightning; Shoot a bead of ghostly, frigid fire. Unlike your mundane service weapons, blast is a supernatural weapon and therefore doesn\'t become hard by default when used against sins.',
     kitWeapons: 'Kit & Weapons', kitPoints: 'Kit Points', firearm: 'Firearm', melee: 'Melee',
+    kit_expansion_shop: 'Kit Expansion', kit_owned: 'Owned Kit', kit_buy: 'Buy', kit_sell: 'Sell', kit_locked: 'Locked', kit_owned_badge: 'Owned',
     notes: 'Notes', noNotes: 'No notes.', noAgenda: 'No agenda selected.',
     id: 'ID', missions: 'Missions', scrip: 'Scrip', category: 'Category',
     progression: 'Progression', pBursts: 'P. Bursts', sinCap: 'Sin Cap', weapons: 'Weapons',
@@ -192,6 +193,7 @@ var LOCALES = {
     agenda: 'Agenda', abilities: 'Habilidades', blasphemies: 'Blasfêmias',
     blastDesc: 'Gaste um pulso psíquico e role PSIQUE para produzir uma forma concentrada e armada de energia psíquica em corpo a corpo ou curta distância. A aparência específica desta habilidade básica de exorcista varia entre exorcistas. A força desta rajada escala com CAT. Quando seu exorcista produz uma rajada, ele pode: Imbuir um golpe de lâmina ou um disparo de arma de longo alcance com energia psíquica; Disparar uma esfera invisível de força a partir dos dedos; Lançar relâmpagos escaldantes; Disparar uma gota de fogo fantasmagórico e gélido. Diferente de suas armas de serviço mundanas, rajada é uma arma sobrenatural e portanto não se torna difícil por padrão quando usada contra pecados.',
     kitWeapons: 'Kit & Armas', kitPoints: 'Pontos de Kit', firearm: 'Arma de Fogo', melee: 'Arma Branca',
+    kit_expansion_shop: 'Expansão de Kit', kit_owned: 'Kit Adquirido', kit_buy: 'Comprar', kit_sell: 'Vender', kit_locked: 'Bloqueado', kit_owned_badge: 'Adquirido',
     notes: 'Anotações', noNotes: 'Sem anotações.', noAgenda: 'Nenhuma agenda selecionada.',
     id: 'ID', missions: 'Missões', scrip: 'Scrip', category: 'Categoria',
     progression: 'Progressão', pBursts: 'Pulsos Ps.', sinCap: 'Limite Pecado', weapons: 'Armas',
@@ -2761,8 +2763,9 @@ function createBlankCharacter() {
     stress: 0, maxStress: 6, injuries: 0, psycheBursts: 3, maxPsycheBursts: 3,
     pathos: 0, sin: 0, sinOverflowCap: 10, sinMarks: [],
     hooks: [], afflictions: [],
-    kitPoints: 5, maxKitPoints: 5, kitItems: [],
+    kitPoints: 5, maxKitPoints: 5, kitItems: [], ownedKit: [],
     weapons: { firearm: { name: 'Service Firearm', category: 0 }, melee: { name: 'Service Melee', category: 0 } },
+    weaponSets: [{ id: 'ws_default', name: '', firearm: { name: 'Service Firearm', category: 0 }, melee: { name: 'Service Melee', category: 0 } }],
     notes: '', customContent: []
   };
 }
@@ -2788,9 +2791,405 @@ function getPsycheValue(category) {
 var BASE_KIT = [
   { name: 'Uniform', namePt: 'Uniforme', kp: 0, description: 'Standard issue uniform, collar, shoes, button pin.', descriptionPt: 'Uniforme padrão, colarinho, sapatos, broche.' },
   { name: 'Notebook & Pen', namePt: 'Caderno e Caneta', kp: 1, description: 'Notebook and pen.', descriptionPt: 'Caderno e caneta.' },
-  { name: 'Matchbook', namePt: 'Fósforos', kp: 1, description: 'Matchbook (20 matches), clean handkerchief.', descriptionPt: 'Caixa de fósforos (20), lenço limpo.' },
-  { name: 'Service Weapons', namePt: 'Armas de Serviço', kp: 2, description: 'CAT 0 firearm, ammunition, and melee weapon.', descriptionPt: 'Arma de fogo CAT 0, munição e arma branca.' }
+  { name: 'Matchbook', namePt: 'Fósforos', kp: 1, description: 'Matchbook (20 matches), clean handkerchief.', descriptionPt: 'Caixa de fósforos (20), lenço limpo.' }
 ];
+
+// Kit Expansion catalog (pg 78+) — scrip-purchasable items, grouped by category.
+// scrip = purchase cost (spent between missions). KP to pull out follows the size
+// guide (0/1/2/3/5). tags: Consumable | Conspicuous | Focus | range tags.
+var KIT_EXPANSION = [
+  {
+    id: 'aesthetics',
+    name: 'Aesthetics', namePt: 'Estéticas',
+    note: 'Aesthetics have no mechanical benefit. All are 0 KP. CAIN dress code is tightly regulated (see CASTLE doctrine c9800).',
+    notePt: 'Estéticas não têm benefício mecânico. Todas custam 0 KP. O código de vestimenta da CAIN é rigidamente regulado (ver doutrina CASTLE c9800).',
+    items: [
+      { id: 'aes_service_uniform', name: 'Service Uniform', namePt: 'Uniforme de Serviço', scrip: 0,
+        description: 'Free standard-issue service uniform, including sash, shoes, and buckle for optional cape. Not tailored to fit. Shoes are recycled.',
+        descriptionPt: 'Uniforme de serviço padrão gratuito, incluindo faixa, sapatos e fivela para capa opcional. Sem ajuste sob medida. Sapatos são reciclados.' },
+      { id: 'aes_ceremonial_uniform', name: 'Ceremonial Uniform', namePt: 'Uniforme Cerimonial', scrip: 1,
+        description: 'Issue cassock or habit. Tailored to fit. Made of very fine material, comfortable. Includes optional head or face coverings for modesty.',
+        descriptionPt: 'Batina ou hábito de serviço. Ajustado sob medida. Feito de material muito fino, confortável. Inclui coberturas opcionais de cabeça ou rosto por modéstia.' },
+      { id: 'aes_comfortable_shoes', name: 'Comfortable Shoes', namePt: 'Sapatos Confortáveis', scrip: 1,
+        description: 'Shoes sized to fit. Production based on availability.',
+        descriptionPt: 'Sapatos no tamanho certo. Produção conforme disponibilidade.' },
+      { id: 'aes_suit', name: 'Suit', namePt: 'Terno', scrip: 1, reqCat: 2,
+        description: 'High quality tailored suit. Only available to CAT 2+ exorcists.',
+        descriptionPt: 'Terno de alta qualidade sob medida. Disponível apenas para exorcistas CAT 2+.' },
+      { id: 'aes_casual_wear', name: 'Casual Wear', namePt: 'Roupa Casual', scrip: 4, reqCat: 3,
+        description: 'Sanctioned casual wear that can bypass CAIN dress restrictions when off-duty. Strictly not for mission wear. Only available to CAT 3+ exorcists.',
+        descriptionPt: 'Roupa casual autorizada que dispensa as restrições de vestimenta da CAIN fora de serviço. Estritamente proibida em missões. Disponível apenas para exorcistas CAT 3+.' },
+      { id: 'aes_formalwear', name: 'Formalwear', namePt: 'Traje Formal', scrip: 6, tags: ['Conspicuous'], reqCat: 2,
+        description: 'Sanctioned formalwear for organization events. Finely tailored. Not approved for field use. Includes allowances for jewelry. Only available to CAT 2+ exorcists.',
+        descriptionPt: 'Traje formal autorizado para eventos da organização. Finamente ajustado. Não aprovado para uso em campo. Inclui permissão para joias. Disponível apenas para exorcistas CAT 2+.' },
+      { id: 'aes_well_overcoat', name: '"Well" Overcoat', namePt: 'Sobretudo "Well"', scrip: 4, reqCat: 4,
+        description: 'Overcoat that fits over all uniforms. Weather resistant, tailored and extremely high quality. Some customization options. Available only to CAT 4+ exorcists.',
+        descriptionPt: 'Sobretudo que veste sobre todos os uniformes. Resistente ao clima, sob medida e de qualidade extremamente alta. Algumas opções de personalização. Disponível apenas para exorcistas CAT 4+.' },
+      { id: 'aes_dress_uniform', name: 'Dress Uniform', namePt: 'Uniforme de Gala', scrip: 3, tags: ['Conspicuous'], reqCat: 3,
+        description: 'Formal uniform including half cape, originally for ceremonial event wear. Available only to CAT 3+ exorcists.',
+        descriptionPt: 'Uniforme formal com meia-capa, originalmente para uso em eventos cerimoniais. Disponível apenas para exorcistas CAT 3+.' }
+    ]
+  },
+  {
+    id: 'comfort_career',
+    name: 'Comfort / Career', namePt: 'Conforto / Carreira',
+    note: 'Personal allowances pursuant to CASTLE doctrine c9880.',
+    notePt: 'Permissões pessoais conforme a doutrina CASTLE c9880.',
+    items: [
+      { id: 'cc_living_quarters', name: 'Living Quarters Expansion', namePt: 'Expansão dos Aposentos', scrip: 8, type: 'use',
+        description: 'Kitchenette, choice of two pieces of furniture. Window. Roll a single resting die during a mission, once, when a scene passes. You gain its benefits as if you rested.',
+        descriptionPt: 'Cozinha compacta, escolha de dois móveis. Janela. Role um único dado de descanso durante a missão, uma vez, quando uma cena passar. Você ganha seus benefícios como se tivesse descansado.' },
+      { id: 'cc_private_room', name: 'Private Room', namePt: 'Quarto Privativo', scrip: 8, reqCat: 3, type: 'passive', mods: { maxStress: 1 },
+        description: 'Room available only for CAT 3+ exorcists. +1 max stress.',
+        descriptionPt: 'Quarto disponível apenas para exorcistas CAT 3+. +1 estresse máximo.' },
+      { id: 'cc_visitation_rights', name: 'Visitation Rights', namePt: 'Direito de Visita', scrip: 15, type: 'passive', mods: { maxInjury: 1 },
+        description: 'Expanded leave rights to visit potential family or relations, under observation. +1 max injury.',
+        descriptionPt: 'Direitos de licença ampliados para visitar possível família ou parentes, sob observação. +1 ferimento máximo.' },
+      { id: 'cc_relaxed_grooming', name: 'Relaxed Grooming Guidelines', namePt: 'Diretrizes de Aparência Flexíveis', scrip: 6, reqCat: 3, type: 'passive', mods: { sinCap: 2 },
+        description: 'Allowances for different hairstyles that exceed CASTLE restrictions and make small allowances for jewelry or makeup. CAT 3+ exorcists only. +2 sin overflow cap.',
+        descriptionPt: 'Permissões para diferentes penteados que excedem as restrições da CASTLE e pequenas concessões para joias ou maquiagem. Apenas exorcistas CAT 3+. +2 no limite de transbordo de pecado.' },
+      { id: 'cc_improved_meal_plan', name: 'Improved Meal Plan', namePt: 'Plano de Refeições Melhorado', scrip: 4, type: 'passive', mods: { maxKP: 1 },
+        description: "Move to the 'B' meal plan. +1 max KP.",
+        descriptionPt: "Passe para o plano de refeições 'B'. +1 KP máximo." },
+      { id: 'cc_sanctioned_indulgences', name: 'Sanctioned Indulgences', namePt: 'Indulgências Autorizadas', scrip: 2, kp: 1, tags: ['Consumable'], type: 'consumable',
+        description: 'Small personal indulgences, sanctioned by CASTLE. Cigarettes, coffee, candy, chewing gum, spending money. Use to roll an extra resting die when resting.',
+        descriptionPt: 'Pequenas indulgências pessoais, autorizadas pela CASTLE. Cigarros, café, doces, chiclete, dinheiro para gastar. Use para rolar um dado de descanso extra ao descansar.' },
+      { id: 'cc_leave_of_absence', name: 'Leave of Absence', namePt: 'Licença', scrip: 12, type: 'passive', mods: { maxStress: 1, maxKP: 1, sinCap: 1 },
+        description: 'You are allowed one week off a year with some travel allowances. You gain +1 max stress, +1 KP, and +1 sin overflow cap.',
+        descriptionPt: 'Você tem direito a uma semana de folga por ano com algumas concessões de viagem. Você ganha +1 estresse máximo, +1 KP e +1 no limite de transbordo de pecado.' },
+      { id: 'cc_pieces_of_silver', name: 'Pieces of Silver', namePt: 'Moedas de Prata', scrip: 44,
+        description: 'You are permitted to retire from exorcism. The work continues. You may work at CAIN in one of its many branches in an administrative capacity for the rest of your life, with potential opportunity for advancement.',
+        descriptionPt: 'Você tem permissão para se aposentar do exorcismo. O trabalho continua. Você pode trabalhar na CAIN em um de seus muitos ramos em função administrativa pelo resto da vida, com potencial oportunidade de progressão.' }
+    ]
+  },
+  {
+    id: 'possessions',
+    name: 'Possessions', namePt: 'Pertences',
+    note: 'Sanctioned or unsanctioned allowances for personal possessions, often assembled doing odd jobs in off-duty work. Some items are collected in a kit. You can spend KP to pull out anything on a kit list once you have access to it.',
+    notePt: 'Concessões autorizadas ou não para pertences pessoais, muitas vezes reunidos em bicos fora de serviço. Alguns itens vêm agrupados em um kit. Você pode gastar KP para sacar qualquer coisa da lista de um kit depois de ter acesso a ele.',
+    items: [
+      { id: 'pos_cell_phone', name: 'Cell Phone', namePt: 'Celular', type: 'variant', kp: 1,
+        description: 'Personal cell phone. Pay 3 Scrip instead to have one with more options and internet browsing available.',
+        descriptionPt: 'Celular pessoal. Pague 3 Scrip para ter um com mais opções e navegação na internet disponível.',
+        variants: [
+          { id: 'simple', label: 'Simple', labelPt: 'Simples', scrip: 1 },
+          { id: 'internet', label: 'More options + internet', labelPt: 'Mais opções + internet', scrip: 3 }
+        ] },
+      { id: 'pos_cash_card', name: 'Cash Card', namePt: 'Cartão de Dinheiro', scrip: 1, kp: 1,
+        description: 'Card that works with most currencies with a preloaded allowance for mundane world purchases. Never enough to buy anything major.',
+        descriptionPt: 'Cartão que funciona com a maioria das moedas, com saldo pré-carregado para compras no mundo mundano. Nunca o suficiente para comprar algo grande.' },
+      { id: 'pos_clerical_kit', name: 'Clerical Kit', namePt: 'Kit Clerical', scrip: 3, type: 'kit',
+        note: 'Some items may need Focus. Official kit of exorcists performing clerical or research duties for senior CAIN staff.',
+        notePt: 'Alguns itens podem exigir Foco. Kit oficial de exorcistas em funções administrativas ou de pesquisa para a cúpula da CAIN.',
+        contents: [
+          { name: 'Hard copy of a SEER archive almanac', namePt: 'Cópia impressa de um almanaque do arquivo SEER', kp: 2 },
+          { name: 'Good quality eyeglasses', namePt: 'Óculos de boa qualidade' },
+          { name: 'A few good pens', namePt: 'Algumas boas canetas' },
+          { name: 'Thick binder', namePt: 'Fichário grosso' },
+          { name: 'Local area history notes', namePt: 'Notas de história da região' }
+        ] },
+      { id: 'pos_cleaner_kit', name: 'Cleaner Kit', namePt: 'Kit de Limpeza', scrip: 3, type: 'kit', tags: ['Conspicuous'],
+        note: 'Official kit of exorcists performing cleaning duties in their off-time, tasked with cleaning up the aftermath of other hunts. Odious work.',
+        notePt: 'Kit oficial de exorcistas em funções de limpeza no tempo livre, encarregados de limpar as consequências de outras caçadas. Trabalho odioso.',
+        contents: [
+          { name: 'Stain and waterproof overalls', namePt: 'Macacão à prova de manchas e água' },
+          { name: 'Goggles', namePt: 'Óculos de proteção' },
+          { name: 'Gas mask', namePt: 'Máscara de gás' },
+          { name: 'Heavy gloves', namePt: 'Luvas pesadas' },
+          { name: 'Antitoxin (1 charge)', namePt: 'Antitoxina (1 carga)', kp: 2 }
+        ] },
+      { id: 'pos_delinquent_kit', name: 'Delinquent Kit', namePt: 'Kit de Delinquente', scrip: 2, type: 'kit',
+        note: 'Unsanctioned by commissary, mostly black market.',
+        notePt: 'Não autorizado pela intendência, majoritariamente mercado negro.',
+        contents: [
+          { name: 'Pocket knife', namePt: 'Canivete' },
+          { name: 'Lighter', namePt: 'Isqueiro' },
+          { name: 'Boot knife', namePt: 'Faca de bota' },
+          { name: 'Pack of various cigarettes', namePt: 'Maço de cigarros variados' },
+          { name: 'Hair pins', namePt: 'Grampos de cabelo' },
+          { name: 'Hair grease', namePt: 'Pomada de cabelo' }
+        ] },
+      { id: 'pos_driver_kit', name: 'Driver Kit', namePt: 'Kit de Motorista', scrip: 6, type: 'kit', tags: ['Conspicuous'],
+        note: 'Allocated with approval. You have good quality driving gloves (1 KP) and access to a car on missions. The car has a 10 talisman for harm and can fit 4 people comfortably. If it is totaled, you are docked 2 scrip for a replacement.',
+        notePt: 'Concedido com aprovação. Você tem luvas de direção de boa qualidade (1 KP) e acesso a um carro nas missões. O carro tem um talismã de dano 10 e comporta 4 pessoas confortavelmente. Se for destruído, você é descontado em 2 scrip para reposição.',
+        contents: [
+          { name: 'Good quality driving gloves', namePt: 'Luvas de direção de boa qualidade', kp: 1 },
+          { name: 'Access to a car', namePt: 'Acesso a um carro', kp: 0, special: 'car', talisman: 10 }
+        ] },
+      { id: 'pos_field_kit', name: 'Field Kit', namePt: 'Kit de Campo', scrip: 3, type: 'kit', tags: ['Conspicuous'],
+        note: 'Official kit of exorcists performing field monitoring work.',
+        notePt: 'Kit oficial de exorcistas em trabalho de monitoramento de campo.',
+        contents: [
+          { name: 'Waterproof notebook', namePt: 'Caderno à prova d\'água' },
+          { name: 'All-weather cape', namePt: 'Capa para todo clima' },
+          { name: 'Good boots', namePt: 'Boas botas' },
+          { name: 'Survival food', namePt: 'Comida de sobrevivência' },
+          { name: 'Tent and sleeping bag', namePt: 'Barraca e saco de dormir', kp: 3 },
+          { name: 'Optical scope', namePt: 'Luneta óptica' }
+        ] },
+      { id: 'pos_junk_kit', name: 'Junk Kit', namePt: 'Kit de Ferro-Velho', scrip: 2, type: 'kit', tags: ['Conspicuous'],
+        note: 'Scrounged in parts.',
+        notePt: 'Garimpado em partes.',
+        contents: [
+          { name: 'Rubber bands', namePt: 'Elásticos' },
+          { name: 'Wiring kit', namePt: 'Kit de fiação' },
+          { name: 'Good pen', namePt: 'Boa caneta' },
+          { name: 'Chewing gum', namePt: 'Chiclete' },
+          { name: 'Screwdriver', namePt: 'Chave de fenda' },
+          { name: 'Tape', namePt: 'Fita adesiva' },
+          { name: 'C-clamps', namePt: 'Grampos tipo C' },
+          { name: 'Crowbar', namePt: 'Pé de cabra' },
+          { name: 'Dented toolbox', namePt: 'Caixa de ferramentas amassada' }
+        ] },
+      { id: 'pos_monitor_kit', name: 'Monitor Kit', namePt: 'Kit de Monitor', scrip: 3, type: 'kit',
+        note: 'Official kit of exorcists working as monitors in its storage facilities.',
+        notePt: 'Kit oficial de exorcistas que trabalham como monitores em suas instalações de armazenamento.',
+        contents: [
+          { name: 'Two-way radio', namePt: 'Rádio comunicador' },
+          { name: 'Heavy-duty flashlight', namePt: 'Lanterna reforçada' },
+          { name: 'Shock baton', namePt: 'Cassetete de choque' },
+          { name: 'Cap', namePt: 'Boné' },
+          { name: 'Flashbang grenade', namePt: 'Granada de atordoamento', kp: 2 }
+        ] },
+      { id: 'pos_morgue_kit', name: 'Morgue Kit', namePt: 'Kit de Necrotério', scrip: 3, type: 'kit',
+        note: 'Some items may need Focus. Official kit of exorcists performing forensic work on the classified bodies of mundane humans brought into CAIN facilities. Some have been affected by terrifying forces and require memory wipes post work.',
+        notePt: 'Alguns itens podem exigir Foco. Kit oficial de exorcistas em trabalho forense sobre os corpos classificados de humanos mundanos trazidos às instalações da CAIN. Alguns foram afetados por forças aterrorizantes e exigem apagamento de memória após o trabalho.',
+        contents: [
+          { name: 'Tweezers', namePt: 'Pinça' },
+          { name: 'Compact magnifying scope', namePt: 'Lupa compacta' },
+          { name: 'Scalpel', namePt: 'Bisturi' },
+          { name: 'Sample collector', namePt: 'Coletor de amostras' },
+          { name: 'Compact breathing mask', namePt: 'Máscara respiratória compacta' },
+          { name: 'Wet wipes', namePt: 'Lenços umedecidos' }
+        ] },
+      { id: 'pos_porter_kit', name: 'Porter Kit', namePt: 'Kit de Carregador', scrip: 3, type: 'kit', tags: ['Conspicuous'],
+        note: 'Official kit of junior exorcists working as porters in its cavernous internal facilities.',
+        notePt: 'Kit oficial de exorcistas juniores que trabalham como carregadores em suas cavernosas instalações internas.',
+        contents: [
+          { name: 'Sturdy backpack', namePt: 'Mochila resistente' },
+          { name: 'Foldable ladder', namePt: 'Escada dobrável' },
+          { name: 'Pitons', namePt: 'Pitons' },
+          { name: 'Ice pick', namePt: 'Picareta de gelo' },
+          { name: '30ft of good quality cord', namePt: '9m de corda de boa qualidade' },
+          { name: 'Flashlight', namePt: 'Lanterna' }
+        ] },
+      { id: 'pos_study_kit', name: 'Study Kit', namePt: 'Kit de Estudos', scrip: 2, type: 'kit',
+        note: 'Official kit of students of all ages continuing their education in school facilities while on-job.',
+        notePt: 'Kit oficial de estudantes de todas as idades que continuam sua educação em instalações escolares durante o serviço.',
+        contents: [
+          { name: 'Electronic dictionary', namePt: 'Dicionário eletrônico' },
+          { name: 'Translation guide', namePt: 'Guia de tradução' },
+          { name: 'Local map', namePt: 'Mapa local' },
+          { name: 'Pencil case', namePt: 'Estojo' },
+          { name: 'Notebook', namePt: 'Caderno' },
+          { name: 'Textbook on a relevant subject', namePt: 'Livro didático sobre um assunto relevante', kp: 2 }
+        ] },
+      { id: 'pos_warden_kit', name: 'Warden Kit', namePt: 'Kit de Guardião', scrip: 2, type: 'kit',
+        note: 'Official kit of junior exorcists working as door watchmen for extremely sensitive TEMERITY facilities built to contain forces beyond human comprehension. Highly vetted.',
+        notePt: 'Kit oficial de exorcistas juniores que trabalham como vigias de portas para instalações TEMERITY extremamente sensíveis, construídas para conter forças além da compreensão humana. Altamente avaliados.',
+        contents: [
+          { name: 'Holy text', namePt: 'Texto sagrado', kp: 2 },
+          { name: 'Prayer beads', namePt: 'Terço de orações' },
+          { name: 'Standard issue great dagger', namePt: 'Adaga grande padrão' },
+          { name: 'Suicide pill', namePt: 'Pílula suicida' },
+          { name: 'Scented oil', namePt: 'Óleo perfumado' },
+          { name: 'Antique censer', namePt: 'Turíbulo antigo' }
+        ] }
+    ]
+  },
+  {
+    id: 'occult_medical',
+    name: 'Occult / Medical', namePt: 'Oculto / Médico',
+    note: 'Items cultivated by TEMERITY for field use. Overuse can lead to {redacted:12} (see manual C788).',
+    notePt: 'Itens cultivados pela TEMERITY para uso em campo. O uso excessivo pode levar a {redacted:12} (ver manual C788).',
+    items: [
+      { id: 'om_qlippoth', name: 'Qlippoth', namePt: 'Qlippoth', scrip: 3, kp: 2, tags: ['Consumable'], type: 'consumable',
+        description: 'Cursed fruit of the Ymir tree. Crush to regain 1d3 psyche burst.',
+        descriptionPt: 'Fruto amaldiçoado da árvore Ymir. Esmague para recuperar 1d3 pulsos psíquicos.' },
+      { id: 'om_green_herb', name: 'Green Herb', namePt: 'Erva Verde', scrip: 2, kp: 1, tags: ['Consumable', 'Focus'], type: 'consumable',
+        description: 'Consume to heal 1d3 stress.',
+        descriptionPt: 'Consuma para curar 1d3 de estresse.' },
+      { id: 'om_red_herb', name: 'Red Herb', namePt: 'Erva Vermelha', scrip: 4, kp: 2, tags: ['Consumable', 'Focus'], type: 'consumable',
+        description: 'Consume to heal 1d3+3 stress.',
+        descriptionPt: 'Consuma para curar 1d3+3 de estresse.' },
+      { id: 'om_adrenal_pill', name: 'Adrenal Pill', namePt: 'Pílula Adrenal', scrip: 3, kp: 1, tags: ['Consumable'], type: 'consumable',
+        description: 'Consume to heal 2d3 stress, then reduce max stress by 1 for the rest of the mission. Can be used while under duress.',
+        descriptionPt: 'Consuma para curar 2d3 de estresse, depois reduza o estresse máximo em 1 pelo resto da missão. Pode ser usada sob pressão.' },
+      { id: 'om_seed_ymir', name: 'Seed of the Ymir Tree', namePt: 'Semente da Árvore Ymir', scrip: 4, kp: 2, tags: ['Consumable'], type: 'consumable',
+        description: 'During a rest, you can spend two resting dice to heal an injury, removing it.',
+        descriptionPt: 'Durante um descanso, você pode gastar dois dados de descanso para curar um ferimento, removendo-o.' },
+      { id: 'om_black_blood', name: 'Black Blood Medicine', namePt: 'Remédio de Sangue Negro', scrip: 6, kp: 2, tags: ['Consumable'], type: 'consumable',
+        description: 'Consume on a dead exorcist that died in the same scene and has a (relatively) intact body to revive them. They come back with 2 injuries and permanently mark 1 sin box. All actions are hard for them until a rest.',
+        descriptionPt: 'Use em um exorcista morto que morreu na mesma cena e tem um corpo (relativamente) intacto para revivê-lo. Ele volta com 2 ferimentos e marca permanentemente 1 caixa de pecado. Todas as ações são difíceis para ele até um descanso.' },
+      { id: 'om_white_body', name: 'White Body', namePt: 'Corpo Branco', scrip: 2, kp: 1, tags: ['Consumable'], type: 'consumable',
+        description: 'Condensed sinseed of a large sin. May break to clear an affliction.',
+        descriptionPt: 'Semente profana condensada de um grande pecado. Pode ser quebrada para remover uma aflição.' },
+      { id: 'om_black_body', name: 'Black Body', namePt: 'Corpo Negro', scrip: 3, kp: 1, tags: ['Consumable'], type: 'consumable',
+        description: 'Condensed sinseed of a large sin. Can be broken to lower sin by 3d3, but permanently lowers sin overflow cap by 1.',
+        descriptionPt: 'Semente profana condensada de um grande pecado. Pode ser quebrada para reduzir o pecado em 3d3, mas reduz permanentemente o limite de transbordo de pecado em 1.' },
+      { id: 'om_cursed_salt', name: 'Cursed Salt', namePt: 'Sal Amaldiçoado', scrip: 2, kp: 1, tags: ['Consumable'], type: 'consumable',
+        description: 'When spread over a room-sized area, prevents humans from entering until pressure increases.',
+        descriptionPt: 'Quando espalhado sobre uma área do tamanho de um cômodo, impede que humanos entrem até que a pressão aumente.' },
+      { id: 'om_ambrosia', name: 'Ambrosia', namePt: 'Ambrosia', scrip: 5, kp: 1, tags: ['Consumable'], type: 'consumable',
+        description: 'Consume to gain 1 max and current psyche burst. Effect does not stack and lasts until the mission is over.',
+        descriptionPt: 'Consuma para ganhar 1 pulso psíquico máximo e atual. O efeito não acumula e dura até o fim da missão.' }
+    ]
+  }
+];
+
+/** Translate a kit-expansion tag label. */
+function tKitTag(tag) {
+  var pt = { Consumable: 'Consumível', Conspicuous: 'Notável', Focus: 'Foco', adjacent: 'adjacente', short: 'curto', long: 'longo', extreme: 'extremo' };
+  return (currentLang === 'pt' && pt[tag]) ? pt[tag] : tag;
+}
+
+/** Find a kit-expansion item (and its category) by item id. */
+function findKitExpansionItem(itemId) {
+  for (var i = 0; i < KIT_EXPANSION.length; i++) {
+    var cat = KIT_EXPANSION[i];
+    for (var j = 0; j < cat.items.length; j++) {
+      if (cat.items[j].id === itemId) return { item: cat.items[j], category: cat };
+    }
+  }
+  return null;
+}
+
+/** Parse an owned-kit entry ('itemId' or 'itemId:variantId') into { itemId, variantId }. */
+function parseOwnedEntry(entry) {
+  var parts = String(entry).split(':');
+  return { itemId: parts[0], variantId: parts[1] || null };
+}
+
+/** Resolve an owned-kit entry to { item, variant, entry } (variant may be null). */
+function resolveOwnedEntry(entry) {
+  var p = parseOwnedEntry(entry);
+  var found = findKitExpansionItem(p.itemId);
+  if (!found) return null;
+  var variant = null;
+  if (p.variantId && found.item.variants) {
+    variant = found.item.variants.find(function(v) { return v.id === p.variantId; }) || null;
+  }
+  return { item: found.item, variant: variant, entry: entry };
+}
+
+/** Sum a given stat modifier (e.g. 'maxStress') across owned passive kit items. */
+function getKitMod(char, key) {
+  var total = 0;
+  (char.ownedKit || []).forEach(function(oid) {
+    var found = findKitExpansionItem(parseOwnedEntry(oid).itemId);
+    if (found && found.item.mods && typeof found.item.mods[key] === 'number') {
+      total += found.item.mods[key];
+    }
+  });
+  return total;
+}
+
+/** List of owned kit items that are passive/mission-use (not deploy-with-KP items). */
+function getOwnedKitPassives(char) {
+  return (char.ownedKit || []).map(function(oid) {
+    var found = findKitExpansionItem(parseOwnedEntry(oid).itemId);
+    return found ? found.item : null;
+  }).filter(function(it) { return it && (it.type === 'passive' || it.type === 'use'); });
+}
+
+/** Owned consumable items (deploy+consume in a single confirmed action). */
+function getOwnedKitConsumables(char) {
+  return (char.ownedKit || []).map(function(oid) {
+    var found = findKitExpansionItem(parseOwnedEntry(oid).itemId);
+    return found ? found.item : null;
+  }).filter(function(it) { return it && it.type === 'consumable'; });
+}
+
+/** Owned 'kit' items (groups with pull-out contents). */
+function getOwnedKitGroups(char) {
+  return (char.ownedKit || []).map(function(oid) {
+    var found = findKitExpansionItem(parseOwnedEntry(oid).itemId);
+    return found ? found.item : null;
+  }).filter(function(it) { return it && it.type === 'kit'; });
+}
+
+/** Owned deployable entries (simple + variant items pulled out with KP). */
+function getOwnedKitDeployables(char) {
+  return (char.ownedKit || []).map(resolveOwnedEntry).filter(function(r) {
+    return r && r.item.type !== 'passive' && r.item.type !== 'use' && r.item.type !== 'consumable' && r.item.type !== 'kit';
+  });
+}
+
+/** Effective sin overflow cap (base + kit passives). */
+function getEffectiveSinCap(char) {
+  return (char.sinOverflowCap || 10) + getKitMod(char, 'sinCap');
+}
+
+/** Effective max injuries (base 3 + kit passives). */
+function getEffectiveMaxInjury(char) {
+  return 3 + getKitMod(char, 'maxInjury');
+}
+
+/**
+ * Return the character's weapon pairs, migrating legacy `char.weapons` into a
+ * `weaponSets` array on first access. Always returns at least one pair.
+ */
+function getWeaponSets(char) {
+  if (!Array.isArray(char.weaponSets) || !char.weaponSets.length) {
+    var w = char.weapons || {};
+    char.weaponSets = [{
+      id: 'ws_default', name: '',
+      firearm: { name: (w.firearm && w.firearm.name) || 'Service Firearm', category: (w.firearm && w.firearm.category) || 0 },
+      melee: { name: (w.melee && w.melee.name) || 'Service Melee', category: (w.melee && w.melee.category) || 0 }
+    }];
+  }
+  return char.weaponSets;
+}
+
+/** Keep legacy char.weapons synced to the first weapon set (so Edit keeps working). */
+function syncLegacyWeapons(char) {
+  var sets = getWeaponSets(char);
+  char.weapons = {
+    firearm: { name: sets[0].firearm.name, category: sets[0].firearm.category },
+    melee: { name: sets[0].melee.name, category: sets[0].melee.category }
+  };
+}
+
+/** Human-readable label for an item's stat mods (e.g. "+1 max stress, +1 KP"). */
+function kitModLabel(item) {
+  if (!item.mods) return '';
+  var pt = currentLang === 'pt';
+  var labels = { maxStress: pt ? 'estresse máx' : 'max stress', maxKP: pt ? 'KP máx' : 'max KP', sinCap: pt ? 'limite de pecado' : 'sin cap', maxInjury: pt ? 'ferimento máx' : 'max injury' };
+  return Object.keys(item.mods).map(function(k) {
+    var v = item.mods[k];
+    return (v >= 0 ? '+' : '') + v + ' ' + (labels[k] || k);
+  }).join(', ');
+}
+
+/**
+ * Render the "Kit Passives" block for owned passive/use/consumable items.
+ * `interactive` (session mode) adds a use counter for 'use' items and a
+ * consume button for 'consumable' items. Returns '' when there are none.
+ */
+function renderKitPassivesHtml(char, interactive) {
+  var passives = getOwnedKitPassives(char);
+  if (!passives.length) return '';
+  var pt = currentLang === 'pt';
+  var rows = passives.map(function(it) {
+    var name = pt ? it.namePt : it.name;
+    var right = '';
+    if (it.type === 'passive') {
+      right = '<span class="kit-passive-mod">' + kitModLabel(it) + '</span>';
+    } else if (it.type === 'use') {
+      if (interactive) {
+        var used = (char.session && char.session.kitUses && char.session.kitUses[it.id]) || 0;
+        right = '<span class="kit-passive-uses">' + (pt ? 'Usos' : 'Uses') + ': ' + used + '</span>' +
+          '<button class="btn btn-tiny kit-use-btn" data-id="' + it.id + '">' + (pt ? 'Usar' : 'Use') + '</button>';
+      } else {
+        right = '<span class="kit-passive-mod">' + (pt ? 'Uso na missão' : 'Mission use') + '</span>';
+      }
+    }
+    return '<div class="kit-passive-row"><div class="kit-passive-info"><strong>' + escHtml(name) + '</strong>' +
+      (it.description ? '<p class="muted">' + escHtml(pt ? it.descriptionPt : it.description) + '</p>' : '') + '</div>' +
+      '<div class="kit-passive-right">' + right + '</div></div>';
+  }).join('');
+  return '<div class="kit-passives"><h4>' + (pt ? 'Passivas do Kit' : 'Kit Passives') + '</h4>' + rows + '</div>';
+}
 
 /** Get effective max kit points (base + bonuses from passives like Pocket) */
 function getEffectiveMaxKP(char) {
@@ -2804,6 +3203,7 @@ function getEffectiveMaxKP(char) {
     });
     if (!hasReplacingQuirk) base += 1;
   }
+  base += getKitMod(char, 'maxKP'); // Kit expansion passives (e.g. Improved Meal Plan)
   return base;
 }
 
@@ -2815,6 +3215,7 @@ function getEffectiveMaxStress(char) {
   if (abilities.indexOf('survivor_will_to_live') !== -1) base += 1;
   // Fragile (Cradle): +1 max stress
   if (abilities.indexOf('cradle_fragile') !== -1) base += 1;
+  base += getKitMod(char, 'maxStress'); // Kit expansion passives (e.g. Private Room)
   return base;
 }
 
@@ -4200,10 +4601,10 @@ function renderView(characterId) {
         // Combat State
         '<section class="sheet-section"><h3>' + t('combatState') + '</h3><div class="state-grid">' +
           '<div class="state-box"><label>' + t('stress') + '</label><span class="state-value large">' + char.stress + ' / ' + (getEffectiveMaxStress(char) - char.injuries) + '</span></div>' +
-          '<div class="state-box"><label>' + t('injuries') + '</label><span class="state-value large">' + char.injuries + '</span></div>' +
+          '<div class="state-box"><label>' + t('injuries') + '</label><span class="state-value large">' + char.injuries + ' / ' + getEffectiveMaxInjury(char) + '</span></div>' +
           '<div class="state-box"><label>' + t('psycheBursts') + '</label><span class="state-value large">' + char.psycheBursts + ' / ' + char.maxPsycheBursts + '</span></div>' +
           '<div class="state-box"><label>' + t('pathos') + '</label><span class="state-value large">' + char.pathos + ' / 3</span></div>' +
-          '<div class="state-box"><label>' + t('sin') + '</label><span class="state-value large ' + (char.sin >= char.sinOverflowCap ? 'danger' : '') + '">' + char.sin + ' / ' + char.sinOverflowCap + '</span></div>' +
+          '<div class="state-box"><label>' + t('sin') + '</label><span class="state-value large ' + (char.sin >= getEffectiveSinCap(char) ? 'danger' : '') + '">' + char.sin + ' / ' + getEffectiveSinCap(char) + '</span></div>' +
           '<div class="state-box"><label>' + t('xp') + '</label><span class="state-value large">' + char.experience + ' / 4</span></div>' +
           '<div class="state-box"><label>' + t('session_advances') + '</label><span class="state-value large">' + (char.advances || 0) + '</span></div>' +
         '</div></section>' +
@@ -4247,9 +4648,52 @@ function renderView(characterId) {
         // Weapons
         '<section class="sheet-section"><h3>' + t('kitWeapons') + '</h3>' +
           '<p><strong>' + t('kitPoints') + ':</strong> ' + (char.session ? (getEffectiveMaxKP(char) - (char.session.kitPointsUsed || 0)) + ' / ' + getEffectiveMaxKP(char) : char.kitPoints + ' / ' + getEffectiveMaxKP(char)) + '</p>' +
-          '<p><strong>' + t('firearm') + ':</strong> ' + char.weapons.firearm.name + ' (CAT ' + char.weapons.firearm.category + ')</p>' +
-          '<p><strong>' + t('melee') + ':</strong> ' + char.weapons.melee.name + ' (CAT ' + char.weapons.melee.category + ')</p>' +
+          // Weapon pairs — editable names + per-pair CAT upgrade (3 scrip each, max CAT 3)
+          '<div class="weapon-sets">' +
+            getWeaponSets(char).map(function(ws, wi) {
+              var cat = ws.firearm.category;
+              var canUp = cat < 3 && (char.scrip || 0) >= 3;
+              var canDown = cat > 0;
+              return '<div class="weapon-set" data-wi="' + wi + '">' +
+                '<div class="weapon-set-head">' +
+                  '<input type="text" class="ws-pair-name" data-wi="' + wi + '" value="' + escAttr(ws.name || '') + '" placeholder="' + (currentLang === 'pt' ? 'Nome do par (opcional)' : 'Pair name (optional)') + '">' +
+                  '<span class="ws-cat-badge">CAT ' + cat + '</span>' +
+                  (getWeaponSets(char).length > 1 ? '<button class="btn btn-tiny btn-danger ws-remove" data-wi="' + wi + '" title="' + (currentLang === 'pt' ? 'Remover par' : 'Remove pair') + '">\u2715</button>' : '') +
+                '</div>' +
+                '<div class="form-row"><div class="form-group"><label>' + t('firearm') + '</label><input type="text" class="ws-fw-name" data-wi="' + wi + '" value="' + escAttr(ws.firearm.name) + '"></div>' +
+                  '<div class="form-group"><label>' + t('melee') + '</label><input type="text" class="ws-mw-name" data-wi="' + wi + '" value="' + escAttr(ws.melee.name) + '"></div></div>' +
+                '<div class="ws-upgrade">' +
+                  '<button class="btn btn-tiny ws-cat-down" data-wi="' + wi + '"' + (canDown ? '' : ' disabled') + '>\u2212 CAT (+3 scrip)</button>' +
+                  '<button class="btn btn-tiny btn-primary ws-cat-up" data-wi="' + wi + '"' + (canUp ? '' : ' disabled') + '>+ CAT (\u22123 scrip)</button>' +
+                '</div>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+          '<button class="btn btn-secondary btn-sm" id="btn-add-weaponset">' + (currentLang === 'pt' ? '+ Novo par de armas' : '+ New weapon pair') + '</button>' +
           (char.session && char.session.itemsDeployed && char.session.itemsDeployed.length > 0 ? '<div class="items-deployed-view"><h4>' + t('session_items') + '</h4>' + char.session.itemsDeployed.map(function(item) { return '<div class="kit-item-deployed"><strong>' + escHtml(item.name) + '</strong>' + (item.kp ? ' <span class="kit-kp-tag">' + item.kp + ' KP</span>' : '') + (item.description ? ' — <span class="muted">' + escHtml(item.description) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '') +
+          // Owned Kit Expansion — deployable items + kit groups
+          (function() {
+            var deployables = getOwnedKitDeployables(char);
+            var groups = getOwnedKitGroups(char);
+            var consumables = getOwnedKitConsumables(char);
+            if (!deployables.length && !groups.length && !consumables.length) return '';
+            var rows = deployables.map(function(r) {
+              var label = currentLang === 'pt' ? r.item.namePt : r.item.name;
+              if (r.variant) label += ' (' + (currentLang === 'pt' ? r.variant.labelPt : r.variant.label) + ')';
+              var cost = r.variant ? r.variant.scrip : r.item.scrip;
+              return '<div class="kit-item-deployed"><strong>' + escHtml(label) + '</strong> <span class="kit-kp-tag">' + cost + ' Scrip</span></div>';
+            }).join('');
+            rows += groups.map(function(g) {
+              return '<div class="kit-item-deployed"><strong>' + escHtml(currentLang === 'pt' ? g.namePt : g.name) + '</strong> <span class="kit-kp-tag">' + g.scrip + ' Scrip</span></div>';
+            }).join('');
+            rows += getOwnedKitConsumables(char).map(function(it) {
+              return '<div class="kit-item-deployed"><strong>' + escHtml(currentLang === 'pt' ? it.namePt : it.name) + '</strong> <span class="kit-item-tag">' + tKitTag('Consumable') + '</span> <span class="kit-kp-tag">' + it.scrip + ' Scrip</span></div>';
+            }).join('');
+            return '<div class="items-deployed-view"><h4>' + t('kit_owned') + '</h4>' + rows + '</div>';
+          })() +
+          // Owned Kit Expansion — passives / mission-use / consumables
+          renderKitPassivesHtml(char, false) +
+          '<button class="btn btn-secondary btn-sm" id="btn-kitshop" style="margin-top:var(--space-md)">' + t('kit_expansion_shop') + '</button>' +
         '</section>' +
         // Notes
         '<section class="sheet-section"><h3>' + t('notes') + '</h3><p class="notes-display">' + (char.notes ? escHtml(char.notes) : '<span class="muted">' + t('noNotes') + '</span>') + '</p></section>' +
@@ -4267,6 +4711,190 @@ function renderView(characterId) {
   document.getElementById('btn-sinmarks').addEventListener('click', function() { navigate('sinmarks/' + characterId); });
   document.getElementById('btn-edit').addEventListener('click', function() { navigate('edit/' + characterId); });
   document.getElementById('btn-export').addEventListener('click', function() { exportCharacter(char); });
+  if (document.getElementById('btn-kitshop')) {
+    document.getElementById('btn-kitshop').addEventListener('click', function() { navigate('kitshop/' + characterId); });
+  }
+
+  // ─── Weapon pairs ──────────────────────────────────────
+  function saveWeaponsAndRerender() { syncLegacyWeapons(char); saveCharacter(char); renderView(characterId); }
+  // Inline name edits (save on change; no full rerender to keep focus smooth)
+  app.querySelectorAll('.ws-pair-name').forEach(function(inp) {
+    inp.addEventListener('change', function() { getWeaponSets(char)[parseInt(inp.dataset.wi, 10)].name = inp.value.trim(); syncLegacyWeapons(char); saveCharacter(char); });
+  });
+  app.querySelectorAll('.ws-fw-name').forEach(function(inp) {
+    inp.addEventListener('change', function() { getWeaponSets(char)[parseInt(inp.dataset.wi, 10)].firearm.name = inp.value.trim(); syncLegacyWeapons(char); saveCharacter(char); });
+  });
+  app.querySelectorAll('.ws-mw-name').forEach(function(inp) {
+    inp.addEventListener('change', function() { getWeaponSets(char)[parseInt(inp.dataset.wi, 10)].melee.name = inp.value.trim(); syncLegacyWeapons(char); saveCharacter(char); });
+  });
+  app.querySelectorAll('.ws-cat-up').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var ws = getWeaponSets(char)[parseInt(btn.dataset.wi, 10)];
+      if (ws.firearm.category >= 3) return;
+      if ((char.scrip || 0) < 3) { alert(currentLang === 'pt' ? 'Scrip insuficiente (3).' : 'Not enough scrip (3).'); return; }
+      char.scrip -= 3;
+      ws.firearm.category += 1; ws.melee.category += 1;
+      saveWeaponsAndRerender();
+    });
+  });
+  app.querySelectorAll('.ws-cat-down').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var ws = getWeaponSets(char)[parseInt(btn.dataset.wi, 10)];
+      if (ws.firearm.category <= 0) return;
+      ws.firearm.category -= 1; ws.melee.category -= 1;
+      char.scrip = (char.scrip || 0) + 3; // refund
+      saveWeaponsAndRerender();
+    });
+  });
+  app.querySelectorAll('.ws-remove').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var sets = getWeaponSets(char);
+      if (sets.length <= 1) return;
+      sets.splice(parseInt(btn.dataset.wi, 10), 1);
+      saveWeaponsAndRerender();
+    });
+  });
+  if (document.getElementById('btn-add-weaponset')) {
+    document.getElementById('btn-add-weaponset').addEventListener('click', function() {
+      var sets = getWeaponSets(char);
+      sets.push({ id: 'ws_' + generateId(), name: '', firearm: { name: currentLang === 'pt' ? 'Arma de Fogo' : 'Service Firearm', category: 0 }, melee: { name: currentLang === 'pt' ? 'Arma Branca' : 'Service Melee', category: 0 } });
+      saveWeaponsAndRerender();
+    });
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PAGE: KIT EXPANSION SHOP
+// ════════════════════════════════════════════════════════════════════
+
+function renderKitShop(characterId) {
+  var app = document.getElementById('app');
+  var char = getCharacter(characterId);
+  if (!char) { navigate('home'); return; }
+  var pt = currentLang === 'pt';
+  if (!Array.isArray(char.ownedKit)) char.ownedKit = [];
+
+  app.innerHTML =
+    '<div class="page kitshop-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">' + t('nav_back') + '</button>' +
+        '<h1 class="title">' + t('kit_expansion_shop') + '</h1>' +
+      '</header>' +
+      '<div class="sheet-section kitshop-balance">' +
+        '<strong>' + t('scrip') + ':</strong> <span class="kitshop-scrip">' + (char.scrip || 0) + '</span>' +
+        '<p class="muted">' + (pt ? 'Scrip só pode ser gasto entre missões. Itens comprados ficam permanentes no kit e são sacados com KP na missão.' : 'Scrip can only be spent between missions. Purchased items stay in your kit permanently and are pulled out with KP during a mission.') + '</p>' +
+      '</div>' +
+      KIT_EXPANSION.map(function(cat) {
+        return '<div class="sheet-section kitshop-cat">' +
+          '<h3>' + (pt ? cat.namePt : cat.name) + '</h3>' +
+          ((pt ? cat.notePt : cat.note) ? '<p class="muted">' + escStory(pt ? cat.notePt : cat.note) + '</p>' : '') +
+          cat.items.map(function(it) {
+            var meetsCat = !it.reqCat || (char.category || 1) >= it.reqCat;
+            var reqNote = it.reqCat ? '<span class="kit-req' + (meetsCat ? '' : ' unmet') + '">CAT ' + it.reqCat + '+</span>' : '';
+            var tags = (it.tags || []).map(function(tg) { return '<span class="kit-item-tag">' + tKitTag(tg) + '</span>'; }).join('');
+
+            // Variant items: one buy button per exclusive option.
+            if (it.type === 'variant') {
+              var ownedVariant = (char.ownedKit || []).map(parseOwnedEntry).filter(function(p) { return p.itemId === it.id; })[0];
+              var vBtns = it.variants.map(function(v) {
+                var label = pt ? v.labelPt : v.label;
+                if (ownedVariant && ownedVariant.variantId === v.id) {
+                  return '<button class="btn btn-tiny btn-danger kit-sell-variant" data-id="' + it.id + '" data-variant="' + v.id + '">' + t('kit_sell') + ': ' + escHtml(label) + ' (' + v.scrip + ')</button>';
+                }
+                var afford = (char.scrip || 0) >= v.scrip;
+                var disabled = (!meetsCat || !afford || ownedVariant) ? ' disabled' : '';
+                return '<button class="btn btn-tiny btn-primary kit-buy-variant" data-id="' + it.id + '" data-variant="' + v.id + '"' + disabled + '>' + escHtml(label) + ' \u2014 ' + v.scrip + ' Scrip</button>';
+              }).join('');
+              return '<div class="kit-shop-item' + (ownedVariant ? ' owned' : '') + '">' +
+                '<div class="kit-item-head"><strong>' + escHtml(pt ? it.namePt : it.name) + '</strong>' + (reqNote ? '<span class="kit-item-scrip">' + reqNote + '</span>' : '') + '</div>' +
+                (tags ? '<div class="kit-item-tags">' + tags + '</div>' : '') +
+                '<p>' + escHtml(pt ? it.descriptionPt : it.description) + '</p>' +
+                '<div class="kit-shop-actions">' + vBtns + (ownedVariant ? '<span class="kit-owned-badge">' + t('kit_owned_badge') + '</span>' : '') + '</div>' +
+              '</div>';
+            }
+
+            // Standard, kit, passive, use, consumable items: single buy/sell.
+            var owned = char.ownedKit.indexOf(it.id) !== -1;
+            var canAfford = (char.scrip || 0) >= it.scrip;
+            var btn;
+            if (owned) {
+              btn = '<button class="btn btn-tiny btn-danger kit-sell" data-id="' + it.id + '">' + t('kit_sell') + '</button>';
+            } else if (!meetsCat) {
+              btn = '<button class="btn btn-tiny" disabled>' + t('kit_locked') + '</button>';
+            } else {
+              btn = '<button class="btn btn-tiny btn-primary kit-buy" data-id="' + it.id + '"' + (canAfford ? '' : ' disabled') + '>' + t('kit_buy') + '</button>';
+            }
+            // 'kit' items list their contents so the buyer knows what they get.
+            var contentsHtml = (it.type === 'kit' && it.contents) ? '<ul class="kit-contents-list">' + it.contents.map(function(c) {
+              return '<li>' + escHtml(pt ? c.namePt : c.name) + ' <span class="kit-kp-tag">' + (c.kp != null ? c.kp : 1) + ' KP</span></li>';
+            }).join('') + '</ul>' : '';
+            var itemNote = (it.type === 'kit' && (pt ? it.notePt : it.note)) ? '<p class="muted kit-item-note">' + escHtml(pt ? it.notePt : it.note) + '</p>' : '';
+            return '<div class="kit-shop-item' + (owned ? ' owned' : '') + '">' +
+              '<div class="kit-item-head"><strong>' + escHtml(pt ? it.namePt : it.name) + '</strong>' +
+                '<span class="kit-item-scrip">' + it.scrip + ' Scrip ' + reqNote + '</span></div>' +
+              (tags ? '<div class="kit-item-tags">' + tags + '</div>' : '') +
+              (it.description ? '<p>' + escHtml(pt ? it.descriptionPt : it.description) + '</p>' : '') +
+              itemNote +
+              contentsHtml +
+              '<div class="kit-shop-actions">' + btn + (owned ? '<span class="kit-owned-badge">' + t('kit_owned_badge') + '</span>' : '') + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }).join('') +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('view/' + characterId); });
+
+  app.querySelectorAll('.kit-buy').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var found = findKitExpansionItem(btn.dataset.id);
+      if (!found) return;
+      if ((char.scrip || 0) < found.item.scrip) { alert(pt ? 'Scrip insuficiente.' : 'Not enough scrip.'); return; }
+      char.scrip = (char.scrip || 0) - found.item.scrip;
+      if (char.ownedKit.indexOf(found.item.id) === -1) char.ownedKit.push(found.item.id);
+      saveCharacter(char);
+      renderKitShop(characterId);
+    });
+  });
+  app.querySelectorAll('.kit-sell').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var found = findKitExpansionItem(btn.dataset.id);
+      if (!found) return;
+      char.ownedKit = char.ownedKit.filter(function(x) { return x !== found.item.id; });
+      char.scrip = (char.scrip || 0) + found.item.scrip; // refund
+      saveCharacter(char);
+      renderKitShop(characterId);
+    });
+  });
+  // Variant items (e.g. Cell Phone): entry stored as 'itemId:variantId'
+  app.querySelectorAll('.kit-buy-variant').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var found = findKitExpansionItem(btn.dataset.id);
+      if (!found || !found.item.variants) return;
+      var v = found.item.variants.find(function(x) { return x.id === btn.dataset.variant; });
+      if (!v) return;
+      if ((char.scrip || 0) < v.scrip) { alert(pt ? 'Scrip insuficiente.' : 'Not enough scrip.'); return; }
+      // Exclusive: only one variant of this item at a time
+      char.ownedKit = char.ownedKit.filter(function(e) { return parseOwnedEntry(e).itemId !== found.item.id; });
+      char.scrip = (char.scrip || 0) - v.scrip;
+      char.ownedKit.push(found.item.id + ':' + v.id);
+      saveCharacter(char);
+      renderKitShop(characterId);
+    });
+  });
+  app.querySelectorAll('.kit-sell-variant').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var found = findKitExpansionItem(btn.dataset.id);
+      if (!found || !found.item.variants) return;
+      var v = found.item.variants.find(function(x) { return x.id === btn.dataset.variant; });
+      if (!v) return;
+      char.ownedKit = char.ownedKit.filter(function(e) { return e !== (found.item.id + ':' + v.id); });
+      char.scrip = (char.scrip || 0) + v.scrip; // refund
+      saveCharacter(char);
+      renderKitShop(characterId);
+    });
+  });
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -4429,10 +5057,12 @@ function renderEditForm(app) {
     editChar.sin = parseInt(document.getElementById('e-sin').value) || 0;
     editChar.sinOverflowCap = parseInt(document.getElementById('e-sincap').value) || 10;
     document.querySelectorAll('.skill-input').forEach(function(inp) { editChar.skills[inp.dataset.skill] = parseInt(inp.value) || 0; });
-    editChar.weapons.firearm.name = document.getElementById('e-fw-name').value.trim();
-    editChar.weapons.firearm.category = parseInt(document.getElementById('e-fw-cat').value) || 0;
-    editChar.weapons.melee.name = document.getElementById('e-mw-name').value.trim();
-    editChar.weapons.melee.category = parseInt(document.getElementById('e-mw-cat').value) || 0;
+    var editSets = getWeaponSets(editChar);
+    editSets[0].firearm.name = document.getElementById('e-fw-name').value.trim();
+    editSets[0].firearm.category = parseInt(document.getElementById('e-fw-cat').value) || 0;
+    editSets[0].melee.name = document.getElementById('e-mw-name').value.trim();
+    editSets[0].melee.category = parseInt(document.getElementById('e-mw-cat').value) || 0;
+    syncLegacyWeapons(editChar);
     editChar.notes = document.getElementById('e-notes').value.trim();
     saveCharacter(editChar);
     navigate('view/' + editChar.id);
@@ -4554,6 +5184,7 @@ function renderSession(characterId) {
       xp: char.experience || 0,
       advances: char.advances || 0,
       kitPointsUsed: 0,
+      kitUses: {},
       hooks: [],
       afflictions: [],
       itemsDeployed: [],
@@ -4621,7 +5252,7 @@ function renderSession(characterId) {
             '<label>' + t('injuries') + '</label>' +
             '<div class="session-controls">' +
               '<button class="btn btn-tiny" id="inj-dec">\u2212</button>' +
-              '<span class="session-value large">' + s.injuries + '</span>' +
+              '<span class="session-value large">' + s.injuries + ' / ' + getEffectiveMaxInjury(char) + '</span>' +
               '<button class="btn btn-tiny" id="inj-inc">+</button>' +
             '</div>' +
           '</div>' +
@@ -4639,7 +5270,7 @@ function renderSession(characterId) {
             '<label>' + t('sin') + '</label>' +
             '<div class="session-controls">' +
               '<button class="btn btn-tiny" id="sin-dec">\u2212</button>' +
-              '<span class="session-value large ' + (s.sin >= char.sinOverflowCap ? 'danger' : '') + '">' + s.sin + ' / ' + char.sinOverflowCap + '</span>' +
+              '<span class="session-value large ' + (s.sin >= getEffectiveSinCap(char) ? 'danger' : '') + '">' + s.sin + ' / ' + getEffectiveSinCap(char) + '</span>' +
               '<button class="btn btn-tiny" id="sin-inc">+</button>' +
             '</div>' +
           '</div>' +
@@ -4733,6 +5364,61 @@ function renderSession(characterId) {
             return '<button class="kit-quick-btn" data-kit="' + i + '">' + (currentLang === 'pt' ? k.namePt : k.name) + ' <span class="kit-kp-tag">' + k.kp + ' KP</span></button>';
           }).join('') +
         '</div>' +
+        // Weapon pairs — each deployable for 2 KP
+        '<div class="kit-quick-row">' +
+          '<span class="kit-quick-label">' + (currentLang === 'pt' ? 'Armas de serviço:' : 'Service weapons:') + '</span>' +
+          getWeaponSets(char).map(function(ws, wi) {
+            var label = ws.name || ((currentLang === 'pt' ? 'Par' : 'Pair') + ' ' + (wi + 1));
+            return '<button class="kit-quick-btn ws-deploy-btn" data-wi="' + wi + '">' + escHtml(label) + ' <span class="kit-kp-tag">2 KP</span></button>';
+          }).join('') +
+        '</div>' +
+        // Owned Kit Expansion items — deploy by spending KP (simple + variant items)
+        (function() {
+          var deployables = getOwnedKitDeployables(char);
+          if (!deployables.length) return '';
+          return '<div class="kit-quick-row">' +
+            '<span class="kit-quick-label">' + (currentLang === 'pt' ? 'Kit adquirido:' : 'Owned kit:') + '</span>' +
+            deployables.map(function(r) {
+              var kp = r.item.kp || 0;
+              var label = currentLang === 'pt' ? r.item.namePt : r.item.name;
+              if (r.variant) label += ' (' + (currentLang === 'pt' ? r.variant.labelPt : r.variant.label) + ')';
+              return '<button class="kit-quick-btn kit-owned-btn" data-owned="' + escAttr(r.entry) + '">' + escHtml(label) + ' <span class="kit-kp-tag">' + kp + ' KP</span></button>';
+            }).join('') +
+          '</div>';
+        })() +
+        // Owned Kit Expansion — kit groups (pull out individual contents)
+        getOwnedKitGroups(char).map(function(kit) {
+          var pt2 = currentLang === 'pt';
+          return '<div class="kit-group"><div class="kit-group-name">' + escHtml(pt2 ? kit.namePt : kit.name) + (kit.tags && kit.tags.length ? ' <span class="kit-item-tag">' + kit.tags.map(tKitTag).join('</span> <span class="kit-item-tag">') + '</span>' : '') + '</div>' +
+            '<div class="kit-quick-row">' +
+              (kit.contents || []).map(function(c, ci) {
+                var kp = c.kp != null ? c.kp : 1;
+                return '<button class="kit-quick-btn kit-content-btn" data-kit="' + kit.id + '" data-ci="' + ci + '">' + escHtml(pt2 ? c.namePt : c.name) + ' <span class="kit-kp-tag">' + kp + ' KP</span></button>';
+              }).join('') +
+            '</div>' +
+          '</div>';
+        }).join('') +
+        // Owned consumables — deploy + consume in one confirmed action
+        (function() {
+          var cons = getOwnedKitConsumables(char);
+          if (!cons.length) return '';
+          return '<div class="kit-quick-row">' +
+            '<span class="kit-quick-label">' + (currentLang === 'pt' ? 'Consumíveis:' : 'Consumables:') + '</span>' +
+            cons.map(function(it) {
+              var kp = it.kp != null ? it.kp : 0;
+              return '<button class="kit-quick-btn kit-consume-deploy" data-id="' + it.id + '">' + (currentLang === 'pt' ? it.namePt : it.name) + ' <span class="kit-kp-tag">' + kp + ' KP</span></button>';
+            }).join('') +
+          '</div>';
+        })() +
+        // Deployed car (Driver Kit) — interactive harm talisman block
+        (s.carActive ? '<div class="kit-car-block"><div class="kit-car-head"><strong>' + (currentLang === 'pt' ? 'Carro' : 'Car') + '</strong>' +
+          ' <span class="combat-count">' + (s.carSlashes || 0) + '/' + (s.carTalisman || 10) + '</span>' +
+          '<button class="btn btn-tiny btn-danger" id="car-dismiss" style="margin-left:auto">\u2715</button></div>' +
+          '<div class="kit-car-label muted">' + (currentLang === 'pt' ? 'Talismã de Dano' : 'Harm Talisman') + '</div>' +
+          renderClickableTalisman(s.carSlashes || 0, s.carTalisman || 10, 'car') +
+        '</div>' : '') +
+        // Owned Kit Expansion — passives / mission-use / consumables (interactive)
+        renderKitPassivesHtml(char, true) +
         '<div id="session-items">' +
           s.itemsDeployed.map(function(item, i) {
             return '<div class="session-item-row" data-idx="' + i + '">' +
@@ -5093,6 +5779,133 @@ function renderSession(characterId) {
         kp: k.kp
       });
       if (k.kp > 0) s.kitPointsUsed += k.kp;
+      saveAndRerender();
+    });
+  });
+
+  // Weapon pairs — deploy a service weapon pair for 2 KP
+  app.querySelectorAll('.ws-deploy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var ws = getWeaponSets(char)[parseInt(btn.dataset.wi, 10)];
+      if (!ws) return;
+      if ((s.kitPointsUsed + 2) > getEffectiveMaxKP(char)) {
+        alert(currentLang === 'pt' ? 'Pontos de Kit insuficientes.' : 'Not enough Kit Points.');
+        return;
+      }
+      var pairLabel = ws.name || (currentLang === 'pt' ? 'Armas de Serviço' : 'Service Weapons');
+      var desc = ws.firearm.name + ' (CAT ' + ws.firearm.category + '), ' + ws.melee.name + ' (CAT ' + ws.melee.category + ')';
+      s.itemsDeployed.push({ name: pairLabel, description: desc, kp: 2 });
+      s.kitPointsUsed += 2;
+      saveAndRerender();
+    });
+  });
+
+  // Owned Kit Expansion — deploy a purchased item (simple or variant), auto-spending its KP
+  app.querySelectorAll('.kit-owned-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var r = resolveOwnedEntry(btn.dataset.owned);
+      if (!r) return;
+      var kp = r.item.kp || 0;
+      if (kp > 0 && (s.kitPointsUsed + kp) > getEffectiveMaxKP(char)) {
+        alert(currentLang === 'pt' ? 'Pontos de Kit insuficientes.' : 'Not enough Kit Points.');
+        return;
+      }
+      var name = currentLang === 'pt' ? r.item.namePt : r.item.name;
+      if (r.variant) name += ' (' + (currentLang === 'pt' ? r.variant.labelPt : r.variant.label) + ')';
+      s.itemsDeployed.push({
+        name: name,
+        description: currentLang === 'pt' ? r.item.descriptionPt : r.item.description,
+        kp: kp
+      });
+      if (kp > 0) s.kitPointsUsed += kp;
+      saveAndRerender();
+    });
+  });
+
+  // Kit group content — pull out an individual item from an owned kit, spending its KP
+  app.querySelectorAll('.kit-content-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var found = findKitExpansionItem(btn.dataset.kit);
+      if (!found || !found.item.contents) return;
+      var c = found.item.contents[parseInt(btn.dataset.ci, 10)];
+      if (!c) return;
+      var kp = c.kp != null ? c.kp : 1;
+      if ((s.kitPointsUsed + kp) > getEffectiveMaxKP(char)) {
+        alert(currentLang === 'pt' ? 'Pontos de Kit insuficientes.' : 'Not enough Kit Points.');
+        return;
+      }
+      // Special content (e.g. the Driver Kit car): spawns an interactive harm
+      // talisman block instead of a plain deployed-item line.
+      if (c.special === 'car') {
+        if (s.carActive) { alert(currentLang === 'pt' ? 'O carro já está em campo.' : 'The car is already deployed.'); return; }
+        s.carActive = true;
+        s.carSlashes = 0;
+        s.carTalisman = c.talisman || 10;
+        if (kp > 0) s.kitPointsUsed += kp;
+        saveAndRerender();
+        return;
+      }
+      var kitName = currentLang === 'pt' ? found.item.namePt : found.item.name;
+      s.itemsDeployed.push({
+        name: (currentLang === 'pt' ? c.namePt : c.name) + ' \u2014 ' + kitName,
+        kp: kp
+      });
+      s.kitPointsUsed += kp;
+      saveAndRerender();
+    });
+  });
+
+  // Car harm talisman (Driver Kit): click a slash to set the count (toggle down on last)
+  app.querySelectorAll('.combat-slash[data-kind="car"]').forEach(function(slash) {
+    slash.addEventListener('click', function() {
+      var i = parseInt(slash.dataset.i, 10);
+      var cur = s.carSlashes || 0;
+      s.carSlashes = (i + 1 === cur) ? i : (i + 1);
+      saveAndRerender();
+    });
+  });
+  var carDismiss = document.getElementById('car-dismiss');
+  if (carDismiss) {
+    carDismiss.addEventListener('click', function() {
+      s.carActive = false;
+      s.carSlashes = 0;
+      saveAndRerender();
+    });
+  }
+
+  // Kit passive "use" counter (e.g. Living Quarters resting die)
+  app.querySelectorAll('.kit-use-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = btn.dataset.id;
+      if (!s.kitUses) s.kitUses = {};
+      s.kitUses[id] = (s.kitUses[id] || 0) + 1;
+      saveAndRerender();
+    });
+  });
+
+  // Consumable — one confirmed action: spend KP, deploy, then consume (remove from kit, no refund)
+  app.querySelectorAll('.kit-consume-deploy').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var found = findKitExpansionItem(btn.dataset.id);
+      if (!found) return;
+      var kp = found.item.kp != null ? found.item.kp : 0;
+      if (kp > 0 && (s.kitPointsUsed + kp) > getEffectiveMaxKP(char)) {
+        alert(currentLang === 'pt' ? 'Pontos de Kit insuficientes.' : 'Not enough Kit Points.');
+        return;
+      }
+      var name = currentLang === 'pt' ? found.item.namePt : found.item.name;
+      var ok = confirm(currentLang === 'pt'
+        ? 'Usar "' + name + '"? Ele será sacado (gastando ' + kp + ' KP) e consumido — removido do seu kit, sem reembolso.'
+        : 'Use "' + name + '"? It will be pulled out (spending ' + kp + ' KP) and consumed — removed from your kit, no refund.');
+      if (!ok) return;
+      s.itemsDeployed.push({
+        name: name,
+        description: currentLang === 'pt' ? found.item.descriptionPt : found.item.description,
+        kp: kp
+      });
+      if (kp > 0) s.kitPointsUsed += kp;
+      char.ownedKit = (char.ownedKit || []).filter(function(x) { return parseOwnedEntry(x).itemId !== found.item.id; });
+      saveCharacter(char);
       saveAndRerender();
     });
   });
@@ -6256,11 +7069,53 @@ function renderCompendiumTab(tabId) {
         '</ul>' +
       '</div>' +
 
-      // Kit expansion (placeholder until user provides the list)
+      // Kit expansion — how it works (size/KP guide + tags)
       '<div class="compendium-card reference-card">' +
         '<h3 class="compendium-card-name">' + (pt ? 'Expansão de Kit' : 'Kit Expansion') + '</h3>' +
-        '<p class="muted">' + (pt ? 'Itens compráveis com scrip (catálogo). Em breve.' : 'Scrip-purchasable items (catalog). Coming soon.') + '</p>' +
+        '<p>' + (pt ? 'Itens que qualquer exorcista pode comprar com scrip. Comprados, ficam permanentemente disponíveis no kit e são sacados durante a missão gastando KP. Scrip só é gasto entre missões. Salvo se consumível, cada item só pode ser comprado uma vez por vez e sacado uma vez por missão.' : 'Items any exorcist may buy with scrip. Once purchased, they stay permanently available in your kit and are pulled out during a mission by spending KP. Scrip is only spent between missions. Unless consumable, an item can only be purchased once at a time and pulled out once per mission.') + '</p>' +
+        '<h4 class="reference-subhead">' + (pt ? 'Custo em KP por tamanho (guia)' : 'KP cost by size (guide)') + '</h4>' +
+        '<ul class="reference-list">' +
+          '<li><strong>0 KP</strong> — ' + (pt ? 'Itens muito pequenos / objetos pessoais que cabem no bolso de um casaco (caneta, carteira)' : 'Very small items / personal effects that fit in a coat pocket (pen, wallet)') + '</li>' +
+          '<li><strong>1 KP</strong> — ' + (pt ? 'Item pequeno que cabe na mão' : 'Small item that fits in a hand') + '</li>' +
+          '<li><strong>2 KP</strong> — ' + (pt ? 'Item que exige armazenamento ou as duas mãos (arma de fogo, arma branca)' : 'Item that requires storage or both hands (firearm, melee weapon)') + '</li>' +
+          '<li><strong>3 KP</strong> — ' + (pt ? 'Item muito grande/pesado, precisa ser carregado (mochila cheia, arma de duas mãos, gerador portátil, maleta médica)' : 'Very large, heavy item that must be carried (full backpack, two-handed weapon, portable generator, medical bag)') + '</li>' +
+          '<li><strong>5 KP</strong> — ' + (pt ? 'Corpo humano' : 'Human body') + '</li>' +
+        '</ul>' +
+        '<h4 class="reference-subhead">' + (pt ? 'Tags' : 'Tags') + '</h4>' +
+        '<ul class="reference-list">' +
+          '<li><strong>' + tKitTag('Consumable') + '</strong> — ' + (pt ? 'Usado uma vez, some para sempre. Várias cópias podem ser compradas.' : 'Once used, gone forever. Multiple copies can be bought.') + '</li>' +
+          '<li><strong>' + tKitTag('Conspicuous') + '</strong> — ' + (pt ? 'É óbvio e chama atenção.' : 'Obvious and stands out.') + '</li>' +
+          '<li><strong>' + tKitTag('Focus') + '</strong> — ' + (pt ? 'Exige foco; não pode ser usado durante outra atividade, em cena de conflito, ou sob pressão.' : 'Requires focus; cannot be used while doing another activity, in a conflict scene, or under duress.') + '</li>' +
+          '<li><strong>' + (pt ? 'Alcance' : 'Range') + '</strong> — ' + (pt ? 'Alguns itens têm alcance (adjacente, curto, longo, extremo); só funcionam dentro do alcance listado.' : 'Some items have range (adjacent, short, long, extreme); only usable within the listed range.') + '</li>' +
+        '</ul>' +
       '</div>' +
+
+      // Kit expansion catalog (data-driven, grows as categories are added)
+      KIT_EXPANSION.map(function(cat) {
+        return '<div class="compendium-card reference-card kit-cat-card">' +
+          '<h3 class="compendium-card-name">' + (pt ? cat.namePt : cat.name) + '</h3>' +
+          ((pt ? cat.notePt : cat.note) ? '<p class="muted">' + escStory(pt ? cat.notePt : cat.note) + '</p>' : '') +
+          cat.items.map(function(it) {
+            var tags = (it.tags || []).map(function(tg) { return '<span class="kit-item-tag">' + tKitTag(tg) + '</span>'; }).join('');
+            // Price label: variant items show their options' prices; others show scrip.
+            var price = it.type === 'variant'
+              ? it.variants.map(function(v) { return (pt ? v.labelPt : v.label) + ' ' + v.scrip; }).join(' / ') + ' Scrip'
+              : it.scrip + ' Scrip';
+            var contentsHtml = (it.type === 'kit' && it.contents) ? '<ul class="kit-contents-list">' + it.contents.map(function(c) {
+              return '<li>' + escHtml(pt ? c.namePt : c.name) + ' <span class="kit-kp-tag">' + (c.kp != null ? c.kp : 1) + ' KP</span></li>';
+            }).join('') + '</ul>' : '';
+            var itemNote = (it.type === 'kit' && (pt ? it.notePt : it.note)) ? '<p class="muted kit-item-note">' + escStory(pt ? it.notePt : it.note) + '</p>' : '';
+            return '<div class="kit-item">' +
+              '<div class="kit-item-head"><strong>' + escHtml(pt ? it.namePt : it.name) + '</strong>' +
+                '<span class="kit-item-scrip">' + price + '</span></div>' +
+              (tags ? '<div class="kit-item-tags">' + tags + '</div>' : '') +
+              (it.description ? '<p>' + escHtml(pt ? it.descriptionPt : it.description) + '</p>' : '') +
+              itemNote +
+              contentsHtml +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }).join('') +
 
       '</div>';
   }
@@ -7413,6 +8268,7 @@ route('advance', renderAdvance);
 route('swapagenda', renderSwapAgenda);
 route('quirks', renderQuirks);
 route('sinmarks', renderSinMarks);
+route('kitshop', renderKitShop);
 initRouter();
 
 })();

@@ -2896,6 +2896,264 @@ input[type="number"] {
   color: var(--text-accent);
 }
 
+/* Kit Expansion catalog items */
+.kit-item {
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kit-item:last-child {
+  border-bottom: none;
+}
+
+.kit-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.kit-item-head strong {
+  color: var(--text-primary);
+}
+
+.kit-item-scrip {
+  color: var(--text-accent);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.kit-item-tags {
+  margin: 2px 0;
+}
+
+.kit-item-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  margin-right: var(--space-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.kit-item p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ─── Kit Expansion Shop ────────────────────────────────────────── */
+
+.kitshop-balance .kitshop-scrip {
+  color: var(--text-accent);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.kit-shop-item {
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kit-shop-item:last-child {
+  border-bottom: none;
+}
+
+.kit-shop-item.owned {
+  opacity: 0.85;
+}
+
+.kit-shop-item p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: var(--space-xs) 0;
+}
+
+.kit-shop-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.kit-owned-badge {
+  color: var(--success);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.kit-req {
+  margin-left: var(--space-xs);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.kit-req.unmet {
+  color: #e55;
+}
+
+/* ─── Kit Passives (owned passive/use/consumable items) ─────────── */
+
+.kit-passives {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border-color);
+}
+
+.kit-passives h4 {
+  margin-bottom: var(--space-sm);
+}
+
+.kit-passive-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.kit-passive-row:last-child {
+  border-bottom: none;
+}
+
+.kit-passive-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.kit-passive-info p {
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+
+.kit-passive-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.kit-passive-mod {
+  color: var(--text-accent);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.kit-passive-uses {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+}
+
+/* ─── Kit groups (Possessions kits) in session ──────────────────── */
+
+.kit-group {
+  margin-top: var(--space-sm);
+}
+
+.kit-group-name {
+  font-size: 0.85rem;
+  color: var(--text-accent);
+  margin-bottom: var(--space-xs);
+}
+
+/* Kit contents list shown in the shop */
+.kit-contents-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-xs) 0;
+}
+
+.kit-contents-list li {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 2px 0;
+}
+
+.kit-item-note {
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* Deployed car block (Driver Kit) with interactive harm talisman */
+.kit-car-block {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+.kit-car-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.kit-car-head strong {
+  color: var(--text-accent);
+}
+
+.kit-car-label {
+  font-size: 0.75rem;
+  margin-bottom: var(--space-xs);
+}
+
+/* ─── Weapon pairs (View) ───────────────────────────────────────── */
+
+.weapon-sets {
+  display: grid;
+  gap: var(--space-md);
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.weapon-set {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+.weapon-set-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.ws-pair-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.ws-cat-badge {
+  background: rgba(196, 163, 90, 0.15);
+  color: var(--text-accent);
+  border-radius: var(--radius);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ws-upgrade {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.ws-upgrade .btn {
+  flex: 1;
+}
+
 /* ─── Hunt Tracker (GM) ─────────────────────────────────────────── */
 
 .hunt-section {
