@@ -6799,6 +6799,7 @@ function renderEnemyCard(en) {
       (en.description ? '<p class="enemy-desc muted">' + escHtml(en.description) + '</p>' : '');
   }
   return '<div class="enemy-card' + (isSin ? ' enemy-card-sin' : '') + '" data-id="' + en.id + '" data-kind="' + (en.kind || 'opponent') + '">' +
+    (en.image ? '<img class="enemy-card-img" src="' + en.image + '" alt="' + escAttr(en.name) + '">' : '') +
     '<div class="enemy-card-header">' +
       '<h3 class="enemy-name">' + escHtml(en.name || (pt ? 'Sem nome' : 'Unnamed')) + '</h3>' +
       '<span class="enemy-cat">CAT ' + (en.category || 0) + '</span>' +
