@@ -27,6 +27,7 @@ var LOCALES = {
     step_details: 'Details', step_skills: 'Skills', step_agenda: 'Agenda', step_blasphemy: 'Blasphemy', step_review: 'Review',
     identity: 'Identity', name: 'Name', namePh: 'Exorcist name', exorcistId: 'Exorcist ID', exorcistIdPh: 'e.g. XXX0357',
     look: 'Look / Description', lookPh: 'Describe appearance',
+    portrait_none: 'No image', portrait_upload: 'Upload image', portrait_remove: 'Remove',
     sinSeed: 'Sin-seed Location', brain: 'Brain', heart: 'Heart',
     questions: 'Questions', questionsHint: '(share with your Admin)',
     qManifest: 'How did you first manifest your powers?', qHidden: 'What do you hide in the deepest parts of you?',
@@ -173,6 +174,7 @@ var LOCALES = {
     step_details: 'Detalhes', step_skills: 'Perícias', step_agenda: 'Agenda', step_blasphemy: 'Blasfêmia', step_review: 'Revisão',
     identity: 'Identidade', name: 'Nome', namePh: 'Nome do exorcista', exorcistId: 'ID do Exorcista', exorcistIdPh: 'ex. XXX0357',
     look: 'Aparência / Descrição', lookPh: 'Descreva a aparência',
+    portrait_none: 'Sem imagem', portrait_upload: 'Enviar imagem', portrait_remove: 'Remover',
     sinSeed: 'Semente Profana', brain: 'Cérebro', heart: 'Coração',
     questions: 'Perguntas', questionsHint: '(compartilhe com seu Admin)',
     qManifest: 'Como você manifestou seus poderes pela primeira vez?', qHidden: 'O que você esconde nas partes mais profundas de si?',
@@ -2829,6 +2831,56 @@ function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 }
 
+// Fallback portrait used when a character has no custom image.
+var DEFAULT_PORTRAIT = 'img/misc/exorcist-default.png';
+
+/** Return a character's portrait, or the default fallback image. */
+function getPortrait(char) {
+  return (char && char.portrait) ? char.portrait : DEFAULT_PORTRAIT;
+}
+
+/**
+ * Read an image File, downscale it to fit within maxDim (px) and re-encode as a
+ * compressed JPEG Data URL, then hand the result to `callback(dataUrl)`.
+ * Keeps stored images small (tens of KB) so they fit in localStorage and travel
+ * cleanly through JSON export/import. Falls back to the raw Data URL on error.
+ */
+function readImageAsDataURL(file, callback, maxDim, quality) {
+  maxDim = maxDim || 512;
+  quality = quality || 0.82;
+  if (!file || !/^image\//.test(file.type)) {
+    alert(currentLang === 'pt' ? 'Selecione um arquivo de imagem.' : 'Please select an image file.');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      var w = img.width, h = img.height;
+      var scale = Math.min(1, maxDim / Math.max(w, h));
+      var cw = Math.round(w * scale), ch = Math.round(h * scale);
+      var canvas = document.createElement('canvas');
+      canvas.width = cw; canvas.height = ch;
+      try {
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, cw, ch);
+        // PNG with transparency stays PNG; everything else compresses to JPEG.
+        var isPng = /image\/png/.test(file.type);
+        var out = canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', quality);
+        callback(out);
+      } catch (e) {
+        callback(ev.target.result); // fallback: original data url
+      }
+    };
+    img.onerror = function() { callback(ev.target.result); };
+    img.src = ev.target.result;
+  };
+  reader.onerror = function() {
+    alert(currentLang === 'pt' ? 'Falha ao ler a imagem.' : 'Failed to read the image.');
+  };
+  reader.readAsDataURL(file);
+}
+
 // ════════════════════════════════════════════════════════════════════
 // STORAGE
 // ════════════════════════════════════════════════════════════════════
@@ -3629,7 +3681,7 @@ function renderCharacterCard(char) {
   var access = canAccessCharacter(char);
   var blockedHtml = !access.ok ? '<p class="char-card-blocked">\u26A0 ' + t('exp_blocked_title') + ': ' + access.missing.map(getExpansionName).join(', ') + '</p>' : '';
   return '<div class="char-card ' + (!access.ok ? 'blocked' : '') + '" data-id="' + char.id + '">' +
-    '<div class="char-card-header"><h3 class="char-name">' + (char.name || 'Unnamed Exorcist') + '</h3><span class="char-cat">CAT ' + (char.category || 1) + '</span></div>' +
+    '<div class="char-card-header">' + '<img class="char-card-portrait" src="' + getPortrait(char) + '" alt="' + escAttr(char.name) + '">' + '<h3 class="char-name">' + (char.name || 'Unnamed Exorcist') + '</h3><span class="char-cat">CAT ' + (char.category || 1) + '</span></div>' +
     '<div class="char-card-body">' +
       '<p><span class="label">' + t('home_agenda') + ':</span> ' + agendaName + '</p>' +
       '<p><span class="label">' + t('home_blasphemy') + ':</span> ' + blasphemyNames + '</p>' +
@@ -3739,6 +3791,13 @@ function renderCreateStep() {
 function renderDetailsStep(container) {
   container.innerHTML =
     '<div class="form-section"><h3>' + t('identity') + '</h3>' +
+      '<div class="portrait-edit">' +
+        '<div class="portrait-preview" id="c-portrait-preview"><img src="' + getPortrait(createChar) + '" alt="portrait"></div>' +
+        '<div class="portrait-controls">' +
+          '<label class="btn btn-secondary btn-sm portrait-upload-label">' + t('portrait_upload') + '<input type="file" id="c-portrait-input" accept="image/*" hidden></label>' +
+          (createChar.portrait ? '<button type="button" class="btn btn-tiny btn-danger" id="c-portrait-remove">' + t('portrait_remove') + '</button>' : '') +
+        '</div>' +
+      '</div>' +
       '<div class="form-group"><label for="name">' + t('name') + '</label><input type="text" id="name" value="' + escHtml(createChar.name) + '" placeholder="' + t('namePh') + '"></div>' +
       '<div class="form-group"><label for="exorcist-id">' + t('exorcistId') + '</label><input type="text" id="exorcist-id" value="' + escHtml(createChar.exorcistId) + '" placeholder="' + t('exorcistIdPh') + '"></div>' +
       '<div class="form-group"><label for="look">' + t('look') + '</label><textarea id="look" rows="2" placeholder="' + t('lookPh') + '">' + escHtml(createChar.look) + '</textarea></div>' +
@@ -3755,15 +3814,44 @@ function renderDetailsStep(container) {
     '</div>' +
     '<button class="btn btn-primary btn-next" id="btn-next">' + t('nextSkills') + '</button>';
 
+  // Collect the current details-step inputs into createChar (preserve in-progress edits)
+  function collectDetailsInto(target) {
+    target.name = document.getElementById('name').value.trim();
+    target.exorcistId = document.getElementById('exorcist-id').value.trim();
+    target.look = document.getElementById('look').value.trim();
+    target.sinSeedLocation = (document.querySelector('input[name="sinseed"]:checked') || {}).value || 'brain';
+    target.questions.manifestation = document.getElementById('q-manifest').value.trim();
+    target.questions.hidden = document.getElementById('q-hidden').value.trim();
+    target.questions.hand = document.getElementById('q-hand').value.trim();
+    target.questions.mother = document.getElementById('q-mother').value.trim();
+  }
+
+  // ─── Portrait upload / remove ──────────────────────────
+  var cPortraitInput = document.getElementById('c-portrait-input');
+  if (cPortraitInput) {
+    cPortraitInput.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      readImageAsDataURL(file, function(dataUrl) {
+        collectDetailsInto(createChar);
+        createChar.portrait = dataUrl;
+        try { saveCreateState(); } catch (err) { alert(currentLang === 'pt' ? 'Imagem grande demais. Tente uma menor.' : 'Image too large. Try a smaller one.'); return; }
+        renderDetailsStep(container);
+      });
+    });
+  }
+  var cPortraitRemove = document.getElementById('c-portrait-remove');
+  if (cPortraitRemove) {
+    cPortraitRemove.addEventListener('click', function() {
+      collectDetailsInto(createChar);
+      delete createChar.portrait;
+      saveCreateState();
+      renderDetailsStep(container);
+    });
+  }
+
   document.getElementById('btn-next').addEventListener('click', function() {
-    createChar.name = document.getElementById('name').value.trim();
-    createChar.exorcistId = document.getElementById('exorcist-id').value.trim();
-    createChar.look = document.getElementById('look').value.trim();
-    createChar.sinSeedLocation = (document.querySelector('input[name="sinseed"]:checked') || {}).value || 'brain';
-    createChar.questions.manifestation = document.getElementById('q-manifest').value.trim();
-    createChar.questions.hidden = document.getElementById('q-hidden').value.trim();
-    createChar.questions.hand = document.getElementById('q-hand').value.trim();
-    createChar.questions.mother = document.getElementById('q-mother').value.trim();
+    collectDetailsInto(createChar);
     createStep++; saveCreateState(); renderCreateStep();
   });
 }
@@ -4026,6 +4114,7 @@ function renderReviewStep(container) {
   container.innerHTML =
     '<div class="form-section review-section"><h3>' + t('reviewTitle') + '</h3>' +
       '<div class="review-block"><h4>' + t('identity') + '</h4>' +
+        '<img class="char-portrait" src="' + getPortrait(createChar) + '" alt="portrait" style="margin-bottom:var(--space-sm)">' +
         '<p><strong>' + t('name') + ':</strong> ' + (createChar.name || '<em>Unnamed</em>') + '</p>' +
         '<p><strong>' + t('id') + ':</strong> ' + (createChar.exorcistId || '\u2014') + '</p>' +
         '<p><strong>' + t('sinSeed') + ':</strong> ' + t(createChar.sinSeedLocation) + '</p>' +
@@ -4094,9 +4183,12 @@ function renderView(characterId) {
       '<header class="page-header"><button class="btn btn-back" id="btn-home">' + t('nav_back') + '</button><div class="header-actions"><button class="btn btn-primary" id="btn-session">' + t('nav_session') + '</button><button class="btn btn-secondary" id="btn-advance">' + t('nav_advance') + '</button><button class="btn btn-secondary" id="btn-swap-agenda">' + t('nav_swap_agenda') + '</button>' + (isExpansionEnabled('gff4') ? '<button class="btn btn-secondary" id="btn-quirks">' + t('nav_quirks') + '</button>' : '') + '<button class="btn btn-secondary" id="btn-sinmarks">' + t('nav_sinmarks') + '</button><button class="btn btn-secondary" id="btn-edit">' + t('nav_edit') + '</button><button class="btn btn-secondary" id="btn-export">' + t('nav_export') + '</button></div></header>' +
       '<div class="sheet">' +
         // Identity
-        '<section class="sheet-section"><div class="sheet-row"><h2 class="char-name-large">' + (char.name || 'Unnamed Exorcist') + '</h2><span class="cat-badge">CAT ' + char.category + '</span></div>' +
+        '<section class="sheet-section"><div class="identity-header">' +
+          '<img class="char-portrait" src="' + getPortrait(char) + '" alt="' + escAttr(char.name) + '">' +
+          '<div class="identity-header-main"><div class="sheet-row"><h2 class="char-name-large">' + (char.name || 'Unnamed Exorcist') + '</h2><span class="cat-badge">CAT ' + char.category + '</span></div>' +
           '<div class="identity-details"><span><strong>' + t('id') + ':</strong> ' + (char.exorcistId || '\u2014') + '</span><span><strong>' + t('sinSeed') + ':</strong> ' + t(char.sinSeedLocation) + '</span><span><strong>' + t('missions') + ':</strong> ' + char.missionsSurvived + '</span><span><strong>' + t('scrip') + ':</strong> ' + char.scrip + '</span></div>' +
           (char.look ? '<p class="char-look">' + escHtml(char.look) + '</p>' : '') +
+          '</div></div>' +
         '</section>' +
         // Skills
         '<section class="sheet-section"><h3>' + t('skills') + '</h3><div class="skills-display">' +
@@ -4200,6 +4292,13 @@ function renderEditForm(app) {
       '<header class="page-header"><button class="btn btn-back" id="btn-back">' + t('nav_back') + '</button><h2>' + t('nav_edit') + ': ' + (editChar.name || 'Exorcist') + '</h2></header>' +
       '<form id="edit-form" class="edit-form">' +
         '<section class="sheet-section"><h3>' + t('identity') + '</h3>' +
+          '<div class="portrait-edit">' +
+            '<div class="portrait-preview" id="e-portrait-preview"><img src="' + getPortrait(editChar) + '" alt="portrait"></div>' +
+            '<div class="portrait-controls">' +
+              '<label class="btn btn-secondary btn-sm portrait-upload-label">' + t('portrait_upload') + '<input type="file" id="e-portrait-input" accept="image/*" hidden></label>' +
+              (editChar.portrait ? '<button type="button" class="btn btn-tiny btn-danger" id="e-portrait-remove">' + t('portrait_remove') + '</button>' : '') +
+            '</div>' +
+          '</div>' +
           '<div class="form-row"><div class="form-group"><label>' + t('name') + '</label><input type="text" id="e-name" value="' + escHtml(editChar.name) + '"></div><div class="form-group"><label>' + t('id') + '</label><input type="text" id="e-id" value="' + escHtml(editChar.exorcistId) + '"></div></div>' +
           '<div class="form-group"><label>' + t('look') + '</label><textarea id="e-look" rows="2">' + escHtml(editChar.look) + '</textarea></div>' +
         '</section>' +
@@ -4291,6 +4390,29 @@ function renderEditForm(app) {
 
   document.getElementById('btn-back').addEventListener('click', function() { navigate('view/' + editChar.id); });
   document.getElementById('btn-cancel').addEventListener('click', function() { navigate('view/' + editChar.id); });
+
+  // ─── Portrait upload / remove ──────────────────────────
+  var ePortraitInput = document.getElementById('e-portrait-input');
+  if (ePortraitInput) {
+    ePortraitInput.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      readImageAsDataURL(file, function(dataUrl) {
+        editChar.portrait = dataUrl;
+        try { saveCharacter(editChar); } catch (err) { alert(currentLang === 'pt' ? 'Imagem grande demais para salvar. Tente uma menor.' : 'Image too large to save. Try a smaller one.'); return; }
+        renderEditForm(app);
+      });
+    });
+  }
+  var ePortraitRemove = document.getElementById('e-portrait-remove');
+  if (ePortraitRemove) {
+    ePortraitRemove.addEventListener('click', function() {
+      delete editChar.portrait;
+      saveCharacter(editChar);
+      renderEditForm(app);
+    });
+  }
+
   document.getElementById('edit-form').addEventListener('submit', function(e) {
     e.preventDefault();
     editChar.name = document.getElementById('e-name').value.trim();
@@ -6380,6 +6502,7 @@ function renderEnemyCombat(enemyId) {
         '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
         '<h1 class="title">' + escHtml(en.name || (pt ? 'Sem nome' : 'Unnamed')) + ' <span class="subtitle">CAT ' + (en.category || 0) + '</span></h1>' +
       '</header>' +
+      (en.image ? '<img class="enemy-detail-img" src="' + en.image + '" alt="' + escAttr(en.name) + '">' : '') +
       '<div class="combat-talismans">' +
         '<div class="combat-talisman-group">' +
           '<div class="combat-talisman-label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ' <span class="combat-count" id="exec-count">' + execCur + '/' + execMax + '</span>' +
@@ -6747,6 +6870,13 @@ function renderEnemyForm(enemyId) {
       '</header>' +
       '<form class="enemy-form" id="enemy-form">' +
         '<div class="form-section">' +
+          '<div class="portrait-edit">' +
+            '<div class="portrait-preview' + (en.image ? '' : ' empty') + '" id="en-portrait-preview">' + (en.image ? '<img src="' + en.image + '" alt="portrait">' : '<span class="portrait-placeholder">' + (pt ? 'Sem imagem' : 'No image') + '</span>') + '</div>' +
+            '<div class="portrait-controls">' +
+              '<label class="btn btn-secondary btn-sm portrait-upload-label">' + (pt ? 'Enviar imagem' : 'Upload image') + '<input type="file" id="en-portrait-input" accept="image/*" hidden></label>' +
+              (en.image ? '<button type="button" class="btn btn-tiny btn-danger" id="en-portrait-remove">' + (pt ? 'Remover' : 'Remove') + '</button>' : '') +
+            '</div>' +
+          '</div>' +
           '<label>' + (pt ? 'Nome' : 'Name') + '</label>' +
           '<input type="text" id="f-name" value="' + escAttr(en.name) + '" placeholder="' + (pt ? 'Ex: Guarda de Segurança' : 'e.g. Security Guard') + '">' +
           '<label>' + (pt ? 'Descrição' : 'Description') + '</label>' +
@@ -6821,6 +6951,48 @@ function renderEnemyForm(enemyId) {
   document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
   document.getElementById('btn-cancel').addEventListener('click', function() { navigate('admin'); });
 
+  // ─── Portrait upload / remove ──────────────────────────
+  function collectEnemyFormInto(target) {
+    target.name = document.getElementById('f-name').value.trim();
+    target.description = document.getElementById('f-description').value.trim();
+    target.type = document.getElementById('f-type').value;
+    target.category = parseInt(document.getElementById('f-category').value, 10) || 0;
+    target.talismanSize = document.getElementById('f-talismanSize').value;
+    target.talismanSegments = parseInt(document.getElementById('f-talismanSegments').value, 10) || 2;
+    target.facts = document.getElementById('f-facts').value.trim();
+    target.attacksWith = document.getElementById('f-attacksWith').value.trim();
+    target.complications = document.getElementById('f-complications').value.trim();
+    target.threat = document.getElementById('f-threat').value.trim();
+    var rEl = document.getElementById('f-reactions');
+    if (rEl) target.reactions = rEl.value.trim();
+    target.stress = parseInt(document.getElementById('f-stress').value, 10) || 0;
+    target.stressRisk23 = parseInt(document.getElementById('f-stressRisk23').value, 10) || 0;
+    target.stressRisk1 = parseInt(document.getElementById('f-stressRisk1').value, 10) || 0;
+    target.expansion = document.getElementById('f-expansion').value;
+  }
+  var enPortraitInput = document.getElementById('en-portrait-input');
+  if (enPortraitInput) {
+    enPortraitInput.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      readImageAsDataURL(file, function(dataUrl) {
+        collectEnemyFormInto(en); // preserve in-progress edits across the re-render
+        en.image = dataUrl;
+        try { saveEnemy(en); } catch (err) { alert(pt ? 'Imagem grande demais para salvar. Tente uma menor.' : 'Image too large to save. Try a smaller one.'); return; }
+        navigate('enemy-edit/' + en.id);
+      });
+    });
+  }
+  var enPortraitRemove = document.getElementById('en-portrait-remove');
+  if (enPortraitRemove) {
+    enPortraitRemove.addEventListener('click', function() {
+      collectEnemyFormInto(en);
+      delete en.image;
+      saveEnemy(en);
+      navigate('enemy-edit/' + en.id);
+    });
+  }
+
   document.getElementById('enemy-form').addEventListener('submit', function(e) {
     e.preventDefault();
     en.name = document.getElementById('f-name').value.trim();
@@ -6886,6 +7058,13 @@ function renderSinForm(sinId, startingType) {
       '<form class="enemy-form sin-form" id="sin-form">' +
         // Identity
         '<div class="form-section">' +
+          '<div class="portrait-edit">' +
+            '<div class="portrait-preview' + (s.image ? '' : ' empty') + '" id="s-portrait-preview">' + (s.image ? '<img src="' + s.image + '" alt="portrait">' : '<span class="portrait-placeholder">' + (pt ? 'Sem imagem' : 'No image') + '</span>') + '</div>' +
+            '<div class="portrait-controls">' +
+              '<label class="btn btn-secondary btn-sm portrait-upload-label">' + (pt ? 'Enviar imagem' : 'Upload image') + '<input type="file" id="s-portrait-input" accept="image/*" hidden></label>' +
+              (s.image ? '<button type="button" class="btn btn-tiny btn-danger" id="s-portrait-remove">' + (pt ? 'Remover' : 'Remove') + '</button>' : '') +
+            '</div>' +
+          '</div>' +
           '<label>' + (pt ? 'Nome' : 'Name') + '</label>' +
           '<input type="text" id="s-name" value="' + escAttr(s.name) + '" placeholder="' + (pt ? 'Ex: O Minotauro' : 'e.g. The Minotaur') + '">' +
         '</div>' +
@@ -6995,6 +7174,58 @@ function renderSinForm(sinId, startingType) {
       descInputs[slot].value = opt.description;
     });
   });
+
+  // ─── Portrait upload / remove ──────────────────────────
+  function collectSinFormInto(target) {
+    target.name = document.getElementById('s-name').value.trim();
+    target.sinType = document.getElementById('s-sinType').value;
+    target.form = document.getElementById('s-form').value;
+    target.category = parseInt(document.getElementById('s-category').value, 10) || 0;
+    target.primaryEmotion = document.getElementById('s-primaryEmotion').value.trim();
+    target.talismanSegments = parseInt(document.getElementById('s-talismanSegments').value, 10) || 4;
+    target.appearance = document.getElementById('s-appearance').value.trim();
+    target.behavior = document.getElementById('s-behavior').value.trim();
+    target.domains = [0, 1, 2].map(function(i) {
+      return { name: document.querySelector('.s-domain-name[data-i="' + i + '"]').value.trim(), description: document.querySelector('.s-domain-desc[data-i="' + i + '"]').value.trim() };
+    });
+    target.traumas = [0, 1, 2].map(function(i) {
+      return { question: document.querySelector('.s-trauma-q[data-i="' + i + '"]').value.trim(), answer: document.querySelector('.s-trauma-a[data-i="' + i + '"]').value.trim() };
+    });
+    target.pressureName = document.getElementById('s-pressureName').value.trim();
+    target.pressureEffect = document.getElementById('s-pressureEffect').value.trim();
+    target.outOfControl = document.getElementById('s-outOfControl').value.trim();
+    target.attacksWith = document.getElementById('s-attacksWith').value.trim();
+    target.complications = document.getElementById('s-complications').value.trim();
+    target.threats = document.getElementById('s-threats').value.trim();
+    target.afflictions = document.getElementById('s-afflictions').value.trim();
+    target.tensionMoves = document.getElementById('s-tensionMoves').value.trim();
+    target.severeAttack = document.getElementById('s-severeAttack').value.trim();
+    target.palace = document.getElementById('s-palace').value.trim();
+    target.traces = document.getElementById('s-traces').value.trim();
+    target.expansion = document.getElementById('s-expansion').value;
+  }
+  var sPortraitInput = document.getElementById('s-portrait-input');
+  if (sPortraitInput) {
+    sPortraitInput.addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      readImageAsDataURL(file, function(dataUrl) {
+        collectSinFormInto(s);
+        s.image = dataUrl;
+        try { saveEnemy(s); } catch (err) { alert(pt ? 'Imagem grande demais para salvar. Tente uma menor.' : 'Image too large to save. Try a smaller one.'); return; }
+        navigate('sin-edit/' + s.id);
+      });
+    });
+  }
+  var sPortraitRemove = document.getElementById('s-portrait-remove');
+  if (sPortraitRemove) {
+    sPortraitRemove.addEventListener('click', function() {
+      collectSinFormInto(s);
+      delete s.image;
+      saveEnemy(s);
+      navigate('sin-edit/' + s.id);
+    });
+  }
 
   document.getElementById('sin-form').addEventListener('submit', function(e) {
     e.preventDefault();
