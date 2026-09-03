@@ -4591,6 +4591,20 @@ function renderView(characterId) {
           (char.look ? '<p class="char-look">' + escHtml(char.look) + '</p>' : '') +
           '</div></div>' +
         '</section>' +
+        // Questions (from character creation)
+        ((function() {
+          var q = char.questions || {};
+          var rows = [
+            { label: t('qManifest'), val: q.manifestation },
+            { label: t('qHidden'), val: q.hidden },
+            { label: t('qHand'), val: q.hand },
+            { label: t('qMother'), val: q.mother }
+          ].filter(function(r) { return r.val && r.val.trim(); });
+          if (!rows.length) return '';
+          return '<section class="sheet-section"><h3>' + t('questions') + '</h3><div class="questions-display">' +
+            rows.map(function(r) { return '<p><strong>' + escHtml(r.label) + '</strong><br>' + escHtml(r.val) + '</p>'; }).join('') +
+          '</div></section>';
+        })()) +
         // Skills
         '<section class="sheet-section"><h3>' + t('skills') + '</h3><div class="skills-display">' +
           SKILLS.map(function(s) {
@@ -4930,6 +4944,12 @@ function renderEditForm(app) {
           '<div class="form-row"><div class="form-group"><label>' + t('name') + '</label><input type="text" id="e-name" value="' + escHtml(editChar.name) + '"></div><div class="form-group"><label>' + t('id') + '</label><input type="text" id="e-id" value="' + escHtml(editChar.exorcistId) + '"></div></div>' +
           '<div class="form-group"><label>' + t('look') + '</label><textarea id="e-look" rows="2">' + escHtml(editChar.look) + '</textarea></div>' +
         '</section>' +
+        '<section class="sheet-section"><h3>' + t('questions') + ' <span class="muted">' + t('questionsHint') + '</span></h3>' +
+          '<div class="form-group"><label>' + t('qManifest') + '</label><textarea id="e-q-manifest" rows="2">' + escHtml((editChar.questions || {}).manifestation || '') + '</textarea></div>' +
+          '<div class="form-group"><label>' + t('qHidden') + '</label><textarea id="e-q-hidden" rows="2">' + escHtml((editChar.questions || {}).hidden || '') + '</textarea></div>' +
+          '<div class="form-group"><label>' + t('qHand') + '</label><textarea id="e-q-hand" rows="2">' + escHtml((editChar.questions || {}).hand || '') + '</textarea></div>' +
+          '<div class="form-group"><label>' + t('qMother') + '</label><textarea id="e-q-mother" rows="2">' + escHtml((editChar.questions || {}).mother || '') + '</textarea></div>' +
+        '</section>' +
         '<section class="sheet-section"><h3>' + t('progression') + '</h3>' +
           '<div class="form-row">' +
             '<div class="form-group"><label>' + t('category') + '</label><input type="number" id="e-cat" min="1" max="5" value="' + editChar.category + '"></div>' +
@@ -5046,6 +5066,11 @@ function renderEditForm(app) {
     editChar.name = document.getElementById('e-name').value.trim();
     editChar.exorcistId = document.getElementById('e-id').value.trim();
     editChar.look = document.getElementById('e-look').value.trim();
+    if (!editChar.questions) editChar.questions = {};
+    editChar.questions.manifestation = document.getElementById('e-q-manifest').value.trim();
+    editChar.questions.hidden = document.getElementById('e-q-hidden').value.trim();
+    editChar.questions.hand = document.getElementById('e-q-hand').value.trim();
+    editChar.questions.mother = document.getElementById('e-q-mother').value.trim();
     editChar.category = parseInt(document.getElementById('e-cat').value) || 1;
     editChar.missionsSurvived = parseInt(document.getElementById('e-missions').value) || 0;
     editChar.scrip = parseInt(document.getElementById('e-scrip').value) || 0;
@@ -6900,6 +6925,8 @@ function renderCompendium() {
   }
   // Reference tab (scrip, kit, weapons) — always available
   tabs.push({ id: 'reference', label: currentLang === 'pt' ? 'Referência' : 'Reference' });
+  // Rules quick reference — always available
+  tabs.push({ id: 'rules', label: currentLang === 'pt' ? 'Regras' : 'Rules' });
 
   // Restore last selected tab (default to first)
   var savedTab = null;
@@ -7118,6 +7145,50 @@ function renderCompendiumTab(tabId) {
       }).join('') +
 
       '</div>';
+  }
+
+  if (tabId === 'rules') {
+    var ptR = currentLang === 'pt';
+    function ruleCard(titleEn, titlePt, bodyEn, bodyPt) {
+      return '<div class="compendium-card reference-card">' +
+        '<h3 class="compendium-card-name">' + (ptR ? titlePt : titleEn) + '</h3>' +
+        (ptR ? bodyPt : bodyEn) + '</div>';
+    }
+    content.innerHTML = '<div class="reference-content rules-content">' +
+      ruleCard('The Action Roll', 'A Rolagem de Ação',
+        '<p>Only roll when the outcome is risky, contested, or uncertain. Build a pool of d6: up to 3 dice from the relevant skill (0-3) plus up to 3 dice from advantages (ally aid, position, abilities; max +3 from advantages). Any die showing <strong>4+</strong> is a success. At least one success = you achieve the goal; extra successes can sometimes be cashed in. No successes = failure with consequences. A pool of 0 dice rolls 2d6 and keeps the <strong>lowest</strong>.</p>',
+        '<p>Só role quando o resultado for arriscado, contestado ou incerto. Monte uma reserva de d6: até 3 dados da perícia relevante (0-3) mais até 3 dados de vantagens (ajuda de aliado, posição, habilidades; máx +3 de vantagens). Qualquer dado com <strong>4+</strong> é sucesso. Ao menos um sucesso = você atinge o objetivo; sucessos extras às vezes podem ser aproveitados. Nenhum sucesso = falha com consequências. Uma reserva de 0 dados rola 2d6 e mantém o <strong>menor</strong>.</p>') +
+      ruleCard('Hard, Risky, Fate & Admin Rolls', 'Rolagens Difíceis, Arriscadas, do Destino e do Admin',
+        '<p><strong>Hard:</strong> tasks beyond normal skill, under duress, or without proper tools — successes only count on a <strong>6</strong>. The Admin may declare something Impossible until circumstances change.</p><p><strong>Risky:</strong> when there is clear danger, the Admin rolls a <strong>risk die (1d6)</strong> alongside your action.</p><p><strong>Fate roll:</strong> a 1d6 the Admin rolls to leave things to chance. Risk/Fate scale: 1 = much worse, 2-3 = worse, 4-5 = as expected, 6 = better.</p><p><strong>Admin rolls:</strong> the Admin rarely rolls except the fate and risk dice; they mostly react to player rolls.</p>',
+        '<p><strong>Difícil:</strong> tarefas além da perícia normal, sob pressão, ou sem as ferramentas certas — sucessos só contam com <strong>6</strong>. O Admin pode declarar algo Impossível até as circunstâncias mudarem.</p><p><strong>Arriscada:</strong> quando há perigo claro, o Admin rola um <strong>dado de risco (1d6)</strong> junto com sua ação.</p><p><strong>Rolagem do Destino:</strong> um 1d6 que o Admin rola para deixar as coisas ao acaso. Escala de Risco/Destino: 1 = muito pior, 2-3 = pior, 4-5 = como esperado, 6 = melhor.</p><p><strong>Rolagens do Admin:</strong> o Admin raramente rola, exceto os dados de destino e risco; ele reage às rolagens dos jogadores.</p>') +
+      ruleCard('Consequences & Upsides', 'Consequências e Vantagens',
+        '<p>Consequences apply on a failure OR when the risk die is low (1-3) — they never remove a success, only add cost: a follow-up needed, gear breaking, more danger, lost time, a hard choice, a hook, or a ticking-clock talisman. Stress guide: 1 = pain/minor injury; 2-3 = crippling/potentially fatal; 4+ = instantly fatal to humans.</p><p><strong>Upside:</strong> a <strong>6</strong> on the risk die (even on a failure) lets the action still have some effect, or makes the next action less hard/risky or grants +1 advantage die.</p>',
+        '<p>Consequências surgem na falha OU quando o dado de risco é baixo (1-3) — nunca removem um sucesso, só adicionam custo: um acompanhamento necessário, equipamento quebrando, mais perigo, tempo perdido, uma escolha difícil, um gancho, ou um talismã de contagem regressiva. Guia de estresse: 1 = dor/ferimento leve; 2-3 = incapacitante/potencialmente fatal; 4+ = instantaneamente fatal para humanos.</p><p><strong>Vantagem:</strong> um <strong>6</strong> no dado de risco (mesmo na falha) permite que a ação ainda tenha algum efeito, ou torna a próxima ação menos difícil/arriscada ou concede +1 dado de vantagem.</p>') +
+      ruleCard('Teamwork & Setup', 'Trabalho em Equipe e Preparação',
+        '<p><strong>Teamwork:</strong> several willing characters pick a leader and combine the <strong>highest</strong> advantages, skills, kit and abilities among them; the leader makes one roll and everyone shares the outcome <em>and</em> the same consequences (including stress).</p><p><strong>Setup:</strong> a character acts only to set up another — on success the target\'s next action gains one of: +1D, hard→normal, or risky→straight. A character benefits from setup only once per action.</p>',
+        '<p><strong>Trabalho em Equipe:</strong> vários personagens dispostos escolhem um líder e combinam as <strong>maiores</strong> vantagens, perícias, kit e habilidades entre eles; o líder faz uma rolagem e todos compartilham o resultado <em>e</em> as mesmas consequências (incluindo estresse).</p><p><strong>Preparação:</strong> um personagem age só para preparar outro — no sucesso, a próxima ação do alvo ganha um de: +1D, difícil→normal, ou arriscada→direta. Um personagem só se beneficia de preparação uma vez por ação.</p>') +
+      ruleCard('Divine Agony (Pathos)', 'Agonia Divina (Pathos)',
+        '<p>Gain 1 <strong>pathos</strong> whenever you roll no successes, take an injury or affliction, fill a hook, or another exorcist dies or suffers sin overflow (cap 3). Spend <strong>all</strong> pathos for Divine Agony: +1D per pathos on a roll, stacking past the normal +3D cap. Limited to once per session per character and once per scene for the group. All pathos clears at end of session.</p>',
+        '<p>Ganhe 1 <strong>pathos</strong> sempre que rolar sem sucessos, sofrer um ferimento ou aflição, preencher um gancho, ou quando outro exorcista morre ou sofre transbordo de pecado (limite 3). Gaste <strong>todo</strong> o pathos para a Agonia Divina: +1D por pathos numa rolagem, acumulando além do limite normal de +3D. Limitado a uma vez por sessão por personagem e uma vez por cena para o grupo. Todo o pathos é zerado no fim da sessão.</p>') +
+      ruleCard('Talismans', 'Talismãs',
+        '<p>Talismans track multi-roll challenges as slashes. When rolling on a talisman you make a normal action roll, then cash in <strong>every</strong> success as one slash (if the roll is hard, only 6s count). Lengths: simple 1-2, medium 3-5, complex 6-8. Filling it resolves the task; slashes can be reduced, even to 0. Name them descriptively ("Shuddering Horrors", not "Evade the Horrors").</p>',
+        '<p>Talismãs rastreiam desafios de múltiplas rolagens como cortes. Ao rolar sobre um talismã você faz uma rolagem de ação normal, depois converte <strong>cada</strong> sucesso em um corte (se a rolagem for difícil, só 6 contam). Tamanhos: simples 1-2, médio 3-5, complexo 6-8. Preenchê-lo resolve a tarefa; cortes podem ser reduzidos, até a 0. Nomeie-os de forma descritiva ("Horrores Trêmulos", não "Evite os Horrores").</p>') +
+      ruleCard('Category (CAT): Mundane vs Supernatural', 'Categoria (CAT): Mundano vs Sobrenatural',
+        '<p>Everything is rated by Category (0-7). CAT 0 = ordinary human capability; exorcists\' mundane actions and gear are CAT 0, while their Blasphemies are CAT 1-5+. Category scales speed, size, area, range and strength per step. <strong>Key rule:</strong> anything <em>mundane</em> an exorcist does to harm or subdue a sin is <strong>always hard</strong>. Supernatural powers (Blasphemies and the basic Blast) bypass this and scale with the exorcist\'s CAT.</p>',
+        '<p>Tudo é classificado por Categoria (0-7). CAT 0 = capacidade humana comum; ações e equipamentos mundanos de exorcistas são CAT 0, enquanto suas Blasfêmias são CAT 1-5+. A categoria escala velocidade, tamanho, área, alcance e força a cada passo. <strong>Regra chave:</strong> qualquer coisa <em>mundana</em> que um exorcista faça para ferir ou subjugar um pecado é <strong>sempre difícil</strong>. Poderes sobrenaturais (Blasfêmias e a Rajada básica) ignoram isso e escalam com o CAT do exorcista.</p>') +
+      ruleCard('Bargaining', 'Barganha',
+        '<p>When you or an ally is acting, you may offer <strong>hooks</strong> to the Admin as a tradeoff to gain: +1D advantage, make an action less hard or less risky, or slash a talisman one extra time. The Admin decides whether to accept and may adjust the hook\'s severity; terms are agreed before rolling.</p>',
+        '<p>Quando você ou um aliado está agindo, você pode oferecer <strong>ganchos</strong> ao Admin como troca para ganhar: +1D de vantagem, tornar uma ação menos difícil ou menos arriscada, ou cortar um talismã uma vez extra. O Admin decide se aceita e pode ajustar a severidade do gancho; os termos são acordados antes de rolar.</p>') +
+      ruleCard('Experience & Advances', 'Experiência e Avanços',
+        '<p>At session end gain XP for fulfilling agenda items (normal and bolded). Fill the 4-segment experience bar to cash out one <strong>Advance</strong> (can be banked). Spend an advance to: gain a new agenda ability (max 5); gain a new blasphemy power or unlock a new blasphemy (passive + 1 power); evolve a sin mark; gain 3 scrip; or improve a skill by 1 (max six improvements, at most two skills at 3). A new blasphemy also lowers your sin cap by 1 and raises your XP cap by 1.</p>',
+        '<p>No fim da sessão ganhe XP por cumprir itens da agenda (normal e em negrito). Preencha a barra de experiência de 4 segmentos para sacar um <strong>Avanço</strong> (pode ser guardado). Gaste um avanço para: ganhar uma nova habilidade de agenda (máx 5); ganhar um novo poder de blasfêmia ou desbloquear uma nova blasfêmia (passiva + 1 poder); evoluir uma marca de pecado; ganhar 3 scrip; ou melhorar uma perícia em 1 (máx seis melhorias, no máximo duas perícias em 3). Uma nova blasfêmia também reduz seu limite de pecado em 1 e aumenta seu limite de XP em 1.</p>') +
+      ruleCard('Rest', 'Descanso',
+        '<p>The group decides to rest together; resting <strong>always raises pressure by 1</strong>. Each exorcist rolls <strong>2d3</strong> and assigns each die to: regain that many psyche bursts, erase that much stress, or erase that many slashes on a hook (you may pick the same option twice). Resting also ends or resets some power effects.</p>',
+        '<p>O grupo decide descansar junto; descansar <strong>sempre aumenta a pressão em 1</strong>. Cada exorcista rola <strong>2d3</strong> e atribui cada dado a: recuperar aquela quantidade de pulsos psíquicos, apagar aquela quantidade de estresse, ou apagar aquela quantidade de cortes em um gancho (pode escolher a mesma opção duas vezes). Descansar também encerra ou reseta alguns efeitos de poder.</p>') +
+      ruleCard('Sin Overflow & Resistance', 'Transbordo de Pecado e Resistência',
+        '<p>Instead of spending a psyche burst you may gain <strong>1d3 sin</strong>. Reaching your sin cap triggers overflow, but only at the <strong>end of the scene</strong> (so you can keep tapping sin once over cap). Sin halves (round up) after a survived mission. On overflow, choose <strong>Give Up</strong> (become an NPC sin) or <strong>Resist</strong>: roll <strong>1d6 + your sin marks</strong>; total <strong>6 or less passes</strong>, 7+ fails; a natural 1 always passes; no sin marks auto-passes, no sin boxes left auto-fails. Passing clears all sin, permanently ticks off two sin boxes, and grants a sin mark.</p>',
+        '<p>Em vez de gastar um pulso psíquico, você pode ganhar <strong>1d3 de pecado</strong>. Atingir o limite de pecado dispara o transbordo, mas só no <strong>fim da cena</strong> (então você pode continuar acumulando pecado uma vez acima do limite). O pecado é reduzido à metade (arredondando para cima) após uma missão sobrevivida. No transbordo, escolha <strong>Desistir</strong> (tornar-se um pecado NPC) ou <strong>Resistir</strong>: role <strong>1d6 + suas marcas de pecado</strong>; total <strong>6 ou menos passa</strong>, 7+ falha; um 1 natural sempre passa; sem marcas de pecado passa automaticamente, sem caixas de pecado falha automaticamente. Passar limpa todo o pecado, marca permanentemente duas caixas de pecado e concede uma marca de pecado.</p>') +
+    '</div>';
   }
 }
 
@@ -7497,6 +7568,7 @@ function renderAdmin() {
         (enemies.length > 0 ? '<button class="btn btn-secondary" id="btn-export-enemies">' + (pt ? 'Exportar Tudo' : 'Export All') + '</button>' : '') +
         '<button class="btn btn-secondary" id="btn-bestiary">' + (pt ? 'Bestiário' : 'Bestiary') + '</button>' +
         '<button class="btn btn-secondary" id="btn-hunt">' + (pt ? 'Caçada' : 'Hunt Tracker') + '</button>' +
+        '<button class="btn btn-secondary" id="btn-investigation">' + (pt ? 'Estruturar Caçada' : 'Structure a Hunt') + '</button>' +
       '</div>' +
       (enemies.length === 0 ?
         '<div class="empty-state"><p>' + (pt ? 'Nenhum inimigo criado ainda.' : 'No enemies created yet.') + '</p><p class="muted">' + (pt ? 'Crie oponentes para usar em suas sessões.' : 'Create opponents to use in your sessions.') + '</p></div>' :
@@ -7514,6 +7586,7 @@ function renderAdmin() {
   if (expBtn) expBtn.addEventListener('click', exportAllEnemies);
   document.getElementById('btn-bestiary').addEventListener('click', function() { navigate('bestiary'); });
   document.getElementById('btn-hunt').addEventListener('click', function() { navigate('hunt'); });
+  document.getElementById('btn-investigation').addEventListener('click', function() { navigate('investigation'); });
 
   app.querySelectorAll('.enemy-card').forEach(function(card) {
     var id = card.dataset.id;
@@ -8124,6 +8197,70 @@ function renderSinForm(sinId, startingType) {
 }
 
 // ════════════════════════════════════════════════════════════════════
+// PAGE: STRUCTURE A HUNT (GM) — investigation phase reference
+// ════════════════════════════════════════════════════════════════════
+
+function renderInvestigation() {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+
+  function phase(numEn, titleEn, titlePt, bodyEn, bodyPt) {
+    return '<div class="compendium-card reference-card hunt-phase">' +
+      '<h3 class="compendium-card-name"><span class="hunt-phase-num">' + numEn + '</span> ' + (pt ? titlePt : titleEn) + '</h3>' +
+      '<p>' + (pt ? bodyPt : bodyEn) + '</p></div>';
+  }
+
+  app.innerHTML =
+    '<div class="page compendium-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (pt ? 'Estruturar Caçada' : 'Structure a Hunt') + '</h1>' +
+      '</header>' +
+      '<p class="help-text">' + (pt ? 'O objetivo da caçada é rastrear o palácio do pecado — sua realidade-bolso — pois um pecado só pode ser destruído permanentemente dentro dele. Fora do palácio, ele recua e se regenera.' : 'The goal of a hunt is to track down the sin\'s palace — its pocket reality — because a sin can only be permanently destroyed inside it. Outside, it retreats and regenerates.') + '</p>' +
+      '<div class="reference-content">' +
+        phase('1', 'Briefing', 'Briefing',
+          'The hunt opens with a briefing covering the case, location, and points of interest (2-3 minimum: murder scenes, sightings, suspects, disappearances). Exorcists learn only the sin\'s <strong>type</strong> and its trauma <em>questions</em> (not answers). CAIN is clandestine — no local-authority help. A briefing never raises tension.',
+          'A caçada abre com um briefing sobre o caso, o local e os pontos de interesse (mínimo 2-3: cenas de crime, avistamentos, suspeitos, desaparecimentos). Os exorcistas sabem apenas o <strong>tipo</strong> do pecado e as <em>perguntas</em> de trauma (não as respostas). A CAIN é clandestina — sem ajuda das autoridades locais. Um briefing nunca aumenta a tensão.') +
+        phase('2', 'Arrival', 'Chegada',
+          'Exorcists arrive at the area. Full refresh: no stress, no injuries, no hooks, 3 psyche bursts, max kit points. Only current sin level (after halving), agendas, sin marks, abilities, experience and scrip carry over between missions.',
+          'Os exorcistas chegam à área. Renovação completa: sem estresse, sem ferimentos, sem ganchos, 3 pulsos psíquicos, pontos de kit máximos. Só o nível atual de pecado (após a redução), agendas, marcas de pecado, habilidades, experiência e scrip passam entre missões.') +
+        phase('3', 'Tracking', 'Rastreamento',
+          'The core objective: find the sin\'s palace and host. The palace lies near where the sin is most active. Track via supernatural traces, environmental evidence, victims, the host\'s social ties, or the host directly. To force an execution, use the Nail of Abel pulse (needs the host present, an object/person precious to them, or part of their body) to summon the sin into its palace — or fight it outside to drive it in.',
+          'O objetivo central: encontrar o palácio e o hospedeiro do pecado. O palácio fica perto de onde o pecado é mais ativo. Rastreie por traços sobrenaturais, evidências do ambiente, vítimas, laços sociais do hospedeiro, ou o próprio hospedeiro. Para forçar uma execução, use o pulso Prego de Abel (exige o hospedeiro presente, um objeto/pessoa precioso a ele, ou parte do corpo dele) para invocar o pecado ao seu palácio — ou lute com ele fora para empurrá-lo para dentro.') +
+        phase('4a', 'Investigation', 'Investigação',
+          'Optional info-gathering to learn the sin\'s capabilities or <strong>traumas</strong> (examine victims, observe the sin, study crime scenes/traces, question contacts, occult research). Learning a trauma answer lets you <em>counter</em> a reaction during the execution: after seeing the risk die but before the Admin announces the reaction, spend the counter, roll 1d3 to reduce a target\'s stress by that much and deal that many slashes to the sin (never below 1). Each trauma question is usable once.',
+          'Coleta opcional de informações para descobrir as capacidades ou <strong>traumas</strong> do pecado (examinar vítimas, observar o pecado, estudar cenas/traços, questionar contatos, pesquisa oculta). Descobrir a resposta de um trauma permite <em>neutralizar</em> uma reação durante a execução: após ver o dado de risco mas antes de o Admin anunciar a reação, gaste o contador, role 1d3 para reduzir o estresse de um alvo nesse valor e cause essa quantidade de cortes no pecado (nunca abaixo de 1). Cada pergunta de trauma é usável uma vez.') +
+        phase('4b', 'Preparation', 'Preparação',
+          'Build countermeasures and assets, or tackle time-consuming projects: anti-power talismans, traps, improvised explosives, evacuating civilians, protective circles, finding a car, etc. May be a single roll or a talisman.',
+          'Construa contramedidas e recursos, ou encare projetos demorados: talismãs anti-poder, armadilhas, explosivos improvisados, evacuar civis, círculos de proteção, achar um carro, etc. Pode ser uma única rolagem ou um talismã.') +
+        phase('4c', 'Rest', 'Descanso',
+          'The group decides to rest; pressure rises by 1. Each exorcist rolls 2d3, assigning each die to regain psyche bursts, erase stress, or erase hook slashes. Resting also ends or resets some effects.',
+          'O grupo decide descansar; a pressão sobe 1. Cada exorcista rola 2d3, atribuindo cada dado a recuperar pulsos psíquicos, apagar estresse, ou apagar cortes de gancho. Descansar também encerra ou reseta alguns efeitos.') +
+        phase('5a', 'Tension', 'Tensão',
+          'The Admin sets a tension talisman at the start. It slashes when a scene passes or when a risk die rolls a 1 (max once per scene). Each time tension reaches 3, empty it, raise pressure by 1, and trigger a tension move (worsens the sin\'s position, hurts exorcists, or degrades the world). Tension never rises in conflict scenes or briefings.',
+          'O Admin coloca um talismã de tensão no início. Ele é cortado quando uma cena passa ou quando um dado de risco rola 1 (máx uma vez por cena). Cada vez que a tensão chega a 3, esvazie-a, aumente a pressão em 1, e dispare um movimento de tensão (piora a posição do pecado, fere os exorcistas, ou degrada o mundo). A tensão nunca sobe em cenas de conflito ou briefings.') +
+        phase('5b', 'Pressure', 'Pressão',
+          'The Admin sets a pressure talisman (capacity 6). Pressure rises by 1 each time the group rests and each time the tension talisman fills. The sin\'s execution talisman grows by 1 per slash of pressure; if pressure fills completely, the situation goes out of control (unique per sin).',
+          'O Admin coloca um talismã de pressão (capacidade 6). A pressão sobe 1 a cada descanso do grupo e a cada vez que o talismã de tensão enche. O talismã de execução do pecado cresce 1 por corte de pressão; se a pressão encher completamente, a situação sai do controle (único por pecado).') +
+        phase('6', 'Execution', 'Execução',
+          'The sin\'s execution talisman is its lifeblood and governs it in a conflict scene. Once the sin is in its palace, summon it for an execution scene where it can be permanently destroyed.',
+          'O talismã de execução do pecado é sua força vital e o governa numa cena de conflito. Uma vez que o pecado está em seu palácio, invoque-o para uma cena de execução onde ele pode ser destruído permanentemente.') +
+        phase('7', 'Exfiltration', 'Exfiltração',
+          'The exorcists leave. Survivors are paid in scrip, mark a mission survived, and halve all sin. XP is awarded at end of session.',
+          'Os exorcistas partem. Os sobreviventes são pagos em scrip, marcam uma missão sobrevivida, e reduzem todo o pecado à metade. O XP é concedido no fim da sessão.') +
+        // Conflict scenes reference
+        '<div class="compendium-card reference-card">' +
+          '<h3 class="compendium-card-name">' + (pt ? 'Cenas de Conflito' : 'Conflict Scenes') + '</h3>' +
+          '<p>' + (pt ? 'Modo estruturado opcional para batalhas, perseguições, furtividade ou disputas: (1) estabeleça o que está em jogo para cada lado; (2) monte a cena e os talismãs (uma luta contra pecado usa o talismã de Execução); (3) os jogadores escolhem ações — jogadores sempre agem primeiro (Agir, Defender, Preparar/Equipe, Analisar, Fugir); (4) personagens agem um de cada vez, em qualquer ordem; uma rodada passa quando todos agiram; (5) os oponentes reagem — o Admin não tem turnos, usa o dado de risco para reagir a cada ação arriscada. Em cenas de conflito, todas as ações são arriscadas por padrão e a tensão nunca aumenta.' : 'Optional structured mode for battles, chases, stealth or contests: (1) establish stakes for each side; (2) set the scene and talismans (a sin fight uses the Execution talisman); (3) players choose actions — players always act first (Act, Defend, Set Up/Teamwork, Analyze, Flee); (4) characters act one at a time in any order; a round passes when all have acted; (5) opponents react — the Admin takes no turns, using the risk die to react to each risky action. In conflict scenes all actions are risky by default and tension never rises.') + '</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
+}
+
+// ════════════════════════════════════════════════════════════════════
 // PAGE: HUNT TRACKER (GM) — hunt-wide tension/pressure + party roster
 // ════════════════════════════════════════════════════════════════════
 
@@ -8260,6 +8397,7 @@ route('enemy-combat', function(id) { renderEnemyCombat(id); });
 route('official-view', function(id) { renderOfficialView(id); });
 route('bestiary', renderBestiary);
 route('hunt', renderHunt);
+route('investigation', renderInvestigation);
 route('create', renderCreate);
 route('view', renderView);
 route('edit', renderEdit);

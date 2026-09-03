@@ -3378,3 +3378,26 @@ input[type="number"] {
     justify-content: center;
   }
 }
+
+/* ─── Rules quick reference & Hunt structure ────────────────────── */
+
+.rules-content .reference-card p {
+  margin-bottom: var(--space-sm);
+}
+
+.rules-content .reference-card p:last-child {
+  margin-bottom: 0;
+}
+
+.hunt-phase-num {
+  display: inline-block;
+  min-width: 1.8em;
+  text-align: center;
+  background: rgba(196, 163, 90, 0.15);
+  color: var(--text-accent);
+  border-radius: var(--radius);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-right: var(--space-xs);
+}
