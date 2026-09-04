@@ -4062,6 +4062,287 @@ var SIN_TEMPLATES = {
   }
 };
 
+// Trace sub-creatures for each sin type, as structured statblocks (EN + PT) so the
+// Trace sub-page can show separate boxes (Description / Facts / Attacks With /
+// Complications) and duplicate a clean enemy into the bestiary.
+// talismanVariants: selectable execution-talisman sizes (solo/group/...).
+var SIN_TRACES = {
+  ogre: {
+    name: 'Stumblers', namePt: 'Tropeços', type: 'sin',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 2 }, { label: 'group', labelPt: 'grupo', segments: 4 }, { label: 'massive group', labelPt: 'grupo massivo', segments: 6 } ],
+    description: "Bulbous, misshapen humanoids formed from the ogre's shame and guilt, drawn to warmth. Partly visible to graceless humans, who can be driven catatonic by looking at one.",
+    descriptionPt: 'Humanoides bulbosos e disformes formados da vergonha e culpa do ogro, atraídos pelo calor. Parcialmente visíveis para humanos sem graça, que podem ficar catatônicos ao olhar para um.',
+    facts: 'Disintegrate rapidly outside the miasma.\nSlow and uncoordinated: actions taking advantage of this roll +1D.\nTake -1 slash from physical harm.',
+    factsPt: 'Desintegram-se rapidamente fora do miasma.\nLentos e descoordenados: ações que se aproveitam disso rolam +1D.\nSofrem -1 corte de dano físico.',
+    attacksWith: 'Misshapen body, rusted metal, spurts of fluid: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Corpo disforme, metal enferrujado, jatos de fluido: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Grab someone, smother in flesh, infected bite, rupture and threaten to explode, fuse to wall, ear-splitting screaming, devour humans.',
+    complicationsPt: 'Agarrar alguém, sufocar em carne, mordida infectada, romper e ameaçar explodir, fundir-se à parede, gritos ensurdecedores, devorar humanos.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  hound: {
+    name: 'Myrmidons', namePt: 'Mirmidões', type: 'sin',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 2 }, { label: 'group', labelPt: 'grupo', segments: 4 }, { label: 'massive group', labelPt: 'grupo massivo', segments: 6 } ],
+    description: 'Violent echoes arising from the dripping bodily fluids of the Hound or its victims. They shudder uncontrollably and give off bloody acidic steam when enraged, but are short-lived (disintegrate in a few hours).',
+    descriptionPt: 'Ecos violentos surgidos dos fluidos corporais escorrentes do Cão ou de suas vítimas. Tremem incontrolavelmente e liberam vapor ácido sanguinolento quando enfurecidos, mas têm vida curta (desintegram em poucas horas).',
+    facts: 'Deal +1 stress to exorcists who already have an injury.\nRip exorcists in half when inflicting the last injury, causing instant death instead of the brink of death.',
+    factsPt: 'Causam +1 estresse a exorcistas que já têm um ferimento.\nRasgam exorcistas ao meio ao infligir o último ferimento, causando morte instantânea em vez da beira da morte.',
+    attacksWith: 'Teeth, claws, ear-splitting screaming: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Dentes, garras, gritos ensurdecedores: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Grow spines, rake with claws, snap bones in jaws, grow a new limb or head.\nBloody Steam (1-2): steam gets in nearby exorcists\' lungs, making speaking or strenuous activity cost 1 stress first.',
+    complicationsPt: 'Criar espinhos, dilacerar com garras, quebrar ossos nas mandíbulas, criar um novo membro ou cabeça.\nVapor Sanguíneo (1-2): o vapor entra nos pulmões dos exorcistas próximos, fazendo falar ou atividade extenuante custar 1 estresse primeiro.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  idol: {
+    name: 'Cultists', namePt: 'Cultistas', type: 'human',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 2 }, { label: 'group', labelPt: 'grupo', segments: 4 }, { label: 'large group', labelPt: 'grupo grande', segments: 6 } ],
+    description: 'Mundane humans pulled under the Idol\'s supernatural influence - functionally puppets, though they can behave normally when required. Deployed for important missions or to infiltrate groups. Defeating the idol frees them (they have no memory of the time brainwashed).',
+    descriptionPt: 'Humanos mundanos atraídos para sob a influência sobrenatural do Ídolo - funcionalmente fantoches, embora possam se comportar normalmente quando necessário. Enviados em missões importantes ou para se infiltrar em grupos. Derrotar o ídolo os liberta (não têm memória do tempo sob lavagem cerebral).',
+    facts: '',
+    factsPt: '',
+    attacksWith: 'Bare hands, improvised melee: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Mãos, corpo a corpo improvisado: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Draw unwanted attention, choke someone out, pull out a gun, draw in bystanders, make a shocking reveal.',
+    complicationsPt: 'Atrair atenção indesejada, sufocar alguém, sacar uma arma, atrair espectadores, fazer uma revelação chocante.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  centipede: {
+    name: 'Infested', namePt: 'Infestados', type: 'sin',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 1 }, { label: 'group', labelPt: 'grupo', segments: 3 }, { label: 'large group', labelPt: 'grupo grande', segments: 5 }, { label: 'full horde', labelPt: 'horda completa', segments: 7 } ],
+    description: 'Mutated humans, essentially minor Form II sins affected by the psycho-biotic poison, forming large animalistic hive swarms the centipede mentally controls. Start human-looking, become more insect-like over time. Only appear in large group/horde at pressure 3+.',
+    descriptionPt: 'Humanos mutados, essencialmente pecados menores de Forma II afetados pelo veneno psico-biótico, formando grandes enxames animalescos de colmeia que a centopeia controla mentalmente. Começam com aparência humana, tornam-se mais insetoides com o tempo. Só aparecem em grupo grande/horda em pressão 3+.',
+    facts: 'Slow, clumsy, unintelligent but numerous and resilient; area powers gain +1D against groups.\nNote: exorcists get one dose of Centipede Antivenom each (mark 1 KP to inject someone in reach).',
+    factsPt: 'Lentos, desajeitados, pouco inteligentes mas numerosos e resistentes; poderes de área ganham +1D contra grupos.\nNota: exorcistas recebem uma dose de Antídoto de Centopeia cada (marque 1 KP para injetar em alguém ao alcance).',
+    attacksWith: 'Mutated claws, teeth, mandibles: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Garras mutadas, dentes, mandíbulas: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Eject venomous spines, knock someone down, alert a bigger horde, explode with caustic bile, jump out from somewhere surprising.\nEndless (1-2): more infested arrive, +1d3 to the talisman.\nInfected bite (1): inflict the Centipede Bite affliction.',
+    complicationsPt: 'Ejetar espinhos venenosos, derrubar alguém, alertar uma horda maior, explodir com bile cáustica, saltar de algum lugar surpreendente.\nInfindáveis (1-2): mais infestados chegam, +1d3 ao talismã.\nMordida infectada (1): infligir a aflição Mordida de Centopeia.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  toad: {
+    name: 'Toadspawn', namePt: 'Prole do Sapo', type: 'human',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 1 }, { label: 'group', labelPt: 'grupo', segments: 4 }, { label: 'large group', labelPt: 'grupo grande', segments: 6 } ],
+    description: 'Humans who follow the toad or its host through the very real promise of incredible wealth - from regular gangsters to privately hired security, often oblivious, brainwashed, or willfully ignorant.',
+    descriptionPt: 'Humanos que seguem o sapo ou seu hospedeiro pela promessa muito real de riqueza incrível - de gângsteres comuns a segurança privada contratada, muitas vezes alheios, submetidos a lavagem cerebral ou deliberadamente ignorantes.',
+    facts: 'Mundane humans with mundane (no less deadly) weaponry; often have access to cars or security vans.',
+    factsPt: 'Humanos mundanos com armamento mundano (não menos letal); muitas vezes têm acesso a carros ou vans de segurança.',
+    attacksWith: 'Firearms, close-quarters combat: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Armas de fogo, combate corpo a corpo: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Fire a stun gun, charge an exorcist, get in a martial arts hold, pin down with gunfire, get in a vehicle, throw a grenade.\nThreat - call reinforcements (1): add 1d3 to the execution talisman if allowed to follow through.',
+    complicationsPt: 'Disparar uma arma de choque, investir contra um exorcista, aplicar uma chave de artes marciais, imobilizar com tiros, entrar num veículo, arremessar uma granada.\nAmeaça - chamar reforços (1): adicione 1d3 ao talismã de execução se puder concretizar.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  lord: {
+    name: 'Guards', namePt: 'Guardas', type: 'sin',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 2 }, { label: 'squad', labelPt: 'esquadrão', segments: 4 }, { label: 'platoon', labelPt: 'pelotão', segments: 6 }, { label: 'small army', labelPt: 'pequeno exército', segments: 10 } ],
+    description: 'A lord\'s kingdom always has guards patrolling it - sins taking the form of authority figures or soldiers, completely subservient to the Lord, shaped at its whim (human soldiers with shaded faces, or beast-like demons with medieval weaponry).',
+    descriptionPt: 'O reino de um senhor sempre tem guardas patrulhando - pecados que assumem a forma de figuras de autoridade ou soldados, completamente subservientes ao Senhor, moldados a seu bel-prazer (soldados humanos com rostos sombreados, ou demônios bestiais com armamento medieval).',
+    facts: 'Armed with cruel weaponry and outstanding senses.\nIncapable of existing outside the kingdom.',
+    factsPt: 'Armados com armamento cruel e sentidos excepcionais.\nIncapazes de existir fora do reino.',
+    attacksWith: 'Cruel close-combat weaponry, fists and kicks: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Armamento cruel de combate próximo, socos e chutes: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Trap an exorcist and pile on, pull an exorcist away in chains, disable with a painful strike, threaten bystanders as collaborators, call in a prison vehicle, produce a heavy weapon.\nSound the Alarm (threat, 1-2): alert the Lord or nearby guards; if more guards show up, +1d3 to the execution talisman.',
+    complicationsPt: 'Prender um exorcista e amontoar-se sobre ele, arrastar um exorcista em correntes, incapacitar com um golpe doloroso, ameaçar espectadores como colaboradores, chamar um veículo de prisão, produzir uma arma pesada.\nSoar o Alarme (ameaça, 1-2): alertar o Senhor ou guardas próximos; se mais guardas aparecem, +1d3 ao talismã de execução.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  }
+};
+
+// Localized accessors for a trace's structured fields.
+function traceField(sinType, field) {
+  var tr = SIN_TRACES[sinType];
+  if (!tr) return '';
+  var pt = currentLang === 'pt';
+  return (pt && tr[field + 'Pt'] != null) ? tr[field + 'Pt'] : (tr[field] || '');
+}
+
+// Special traces created by specific sin Domains (distinct from the base sin
+// trace). Keyed by "<sinType>::<English domain name>". Talisman uses a formula
+// resolved against the sin's CAT (e.g. "6+CAT").
+var DOMAIN_TRACES = {
+  'ogre::Where You Belong': {
+    name: 'Guilt-Shame Creature', namePt: 'Criatura de Culpa e Vergonha', type: 'sin',
+    talismanFormula: '6+CAT', talismanLabel: '6 + CAT', talismanLabelPt: '6 + CAT',
+    description: "A creature formed at the start of the mission from a chosen exorcist's guilt and shame; if defeated it is destroyed permanently. The ogre secretly asks that exorcist 'What do you hate the most about yourself?'.",
+    descriptionPt: 'Uma criatura formada no início da missão a partir da culpa e vergonha de um exorcista escolhido; se derrotada, é destruída permanentemente. O ogro pergunta secretamente a esse exorcista "O que você mais odeia em si mesmo?".',
+    facts: "Only attempts to harm the exorcist it was formed from.\nThat exorcist's actions are hard against it.\nDeals +1 stress against the exorcist it is formed from.\nAlso ask that exorcist 'who in this group will let you down?' - any time that person fails an action roll, the afflicted exorcist gains 1 nonlethal stress; if triggered at least once in a session, gain 1 xp at session end.",
+    factsPt: 'Só tenta ferir o exorcista de quem foi formada.\nAs ações desse exorcista são difíceis contra ela.\nCausa +1 estresse contra o exorcista de quem foi formada.\nPergunte também a esse exorcista "quem neste grupo vai te decepcionar?" - sempre que essa pessoa falha numa rolagem de ação, o exorcista afligido ganha 1 de estresse não-letal; se disparado ao menos uma vez na sessão, ganhe 1 xp no fim da sessão.',
+    attacksWith: '', attacksWithPt: '',
+    complications: '', complicationsPt: '',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  'idol::Elevation of the Innumerable Mass': {
+    name: 'Apostle', namePt: 'Apóstolo', type: 'sin',
+    talismanFormula: '4+CAT', talismanLabel: '4 + CAT', talismanLabelPt: '4 + CAT',
+    description: 'A cult member elevated by the idol into a minor sin, with supernatural strength and mutated blades. One can appear per scene when fighting the idol or its cult.',
+    descriptionPt: 'Um membro do culto elevado pelo ídolo a um pecado menor, com força sobrenatural e lâminas mutadas. Um pode aparecer por cena ao lutar contra o ídolo ou seu culto.',
+    facts: 'Can create a fleshy clone, unleash a flurry, mutate, or move impossibly fast.\nExhort (1-3): an ally heals slashes (1: 2, 2-3: 1) and inflicts +1 stress on its next attack.',
+    factsPt: 'Pode criar um clone carnal, desencadear uma rajada, mutar ou se mover impossivelmente rápido.\nExortar (1-3): um aliado cura cortes (1: 2, 2-3: 1) e inflige +1 estresse em seu próximo ataque.',
+    attacksWith: 'Supernatural strength, mutated blades: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Força sobrenatural, lâminas mutadas: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: '', complicationsPt: '',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  'centipede::The Knights of Decay': {
+    name: 'Juggernaut', namePt: 'Juggernaut', type: 'sin',
+    talismanFormula: '4', talismanLabel: '4 (at pressure 3+, +CAT+1)', talismanLabelPt: '4 (em pressão 3+, +CAT+1)',
+    description: 'A dangerous, armored infested that usually appears alongside the horde.',
+    descriptionPt: 'Um infestado perigoso e blindado que geralmente aparece junto da horda.',
+    facts: 'Deals +1 stress to exorcists who are alone or afraid.\nFocuses on one target.\nPractically immune to mundane weapons unless its armor is exposed.\nHive Shroud (1/2): releases acidic clouds that obscure and burn - all its allies take -1 slash until the Juggernaut is dealt with (doesn\'t stack).',
+    factsPt: 'Causa +1 estresse a exorcistas sozinhos ou amedrontados.\nFoca num alvo.\nPraticamente imune a armas mundanas a menos que sua armadura esteja exposta.\nManto de Colmeia (1/2): libera nuvens ácidas que obscurecem e queimam - todos os seus aliados sofrem -1 corte até o Juggernaut ser resolvido (não acumula).',
+    attacksWith: 'Armored bulk, spines, mandibles: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Massa blindada, espinhos, mandíbulas: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: '', complicationsPt: '',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  'centipede::My Children Crawl Quietly': {
+    name: 'Stalkers', namePt: 'Espreitadores', type: 'sin',
+    talismanFormula: '4', talismanLabel: '4 (between the pair; at pressure 3+, +CAT)', talismanLabelPt: '4 (entre o par; em pressão 3+, +CAT)',
+    description: 'Stealthy infested with chameleonic skin, appearing in pairs. Blind and easily distracted.',
+    descriptionPt: 'Infestados furtivos com pele camaleônica, aparecendo em pares. Cegos e facilmente distraídos.',
+    facts: 'Chameleonic Scales (1/2): becomes nearly invisible (hard to fight/find by sight); next reaction deals +1 stress and ends the effect.\nWhen players meet an NPC, the Admin rolls 1d6 - on 1-3 they\'ve already been bitten (Centipede Bite) and hide it.',
+    factsPt: 'Escamas Camaleônicas (1/2): torna-se quase invisível (difícil de combater/encontrar pela visão); a próxima reação causa +1 estresse e encerra o efeito.\nQuando os jogadores conhecem um NPC, o Mestre rola 1d6 - em 1-3 ele já foi mordido (Mordida de Centopeia) e esconde.',
+    attacksWith: 'Scythe claws, venomous spines: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Garras foice, espinhos venenosos: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Kidnap someone, drag into darkness, jump/fly on locust wings.',
+    complicationsPt: 'Sequestrar alguém, arrastar para a escuridão, saltar/voar com asas de gafanhoto.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  'toad::Grand Finesse': {
+    name: 'Psychic Shadow', namePt: 'Sombra Psíquica', type: 'sin',
+    // Base talisman 4, or 6 (one '1' rolled), or 10 (two+ '1's). No CAT/pressure.
+    ignorePerfectBonus: true,
+    baseTalismanChoices: [
+      { value: 4, label: '4 (no 1s)', labelPt: '4 (nenhum 1)' },
+      { value: 6, label: '6 (one 1)', labelPt: '6 (um 1)' },
+      { value: 10, label: '10 (two+ 1s)', labelPt: '10 (dois+ 1)' }
+    ],
+    talismanLabel: '4 / 6 / 10 (by 1s rolled)', talismanLabelPt: '4 / 6 / 10 (por 1s rolados)',
+    description: "The target's stolen ability to use psychic powers, coalesced into a psychic shadow. It has no attacks - it only exists and uses reactions to flee. If destroyed or captured it fuses back, ending the effect.",
+    descriptionPt: 'A capacidade roubada do alvo de usar poderes psíquicos, aglutinada numa sombra psíquica. Não tem ataques - apenas existe e usa reações para fugir. Se destruída ou capturada, funde-se de volta, encerrando o efeito.',
+    facts: 'Uses reactions to flee.\nIf destroyed or captured, it fuses back to its exorcist, ending the effect.',
+    factsPt: 'Usa reações para fugir.\nSe destruída ou capturada, funde-se de volta ao seu exorcista, encerrando o efeito.',
+    attacksWith: '', attacksWithPt: '',
+    complications: '', complicationsPt: '',
+    noAttacks: true,
+    stress: 0, stressRisk23: 0, stressRisk1: 0
+  },
+  'toad::Shadow of the True Self': {
+    name: 'Shadow Binder', namePt: 'Vinculador Sombra', type: 'exorcist',
+    // Grand Finesse's shadow made a combatant. Base talisman 4/6/10 (by 1s rolled),
+    // plus CAT and Pressure length. Length is fully specified, so no generic +2.
+    ignorePerfectBonus: true,
+    baseTalismanChoices: [
+      { value: 4, label: '4 (no 1s)', labelPt: '4 (nenhum 1)' },
+      { value: 6, label: '6 (one 1)', labelPt: '6 (um 1)' },
+      { value: 10, label: '10 (two+ 1s)', labelPt: '10 (dois+ 1)' }
+    ],
+    addCat: true, addPressure: true,
+    talismanLabel: '4 / 6 / 10 (by 1s rolled) + CAT + Pressure', talismanLabelPt: '4 / 6 / 10 (por 1s rolados) + CAT + Pressão',
+    description: "The psychic shadow stolen by the Toad's Grand Finesse severe attack, made a combatant by Shadow of the True Self. Statted as a binder. Reacts alongside the sin once a round for free, like a Trace.",
+    descriptionPt: 'A sombra psíquica roubada pelo ataque severo Grande Finesse do Sapo, transformada em combatente por Sombra do Verdadeiro Eu. Usa os stats de um vinculador. Reage junto com o pecado uma vez por rodada de graça, como um Traço.',
+    facts: 'Uses blasphemies that mirror the exorcists\', but stranger and wilder.\nMay work in formation with other binders or control a mass produced sin.\nReacts alongside the toad once a round for free (like a Trace).',
+    factsPt: 'Usa blasfêmias que espelham as dos exorcistas, mas mais estranhas e selvagens.\nPode trabalhar em formação com outros vinculadores ou controlar um pecado produzido em massa.\nReage junto com o sapo uma vez por rodada de graça (como um Traço).',
+    attacksWith: 'Psychic bursts of power and mundane weaponry (both short range): (1) 5 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Rajadas psíquicas de poder e armamento mundano (ambos curto alcance): (1) 5 estresse, (2/3) 3, (4+) 2.',
+    complications: '', complicationsPt: '',
+    stress: 5, stressRisk23: 3, stressRisk1: 2
+  },
+  'lord::Stricture of The Flaming Sword': {
+    name: 'Guardian', namePt: 'Guardião', type: 'sin',
+    talismanFormula: '4+CAT', talismanLabel: '4 + CAT', talismanLabelPt: '4 + CAT',
+    description: 'A sin-construct patrolling the Kingdom (an officer of the law, a winged humanoid, or a metallic geometric construct). If destroyed it reforms in the Lord\'s palace when pressure increases.',
+    descriptionPt: 'Um construto-pecado que patrulha o Reino (um oficial da lei, um humanoide alado ou um construto geométrico metálico). Se destruído, reforma-se no palácio do Senhor quando a pressão aumenta.',
+    facts: 'Heavily armored and immune to mundane weaponry.\nMoves at CAT+2 speed inside the kingdom (can\'t exist outside).\nAxiomatic - incapable of deceit and always knows when someone is lying in its presence.',
+    factsPt: 'Pesadamente blindado e imune a armamento mundano.\nMove-se a velocidade CAT+2 dentro do reino (não pode existir fora).\nAxiomático - incapaz de engano e sempre sabe quando alguém está mentindo em sua presença.',
+    attacksWith: 'A long-ranged weapon (extreme range) and brutal melee: (1) 5 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Uma arma de longo alcance (alcance extremo) e corpo a corpo brutal: (1) 5 estresse, (2/3) 3, (4+) 2.',
+    complications: 'Imprison someone in a cage of light, blind with glaring beams, swoop high into the air, summon searing blades, impale with a shining spear.',
+    complicationsPt: 'Aprisionar alguém numa jaula de luz, cegar com feixes ofuscantes, mergulhar alto no ar, invocar lâminas escaldantes, empalar com uma lança reluzente.',
+    stress: 5, stressRisk23: 3, stressRisk1: 2
+  }
+};
+
+// Localized accessor for a domain-trace's structured fields.
+function domainTraceField(key, field) {
+  var dt = DOMAIN_TRACES[key];
+  if (!dt) return '';
+  var pt = currentLang === 'pt';
+  return (pt && dt[field + 'Pt'] != null) ? dt[field + 'Pt'] : (dt[field] || '');
+}
+
+// Domains that MODIFY the base sin trace (rather than spawn a new one). Listed on
+// the base trace's sub-page, and offered as opt-in toggles in its duplicate dialog
+// so the GM can apply the buff automatically. Keyed by sin type.
+// effect: { talismanDelta, stressDelta, addFacts/addFactsPt, addAttacks/addAttacksPt }
+var TRACE_MODIFIERS = {
+  ogre: [
+    {
+      domain: 'Perfect Decay (Perfect Ogre)', domainPt: 'Decomposição Perfeita (Ogro Perfeito)',
+      perfectOnly: true,
+      note: 'Any stress taken from the ogre or its traces on a 1-3 reaction grants the Rotting affliction (1 irreducible stress each time tension fills; if it would inflict an injury, instant death).',
+      notePt: 'Qualquer estresse sofrido do ogro ou de seus traços numa reação 1-3 concede a aflição Apodrecimento (1 de estresse irredutível cada vez que a tensão enche; se causar um ferimento, morte instantânea).',
+      effect: { addFacts: 'Stress dealt on a 1-3 reaction grants the Rotting affliction (Perfect Decay).', addFactsPt: 'O estresse causado numa reação 1-3 concede a aflição Apodrecimento (Decomposição Perfeita).' }
+    }
+  ],
+  toad: [
+    {
+      domain: 'Keeper of the Ludic Menagerie', domainPt: 'Guardião do Zoológico Lúdico',
+      note: 'As a (1-3) reaction the toad can pull out a goon, creating a Toadspawn trace (execution talisman 1) or +1 to an existing trace. It can also kidnap and brainwash a human/NPC into its collection.',
+      notePt: 'Como reação (1-3) o sapo pode puxar um capanga, criando um traço de Prole do Sapo (talismã de execução 1) ou +1 a um traço existente. Também pode sequestrar e fazer lavagem cerebral em um humano/NPC, adicionando-o à sua coleção.',
+      effect: { addFacts: 'Can be summoned or reinforced (+1 talisman) by the toad as a 1-3 reaction (Keeper of the Ludic Menagerie).', addFactsPt: 'Pode ser invocada ou reforçada (+1 talismã) pelo sapo como reação 1-3 (Guardião do Zoológico Lúdico).' }
+    },
+    {
+      domain: 'Perfect Spawn (Perfect Toad)', domainPt: 'Prole Perfeita (Sapo Perfeito)',
+      perfectOnly: true,
+      note: 'Toadspawn are Sins (not human) and deal +1 stress on all reactions.',
+      notePt: 'Os Girinos são Pecados (não humanos) e causam +1 de estresse em todas as reações.',
+      effect: { setType: 'sin', allStressDelta: 1, addFacts: 'Is a Sin and deals +1 stress on all reactions (Perfect Spawn).', addFactsPt: 'É um Pecado e causa +1 de estresse em todas as reações (Prole Perfeita).' }
+    }
+  ],
+  centipede: [
+    {
+      domain: 'The Heralds of Venom', domainPt: 'Os Arautos do Veneno',
+      note: 'The horde can spit venom at short range when inflicting stress (the centipede itself spits at extreme range).',
+      notePt: 'A horda pode cuspir veneno a curto alcance ao infligir estresse (a própria centopeia cospe a alcance extremo).',
+      // The venom buff applies to the whole infested horde, so it also affects the
+      // Juggernaut and Stalkers domain-traces.
+      appliesToDomainTraces: true,
+      effect: { addFacts: 'Can spit venom at short range when inflicting stress (The Heralds of Venom).', addFactsPt: 'Pode cuspir veneno a curto alcance ao infligir estresse (Os Arautos do Veneno).' }
+    }
+  ],
+  idol: [
+    {
+      domain: 'Toys for Men', domainPt: 'Brinquedos para Homens',
+      note: 'Cultists gain +1 talisman segment (a lone cultist would have 3) and move even while broken.',
+      notePt: 'Cultistas ganham +1 segmento de talismã (um cultista solo teria 3) e se movem mesmo quebrados.',
+      effect: { talismanDelta: 1, addFacts: 'Move even while broken (Toys for Men).', addFactsPt: 'Movem-se mesmo quebrados (Brinquedos para Homens).' }
+    },
+    {
+      domain: 'Taking the Ears', domainPt: 'Tomando os Ouvidos',
+      note: 'When the idol speaks to a group with cultists present, +2 to their execution talisman.',
+      notePt: 'Quando o ídolo fala a um grupo com cultistas presentes, +2 ao talismã de execução deles.',
+      effect: { talismanDelta: 2 }
+    },
+    {
+      domain: 'The Strong Scented Lips of a Whispering God', domainPt: 'Os Lábios de Forte Perfume de um Deus Sussurrante',
+      note: 'Cultists are armed with short-ranged firearms and body armor: +1 stress on reactions, +1 execution talisman.',
+      notePt: 'Cultistas são armados com armas de fogo de curto alcance e coletes: +1 estresse em reações, +1 talismã de execução.',
+      effect: { talismanDelta: 1, allStressDelta: 1, addFacts: 'Armed with short-ranged firearms and body armor (The Strong Scented Lips).', addFactsPt: 'Armados com armas de fogo de curto alcance e coletes (Os Lábios de Forte Perfume).' }
+    }
+  ]
+};
+
+// Base-trace modifiers for a sin. perfectOnly modifiers only apply to the Perfect
+// Sin version of the trace, so they are filtered out unless isPerfect is true.
+function traceModifiers(sinType, isPerfect) {
+  return (TRACE_MODIFIERS[sinType] || []).filter(function(m) { return isPerfect || !m.perfectOnly; });
+}
+// Modifiers that also apply to a sin's domain-created traces (e.g. venom buffs
+// that affect the whole infested horde, not just the base trace).
+function domainTraceModifiers(sinType) {
+  return (TRACE_MODIFIERS[sinType] || []).filter(function(m) { return m.appliesToDomainTraces; });
+}
+
 // Official pre-made opponents from the rulebook (pg. 146-151). Read-only; can be
 // duplicated into the GM's editable bestiary.
 var OFFICIAL_ENEMIES = [
@@ -4133,7 +4414,7 @@ var OFFICIAL_ENEMIES = [
   },
   // ─── Mother (GFF-3) — infectious Sin/Anomaly, three grades ───────────
   {
-    officialId: 'mothers_sweet', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Sweet", type: 'sin', category: 1, expansion: 'gff3',
+    officialId: 'mothers_sweet', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Sweet", type: 'sin_anomaly', category: 1, expansion: 'gff3',
     image: 'img/enemies/mothers_sweet.png',
     talismanSize: 'short', talismanSegments: 2, talismanDisplay: '2 (solo), 6 (swarm)',
     description: 'Sin/Anomaly. CAT 0-4. Relatively weak, the result of the colonization of the graceless. They act in perfect synchronicity around other parts of Mother.',
@@ -4144,7 +4425,7 @@ var OFFICIAL_ENEMIES = [
     stress: 3, stressRisk23: 2, stressRisk1: 2
   },
   {
-    officialId: 'mothers_dear', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Dear", type: 'sin', category: 2, expansion: 'gff3',
+    officialId: 'mothers_dear', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Dear", type: 'sin_anomaly', category: 2, expansion: 'gff3',
     image: 'img/enemies/mothers_dear.png',
     talismanSize: 'medium', talismanSegments: 4, talismanDisplay: '4 (solo), 8 (duo)',
     description: 'Sin/Anomaly. CAT 1-4. High-priority target for execution. The result of multiple graceless subjects fusing. Very slow, but methodical. Barely flinches when struck. Has no individual sense of preservation.',
@@ -4155,7 +4436,7 @@ var OFFICIAL_ENEMIES = [
     stress: 4, stressRisk23: 3, stressRisk1: 2
   },
   {
-    officialId: 'mothers_favorite', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Favorite", type: 'sin', category: 3, expansion: 'gff3',
+    officialId: 'mothers_favorite', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Favorite", type: 'sin_anomaly', category: 3, expansion: 'gff3',
     image: 'img/enemies/mothers_favorite.png',
     talismanSize: 'long', talismanSegments: 8, talismanDisplay: '8 + pressure + CAT (solo)',
     description: 'Sin/Anomaly. CAT 1-5. Three types observed: (1) latent fusion of many other fused parts of Mother, even the graceless, creating a gestalt grace; (2) colonization of a graceless individual of high willpower, granting them Mother\'s grace wholesale; (3) colonization of an individual with high grace concentration, typically an exorcist.',
@@ -4364,7 +4645,10 @@ var OFFICIAL_ENEMIES = [
 ];
 
 // Resolve an official entry into a full enemy object (handles sinTemplate refs)
-function resolveOfficialEnemy(o) {
+// Resolve an official entry into a full enemy object (handles sinTemplate refs).
+// forView=true also attaches the template's domain options (for the read-only
+// bestiary view); duplication leaves domains empty so the GM picks their own.
+function resolveOfficialEnemy(o, forView) {
   if (o.sinTemplate) {
     var s = createSinFromType(o.sinTemplate);
     s.officialId = o.officialId; // preserve for translation lookups in the view
@@ -4374,6 +4658,10 @@ function resolveOfficialEnemy(o) {
     if (o.image) s.image = o.image;
     if (o.examplesImage) s.examplesImage = o.examplesImage;
     if (o.examples) s.examples = o.examples;
+    if (forView) {
+      var tpl = SIN_TEMPLATES[o.sinTemplate] || {};
+      s.domains = (tpl.domainOptions || []).map(function(d) { return { name: d.name, description: d.description }; });
+    }
     return s;
   }
   return JSON.parse(JSON.stringify(o));
@@ -4449,13 +4737,23 @@ function createSinFromType(typeId) {
  * upgrades and global rules folded into editable fields, with the perfect
  * talisman (12 base) and CAT bumped to the 3+ minimum. Returns a sin object.
  */
-function createPerfectSinFromType(typeId) {
+// Perfect Sin base execution talisman: 12, except the Perfect Idol whose "Mock"
+// upgrade sets its base to 6. Total scales as base + 2xCAT (+2xpressure live).
+function perfectSinTalismanBase(typeId) {
+  return typeId === 'idol' ? 6 : 12;
+}
+
+function createPerfectSinFromType(typeId, opts) {
   var s = createSinFromType(typeId);
   var ps = PERFECT_SINS.sins.find(function(x) { return x.baseSinType === typeId; });
   s.name = ps ? ps.name : ('Perfect ' + tSinType(typeId));
   if (ps && ps.image) s.image = ps.image;
-  if ((s.category || 0) < 3) s.category = 3;
-  s.talismanSegments = 12; // perfect base; GM adds +2xCAT +2xpressure live
+  var cat = (opts && opts.category != null) ? opts.category : (s.category || 0);
+  if (cat < 3) cat = 3;
+  if (cat > 6) cat = 6;
+  s.category = cat;
+  // Base (12, or 6 for the Idol) + 2xCAT; GM adds +2xpressure live.
+  s.talismanSegments = perfectSinTalismanBase(typeId) + 2 * cat;
   var pt = currentLang === 'pt';
   var pfx = pt ? '[Perfeito] ' : '[Perfect] ';
   // Distribute each upgrade into its matching sheet field (slot); everything else
@@ -7915,12 +8213,31 @@ function renderBlasphemyDetail(blasId) {
 // PAGE: ADMIN (GM tools) — Phase 1: simple opponents
 // ════════════════════════════════════════════════════════════════════
 
-var ENEMY_TYPES = ['human', 'sin', 'exorcist', 'mechanical', 'anomaly'];
+var ENEMY_TYPES = ['human', 'sin', 'exorcist', 'mechanical', 'anomaly', 'sin_anomaly'];
 
 function tEnemyType(typeId) {
-  var pt = { human: 'Humano', sin: 'Pecado', exorcist: 'Exorcista', mechanical: 'Mecânico', anomaly: 'Anomalia' };
-  var en = { human: 'Human', sin: 'Sin', exorcist: 'Exorcist', mechanical: 'Mechanical', anomaly: 'Anomaly' };
+  var pt = { human: 'Humano', sin: 'Pecado', exorcist: 'Exorcista', mechanical: 'Mecânico', anomaly: 'Anomalia', sin_anomaly: 'Pecado/Anomalia' };
+  var en = { human: 'Human', sin: 'Sin', exorcist: 'Exorcist', mechanical: 'Mechanical', anomaly: 'Anomaly', sin_anomaly: 'Sin/Anomaly' };
   return (currentLang === 'pt' ? pt[typeId] : en[typeId]) || typeId;
+}
+
+/**
+ * Split a non-sin enemy description's leading "<Type>. CAT X-Y ...strength."
+ * clause out of the loose text, so Type/CAT can render as their own meta lines.
+ * Returns { desc, cat } where cat may be null.
+ */
+function splitEnemyMeta(desc, typeLead) {
+  var oDesc = desc || '';
+  var oCat = null;
+  var catMatch = oDesc.match(/CAT\s*([0-9]+\s*-\s*[0-9]+|[0-9]+\+?)\s*(?:depending on strength|based on the exorcist|dependendo da força|com base no exorcista)?[^.]*\.?/i);
+  if (catMatch) {
+    oCat = catMatch[1].replace(/\s+/g, '');
+    oDesc = oDesc.replace(catMatch[0], '').replace(/\s{2,}/g, ' ').trim();
+  }
+  if (typeLead) {
+    oDesc = oDesc.replace(new RegExp('^\\s*' + typeLead.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\.?\\s*', 'i'), '').replace(/\s{2,}/g, ' ').trim();
+  }
+  return { desc: oDesc, cat: oCat };
 }
 
 /** Escape a value for safe use inside an HTML attribute */
@@ -7996,9 +8313,11 @@ function renderEnemyCombat(enemyId) {
       (en.complications ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.complications).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
       (en.threat ? '<div class="combat-section"><h3>' + (pt ? 'Ameaça' : 'Threat') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.threat).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
       (en.reactions ? '<div class="combat-section"><h3>' + (pt ? 'Reações' : 'Reactions') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.reactions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
+      ((en.activeDomainMods && en.activeDomainMods.length) ? '<div class="combat-section"><h3>' + (pt ? 'Modificado por Domínios' : 'Modified by Domains') + '</h3>' +
+        en.activeDomainMods.map(function(m) { return '<div class="combat-ref-block"><strong>' + escHtml(pt ? (m.domainPt || m.domain) : m.domain) + '</strong>' + ((pt ? (m.notePt || m.note) : m.note) ? '<p>' + escHtml(pt ? (m.notePt || m.note) : m.note) + '</p>' : '') + '</div>'; }).join('') + '</div>' : '') +
+      (en.noAttacks ? '' : '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
         '<p class="combat-meta">(1): ' + (en.stress != null ? en.stress : 2) + ' \u2022 (2-3): ' + (en.stressRisk23 != null ? en.stressRisk23 : 3) + ' \u2022 (4+): ' + (en.stressRisk1 != null ? en.stressRisk1 : 2) + '</p>' +
-      '</div>';
+      '</div>');
   }
 
   app.innerHTML =
@@ -8071,7 +8390,18 @@ function renderOfficialView(officialId) {
   var pt = currentLang === 'pt';
   var src = OFFICIAL_ENEMIES.find(function(x) { return x.officialId === officialId; });
   if (!src) { navigate('admin'); return; }
-  var o = resolveOfficialEnemy(src);
+  var o = resolveOfficialEnemy(src, true);
+
+  // Examples HTML (shared by sins and non-sins; sins place it near the top).
+  var examplesHtml = ((o.examplesImage || (o.examples && o.examples.length)) ? '<div class="combat-section"><h3>' + (pt ? 'Exemplos' : 'Examples') + '</h3>' +
+    (o.examplesImage ? '<img class="enemy-examples-img" src="' + o.examplesImage + '" alt="' + escAttr(o.name) + ' examples">' : '') +
+    ((o.examples && o.examples.length) ? o.examples.map(function(ex, exi) {
+      var exPt = (currentLang === 'pt' && PT_CONTENT.enemies[o.officialId] && PT_CONTENT.enemies[o.officialId].examples && PT_CONTENT.enemies[o.officialId].examples[exi]) || null;
+      var exName = exPt ? exPt.name : ex.name;
+      var exStory = exPt ? exPt.story : ex.story;
+      return '<div class="combat-ref-block"><strong>' + escHtml(exName) + '</strong>' + (exStory ? '<p>' + escStory(exStory) + '</p>' : '') + '</div>';
+    }).join('') : '') +
+    '</div>' : '');
 
   var body;
   if (o.kind === 'sin') {
@@ -8085,21 +8415,63 @@ function renderOfficialView(officialId) {
     var sPressEff = tEnemyField(sid, 'pressureEffect', o.pressureEffect);
     var sOOC = tEnemyField(sid, 'outOfControl', o.outOfControl);
     var sTraces = tEnemyField(sid, 'traces', o.traces);
-    var domTr = (PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].domains) || null; // {name: {name,description}} by base name
-    body =
+    // PT domain translations, keyed by base English name. Only apply in PT.
+    var domTr = (pt && PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].domains) || null;
+
+    // Section builders (ordered per the sheet layout).
+    var metaHtml =
       '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + (pt ? 'Pecado' : 'Sin') + ' ' + tSinType(o.sinType) + '</p>' +
-      '<p class="combat-meta"><span class="label">CAT:</span> 1+</p>' +
+      '<p class="combat-meta"><span class="label">CAT:</span> 1-5</p>' +
       '<p class="combat-meta"><span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> 8 + CAT + ' + (pt ? 'Pressão' : 'Pressure') + '</p>' +
-      (o.primaryEmotion ? '<p class="combat-meta"><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(tEnemyField(sid, 'primaryEmotion', o.primaryEmotion)) + '</p>' : '') +
-      (sAttacks ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(sAttacks).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (sComps ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(sComps).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (sThreats ? '<div class="combat-section"><h3>' + (pt ? 'Ameaças' : 'Threats') + '</h3><div class="combat-ref-block"><p>' + escHtml(sThreats).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (domains.length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios' : 'Domains') + '</h3>' + domains.map(function(d) { var dt = domTr && domTr[d.name]; var dn = dt ? dt.name : d.name; var dd = dt ? dt.description : d.description; return '<div class="combat-ref-block"><strong>' + escHtml(dn) + '</strong>' + (dd ? '<p>' + escHtml(dd) + '</p>' : '') + '</div>'; }).join('') + '</div>' : '') +
-      (sSevere ? '<div class="combat-section"><h3>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</h3><div class="combat-ref-block"><p>' + escHtml(sSevere) + '</p></div></div>' : '') +
-      (sAffl ? '<div class="combat-section"><h3>' + (pt ? 'Aflições' : 'Afflictions') + '</h3><div class="combat-ref-block"><p>' + escHtml(sAffl).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      ((o.traumas || []).some(function(x) { return x && (x.question || x.answer); }) ? '<div class="combat-section"><h3>' + (pt ? 'Traumas' : 'Traumas') + '</h3>' + o.traumas.filter(function(x) { return x && x.question; }).map(function(x, ti) { var trs = (PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].traumas); var q = (currentLang === 'pt' && trs && trs[ti]) ? trs[ti] : x.question; return '<div class="combat-ref-block"><strong>' + escHtml(q) + '</strong></div>'; }).join('') + '</div>' : '') +
-      (o.pressureName ? '<div class="combat-section"><h3>' + (pt ? 'Pressão' : 'Pressure') + ': ' + escHtml(o.pressureName) + '</h3>' + (sPressEff ? '<div class="combat-ref-block"><p>' + escHtml(sPressEff) + '</p></div>' : '') + (sOOC ? '<div class="combat-ref-block"><p><strong>' + (pt ? 'Fora de Controle' : 'Out of Control') + ':</strong> ' + escHtml(sOOC) + '</p></div>' : '') + '</div>' : '') +
-      (sTraces ? '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3><div class="combat-ref-block"><p>' + escHtml(sTraces) + '</p></div></div>' : '');
+      (o.primaryEmotion ? '<p class="combat-meta"><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(tEnemyField(sid, 'primaryEmotion', o.primaryEmotion)) + '</p>' : '');
+
+    var traumasHtml = ((o.traumas || []).some(function(x) { return x && (x.question || x.answer); }) ? '<div class="combat-section"><h3>' + (pt ? 'Traumas' : 'Traumas') + '</h3>' + o.traumas.filter(function(x) { return x && x.question; }).map(function(x, ti) { var trs = (PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].traumas); var q = (currentLang === 'pt' && trs && trs[ti]) ? trs[ti] : x.question; return '<div class="combat-ref-block"><strong>' + escHtml(q) + '</strong></div>'; }).join('') + '</div>' : '');
+    var attacksHtml = (sAttacks ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(sAttacks).replace(/\n/g, '<br>') + '</p></div></div>' : '');
+    var compsHtml = (sComps ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(sComps).replace(/\n/g, '<br>') + '</p></div></div>' : '');
+    var threatsHtml = (sThreats ? '<div class="combat-section"><h3>' + (pt ? 'Ameaças' : 'Threats') + '</h3><div class="combat-ref-block"><p>' + escHtml(sThreats).replace(/\n/g, '<br>') + '</p></div></div>' : '');
+    var pressureHtml = (o.pressureName ? '<div class="combat-section"><h3>' + (pt ? 'Pressão' : 'Pressure') + ': ' + escHtml(o.pressureName) + '</h3>' + (sPressEff ? '<div class="combat-ref-block"><p>' + escHtml(sPressEff) + '</p></div>' : '') + (sOOC ? '<div class="combat-ref-block"><p><strong>' + (pt ? 'Fora de Controle' : 'Out of Control') + ':</strong> ' + escHtml(sOOC) + '</p></div>' : '') + '</div>' : '');
+    // A severe attack may spawn its own trace (e.g. the Toad's Grand Finesse -> Psychic Shadow).
+    var severeTraceKey = (DOMAIN_TRACES[sid + '::Grand Finesse'] && sid === 'toad') ? (sid + '::Grand Finesse') : null;
+    var severeTraceBtn = severeTraceKey ? '<p><button class="btn btn-sm btn-domain-trace" data-trace-key="' + escAttr(severeTraceKey) + '">' + (pt ? 'Ver Traço' : 'View Trace') + ' \u2192</button></p>' : '';
+    var severeHtml = (sSevere ? '<div class="combat-section"><h3>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</h3><div class="combat-ref-block"><p>' + escHtml(sSevere) + '</p>' + severeTraceBtn + '</div></div>' : '');
+    var afflHtml = (sAffl ? '<div class="combat-section"><h3>' + (pt ? 'Aflições' : 'Afflictions') + '</h3><div class="combat-ref-block"><p>' + escHtml(sAffl).replace(/\n/g, '<br>') + '</p></div></div>' : '');
+    var tracesHtml = (function() {
+      var trMeta = SIN_TRACES[o.officialId];
+      if (trMeta) {
+        var trName = pt ? trMeta.namePt : trMeta.name;
+        var trDesc = traceField(o.officialId, 'description');
+        var trFacts = traceField(o.officialId, 'facts');
+        var trAtk = traceField(o.officialId, 'attacksWith');
+        var trComp = traceField(o.officialId, 'complications');
+        var trTal = trMeta.talismanVariants.map(function(v) { return v.segments + ' (' + (pt ? v.labelPt : v.label) + ')'; }).join(', ');
+        return '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3>' +
+          '<div class="combat-ref-block">' +
+            '<strong>' + escHtml(trName) + '</strong>' +
+            (trDesc ? '<p class="muted">' + escHtml(trDesc) + '</p>' : '') +
+            '<p><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(trMeta.type) + '</p>' +
+            '<p><span class="label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ':</span> ' + trTal + '</p>' +
+            (trFacts ? '<p><span class="label">' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + ':</span><br>' + escHtml(trFacts).replace(/\n/g, '<br>') + '</p>' : '') +
+            (trAtk ? '<p><span class="label">' + (pt ? 'Ataca Com' : 'Attacks With') + ':</span> ' + escHtml(trAtk) + '</p>' : '') +
+            (trComp ? '<p><span class="label">' + (pt ? 'Complicações' : 'Complications') + ':</span><br>' + escHtml(trComp).replace(/\n/g, '<br>') + '</p>' : '') +
+            '<p><button class="btn btn-sm" id="btn-trace-inline">' + (pt ? 'Ver Traço' : 'View Trace') + ' \u2192</button></p>' +
+          '</div></div>';
+      }
+      return sTraces ? '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3><div class="combat-ref-block"><p>' + escHtml(sTraces) + '</p></div></div>' : '';
+    })();
+
+    var domainsHtml = (domains.length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios' : 'Domains') + '</h3>' + domains.map(function(d) {
+      var dt = domTr && domTr[d.name];
+      var dn = dt ? dt.name : d.name;
+      var dd = dt ? dt.description : d.description;
+      // Domains that spawn their own trace get a "View Trace" link.
+      var traceKey = sid + '::' + d.name;
+      var traceBtn = DOMAIN_TRACES[traceKey] ? '<p><button class="btn btn-sm btn-domain-trace" data-trace-key="' + escAttr(traceKey) + '">' + (pt ? 'Ver Traço' : 'View Trace') + ' \u2192</button></p>' : '';
+      return '<div class="combat-ref-block"><strong>' + escHtml(dn) + '</strong>' + (dd ? '<p>' + escHtml(dd) + '</p>' : '') + traceBtn + '</div>';
+    }).join('') + '</div>' : '');
+
+    // Ordered statblock: meta, Traumas, Examples, Attacks, Complications,
+    // Threats, Pressure, Severe Attack, Afflictions, Traces, Domains.
+    body = metaHtml + traumasHtml + examplesHtml + attacksHtml + compsHtml + threatsHtml + pressureHtml + severeHtml + afflHtml + tracesHtml + domainsHtml;
   } else {
     // Localized field values (fall back to EN when no PT translation).
     var oid = o.officialId;
@@ -8119,9 +8491,16 @@ function renderOfficialView(officialId) {
       oDesc = oDesc.replace(execMatch[0], '').replace(/\s{2,}/g, ' ').trim();
     }
     if (!oTalisman) oTalisman = o.talismanSegments || 2;
+    // Determine a CAT range to show as its own meta line, and strip the redundant
+    // "<Type>. CAT X-Y ...strength." lead-in from the loose description.
+    var meta = splitEnemyMeta(oDesc, tEnemyType(o.type));
+    oDesc = meta.desc;
+    var oCat = o.categoryDisplay || meta.cat || null;
     body =
       (oDesc ? '<p class="combat-meta muted">' + escHtml(oDesc) + '</p>' : '') +
-      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(o.type) + ' \u2022 <span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> ' + oTalisman + '</p>' +
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(o.type) + '</p>' +
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> ' + oTalisman + '</p>' +
+      (oCat ? '<p class="combat-meta"><span class="label">CAT:</span> ' + escHtml(oCat) + '</p>' : '') +
       (fFacts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(fFacts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
       (fAttacks ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(fAttacks).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
       (fComps ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(fComps).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
@@ -8140,28 +8519,26 @@ function renderOfficialView(officialId) {
       '</header>' +
       '<div class="actions-bar">' +
         '<button class="btn btn-primary" id="btn-dup">' + (pt ? 'Duplicar para meu bestiário' : 'Duplicate to my bestiary') + '</button>' +
+        ((o.kind === 'sin' && SIN_TRACES[o.officialId]) ? '<button class="btn" id="btn-trace">' + (pt ? 'Ver Traço' : 'View Trace') + '</button>' : '') +
       '</div>' +
       ((o.images && o.images.length)
         ? '<div class="enemy-detail-imgs">' + o.images.map(function(src) { return '<img class="enemy-detail-img" src="' + src + '" alt="' + escAttr(o.name) + '">'; }).join('') + '</div>'
         : (o.image ? '<img class="enemy-detail-img" src="' + o.image + '" alt="' + escAttr(o.name) + '">' : '')) +
-      '<div class="combat-ref">' + body +
-        ((o.examplesImage || (o.examples && o.examples.length)) ? '<div class="combat-section"><h3>' + (pt ? 'Exemplos' : 'Examples') + '</h3>' +
-          (o.examplesImage ? '<img class="enemy-examples-img" src="' + o.examplesImage + '" alt="' + escAttr(o.name) + ' examples">' : '') +
-          ((o.examples && o.examples.length) ? o.examples.map(function(ex, exi) {
-            var exPt = (currentLang === 'pt' && PT_CONTENT.enemies[o.officialId] && PT_CONTENT.enemies[o.officialId].examples && PT_CONTENT.enemies[o.officialId].examples[exi]) || null;
-            var exName = exPt ? exPt.name : ex.name;
-            var exStory = exPt ? exPt.story : ex.story;
-            return '<div class="combat-ref-block"><strong>' + escHtml(exName) + '</strong>' + (exStory ? '<p>' + escStory(exStory) + '</p>' : '') + '</div>';
-          }).join('') : '') +
-        '</div>' : '') +
-      '</div>' +
+      // Sins embed examples inside body (ordered); non-sins append them after.
+      '<div class="combat-ref">' + body + (o.kind === 'sin' ? '' : examplesHtml) + '</div>' +
     '</div>';
 
   renderLangToggle();
   document.getElementById('btn-back').addEventListener('click', function() { navigate('bestiary'); });
   document.getElementById('btn-dup').addEventListener('click', function() {
-    duplicateOfficialEnemy(officialId);
-    navigate('admin');
+    openDuplicateDialog(officialId, function() { navigate('admin'); });
+  });
+  var traceBtn = document.getElementById('btn-trace');
+  if (traceBtn) traceBtn.addEventListener('click', function() { navigate('trace-view/' + o.officialId); });
+  var traceInline = document.getElementById('btn-trace-inline');
+  if (traceInline) traceInline.addEventListener('click', function() { navigate('trace-view/' + o.officialId); });
+  document.querySelectorAll('.btn-domain-trace').forEach(function(btn) {
+    btn.addEventListener('click', function() { navigate('domain-trace-view/' + encodeURIComponent(btn.dataset.traceKey)); });
   });
 }
 
@@ -8220,8 +8597,9 @@ function renderAdmin() {
   });
 }
 
-// Clone an official entry into the GM's editable bestiary
-function duplicateOfficialEnemy(officialId) {
+// Clone an official entry into the GM's editable bestiary.
+// opts (optional): { category, talismanSegments } chosen by the GM at duplicate time.
+function duplicateOfficialEnemy(officialId, opts) {
   var src = OFFICIAL_ENEMIES.find(function(o) { return o.officialId === officialId; });
   if (!src) return null;
   var copy = resolveOfficialEnemy(src);
@@ -8234,8 +8612,180 @@ function duplicateOfficialEnemy(officialId) {
   copy.updatedAt = new Date().toISOString();
   copy.execSlashes = 0;
   copy.pressureSlashes = 0;
+  if (opts) {
+    if (opts.category != null) copy.category = opts.category;
+    if (opts.talismanSegments != null) copy.talismanSegments = opts.talismanSegments;
+  }
   saveEnemy(copy);
   return copy;
+}
+
+// ── Duplicate dialog: ask for CAT + Talisman before cloning ─────────────
+// Parse a CAT display like "0-6" or "1-5" into an array of numeric options.
+// Falls back to null when there is no explicit range (caller uses a number input).
+function parseCatOptions(catStr) {
+  if (!catStr) return null;
+  var m = String(catStr).match(/([0-9]+)\s*-\s*([0-9]+)/);
+  if (!m) return null;
+  var lo = parseInt(m[1], 10), hi = parseInt(m[2], 10);
+  if (isNaN(lo) || isNaN(hi) || hi < lo) return null;
+  var out = [];
+  for (var i = lo; i <= hi; i++) out.push(i);
+  return out;
+}
+
+// Parse a talismanDisplay into selectable variants. Each variant carries a
+// formula that resolves to a segment count for a given CAT (pressure assumed 0).
+// Examples handled:
+//   "1+CAT (rank and file), 4+CAT (upper rank), 7+CAT (elites)"
+//   "2 (solo), 6 (swarm)"
+//   "8 + pressure + CAT (solo)"
+//   "8 + CAT + Pressure"   (sins; computed)
+function parseTalismanOptions(display, isSin) {
+  var out = [];
+  if (display) {
+    // Split on commas that separate variants (each variant usually ends with "(label)").
+    var parts = String(display).split(/,\s*/);
+    parts.forEach(function(part) {
+      var labelMatch = part.match(/\(([^)]*)\)/);
+      var label = labelMatch ? labelMatch[1] : '';
+      var formula = part.replace(/\([^)]*\)/, '').trim();
+      out.push({ label: label, formula: formula, raw: part.trim() });
+    });
+  }
+  if (!out.length) {
+    out.push({ label: '', formula: isSin ? '8 + CAT + pressure' : '2', raw: display || '' });
+  }
+  return out;
+}
+
+// Resolve a talisman formula string to a numeric segment count for a CAT value.
+// Understands "+CAT", "+pressure" (0), and leading base numbers.
+function resolveTalismanFormula(formula, cat) {
+  if (formula == null) return null;
+  var f = String(formula).toLowerCase().replace(/\s+/g, '');
+  // Replace tokens: cat -> value, pressure/preassure -> 0
+  f = f.replace(/pressure|preassure|press[ãa]o/g, '0').replace(/cat/g, String(cat || 0));
+  // Now f should be an arithmetic expression of numbers, + and -.
+  if (!/^[0-9+\-]+$/.test(f)) {
+    // Not a clean formula (e.g. "varies"); return null so caller keeps default.
+    var lead = String(formula).match(/^\s*([0-9]+)/);
+    return lead ? parseInt(lead[1], 10) : null;
+  }
+  var total = 0, sign = 1, num = '';
+  for (var i = 0; i < f.length; i++) {
+    var ch = f[i];
+    if (ch === '+' || ch === '-') {
+      if (num !== '') { total += sign * parseInt(num, 10); num = ''; }
+      sign = (ch === '-') ? -1 : 1;
+    } else { num += ch; }
+  }
+  if (num !== '') total += sign * parseInt(num, 10);
+  return total;
+}
+
+function openDuplicateDialog(officialId, onDone) {
+  var pt = currentLang === 'pt';
+  var src = OFFICIAL_ENEMIES.find(function(o) { return o.officialId === officialId; });
+  if (!src) return;
+  var resolved = resolveOfficialEnemy(src);
+  var isSin = !!(src.sinTemplate || src.type === 'sin' || src.type === 'sin_anomaly');
+
+  // CAT options from categoryDisplay or the description's "CAT X-Y" clause.
+  var desc = tEnemyField(src.officialId, 'description', src.description);
+  var catStr = src.categoryDisplay || null;
+  if (!catStr) { var meta = splitEnemyMeta(desc || '', tEnemyType(src.type)); catStr = meta.cat; }
+  if (!catStr && src.sinTemplate) catStr = '1-5';
+  var catOptions = parseCatOptions(catStr);
+  var defaultCat = src.category != null ? src.category : (catOptions ? catOptions[0] : 2);
+  // Entries with no book-defined CAT range (mundane humans, drifters/anomalies).
+  // The rulebook does not assign these a fixed category - CAT is an Admin call
+  // (CAT table, pg. 19). We still let the GM set one, but flag it.
+  var noCat = !catOptions && !src.sinTemplate;
+
+  // Talisman variants. Only true sin templates carry the "8 + CAT + Pressure" form.
+  var talOptions = parseTalismanOptions(src.talismanDisplay || (src.sinTemplate ? '8 + CAT + Pressure' : ''), !!src.sinTemplate);
+
+  var overlay = document.createElement('div');
+  overlay.id = 'dup-dialog-overlay';
+  overlay.className = 'cat-guide-overlay';
+
+  function catField() {
+    if (catOptions) {
+      return '<select id="dup-cat">' + catOptions.map(function(c) {
+        return '<option value="' + c + '"' + (c === defaultCat ? ' selected' : '') + '>' + c + '</option>';
+      }).join('') + '</select>';
+    }
+    return '<input type="number" id="dup-cat" min="0" max="7" value="' + defaultCat + '">';
+  }
+  function talField() {
+    return '<select id="dup-tal">' + talOptions.map(function(o, i) {
+      var lbl = o.raw || o.formula;
+      return '<option value="' + i + '"' + (i === 0 ? ' selected' : '') + '>' + escHtml(lbl) + '</option>';
+    }).join('') + '</select>';
+  }
+
+  overlay.innerHTML =
+    '<div class="cat-guide-content dup-dialog">' +
+      '<div class="cat-guide-header">' +
+        '<h3>' + (pt ? 'Duplicar' : 'Duplicate') + ': ' + escHtml(src.name) + '</h3>' +
+        '<button class="btn btn-tiny" id="dup-close">\u00D7</button>' +
+      '</div>' +
+      '<div class="dup-dialog-body">' +
+        '<div class="form-group"><label>CAT</label>' + catField() +
+          (noCat ? '<p class="help-text dup-note">' + (
+            src.type === 'human'
+              ? (pt ? 'Humanos normalmente são categoria 0.' : 'Humans are normally category 0.')
+              : (pt ? 'Esse inimigo tem categoria livre, a ser definida pelo Admin (tabela de CAT, pg. 19).' : 'This enemy has a free category, to be set by the Admin (CAT table, pg. 19).')
+          ) + '</p>' : '') +
+        '</div>' +
+        '<div class="form-group"><label>' + (pt ? 'Talismã' : 'Talisman') + '</label>' + talField() + '</div>' +
+        '<p class="help-text" id="dup-tal-preview"></p>' +
+      '</div>' +
+      '<div class="dup-dialog-actions">' +
+        '<button class="btn" id="dup-cancel">' + (pt ? 'Cancelar' : 'Cancel') + '</button>' +
+        '<button class="btn btn-primary" id="dup-confirm">' + (pt ? 'Adicionar' : 'Add') + '</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  function currentCat() {
+    var el = document.getElementById('dup-cat');
+    var v = parseInt(el.value, 10);
+    return isNaN(v) ? defaultCat : v;
+  }
+  function updatePreview() {
+    var cat = currentCat();
+    var tal = talOptions[parseInt(document.getElementById('dup-tal').value, 10) || 0];
+    var seg = resolveTalismanFormula(tal.formula, cat);
+    var preview = document.getElementById('dup-tal-preview');
+    // Show "+Pressure live" when the chosen talisman formula factors in pressure
+    // (true sin templates use "8 + CAT + Pressure"; Mother's Favorite is "8 + pressure + CAT").
+    var hasPressure = src.sinTemplate || /pressure|preassure|press[ãa]o/i.test(tal.formula || '');
+    if (seg != null) {
+      preview.textContent = (pt ? 'Talismã de execução: ' : 'Execution talisman: ') + seg + (hasPressure ? (pt ? ' (base, +Pressão ao vivo)' : ' (base, +Pressure live)') : '');
+    } else {
+      preview.textContent = '';
+    }
+  }
+  document.getElementById('dup-cat').addEventListener('change', updatePreview);
+  document.getElementById('dup-cat').addEventListener('input', updatePreview);
+  document.getElementById('dup-tal').addEventListener('change', updatePreview);
+  updatePreview();
+
+  function close() { overlay.remove(); }
+  document.getElementById('dup-close').addEventListener('click', close);
+  document.getElementById('dup-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.getElementById('dup-confirm').addEventListener('click', function() {
+    var cat = currentCat();
+    var tal = talOptions[parseInt(document.getElementById('dup-tal').value, 10) || 0];
+    var seg = resolveTalismanFormula(tal.formula, cat);
+    duplicateOfficialEnemy(officialId, { category: cat, talismanSegments: (seg != null ? seg : undefined) });
+    close();
+    if (typeof onDone === 'function') { onDone(); return; }
+    alert(pt ? 'Adicionado à sua lista de inimigos.' : 'Added to your enemy list.');
+  });
 }
 
 function renderBestiary() {
@@ -8341,8 +8891,7 @@ function renderBestiaryGroup(group) {
     var oid = card.dataset.oid;
     card.querySelector('.btn-duplicate').addEventListener('click', function(e) {
       e.stopPropagation();
-      duplicateOfficialEnemy(oid);
-      alert(pt ? 'Adicionado à sua lista de inimigos.' : 'Added to your enemy list.');
+      openDuplicateDialog(oid);
     });
     card.addEventListener('click', function() { navigate('official-view/' + oid); });
   });
@@ -8358,7 +8907,17 @@ function renderPerfectSinView(psId) {
 
   // Build the base-sin reference sections (reuse the sin fields).
   function sect(title, body) { return body ? '<div class="combat-section"><h3>' + title + '</h3><div class="combat-ref-block"><p>' + body + '</p></div></div>' : ''; }
-  var domains = (base.domainOptions || []).map(function(d) { return '<strong>' + escHtml(d.name) + '</strong>' + (d.description ? '<br>' + escHtml(d.description) : ''); }).join('</p><p>');
+  // Domains as individual blocks (localized), each with a View Trace button when
+  // the domain spawns a trace. Traces created here are Perfect (isPerfect=true).
+  var domTr = (pt && PT_CONTENT.enemies[ps.baseSinType] && PT_CONTENT.enemies[ps.baseSinType].domains) || null;
+  var domainsHtml = (base.domainOptions || []).map(function(d) {
+    var t = domTr && domTr[d.name];
+    var dn = t ? t.name : d.name;
+    var dd = t ? t.description : d.description;
+    var traceKey = ps.baseSinType + '::' + d.name;
+    var traceBtn = DOMAIN_TRACES[traceKey] ? '<p><button class="btn btn-sm btn-domain-trace" data-trace-key="' + escAttr(traceKey) + '">' + (pt ? 'Ver Traço' : 'View Trace') + ' \u2192</button></p>' : '';
+    return '<div class="combat-ref-block"><strong>' + escHtml(dn) + '</strong>' + (dd ? '<p>' + escHtml(dd) + '</p>' : '') + traceBtn + '</div>';
+  }).join('');
 
   app.innerHTML =
     '<div class="page enemy-combat-page combat-sin">' +
@@ -8368,12 +8927,18 @@ function renderPerfectSinView(psId) {
       '</header>' +
       '<div class="actions-bar">' +
         '<button class="btn btn-primary" id="btn-dup-perfect">' + (pt ? 'Duplicar para meu bestiário' : 'Duplicate to my bestiary') + '</button>' +
+        (SIN_TRACES[ps.baseSinType] ? '<button class="btn" id="btn-trace">' + (pt ? 'Ver Traço' : 'View Trace') + '</button>' : '') +
       '</div>' +
       (ps.image ? '<img class="enemy-detail-img" src="' + ps.image + '" alt="' + escAttr(ps.name) + '">' : '') +
       (ps.quote ? '<p class="help-text" style="font-style:italic">\u201C' + (ps.quoteHtml ? ps.quote : escHtml(ps.quote)) + '\u201D</p>' : '') +
       // Perfect upgrades (the star of the card)
       '<div class="combat-ref"><div class="combat-section"><h3>' + (pt ? 'Bônus de Pecado Perfeito' : 'Perfect Sin Upgrades') + '</h3>' +
-        (ps.upgrades || []).map(function(u) { return '<div class="combat-ref-block"><strong>' + escHtml(pt && u.namePt ? u.namePt : u.name) + '</strong><p>' + escHtml(pt ? u.pt : u.en) + '</p></div>'; }).join('') +
+        (ps.upgrades || []).map(function(u) {
+          // Some upgrades spawn their own trace (e.g. Perfect Toad's Shadow of the True Self).
+          var upgradeTraceKey = ps.baseSinType + '::' + u.name;
+          var traceBtn = DOMAIN_TRACES[upgradeTraceKey] ? '<p><button class="btn btn-sm btn-domain-trace" data-trace-key="' + escAttr(upgradeTraceKey) + '">' + (pt ? 'Ver Traço' : 'View Trace') + ' \u2192</button></p>' : '';
+          return '<div class="combat-ref-block"><strong>' + escHtml(pt && u.namePt ? u.namePt : u.name) + '</strong><p>' + escHtml(pt ? u.pt : u.en) + '</p>' + traceBtn + '</div>';
+        }).join('') +
       '</div>' +
       (ps.quote2 ? '<p class="help-text" style="font-style:italic">\u201C' + (ps.quote2Html ? ps.quote2 : escHtml(ps.quote2)) + '\u201D</p>' : '') +
       // Reminder of the global perfect-sin rules
@@ -8391,32 +8956,483 @@ function renderPerfectSinView(psId) {
       sect(pt ? 'Aflições' : 'Afflictions', base.afflictions ? escHtml(base.afflictions).replace(/\n/g, '<br>') : '') +
       sect(pt ? 'Ataque Severo' : 'Severe Attack', base.severeAttack ? escHtml(base.severeAttack) : '') +
       sect(pt ? 'Traços' : 'Traces', base.traces ? escHtml(base.traces) : '') +
-      ((base.domainOptions || []).length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios (escolha 3)' : 'Domains (choose 3)') + '</h3><div class="combat-ref-block"><p>' + domains + '</p></div></div>' : '') +
+      ((base.domainOptions || []).length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios (escolha 3)' : 'Domains (choose 3)') + '</h3>' + domainsHtml + '</div>' : '') +
       '</div>' +
     '</div>';
 
   renderLangToggle();
   document.getElementById('btn-back').addEventListener('click', function() { navigate('bestiary'); });
   document.getElementById('btn-dup-perfect').addEventListener('click', function() {
-    var sin = createPerfectSinFromType(ps.baseSinType);
+    openPerfectDuplicateDialog(ps.id, function() { navigate('admin'); });
+  });
+  var traceBtn = document.getElementById('btn-trace');
+  if (traceBtn) traceBtn.addEventListener('click', function() { navigate('trace-view/' + ps.baseSinType + '/perfect'); });
+  document.querySelectorAll('.btn-domain-trace').forEach(function(btn) {
+    btn.addEventListener('click', function() { navigate('domain-trace-view/' + encodeURIComponent(btn.dataset.traceKey) + '/perfect'); });
+  });
+}
+
+// Duplicate dialog for Perfect Sins: CAT 3-6, base talisman 12+2xCAT
+// (6+2xCAT for the Perfect Idol via Mock), always +Pressure live.
+function openPerfectDuplicateDialog(psId, onDone) {
+  var pt = currentLang === 'pt';
+  var ps = PERFECT_SINS.sins.find(function(x) { return x.id === psId; });
+  if (!ps) return;
+  var base = perfectSinTalismanBase(ps.baseSinType);
+  var catOptions = [3, 4, 5, 6];
+  var defaultCat = 3;
+
+  var overlay = document.createElement('div');
+  overlay.id = 'dup-dialog-overlay';
+  overlay.className = 'cat-guide-overlay';
+  overlay.innerHTML =
+    '<div class="cat-guide-content dup-dialog">' +
+      '<div class="cat-guide-header">' +
+        '<h3>' + (pt ? 'Duplicar' : 'Duplicate') + ': ' + escHtml(pt ? (ps.namePt || ps.name) : ps.name) + '</h3>' +
+        '<button class="btn btn-tiny" id="dup-close">\u00D7</button>' +
+      '</div>' +
+      '<div class="dup-dialog-body">' +
+        '<div class="form-group"><label>CAT</label>' +
+          '<select id="dup-cat">' + catOptions.map(function(c) {
+            return '<option value="' + c + '"' + (c === defaultCat ? ' selected' : '') + '>' + c + '</option>';
+          }).join('') + '</select>' +
+        '</div>' +
+        '<p class="help-text" id="dup-tal-preview"></p>' +
+      '</div>' +
+      '<div class="dup-dialog-actions">' +
+        '<button class="btn" id="dup-cancel">' + (pt ? 'Cancelar' : 'Cancel') + '</button>' +
+        '<button class="btn btn-primary" id="dup-confirm">' + (pt ? 'Adicionar' : 'Add') + '</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  function currentCat() {
+    var v = parseInt(document.getElementById('dup-cat').value, 10);
+    return isNaN(v) ? defaultCat : v;
+  }
+  function updatePreview() {
+    var seg = base + 2 * currentCat();
+    document.getElementById('dup-tal-preview').textContent =
+      (pt ? 'Talismã de execução: ' : 'Execution talisman: ') + seg + (pt ? ' (base, +Pressão ao vivo)' : ' (base, +Pressure live)');
+  }
+  document.getElementById('dup-cat').addEventListener('change', updatePreview);
+  updatePreview();
+
+  function close() { overlay.remove(); }
+  document.getElementById('dup-close').addEventListener('click', close);
+  document.getElementById('dup-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.getElementById('dup-confirm').addEventListener('click', function() {
+    var sin = createPerfectSinFromType(ps.baseSinType, { category: currentCat() });
     sin.id = generateId();
     sin.expansion = 'gff3';
     saveEnemy(sin);
-    navigate('admin');
+    close();
+    if (typeof onDone === 'function') { onDone(); return; }
+    alert(pt ? 'Adicionado à sua lista de inimigos.' : 'Added to your enemy list.');
+  });
+}
+
+// Compute a trace's talisman variants for a given sin, applying the Perfect Sin
+// rule (+2 to every trace talisman) when isPerfect.
+function traceTalismanVariants(sinType, isPerfect) {
+  var tr = SIN_TRACES[sinType];
+  if (!tr) return [];
+  return tr.talismanVariants.map(function(v) {
+    return { label: v.label, labelPt: v.labelPt, segments: v.segments + (isPerfect ? 2 : 0) };
+  });
+}
+
+// Build a bestiary enemy object from a sin's trace, with a chosen talisman size
+// and optional domain modifiers (buffs) to fold into the statblock.
+function createTraceEnemy(sinType, isPerfect, segments, appliedMods) {
+  var pt = currentLang === 'pt';
+  var tr = SIN_TRACES[sinType];
+  var baseName = pt ? tr.namePt : tr.name;
+  var prefix = isPerfect ? (pt ? '[Perfeito] ' : '[Perfect] ') : '';
+  var facts = traceField(sinType, 'facts');
+  var seg = segments;
+  var stress = tr.stress, stress23 = tr.stressRisk23, stress1 = tr.stressRisk1;
+  var traceType = tr.type;
+  var activeDomainMods = []; // {domain, domainPt, note, notePt} for display on the sheet
+  (appliedMods || []).forEach(function(m) {
+    var e = m.effect || {};
+    seg += (e.talismanDelta || 0);
+    // stressDelta: only the primary (1) reaction. allStressDelta: all tiers
+    // ("+1 stress on reactions" applies to (1), (2-3) and (4+)).
+    stress += (e.stressDelta || 0);
+    if (e.allStressDelta) { stress += e.allStressDelta; stress23 += e.allStressDelta; stress1 += e.allStressDelta; }
+    if (e.setType) traceType = e.setType;
+    var extraFacts = pt ? (e.addFactsPt || e.addFacts) : e.addFacts;
+    if (extraFacts) facts = (facts ? facts + '\n' : '') + extraFacts;
+    activeDomainMods.push({ domain: m.domain, domainPt: m.domainPt, note: m.note, notePt: m.notePt });
+  });
+  return {
+    id: generateId(),
+    kind: 'opponent',
+    version: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    name: prefix + baseName + ' (' + tSinType(sinType) + ')',
+    type: traceType,
+    category: 0,
+    talismanSegments: seg,
+    description: traceField(sinType, 'description'),
+    facts: facts,
+    attacksWith: traceField(sinType, 'attacksWith'),
+    complications: traceField(sinType, 'complications'),
+    stress: stress, stressRisk23: stress23, stressRisk1: stress1,
+    activeDomainMods: activeDomainMods,
+    execSlashes: 0, pressureSlashes: 0,
+    expansion: isPerfect ? 'gff3' : 'base'
+  };
+}
+
+// Trace sub-page: shows the localized trace rules for a sin (or perfect sin) and
+// lets the GM duplicate the trace into their bestiary at a chosen talisman size.
+function renderTraceView(sinType, isPerfect) {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var tr = SIN_TRACES[sinType];
+  if (!tr) { navigate('bestiary'); return; }
+  var traceName = pt ? tr.namePt : tr.name;
+  var tDesc = traceField(sinType, 'description');
+  var tFacts = traceField(sinType, 'facts');
+  var tAttacks = traceField(sinType, 'attacksWith');
+  var tComps = traceField(sinType, 'complications');
+  var variants = traceTalismanVariants(sinType, isPerfect);
+  var backHash = isPerfect ? ('perfectsin-view/' + ('perfect_' + sinType)) : ('official-view/' + sinType);
+  // Perfect sin ids are 'perfect_<type>'.
+  if (isPerfect) {
+    var psEntry = PERFECT_SINS.sins.find(function(x) { return x.baseSinType === sinType; });
+    if (psEntry) backHash = 'perfectsin-view/' + psEntry.id;
+  }
+  var title = (isPerfect ? (pt ? 'Traço Perfeito: ' : 'Perfect Trace: ') : (pt ? 'Traço: ' : 'Trace: ')) + traceName;
+
+  app.innerHTML =
+    '<div class="page enemy-combat-page' + (tr.type === 'sin' ? ' combat-sin' : '') + '">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + escHtml(pt ? (tSinType(sinType)) : tSinType(sinType)) + '</button>' +
+        '<h1 class="title">' + escHtml(title) + '</h1>' +
+      '</header>' +
+      '<div class="actions-bar">' +
+        '<button class="btn btn-primary" id="btn-dup-trace">' + (pt ? 'Duplicar para meu bestiário' : 'Duplicate to my bestiary') + '</button>' +
+      '</div>' +
+      '<div class="combat-ref">' +
+        (tDesc ? '<p class="combat-meta muted">' + escHtml(tDesc) + '</p>' : '') +
+        '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(tr.type) + '</p>' +
+        '<p class="combat-meta"><span class="label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ':</span> ' +
+          variants.map(function(v) { return v.segments + ' (' + (pt ? v.labelPt : v.label) + ')'; }).join(', ') +
+          (isPerfect ? (pt ? ' — inclui +2 de Pecado Perfeito' : ' — includes +2 from Perfect Sin') : '') + '</p>' +
+        (tFacts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(tFacts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+        (tAttacks ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(tAttacks).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+        (tComps ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(tComps).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+        '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
+          '<p class="combat-meta">(1): ' + tr.stress + ' \u2022 (2-3): ' + tr.stressRisk23 + ' \u2022 (4+): ' + tr.stressRisk1 + '</p>' +
+        '</div>' +
+        // Domains/upgrades that modify this base trace (buffs applied via the duplicate dialog).
+        (traceModifiers(sinType, isPerfect).length ? '<div class="combat-section"><h3>' + (pt ? 'Modificado por Domínios' : 'Modified by Domains') + '</h3>' +
+          traceModifiers(sinType, isPerfect).map(function(m) {
+            return '<div class="combat-ref-block"><strong>' + escHtml(pt ? m.domainPt : m.domain) + '</strong><p>' + escHtml(pt ? m.notePt : m.note) + '</p></div>';
+          }).join('') + '</div>' : '') +
+      '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate(backHash); });
+  document.getElementById('btn-dup-trace').addEventListener('click', function() {
+    openTraceDuplicateDialog(sinType, isPerfect, function() { navigate('admin'); });
+  });
+}
+
+// Duplicate dialog for a sin trace: pick the talisman size (solo/group/...) and
+// optionally toggle any domains that modify this trace (buffs applied on confirm).
+function openTraceDuplicateDialog(sinType, isPerfect, onDone) {
+  var pt = currentLang === 'pt';
+  var tr = SIN_TRACES[sinType];
+  if (!tr) return;
+  var variants = traceTalismanVariants(sinType, isPerfect);
+  var traceName = pt ? tr.namePt : tr.name;
+  var mods = traceModifiers(sinType, isPerfect);
+
+  var overlay = document.createElement('div');
+  overlay.id = 'dup-dialog-overlay';
+  overlay.className = 'cat-guide-overlay';
+  overlay.innerHTML =
+    '<div class="cat-guide-content dup-dialog">' +
+      '<div class="cat-guide-header">' +
+        '<h3>' + (pt ? 'Duplicar Traço' : 'Duplicate Trace') + ': ' + escHtml(traceName) + '</h3>' +
+        '<button class="btn btn-tiny" id="dup-close">\u00D7</button>' +
+      '</div>' +
+      '<div class="dup-dialog-body">' +
+        '<div class="form-group"><label>' + (pt ? 'Tamanho (Talismã)' : 'Size (Talisman)') + '</label>' +
+          '<select id="dup-tal">' + variants.map(function(v, i) {
+            return '<option value="' + i + '"' + (i === 0 ? ' selected' : '') + '>' + escHtml(pt ? v.labelPt : v.label) + ' \u2014 ' + v.segments + '</option>';
+          }).join('') + '</select>' +
+        '</div>' +
+        (isPerfect ? '<p class="help-text dup-note">' + (pt ? 'Traços de Pecado Perfeito têm +2 no talismã.' : 'Perfect Sin traces get +2 talisman.') + '</p>' : '') +
+        (mods.length ? '<div class="form-group"><label>' + (pt ? 'Domínios ativos?' : 'Active domains?') + '</label>' +
+          mods.map(function(m, i) {
+            return '<label class="dup-check"><input type="checkbox" class="dup-mod" data-mod="' + i + '"> ' + escHtml(pt ? m.domainPt : m.domain) + '</label>';
+          }).join('') + '</div>' : '') +
+        (mods.length ? '<p class="help-text" id="dup-tal-preview"></p>' : '') +
+      '</div>' +
+      '<div class="dup-dialog-actions">' +
+        '<button class="btn" id="dup-cancel">' + (pt ? 'Cancelar' : 'Cancel') + '</button>' +
+        '<button class="btn btn-primary" id="dup-confirm">' + (pt ? 'Adicionar' : 'Add') + '</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  function selectedMods() {
+    var out = [];
+    document.querySelectorAll('.dup-mod').forEach(function(cb) {
+      if (cb.checked) out.push(mods[parseInt(cb.dataset.mod, 10)]);
+    });
+    return out;
+  }
+  function baseSegments() { return variants[parseInt(document.getElementById('dup-tal').value, 10) || 0].segments; }
+  function updatePreview() {
+    var preview = document.getElementById('dup-tal-preview');
+    if (!preview) return;
+    var seg = baseSegments();
+    var s1 = tr.stress, s23 = tr.stressRisk23, s4 = tr.stressRisk1;
+    selectedMods().forEach(function(m) {
+      var e = m.effect || {};
+      seg += (e.talismanDelta || 0);
+      s1 += (e.stressDelta || 0);
+      if (e.allStressDelta) { s1 += e.allStressDelta; s23 += e.allStressDelta; s4 += e.allStressDelta; }
+    });
+    preview.textContent = (pt ? 'Com domínios: talismã ' : 'With domains: talisman ') + seg +
+      ' \u2022 (1): ' + s1 + ' \u2022 (2-3): ' + s23 + ' \u2022 (4+): ' + s4;
+  }
+  document.getElementById('dup-tal').addEventListener('change', updatePreview);
+  document.querySelectorAll('.dup-mod').forEach(function(cb) { cb.addEventListener('change', updatePreview); });
+  updatePreview();
+
+  function close() { overlay.remove(); }
+  document.getElementById('dup-close').addEventListener('click', close);
+  document.getElementById('dup-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.getElementById('dup-confirm').addEventListener('click', function() {
+    var enemy = createTraceEnemy(sinType, isPerfect, baseSegments(), selectedMods());
+    saveEnemy(enemy);
+    close();
+    if (typeof onDone === 'function') { onDone(); return; }
+    alert(pt ? 'Adicionado à sua lista de inimigos.' : 'Added to your enemy list.');
+  });
+}
+
+// Sub-page for a Domain-created trace (e.g. the Ogre's "Where You Belong").
+// key = "<sinType>::<English domain name>". isPerfect applies the Perfect Sin
+// rule (+2 to every trace talisman).
+function renderDomainTraceView(key, isPerfect) {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var dt = DOMAIN_TRACES[key];
+  if (!dt) { navigate('bestiary'); return; }
+  var sinType = key.split('::')[0];
+  var domainName = key.split('::')[1] || '';
+  // Localized label: prefer the domain translation; otherwise, if the key refers to
+  // a Perfect Sin upgrade (e.g. Shadow of the True Self), use the upgrade's PT name.
+  var domTr = (pt && PT_CONTENT.enemies[sinType] && PT_CONTENT.enemies[sinType].domains && PT_CONTENT.enemies[sinType].domains[domainName]) || null;
+  var domainLabel = domTr ? domTr.name : domainName;
+  if (!domTr && pt) {
+    var psForLabel = PERFECT_SINS.sins.find(function(x) { return x.baseSinType === sinType; });
+    var up = psForLabel && (psForLabel.upgrades || []).find(function(u) { return u.name === domainName; });
+    if (up && up.namePt) domainLabel = up.namePt;
+  }
+  var traceName = pt ? dt.namePt : dt.name;
+  var tDesc = domainTraceField(key, 'description');
+  var tFacts = domainTraceField(key, 'facts');
+  var tAttacks = domainTraceField(key, 'attacksWith');
+  var tComps = domainTraceField(key, 'complications');
+  var talLabel = (pt ? (dt.talismanLabelPt || dt.talismanLabel) : dt.talismanLabel) +
+    ((isPerfect && !dt.ignorePerfectBonus) ? (pt ? ' (+2 de Pecado Perfeito)' : ' (+2 from Perfect Sin)') : '');
+
+  app.innerHTML =
+    '<div class="page enemy-combat-page' + (dt.type === 'sin' ? ' combat-sin' : '') + '">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + escHtml(tSinType(sinType)) + '</button>' +
+        '<h1 class="title">' + escHtml(((isPerfect ? (pt ? 'Traço Perfeito: ' : 'Perfect Trace: ') : (pt ? 'Traço: ' : 'Trace: '))) + traceName) + ' <span class="subtitle">' + escHtml(domainLabel) + '</span></h1>' +
+      '</header>' +
+      '<div class="actions-bar">' +
+        '<button class="btn btn-primary" id="btn-dup-domain-trace">' + (pt ? 'Duplicar para meu bestiário' : 'Duplicate to my bestiary') + '</button>' +
+      '</div>' +
+      '<div class="combat-ref">' +
+        (tDesc ? '<p class="combat-meta muted">' + escHtml(tDesc) + '</p>' : '') +
+        '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(dt.type) + '</p>' +
+        '<p class="combat-meta"><span class="label">' + (pt ? 'Talismã de Execução' : 'Execution Talisman') + ':</span> ' + escHtml(talLabel) + '</p>' +
+        (tFacts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(tFacts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+        (tAttacks ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(tAttacks).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+        (tComps ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(tComps).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+        (dt.noAttacks ? '' : '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
+          '<p class="combat-meta">(1): ' + dt.stress + ' \u2022 (2-3): ' + dt.stressRisk23 + ' \u2022 (4+): ' + dt.stressRisk1 + '</p>' +
+        '</div>') +
+        // Horde-wide domain modifiers that also apply to this domain-trace.
+        (domainTraceModifiers(sinType).length ? '<div class="combat-section"><h3>' + (pt ? 'Modificado por Domínios' : 'Modified by Domains') + '</h3>' +
+          domainTraceModifiers(sinType).map(function(m) {
+            return '<div class="combat-ref-block"><strong>' + escHtml(pt ? m.domainPt : m.domain) + '</strong><p>' + escHtml(pt ? m.notePt : m.note) + '</p></div>';
+          }).join('') + '</div>' : '') +
+      '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  var perfectPs = PERFECT_SINS.sins.find(function(x) { return x.baseSinType === sinType; });
+  var backHash = (isPerfect && perfectPs) ? ('perfectsin-view/' + perfectPs.id) : ('official-view/' + sinType);
+  document.getElementById('btn-back').addEventListener('click', function() { navigate(backHash); });
+  document.getElementById('btn-dup-domain-trace').addEventListener('click', function() {
+    openDomainTraceDuplicateDialog(key, isPerfect, function() { navigate('admin'); });
+  });
+}
+
+// Duplicate dialog for a domain-created trace: pick CAT (the trace talisman is a
+// formula like "6+CAT" resolved against the chosen CAT). isPerfect adds +2 to the
+// resolved talisman (Perfect Sin rule).
+function openDomainTraceDuplicateDialog(key, isPerfect, onDone) {
+  var pt = currentLang === 'pt';
+  var dt = DOMAIN_TRACES[key];
+  if (!dt) return;
+  var sinType = key.split('::')[0];
+  var traceName = pt ? dt.namePt : dt.name;
+  var mods = domainTraceModifiers(sinType);
+  // Some traces pick a base talisman from a fixed list (e.g. 4/6/10 by 1s rolled)
+  // instead of a CAT formula. CAT and Pressure selectors are opt-in per trace.
+  var useChoices = !!(dt.baseTalismanChoices && dt.baseTalismanChoices.length);
+  var needsCat = useChoices ? !!dt.addCat : true; // formula traces always use CAT
+  var needsPressure = !!dt.addPressure;
+  var catOptions = [1, 2, 3, 4, 5];
+  var defaultCat = 1;
+
+  var overlay = document.createElement('div');
+  overlay.id = 'dup-dialog-overlay';
+  overlay.className = 'cat-guide-overlay';
+  overlay.innerHTML =
+    '<div class="cat-guide-content dup-dialog">' +
+      '<div class="cat-guide-header">' +
+        '<h3>' + (pt ? 'Duplicar Traço' : 'Duplicate Trace') + ': ' + escHtml(traceName) + '</h3>' +
+        '<button class="btn btn-tiny" id="dup-close">\u00D7</button>' +
+      '</div>' +
+      '<div class="dup-dialog-body">' +
+        (useChoices ? '<div class="form-group"><label>' + (pt ? 'Talismã base (1s rolados)' : 'Base talisman (1s rolled)') + '</label>' +
+          '<select id="dup-base">' + dt.baseTalismanChoices.map(function(c, i) {
+            return '<option value="' + c.value + '"' + (i === 0 ? ' selected' : '') + '>' + escHtml(pt ? c.labelPt : c.label) + '</option>';
+          }).join('') + '</select></div>' : '') +
+        (needsCat ? '<div class="form-group"><label>CAT</label>' +
+          '<select id="dup-cat">' + catOptions.map(function(c) {
+            return '<option value="' + c + '"' + (c === defaultCat ? ' selected' : '') + '>' + c + '</option>';
+          }).join('') + '</select></div>' : '') +
+        (needsPressure ? '<div class="form-group"><label>' + (pt ? 'Pressão atual' : 'Current pressure') + '</label>' +
+          '<select id="dup-pressure">' + [0, 1, 2, 3, 4, 5, 6].map(function(p) {
+            return '<option value="' + p + '"' + (p === 0 ? ' selected' : '') + '>' + p + '</option>';
+          }).join('') + '</select></div>' : '') +
+        (mods.length ? '<div class="form-group"><label>' + (pt ? 'Domínios ativos?' : 'Active domains?') + '</label>' +
+          mods.map(function(m, i) {
+            return '<label class="dup-check"><input type="checkbox" class="dup-mod" data-mod="' + i + '"> ' + escHtml(pt ? m.domainPt : m.domain) + '</label>';
+          }).join('') + '</div>' : '') +
+        '<p class="help-text" id="dup-tal-preview"></p>' +
+      '</div>' +
+      '<div class="dup-dialog-actions">' +
+        '<button class="btn" id="dup-cancel">' + (pt ? 'Cancelar' : 'Cancel') + '</button>' +
+        '<button class="btn btn-primary" id="dup-confirm">' + (pt ? 'Adicionar' : 'Add') + '</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+
+  function currentCat() { var el = document.getElementById('dup-cat'); if (!el) return 0; var v = parseInt(el.value, 10); return isNaN(v) ? defaultCat : v; }
+  function currentPressure() { var el = document.getElementById('dup-pressure'); if (!el) return 0; var v = parseInt(el.value, 10); return isNaN(v) ? 0 : v; }
+  function selectedMods() {
+    var out = [];
+    document.querySelectorAll('.dup-mod').forEach(function(cb) { if (cb.checked) out.push(mods[parseInt(cb.dataset.mod, 10)]); });
+    return out;
+  }
+  var perfectBonus = (isPerfect && !dt.ignorePerfectBonus) ? 2 : 0; // Perfect Sin: +2 to trace talisman.
+  // Base segments: either a chosen value (+ optional CAT/pressure) or a CAT formula.
+  function baseSegments() {
+    if (useChoices) {
+      var el = document.getElementById('dup-base');
+      var base = el ? parseInt(el.value, 10) : dt.baseTalismanChoices[0].value;
+      if (dt.addCat) base += currentCat();
+      if (dt.addPressure) base += currentPressure();
+      return base;
+    }
+    return resolveTalismanFormula(dt.talismanFormula, currentCat());
+  }
+  function computeStats() {
+    var seg = baseSegments() + perfectBonus;
+    var s1 = dt.stress, s23 = dt.stressRisk23, s4 = dt.stressRisk1;
+    selectedMods().forEach(function(m) {
+      var e = m.effect || {};
+      seg += (e.talismanDelta || 0);
+      s1 += (e.stressDelta || 0);
+      if (e.allStressDelta) { s1 += e.allStressDelta; s23 += e.allStressDelta; s4 += e.allStressDelta; }
+    });
+    return { seg: seg, s1: s1, s23: s23, s4: s4 };
+  }
+  function updatePreview() {
+    var st = computeStats();
+    var txt = (pt ? 'Talismã de execução: ' : 'Execution talisman: ') + st.seg;
+    if (!dt.noAttacks) txt += ' \u2022 (1): ' + st.s1 + ' \u2022 (2-3): ' + st.s23 + ' \u2022 (4+): ' + st.s4;
+    document.getElementById('dup-tal-preview').textContent = txt;
+  }
+  var catEl = document.getElementById('dup-cat'); if (catEl) catEl.addEventListener('change', updatePreview);
+  var baseEl = document.getElementById('dup-base'); if (baseEl) baseEl.addEventListener('change', updatePreview);
+  var presEl = document.getElementById('dup-pressure'); if (presEl) presEl.addEventListener('change', updatePreview);
+  document.querySelectorAll('.dup-mod').forEach(function(cb) { cb.addEventListener('change', updatePreview); });
+  updatePreview();
+
+  function close() { overlay.remove(); }
+  document.getElementById('dup-close').addEventListener('click', close);
+  document.getElementById('dup-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+  document.getElementById('dup-confirm').addEventListener('click', function() {
+    var st = computeStats();
+    var facts = domainTraceField(key, 'facts');
+    var activeDomainMods = [];
+    selectedMods().forEach(function(m) {
+      var e = m.effect || {};
+      var extraFacts = pt ? (e.addFactsPt || e.addFacts) : e.addFacts;
+      if (extraFacts) facts = (facts ? facts + '\n' : '') + extraFacts;
+      activeDomainMods.push({ domain: m.domain, domainPt: m.domainPt, note: m.note, notePt: m.notePt });
+    });
+    var namePrefix = isPerfect ? (pt ? '[Perfeito] ' : '[Perfect] ') : '';
+    var enemy = {
+      id: generateId(), kind: 'opponent', version: 1,
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+      name: namePrefix + (pt ? dt.namePt : dt.name) + ' (' + tSinType(sinType) + ')',
+      type: dt.type, category: needsCat ? currentCat() : 0, talismanSegments: st.seg,
+      description: domainTraceField(key, 'description'),
+      facts: facts,
+      attacksWith: dt.noAttacks ? '' : domainTraceField(key, 'attacksWith'),
+      complications: domainTraceField(key, 'complications'),
+      stress: dt.noAttacks ? 0 : st.s1, stressRisk23: dt.noAttacks ? 0 : st.s23, stressRisk1: dt.noAttacks ? 0 : st.s4,
+      noAttacks: !!dt.noAttacks,
+      activeDomainMods: activeDomainMods,
+      execSlashes: 0, pressureSlashes: 0, expansion: isPerfect ? 'gff3' : 'base'
+    };
+    saveEnemy(enemy);
+    close();
+    if (typeof onDone === 'function') { onDone(); return; }
+    alert(pt ? 'Adicionado à sua lista de inimigos.' : 'Added to your enemy list.');
   });
 }
 
 function renderOfficialCard(o) {
   var pt = currentLang === 'pt';
   var typeLabel = o.sinTemplate ? tSinType(o.sinTemplate) : tEnemyType(o.type);
-  return '<div class="enemy-card official-card' + (o.sinTemplate || o.type === 'sin' ? ' enemy-card-sin' : '') + '" data-oid="' + o.officialId + '">' +
+  return '<div class="enemy-card official-card' + (o.sinTemplate || o.type === 'sin' || o.type === 'sin_anomaly' ? ' enemy-card-sin' : '') + '" data-oid="' + o.officialId + '">' +
     (o.image ? '<img class="enemy-card-img" src="' + o.image + '" alt="' + escAttr(o.name) + '">' : '') +
     '<div class="enemy-card-header">' +
       '<h3 class="enemy-name">' + escHtml(o.name) + '</h3>' +
       '<span class="enemy-cat">' + typeLabel + '</span>' +
     '</div>' +
     '<div class="enemy-card-body">' +
-      ((function() { var d = tEnemyField(o.officialId, 'description', o.description); return d ? '<p class="enemy-desc muted">' + escHtml(d) + '</p>' : ''; })()) +
+      ((function() {
+        var d = tEnemyField(o.officialId, 'description', o.description);
+        // For non-sin entries, strip the redundant "<Type>. CAT X-Y ...strength." lead-in.
+        if (d && !o.sinTemplate) d = splitEnemyMeta(d, tEnemyType(o.type)).desc;
+        return d ? '<p class="enemy-desc muted">' + escHtml(d) + '</p>' : '';
+      })()) +
     '</div>' +
     '<div class="enemy-card-actions">' +
       '<button class="btn btn-sm btn-duplicate">' + (pt ? 'Duplicar' : 'Duplicate') + '</button>' +
@@ -9154,6 +10170,8 @@ route('sin-edit', function(id) { renderSinForm(id); });
 route('enemy-combat', function(id) { renderEnemyCombat(id); });
 route('official-view', function(id) { renderOfficialView(id); });
 route('perfectsin-view', function(id) { renderPerfectSinView(id); });
+route('trace-view', function(sinType, variant) { renderTraceView(sinType, variant === 'perfect'); });
+route('domain-trace-view', function(key, variant) { renderDomainTraceView(decodeURIComponent(key || ''), variant === 'perfect'); });
 route('bestiary', renderBestiary);
 route('hunt', renderHunt);
 route('investigation', renderInvestigation);

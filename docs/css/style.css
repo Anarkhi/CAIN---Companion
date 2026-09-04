@@ -3447,3 +3447,48 @@ input[type="number"] {
   padding: 0 0.35rem;
   line-height: 1.4;
 }
+
+/* Duplicate dialog: choose CAT + Talisman before cloning an official enemy */
+.dup-dialog {
+  width: 420px;
+  max-width: 95vw;
+}
+.dup-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+.dup-dialog-body .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.dup-dialog-body label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.dup-dialog-body select,
+.dup-dialog-body input[type="number"] {
+  width: 100%;
+}
+.dup-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+.dup-note {
+  margin-top: var(--space-xs);
+  font-style: italic;
+  opacity: 0.85;
+}
+.dup-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-weight: normal;
+  margin-top: var(--space-xs);
+}
+.dup-check input {
+  width: auto;
+}
