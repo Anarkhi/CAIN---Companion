@@ -2582,6 +2582,12 @@ input[type="number"] {
   border-left-color: #7a2ab8;
 }
 
+/* Perfect Sins intro block: separate it from the perfect-sin cards below */
+.perfectsin-intro {
+  display: block;
+  margin-bottom: var(--space-xl);
+}
+
 .form-subhead {
   color: var(--text-primary);
   border-bottom: 1px solid var(--border-color);

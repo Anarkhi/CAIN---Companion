@@ -898,6 +898,355 @@ function toggleExpansionDrawer() {
 
 // PT-BR translations for game content (descriptions, agenda items, etc.)
 var PT_CONTENT = {
+  // Bestiary: official enemies + sin templates, keyed by id then field.
+  // Only fields present here are translated; missing fields fall back to EN.
+  enemies: {
+    // ── Mundane ──
+    security: {
+      description: 'Humanos sem graça, alheios ao mundo dos fenômenos psíquicos, enviados para lidar com perturbações ou guardar instalações.',
+      facts: 'Capacidades humanas gerais.\nGeralmente alertas e podem acionar algum tipo de alarme.\nA maioria dos humanos mundanos é incapacitada por qualquer estresse e geralmente morta na hora por 4+ de estresse; ficam catatônicos se testemunham um pecado diretamente. (Estes são feitos de material mais resistente.)',
+      attacksWith: 'Cassetetes, técnicas de combate corpo a corpo.',
+      complications: 'Disparar uma arma de choque, socar um alarme, sacar uma arma de fogo, imobilizar um exorcista.',
+      threat: '(1-2) Surra: inflige a aflição Braço Quebrado ou Perna Quebrada (atividades com o membro afetado são difíceis).'
+    },
+    mercenaries: {
+      description: 'Mercenários humanos sem graça, altamente habilidosos, às vezes contratados por hospedeiros de pecado ou governos para defesa ou trabalho sujo.',
+      facts: 'Bem armados e bem pagos.\nBem blindados contra armas leves e com visão térmica e noturna.',
+      attacksWith: 'Tiroteio disciplinado (longo alcance).',
+      complications: 'Jogar uma granada de atordoamento, buscar cobertura pesada, despejar uma rajada de fogo de supressão.',
+      threat: '(1-2) Tiro de Flechette: dá um tiro incapacitante em um exorcista; causa 3 de estresse e inflige a aflição Dilacerado (sofra 1 de estresse em qualquer rolagem de risco 1-2 envolvendo atividade física).'
+    },
+    illuminati: {
+      description: 'Humanos fanáticos ou lavados cerebralmente, formados em torno da manipulação e adoração de pecados, muitas vezes manipulados por organizações obscuras ou por um próprio pecado.',
+      facts: 'Frequentemente escondem o rosto sob máscaras.',
+      attacksWith: 'Ataques avassaladores porém rudimentares.',
+      complications: 'Encurralar um exorcista, atacar com fervor (+1 estresse), começar a entoar cânticos sinistros (1 corte sofrido).',
+      threat: '(1-2) Sacrifício: imobiliza um exorcista (difícil fazer qualquer coisa, não pode se mover, +1 estresse). Coloque um talismã 3 para acabar com a imobilização, e um talismã 3 de "sacrifício" que enche após cada ação de exorcista; quando enche, o alvo sofre 6 de estresse e o efeito acaba.'
+    },
+    binder: {
+      description: 'Exorcista. CAT 0-6 dependendo da força. Um exorcista renegado, autodidata ou organizado, manifestando blasfêmias mais selvagens e às vezes mais poderosas do que o treinamento da CAIN permite. A CAIN exige que sejam subjugados e se submetam sob pena de execução.',
+      facts: 'Usa blasfêmias que espelham as dos exorcistas, mas mais estranhas e selvagens.\nPode trabalhar em formação com outros vinculadores ou controlar um pecado produzido em massa.',
+      attacksWith: 'Rajadas psíquicas de poder e armamento mundano (ambos curto alcance).'
+    },
+    // ── Sins (non-template) ──
+    mass_produced_sin: {
+      description: 'Pecado. CAT 0-4 dependendo da força. Um pecado fraco produzido por métodos indizíveis por PMCs obscuras ou projetos secretos de governo, às vezes a partir de material humano.',
+      facts: 'Pouco inteligente, mas armado com força bruta.\nTem uma unidade de controle implantada; destruí-la geralmente deixa o pecado em fúria.\nTipagem opcional: Tipo A (Tropa de choque - combate corpo a corpo contra ele é difícil; atravessa prédios). Tipo B (Infiltração - pode ficar invisível como complicação, ações que dependem de visão ficam difíceis). Tipo C (Controle - pode controlar humanos mundanos presentes para bloquear -1 estresse ou atacar +1 estresse enquanto ativo).',
+      attacksWith: 'Força bruta, fluidos corrosivos.',
+      complications: 'Cuspir fluido corrosivo negro, gritar de forma ensurdecedora, arremessar um exorcista através de uma parede ou piso.',
+      threat: '(1-2) Fúria: quebra a unidade de controle e entra em fúria, escorrendo icor, causando +1 estresse e +1 pecado com reações pelo resto do combate. Uma vez só.'
+    },
+    imago: {
+      description: 'Pecado. CAT 1-5 com base no exorcista. Um pecado verdadeiro nascente, criado quando um exorcista sofre transbordo de pecado e desiste. Mais inteligente, rancoroso e vingativo conforme seu passado; caçado com extremo rigor pela CAIN.',
+      facts: 'Age com base nos piores impulsos do exorcista de quem foi criado.\nQuase sempre tem um forte instinto de fugir e ficar mais forte, amadurecendo em um pecado verdadeiro e criando um palácio (disparando uma nova caçada). Geralmente luta para escapar.\nA forma básica (escolhida pelo exorcista transformado) dá pistas: tipo Ogro/Ídolo/Cão/Centopeia/Sapo/Senhor.',
+      attacksWith: 'Garras, dentes, apêndices escorrendo, poderes psíquicos: (1) 5 estresse +2 pecado, (2/3) 3 estresse +1 pecado, (4+) 2 estresse.',
+      complications: 'Fazer apelos à humanidade dos exorcistas, mostrar um pouco do seu antigo eu, demonstrar uma habilidade nova surpreendente, superar os exorcistas em velocidade.',
+      threat: '(1-2) Fuga: foge da cena para pupar e virar um pecado completo, perpetuando o ciclo.'
+    },
+    // ── Mother (GFF-3) ──
+    mothers_sweet: {
+      description: 'Pecado/Anomalia. CAT 0-4. Relativamente fraca, resultado da colonização dos sem graça. Agem em perfeita sincronia ao redor de outras partes da Mother.',
+      facts: 'Age em perfeita sincronia com outras partes da Mother.\nGrau mais fraco de Mother; aparece em enxames.\nVárias reações de lutar contra a Mother podem infectar exorcistas com ela. Ganhar a Mother assim NÃO reduz o limite de pecado, não concede um poder na hora, nem aumenta o limite de xp - fora isso, trate-a como uma blasfêmia normal e ganhe sua passiva.',
+      attacksWith: 'Extrusões espinhosas, mordida venenosa: (1) 3 estresse e 1 pecado, (2/3) 2 estresse, (4+) 2 estresse.',
+      threat: '(1-2) Juntar (Só Enxame): apague até 4 cortes no seu talismã de execução se bem-sucedida, depois torne-se uma Mother\'s Dear, substituindo todas as reações.\n(1-2) Colonizar: golpeia com um espinho afiado. Se bem-sucedida, mata a si mesma, mas então causa 5 de estresse ao alvo e o infecta com a Mother.'
+    },
+    mothers_dear: {
+      description: 'Pecado/Anomalia. CAT 1-4. Alvo de alta prioridade para execução. Resultado da fusão de múltiplos sujeitos sem graça. Muito lenta, mas metódica. Mal se abala quando atingida. Não tem senso individual de preservação.',
+      facts: 'Blindada: sofre -1 corte de ataques diretos de categoria igual ou menor a menos que a armadura seja tratada por preparação ou circunstância (achar pontos fracos, quebrar com força avassaladora, etc).',
+      attacksWith: 'Carapaça, cabeçada com chifres, espinhos retráteis: (1) 4 estresse e aflição Costela Quebrada (esforço físico de qualquer tipo é difícil), (2/3) 3 estresse, (4+) 2 estresse.',
+      threat: '(1-2) Colonizar: golpeia com um espinho afiado. Se bem-sucedida, mata a si mesma, mas então causa 5 de estresse ao alvo e o infecta com a Mother.'
+    },
+    mothers_favorite: {
+      description: 'Pecado/Anomalia. CAT 1-5. Três tipos observados: (1) fusão latente de muitas outras partes fundidas da Mother, mesmo os sem graça, criando uma graça gestalt; (2) colonização de um indivíduo sem graça de alta força de vontade, concedendo-lhe a graça da Mother por completo; (3) colonização de um indivíduo com alta concentração de graça, tipicamente um exorcista.',
+      facts: 'Blindada: sofre -1 corte de ataques diretos de categoria igual ou menor a menos que a armadura seja tratada por preparação ou circunstância (achar pontos fracos, quebrar com força avassaladora, etc).\nA Mãe Sabe Melhor: qualquer exorcista que se torna uma Mother\'s Favorite pode sugerir ao Mestre quais deveriam ser suas reações. O Mestre ignora e faz o que a Mother faria (a Mother quer sobreviver, se alimentar e se multiplicar).\nPara rodar uma Mother\'s Favorite como alvo de caçada, rode-a como uma Centopeia ou Ogro reskin, escolhendo um como base e pegando domínios de qualquer um, mais estas reações de dano, ameaça e complicação.',
+      attacksWith: 'Espirais serpenteantes de carne, espinhos de coral, jatos de sangue super-pressurizados (longo alcance): (1) 5 estresse +2 pecado, (2/3) 3 estresse +1 pecado, (4+) 2 estresse.',
+      complications: 'Reforçar armadura, criar espinhos extras, desenrolar o corpo, cavar em parede ou piso, dominar com um grito psíquico.\nNinho (1-3, uma vez por cena): libera uma forma vaporizada da Mother no ar; pólipos de coral crescem por todas as superfícies. Inicie um talismã 6 para lidar com a complicação e um talismã 6 para rastrear ações contra ela. Corte a complicação uma vez após cada turno de jogador. Com 4+ cortes, todos os exorcistas sofrem 1 de estresse não-letal após agir se precisarem respirar. Quando enche, todos os exorcistas sofrem 1d3 de pecado e 3 de estresse irredutível, e o efeito acaba quando os pólipos explodem.',
+      threat: '(1) Colonização Verdadeira: golpeia com um espinho afiado. Se bem-sucedida, causa 5 de estresse ao alvo e o infecta com a Mother.'
+    },
+    // ── Drifters (Anomalias) — base ──
+    pest: {
+      description: 'Uma categoria ampla de drifter - uma manifestação comum que poderia ser categorizada como animalesca, a fauna de um lugar além da compreensão humana. Execução: 2 (solo), 5 (grupo).',
+      facts: 'Tende a quebrar a realidade convencional ao seu redor, alterando coisas como refração da luz, gravidade, espaço. Pode criar buracos que sugam, superfícies reflexivas, estilhaços cristalinos, etc.\nConsome matéria inanimada como vidro, papel ou pedra.',
+      attacksWith: 'Tentáculos chicoteantes, forças extremas: (1) 4 estresse, (2/3) 3 estresse, (4+) 2 estresse.',
+      complications: 'Apagar todas as luzes, empalar com filamentos, distorcer o espaço de alguma forma, sugar o oxigênio de uma sala.'
+    },
+    poltergeist: {
+      description: 'Uma forma quase invisível na escuridão. Execução: 3.',
+      facts: 'Pode adotar um rosto ou forma humana; nunca parece certo.\nPode imitar fala, às vezes compreensível. Às vezes parece prever o futuro. Não o escute.',
+      attacksWith: 'Empurrão telecinético, objetos arremessados, chamas fantasmagóricas: (1) 4 estresse, (2/3) 3 estresse, (4+) 2 estresse.',
+      complications: 'Sussurrar algo no ouvido de alguém, emergir de repente da escuridão, desaparecer completamente.',
+      threat: '(1-2) Alimentar: causa 1d6 de estresse, mas também reduz o pecado do alvo na mesma quantidade. Uma vez por cena apenas.'
+    },
+    titan: {
+      description: 'Um drifter incrivelmente grande, geralmente de trinta a quarenta metros ou mais na altura do ombro. Às vezes antropomórfico, às vezes animalesco. Tem uma relação tênue com a realidade e pode ocasionalmente atravessar a matéria. Grande o bastante para causar destruição chocante. Execução: 10.',
+      facts: 'Tão grande que é imune a armas leves e parece não se importar muito com humanos.\nMal inteligente. Anda devagar, com pouca consideração por obstáculos.',
+      attacksWith: 'Golpes casuais de um apêndice, um passo não intencional: (1) 3d3+1 estresse, (2/3) 1d3+1 estresse, (4+) 2 estresse.',
+      complications: 'Acelerar, subitamente notar os exorcistas, ficar irritado ou enfurecido, causar dano colateral massivo.',
+      threat: '(1-2) Esmagar inseto: o titã tenta um golpe lento mas real contra o último exorcista a causar estresse nele, causando 3d3 de estresse. Se causar um ferimento, causa morte instantânea.'
+    },
+    pale_man: {
+      description: 'Um drifter inteligente que parece interessado nos psiquicamente sensíveis e é atraído por eles como um inseto pela chama. Prefere observar à distância. Completamente pacífico se deixado em paz; luta como um animal se provocado ou aproximado de qualquer forma, sem consideração pela própria segurança. Execução: 5.',
+      facts: 'Observa à distância.\nNão olhe para ele por muito tempo.',
+      attacksWith: 'Membros que quebram ossos, mandíbulas aterrorizantes: (1) 4 estresse, (2/3) 3 estresse, (4+) 2 estresse.',
+      complications: 'Recuar para a escuridão, uivar alto o suficiente para estilhaçar vidro, lamber um exorcista com uma língua entorpecente.',
+      threat: 'Fúria Estridente (1): causa +1 corte e sofre +1 corte em talismãs pelo resto do combate. Este efeito acumula.'
+    },
+    gatherer: {
+      description: 'Um humanoide bulboso que exibe o comportamento incomum de coletar e envolver humanos vivos para carregá-los para lugares desconhecidos. Às vezes aparece em grupos. Execução: 2 (solo), 5 (grupo), 7 (horda).',
+      facts: 'Tem uma estrutura carnuda em forma de saco onde armazena humanos frescos, carregando-os.\nCapaz de se comunicar por infrassom.',
+      attacksWith: 'Espinhos estendidos, spray ácido, vibrações subsônicas: (1) 4 estresse, (2/3) 3 estresse, (4+) 2 estresse.',
+      complications: 'Regurgitar o conteúdo do estômago, empalar com lâminas nos braços, vomitar bile ácida.',
+      threat: '(1) Sequestro: agarra um exorcista e o enfia em seu interior carnudo. Esse exorcista acha difícil fazer qualquer coisa e fica praticamente imobilizado. Ele fica comatoso e sofre um ferimento se o Coletor não for derrotado ou ele não for libertado ao fim de 3 rodadas (contando esta).'
+    },
+    hairy_man: {
+      description: 'TMID 004. Aparece principalmente em ambientes florestais ou rurais. O "pelo" é grosso e abundante; digitação semelhante à humana. Não tem sistema digestivo e regurgita o pelo e os ossos das presas, usando uma mandíbula faríngea para "comer". Capaz de imitar a fala humana. Execução: 4 (solo), 8 (dupla).',
+      facts: 'Segue à distância, prefere abater presas solitárias.\nCaça, mutila e mastiga animais selvagens ou gado e regurgita os restos.\nPode imitar a fala humana.',
+      attacksWith: 'Garras, mandíbula faríngea.',
+      threat: 'Emboscada: Como movimento de tensão, o Mestre pode informar aos exorcistas que estão sendo espreitados. Se nada for feito para mitigar isso, sempre que entrarem em uma cena de conflito pelo resto da caçada há 50% de chance (role 1d6) de um Homem Peludo atacar e tentar arrastar um deles.'
+    },
+    skin_light: {
+      description: 'TMID 820. Bolha multicolorida iluminada por uma luz invisível; feita de pele transparente que "respira" suavemente. Reproduz-se por um processo macabro. Parece não ter senciência. Execução: 1 (solo), 3 (grupo pequeno), 8 (aglomerado).',
+      facts: 'Aparece apenas à noite. Flutua parada.\nAtraída pelo calor gerado por seres vivos e tenta se fundir a eles.',
+      attacksWith: 'Contato de fusão: (1) 3 estresse e gancho Fusão, (2/3) 3 estresse, (4+) 2 estresse.',
+      threat: 'Fusão: Como ameaça ou numa reação de "1", a Luz de Pele se funde a um exorcista com pele exposta. Isso mata o drifter mas dá ao exorcista o gancho Fusão (0/3): a pele borbulha e forma bolhas, usar ferramentas/armas é difícil; se encher, sofra 2d6 de estresse enquanto a pele se rasga para formar uma nova Luz de Pele, deixando cicatrizes permanentes.'
+    },
+    spindley: {
+      description: 'TMID 113. O "Espectro da Estrada". Aparece em áreas com alta ocorrência de acidentes e ferimentos de trânsito. Muitas vezes responsável por desaparecimentos de motoristas; usa alta velocidade de corrida para seguir carros por quilômetros, geralmente os que dirigem sozinhos tarde da noite. Execução: 8 (solo).',
+      facts: 'Encontrado apenas sozinho, andando de um lado para o outro numa estrada à noite ou no subterrâneo.\nExtremamente agressivo uma vez encontrado, mas raramente deixa as estradas.',
+      attacksWith: 'Golpes em alta velocidade.',
+      threat: 'Matador de Estrada: Enquanto sobre uma estrada, causa +2 de estresse com todas as reações e sua velocidade aumenta em +2 CAT. Sofre 1 corte no seu talismã ao fim de qualquer rodada de cena de conflito em que não esteja sobre uma estrada, e eventualmente se desintegra.'
+    },
+    twin: {
+      description: 'TMID 127. Pode ser confundido com um morador de rua ou vagabundo quando inativo; a pele parece velhos trapos de carne. Passivo quando não perturbado e frequentemente parece sentir dor. Congrega-se em áreas subterrâneas (esgotos, metrôs). O gêmeo "menor" é menor e fundido ao corpo "principal"; murmura continuamente, supostamente às vezes declarando fatos sobre eventos futuros (geralmente trágicos). Execução: 4 (solo), 8 (dupla).',
+      facts: 'Quieto e relativamente dócil se não provocado.\nCongrega-se em áreas subterrâneas.',
+      attacksWith: 'Puxar e esmagar.',
+      complications: 'Se incomodado, tenta puxar quem o provocou para a cavidade em seu corpo, onde seus outros membros são guardados.',
+      threat: 'Murmúrio: Exorcistas que tomam qualquer ação ao alcance da mão do Gêmeo podem ouvir seu murmúrio. Se não tiverem boa proteção auricular ou não puderem bloquear o som, sofrem 1 de estresse (ignorando reduções) ao fim de sua ação.'
+    },
+    walker: {
+      description: 'TMID 074. 6-8m de altura. Só aparece em clima inclemente e se desvanece quando o tempo para. A cabeça termina em estruturas braquiais sem propósito discernível que chicoteiam de um lado para o outro. Forte o bastante para quebrar árvores e postes. Uma vocalização alta de trombeta muitas vezes revela sua localização; sem cordas vocais ou boca observáveis. Execução: 10 (solo).',
+      facts: 'Sentidos ruins; pode ser evitado na maioria das vezes se mantido à distância.\nAnda devagar e sem rumo quando passivo, muito rápido quando ativo.',
+      attacksWith: 'Membros braquiais massivos: (1) 7 estresse, (2/3) 5 estresse, (4+) 2 estresse.',
+      threat: 'Desvanecer: Se não estiver em clima inclemente (chuva/névoa/neve/neblina), retorna de onde veio, desvanecendo ao fim de qualquer rodada (em cena de conflito). Retorna se o clima voltar.'
+    },
+    cracked_man: {
+      description: 'TMID 285. Encontrado com mais frequência em lugares abandonados que outrora tiveram muitas crianças - casas, escolas, creches. Execução: 4 (solo), 8 (grupo pequeno).',
+      facts: 'Violento e extraordinariamente beligerante uma vez encontrado.\nQuando encontra portas ou janelas, passa muito tempo tentando descobrir como abri-las.',
+      attacksWith: 'Membros agitados: (1) 5 estresse, (2/3) 4 estresse, (4+) 3 estresse.',
+      threat: 'Cisão (1-2): uma parte do corpo começa a se separar, escorrendo icor. Torna-se capaz de agir com a parte do corpo à distância, e aumenta seu talismã de execução em +2 se a ameaça for executada.'
+    },
+    dog: {
+      description: 'TMID 997. 1-1,5m na altura do ombro; adota um andar quadrúpede mas também pode ficar em duas patas. Não tem dígitos definidos, mas consegue facilmente operar portas para entrar em prédios ou carros. Responsável por ~1,5% dos desaparecimentos em e ao redor de estacionamentos na América do Norte. Execução: 7 (solo).',
+      facts: 'Parece ser majoritariamente um necrófago. Atraído por carros estacionados.\nAnormalmente forte: +2 CAT em feitos de força.',
+      attacksWith: 'Mordida e garras poderosas: (1) 4 estresse e aflição Descompressão, (2/3) 3 estresse, (4+) 2 estresse.',
+      threat: 'Descompressão: Aflição, infligida numa reação de "1" ou com uma ameaça. O exorcista acha cada vez mais difícil andar com um andar bípede (atividades físicas são difíceis andando assim). Pés e membros lentamente se distorcem e ficam digitígrados se não tratados após a missão. Muito doloroso.'
+    },
+    neighbor: {
+      description: 'TMID 282. Entidade que flutua livremente e aparece em grande número sempre que há um evento de vítimas em massa, especialmente de causa psíquica - os abutres do mar psíquico. Vista de perto, 60-85% dos observadores relatam ver uma versão gravemente mutilada do próprio corpo flutuando à sua frente. Execução: 4 (solo), 7 (grupo pequeno).',
+      facts: 'Capaz de voar. Vagueia à distância por algum tempo. Parece majoritariamente curioso.\nIntangível: sofre -1 corte de dano físico (armas, objetos físicos, etc).',
+      attacksWith: 'Chicoteada psíquica.',
+      threat: 'Máscara Mortuária: Causa +2 de estresse com reações contra exorcistas que já têm um ferimento. Eles veem o próprio rosto.'
+    },
+    worm_body: {
+      description: 'TMID 048. Poderia ser confundido com uma pessoa alta à distância. Só observado em propriedades negligenciadas, especialmente residenciais. A entidade inteira parece feita de vermes contorcendo-se e se dividindo. Execução: 3 (solo), 6 (grupo), 10 (grupo grande).',
+      facts: 'Atraído por criaturas que respiram, seguindo as exalações. Outros sentidos limitados.',
+      attacksWith: 'Vermes em enxame: (1) 2 estresse e gancho Verme, (2/3) 1 estresse e gancho Verme, (4+) 1 estresse.',
+      threat: 'Verme: Gancho, infligido com uma ameaça ou ao causar estresse. Um verme se enterrou no seu corpo; recupere -1 de estresse de qualquer dado de descanso por marca. Se o gancho encher, role 1d6: (1-3) sofra morte instantânea (pode resistir normalmente); (4-6) limpe todos os cortes e infecte outro exorcista com este gancho (se não houver ninguém não-infectado, infecte um NPC, senão sofra morte instantânea).'
+    },
+    // ── Sin templates ──
+    ogre: {
+      description: 'Um tipo de pecado comum, nascido de um senso de inadequação e desespero. Emoção: Desespero.',
+      primaryEmotion: 'Desespero',
+      traumas: [
+        'Quem ou o que te empurrou para dentro deste buraco?',
+        'Quem ou o que te impede de ir além da borda?',
+        'Do que você mais se envergonha?'
+      ],
+      examples: [
+        { name: 'O Minotauro', story: 'Sujeito possuído O76, post mortem, Forma III. O76 trabalhava na grande firma financeira {redacted:8} e sofria de uma cultura de trotes e assédio no trabalho havia cinco anos e sete meses. Na manifestação, o prédio da empresa foi convertido em {redacted:6}, aprisionando 153 humanos dentro; os caçadores conseguiram executar e exfiltrar com apenas 30% de baixas.' },
+        { name: 'Bucéfalo', story: 'Sujeito O33, Forma II, fundido com um ogro CAT 4 após ser demitida do emprego por inúmeras infrações de atraso devido a um trajeto extremamente longo. Continuou a vagar pelas rodovias; a família acionou um sujeito de preocupação e os exorcistas {redacted:4}, {redacted:5} e {redacted:4} foram enviados. Um trecho de rodovia {redacted:3} de 5 km de diâmetro virou uma zona de miasma e foi posto em quarentena; os exorcistas localizaram o palácio dentro de um carro estacionado e executaram por volta das 0200, 30 horas após a infiltração. 155 baixas civis, nenhum exorcista morto, missão considerada amplamente bem-sucedida.' },
+        { name: 'Ogro Azul', story: 'Sujeito O167, Forma I, região semirrural em {redacted:4}. Exorcistas acionados após os assassinatos de três estudantes de ensino médio com causa sobrenatural suspeita. O sujeito havia falhado em entrar na universidade, conseguir emprego ou atrair qualquer relacionamento amoroso e escondeu esses fatos da família por vergonha durante vários anos. Manifestação eliminada, mas nenhuma execução registrada, sujeito desaparecido. Os exorcistas foram disciplinados.' }
+      ],
+      attacksWith: 'Dentes, garras, água fétida, jorro negro: (1) 5 estresse, (2/3) 3, (4+) 2.',
+      complications: 'Apagar luzes, invocar névoa, jorrar incessantemente sobre alguém, soterrar um exorcista em lama/lodo/vômito, imobilizar um exorcista, liberar um fedor acre, destruir paredes/piso/tetos, recuar para a escuridão, adicionar um espectador, usar um domínio.',
+      threats: 'Agarrar um exorcista e espremer a vida dele. Arremessar um exorcista através de uma parede. Colapsar a arquitetura. Invocar lacaios. Matar espectadores. Infectar com veias escuras pulsantes. Causar uma enchente relâmpago ou congelamento. Cegar alguém numa nuvem miasmática. Usar um domínio. Fazer algo sombrio, esmagador ou vil.',
+      afflictions: '1. Mofo Branco: veias brancas se espalham e tosse; subtraia 1 de todas as rolagens de descanso e não pode comer, beber ou usar consumíveis.\n2. Membros Congelados: atividade física, blasfêmias ou motricidade fina é difícil se exigir mais de um membro.\n3. Circulando o Ralo: não pode se beneficiar de trabalho em equipe ou preparação; adicione permanentemente à agenda: desistir de algo.\n4. Pulmões Negros: falar cospe lodo negro; toda comunicação que exige fala é difícil.\n5. Apodrecimento: sofra 1 de estresse irredutível cada vez que a tensão enche; se causar um ferimento, causa morte instantânea.\n6. O Peso: adicione permanentemente à agenda: morrer.',
+      pressureEffect: 'A mera presença de um ogro começa a infectar uma área com um Miasma sombrio. O clima azeda; prédios, objetos, estradas e construções se degradam como se mal cuidados por anos; nuvens encobrem o sol e uma névoa densa e de cheiro azedo se instala; mofo branco cresce sobre as superfícies; tecnologia, linhas telefônicas, eletricidade e internet param de funcionar; a arquitetura vira um labirinto sem sentido; humanos dentro do miasma compartilham a visão do ogro e ficam hostis. Quando os exorcistas chegam, o miasma cobre apenas parte da área; cada vez que a pressão aumenta, ele se espalha para uma nova área.',
+      outOfControl: 'Quando a pressão enche completamente, a situação sai do controle. O Ogro aumenta em CAT em +1, e o miasma cobre toda a área de investigação - não importa aonde os exorcistas vão, o miasma os segue pelo resto da missão, mesmo que deixem a área.',
+      traces: 'Tropeços (pecados): humanoides bulbosos e disformes formados da vergonha e culpa do ogro, atraídos pelo calor. Parcialmente visíveis para humanos sem graça, que podem ficar catatônicos ao olhar para um. Talismã de execução 2 (solo), 4 (grupo), 6 (grupo massivo). Desintegram-se rapidamente fora do miasma; lentos e descoordenados (ações que se aproveitam disso rolam +1D); sofrem -1 corte de dano físico. Ataca com corpo disforme, metal enferrujado, jatos de fluido: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: agarrar alguém, sufocar em carne, mordida infectada, romper e ameaçar explodir, fundir-se à parede, gritar de forma ensurdecedora, devorar humanos.',
+      severeAttack: 'Pulverizar: um ogro pode usar isto num "1" na rolagem de risco, uma vez por caçada, golpeando com força esmagadora avassaladora. Escolha um exorcista como alvo; outros exorcistas próximos podem voar em auxílio. Comece com uma reserva de 6d6, depois remova um dado para cada "sim": Outra pessoa está te ajudando? Você consegue se segurar em algo por perto? Você tem uma fonte de luz ou calor forte? O ogro está distraído, atrapalhado ou sob pressão? (Para um "não", alguém pode fazer uma rolagem de ação para corrigir.) Role os dados: o exorcista e os ajudantes sofrem 1 de estresse por dado rolado. O alvo recebe a aflição Estraçalhado (toda atividade física é difícil sem preparação/equipe). Se ao menos um "1" aparecer, membros são arrancados (1d3: 1 braço, 2 perna, 3 ambas as pernas) e ele sofre um ferimento. Dois ou mais "1"s: também sofre morte instantânea.',
+      domains: {
+        'Hostile Door Patterns': { name: 'Padrões Hostis de Portas', description: 'O mundo se volta contra os exorcistas. Como complicação ou movimento de tensão, o ogro apaga sobrenaturalmente entradas, saídas, estradas, veículos ou fontes de luz numa área de cerca de CAT+2. Elas retornam quando a cena passa ou a complicação é resolvida. Uma vez por caçada, como movimento de tensão, se um exorcista abre qualquer porta, todo o grupo se vê de repente numa área de corredores tortuosos, escuridão total e ruídos perturbadores distantes - perigosa e hostil. Escapar exige jogar uma cena ou duas.' },
+        'The Unseeing of Things': { name: 'A Cegueira das Coisas', description: 'O miasma fica permeado de uma escuridão profunda e sufocante. O ogro é invisível na escuridão. Torna-se difícil fazer qualquer coisa ao ogro a menos que ele esteja bem iluminado ou a ação não dependa da visão.' },
+        'The Grinding of Wheels': { name: 'O Ranger das Engrenagens', description: 'O ogro pode forçar exorcistas a experimentar parte do trauma esmagador que causou seu nascimento. Como movimento de tensão, o ogro escolhe um exorcista, que é afligido por Desespero. DESESPERO: só pode afetar um exorcista por vez; ele ganha permanentemente o item de agenda "afastar as pessoas" mesmo que perca esta aflição.' },
+        'That Awful Flesh': { name: 'Aquela Carne Terrível', description: 'O ogro pode se regenerar rapidamente de ferimentos. Sofre -1 corte no talismã de execução a menos que danificado por fogo, ácido ou outro produto químico ou solvente forte na mesma cena.' },
+        'The Inevitable Place of Meat': { name: 'O Inevitável Lugar de Carne', description: 'O toque do ogro pode apodrecer e degradar rapidamente objetos, matéria vegetal e construções, dissolvendo-os em lama e lodo. O ogro pode afundar em qualquer poça de lama grande o suficiente e reaparecer a curta distância como parte de qualquer movimento.' },
+        'The Cold That Creeps': { name: 'O Frio Que Rasteja', description: 'O ogro pode controlar lama, água e temperatura ambiente com efeito letal. Sempre que a pressão aumenta, o ogro pode mudar o clima numa área CAT+2 até o fim da caçada, tornando-o extremamente hostil (frio congelante, chuva, etc). Torna-se difícil ou arriscado realizar qualquer atividade ao ar livre na área que exija concentração, foco ou destreza manual sem proteção suficiente.' },
+        'Where You Belong': { name: 'Onde Você Pertence', description: 'No início de uma missão, o ogro escolhe um exorcista e cria uma criatura (um traço, talismã de execução 6+CAT, destruída permanentemente se derrotada) formada da culpa e vergonha daquele exorcista, perguntando-lhe secretamente "O que você mais odeia em si mesmo?". As ações desse exorcista são difíceis contra ela; ela tenta ferir apenas seu alvo; causa +1 estresse contra o exorcista de quem foi formada. Pergunte ao exorcista "quem neste grupo vai te decepcionar?" - toda vez que essa pessoa falha uma rolagem de ação, o exorcista afligido ganha 1 de estresse não-letal; se disparado ao menos uma vez na sessão, ganhe 1 xp no fim dela.' },
+        'The Agony': { name: 'A Agonia', description: 'No início da missão, o ogro escolhe um exorcista, que ganha a aflição Afundado pelo resto da missão. O ogro pode temporariamente fazer o miasma acelerar seus efeitos: exorcistas dentro começam a apodrecer superficialmente se passam cenas ali (cabelo caindo, pele afundada, unhas caindo); eles se recuperam após a missão.' }
+      }
+    },
+    hound: {
+      description: 'Um pecado vingativo que caça os alvos de seu rancor. Emoção: Vingança.',
+      primaryEmotion: 'Vingança',
+      traumas: [
+        'Quem te fez mal?',
+        'Como você foi injustiçado?',
+        'O que você não está disposto a sacrificar?'
+      ],
+      attacksWith: 'Dentes como agulhas, garras afiadas, esporas ósseas, lâminas em forma de foice, armamento encharcado de sangue: (1) 5 estresse, (2/3) 3, (4+) 2.',
+      complications: 'Mover-se mais rápido que o olho pode ver, incendiar tudo, emitir vapor ou calor massivo, enfurecer-se, expandir-se com lâminas adicionais, aumentar em tamanho e força, adicionar um espectador, usar um domínio.',
+      threats: 'Causar dano colateral massivo. Tentar rasgar alguém ao meio. Dilacerar humanos. Cuspir torrentes de sangue fervente. Arremessar alguém através de um teto ou parede. Cortar tudo em tiras. Infligir um gancho. Usar um domínio. Fazer algo violento, obliterante ou maníaco.',
+      afflictions: '1. Fúria Sanguínea: role +1D ao causar dano, violência ou força física, mas sofra 2 de estresse para tomar qualquer outro tipo de ação.\n2. Olhos Sangrentos: você pode ganhar um pulso psíquico sofrendo 1d3 de estresse.\n3. Febre Ganglionar: febril e quente; role um dado de descanso a menos.\n4. Ressentimento Fervente: no fim da missão, se você infligiu violência física a um humano, pode apagar 2d3 de pecado; se o fizer, adicione permanentemente à agenda: fazer um humano pagar por seus crimes.\n5. Cheiro de Sangue: quando qualquer exorcista sofre um ferimento você pode ganhar um pulso psíquico; se feito ao menos uma vez na missão, adicione permanentemente à agenda: provar sangue.\n6. O Impulso: adicione permanentemente à agenda: matar.',
+      pressureEffect: 'Um cão nutre um rancor contra uma pessoa ou grupo específico. Ao preparar a missão, o Mestre designa três pessoas específicas como alvos do rancor do cão (que pode se expandir para família, amigos ou colegas inocentes). Quando a pressão aumenta, o cão rastreia e tenta matar um de seus alvos - se os exorcistas estiverem presentes, podem impedir com uma cena de conflito, senão o alvo é brutalmente abatido. Se todos os alvos forem mortos, o cão escolhe um NPC que os exorcistas conheceram e o adiciona como novo alvo.',
+      outOfControl: 'Se a pressão chega ao máximo, o cão ganha +1 CAT e adiciona todos os NPCs e os exorcistas ao seu rancor.',
+      traces: 'Mirmidões (pecados): ecos violentos surgidos dos fluidos corporais escorrentes do Cão ou de suas vítimas. Tremem incontrolavelmente e liberam vapor ácido sanguinolento quando enfurecidos, mas têm vida curta (desintegram em poucas horas). Talismã de execução 2 (solo), 4 (grupo), 6 (grupo massivo). Causam +1 estresse a exorcistas que já têm um ferimento; rasgam exorcistas ao meio ao infligir o último ferimento, causando morte instantânea em vez da beira da morte. Ataca com dentes, garras, gritos ensurdecedores: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: criar espinhos, dilacerar com garras, quebrar ossos nas mandíbulas, criar um novo membro ou cabeça. Vapor Sanguíneo (1-2): o vapor entra nos pulmões dos exorcistas próximos, fazendo falar ou atividade extenuante custar 1 estresse primeiro.',
+      severeAttack: 'Apoplexia: usável num "1" na rolagem de risco, uma vez por missão. Escolha um exorcista como alvo; exorcistas próximos podem voar em auxílio. Comece com uma reserva de 6d6, depois remova um dado por "sim": Você tem uma espada (ou algo parecido)? Você tem um escudo (ou algo parecido)? O cão está atrapalhado, distraído ou sob pressão? Você está calmo, controlado e focado? (Para um "não", alguém pode agir para corrigir.) O cão separa o exorcista escolhido do grupo (arremessado numa dimensão-bolso, atravessando uma parede, jogado de uma rodovia) e ataca com fúria - role os dados um a um, cada um representando um ataque. Para cada dado rolado, o exorcista e quem ajuda ganha 1 de estresse. Para cada "1" rolado, o alvo sofre 2 de estresse adicional e tem um pedaço de pele arrancado, causando cicatriz permanente.',
+      domains: {
+        'A Shuddering Thing Through a Dark Hall': { name: 'Uma Coisa Trêmula por um Corredor Escuro', description: 'O cão se alimenta do medo, crescendo maior e mais forte com o terror de vontades mais fracas. Uma vez por cena, se houver humanos mundanos na área local, como complicação o cão se manifesta para eles e se alimenta de seu medo: até os exorcistas acalmarem os humanos ou removê-los, o cão sofre -1 corte de todas as fontes e causa +1 estresse com reações. Exorcistas que tentam feri-lo devem primeiro gastar 1 de estresse para suprimir o medo; podem suprimi-lo permanentemente respondendo "Do que você mais tem medo?" (mas o Mestre então rola dois dados de risco e pega o menor para aquela ação).' },
+        'Turning Blades, I Laughed at their Brittleness': { name: 'Lâminas se Voltando, Ri de sua Fragilidade', description: 'O couro do cão fica incrivelmente duro e resistente, como o de uma fera. Cada vez que uma ação cortaria seu talismã de execução, role 1d6 - em 1-2 reduza todos os cortes para 1. Sua armadura tem pontos fracos: qualquer ação preparada ou parte de trabalho em equipe ignora este efeito.' },
+        'The Catching of the Doe': { name: 'A Captura da Corça', description: 'O cão suprime sua natureza e vira um caçador furtivo. No início da caçada, escolha um exorcista. Uma vez por cena (até três vezes por caçada), o Mestre pode declarar que esse exorcista vislumbra o cão o seguindo (real ou não), dando 1 de estresse não-letal. Em qualquer cena de conflito, o cão ganha uma reação gratuita no início (role o dado de risco), tendo como alvo o exorcista espreitado se possível.' },
+        'The Annihilation of the Wicked': { name: 'A Aniquilação dos Perversos', description: 'O cão ganha afinidade com armas de fogo, empunhando ou fundindo armas à sua forma. Seus ataques ganham alcance CAT+2. Como complicação com +2 de comprimento de talismã, ele imobiliza um exorcista com balas/napalm/granadas: esse exorcista sofre 1 de estresse após agir até ser resolvido, ou 2 se agir exigir se mover. Como reação (1), pode absorver permanentemente todas as armas de fogo numa área CAT, desarmando todos e curando 1 corte se absorveu ao menos uma.' },
+        'The Fattening of Rage': { name: 'O Engordar da Fúria', description: 'O cão se alimenta de seu Rancor. Uma vez por cena, se abate um humano mundano como parte de uma reação, cura 2 segmentos. Se abateu ao menos um alvo de rancor, seu talismã de execução aumenta em +2. Se abateu todos os seus alvos de rancor originais, também inflige +1 estresse com todas as reações.' },
+        'Rile Against Heaven': { name: 'Insurgir-se Contra o Céu', description: 'A presença do cão agrava as rupturas entre humanos e exorcistas. Humanos nunca começam amigáveis e são frequentemente hostis (o Mestre pode rolar destino: hostil em 1-2). Quaisquer dois exorcistas com uma desavença podem declarar que ela transbordou numa briga - pelo resto da caçada não podem participar de trabalho em equipe nem preparar um ao outro; cada um recupera um pulso psíquico quando o outro sofre um ferimento ou aflição, e ambos ganham +1 xp no fim da missão.' },
+        'The Measured Weight of Death': { name: 'O Peso Medido da Morte', description: 'O cão ganha resiliência sobrenatural contornada apenas por métodos específicos (muitas vezes baseados nas superstições/mitologia de seu hospedeiro, sem lógica real necessária). Sofre -1 corte no talismã de execução. Isto pode ser removido por uma cena expondo-o a uma fraqueza específica (muitas vezes precisa ser descoberta): 1. Prata, 2. Ferro, 3. Calor Extremo, 4. Frio Extremo, 5. Água, 6. Luz do Sol.' },
+        'Bloodying the Steel': { name: 'Ensanguentando o Aço', description: 'A fúria do cão é contagiosa. Ele ganha a aflição Rancor Contagioso: enquanto afligido, um exorcista ganha +1D em todas as ações que infligem violência física mas sofre +1 estresse quando sofre estresse de uma fonte externa. Qualquer exorcista pode voluntariamente aceitar esta aflição se ferido pelo cão. Armas mundanas são incapazes de ferir o cão a menos que extremamente fortes (como um canhão de tanque ou míssil).' }
+      },
+      examples: [
+        { name: 'Dullahan', story: 'Forma II, possuindo o cadáver decapitado do sujeito H09, um denunciante da grande fabricante de armas {redacted:8}. Primeira, segunda e terceira equipes enviadas mortas em ação. Avançou para CAT 5, considerado alta prioridade; as Virtudes foram descongeladas e enviadas por trilho orbital. Tempo até execução 22 minutos, 2279 baixas. A cidade {redacted:5} exigiu 3 meses de reconstrução e reprogramação.' },
+        { name: 'Escoriador', story: 'Forma I, CAT 3, manifestado após o sujeito H198 atingir níveis catastróficos de dívida médica devido à sua {redacted:6} crônica. O sujeito viajou ao centro de convenções {redacted:6} em {redacted:9} especificamente para liberar o pecado a fim de se vingar; o centro foi isolado por 48 horas devido ao incidente. Executado com 25 baixas, um exorcista morto em ação.' },
+        { name: 'Caçador de Homens', story: 'Forma I, CAT 1, manifestado no sujeito adolescente H19 (posteriormente recrutado) após sofrer assédio escolar repetido. Relatos repetidos de um prédio de fábrica fechado "assombrado" após o anoitecer atraíram interesse de adolescentes locais e dispararam os protocolos padrão da SEER. Executado após uma longa caçada; equipe 23 da CASTLE morta em ação, mas sem baixas de exorcistas.' }
+      ]
+    },
+    idol: {
+      description: 'Um pecado nascido do desejo não realizado e do anseio de ser amado. Reúne um culto. Emoção: Desejo.',
+      primaryEmotion: 'Desejo',
+      traumas: [
+        'Qual é o seu sonho?',
+        'Por que você desistiu do seu sonho?',
+        'Por que você acredita ser incapaz de ser amado?'
+      ],
+      attacksWith: 'Lâminas bem afiadas, armas de fogo mundanas, garras finas e flexíveis, comandos de voz psíquicos: (1) 5 estresse, (2/3) 3, (4+) 2.',
+      complications: 'Incitar uma multidão, enfeitiçar alguém, cegar com glória, sobrecarregar com emoção, forçar segredos à tona, desarmar alguém, cuspir alucinações, adicionar um espectador, usar um domínio.',
+      threats: 'Convocar cultistas. Causar dor incapacitante. Sobrecarregar os sentidos. Forçar exorcistas a sacrificar algo. Expor uma fraqueza. Enfeitiçar um exorcista. Fazer reféns. Infligir um gancho. Usar um domínio. Fazer algo emocionalmente esmagador, manipulador ou chocante.',
+      afflictions: '1. Enamorado: escolha um aliado; se você agir sem a preparação ou trabalho em equipe dele, sofra 1 de estresse.\n2. Solipsismo: sofra 2 de estresse ao participar de trabalho em equipe ou preparação.\n3. Sonho Violeta: você pode rolar um dado de descanso a qualquer momento, mas se o fizer adormece até a pressão aumentar e não pode ser acordado.\n4. Ciúme Violento: escolha um aliado; ganhe 1 de estresse se ele rolar qualquer "6"; adicione permanentemente à agenda: não deixar ninguém mais me ofuscar.\n5. Narciso: poderes que miram apenas você mesmo ganham +1 CAT; poderes que miram ao menos um aliado sofrem -1 CAT.\n6. Anel: adicione permanentemente à agenda: mostrar a alguém que você é digno de sua atenção.',
+      pressureEffect: 'Ídolos reúnem cultos ao seu redor, crescendo constantemente com o tempo - de admiradores mundanos a pessoas totalmente sob seu feitiço. Um ídolo de categoria mais baixa atrai algumas dezenas de pessoas; um mais alto, centenas ou milhares. Enquanto o ídolo vive, os cultistas são inabalavelmente leais e seguem seus superiores sem questionar. Toda vez que a pressão aumenta, o Mestre escolhe secretamente um NPC que os jogadores conheceram e o adiciona ao culto (não precisa revelar); esse NPC agora segue os comandos psíquicos do ídolo e abandona suas lealdades anteriores.',
+      outOfControl: 'Quando a pressão enche, a situação sai de controle. O Ídolo ganha +1 Categoria e adiciona cada NPC na área da missão ao seu culto, incluindo quaisquer NPCs que os exorcistas encontrem no futuro.',
+      traces: 'Cultistas (humanos): humanos mundanos atraídos para sob a influência sobrenatural do Ídolo - funcionalmente fantoches, embora possam se comportar normalmente quando necessário. Enviados em missões importantes ou para se infiltrar em grupos. Derrotar o ídolo os liberta (não têm memória do tempo sob lavagem cerebral). Talismã de execução 2 (solo), 4 (grupo), 6 (grupo grande). Ataca com as mãos, corpo a corpo improvisado: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: atrair atenção indesejada, sufocar alguém, sacar uma arma, atrair espectadores, fazer uma revelação chocante.',
+      severeAttack: 'Casamento: usável num "1" na rolagem de risco, uma vez por missão. Escolha um exorcista como alvo; exorcistas próximos podem voar em auxílio. Comece com uma reserva de 6d6, depois remova um dado por "sim": Você está longe do ídolo? Você tem amor em sua vida? Alguém que te ajuda se importa com você? O ídolo está atrapalhado, distraído ou sob pressão? (Para um "não", alguém pode agir para corrigir.) Role: o exorcista e quem ajuda sofrem 1 de estresse por dado. O alvo deve responder "Quem entre seus aliados ele mais deseja?" Se "ninguém"/"eu mesmo": o ídolo inflige um ferimento e o deixa inconsciente pela cena. Se outro aliado: o ídolo funde a carne dos dois - eles só podem agir com trabalho em equipe um com o outro até descansarem, e então podem permanecer fundidos ou se separar. Ao menos um "1": separar inflige um ferimento em cada. Dois ou mais "1": a fusão dura o resto da caçada e não pode ser encerrada cedo. Após se desfundir, cada um pega um item de agenda da agenda do outro como item em negrito.',
+      domains: {
+        'Toys for Men': { name: 'Brinquedos para Homens', description: 'O ídolo pode brincar com a carne dos outros como marionetes. Cultistas ganham +1 segmento em seu talismã de execução (um cultista solitário teria 3), movendo-se mesmo quebrados. O ídolo ganha uma nova aflição, COLECIONAR BONECA: o exorcista perde o controle de um braço (como boneco); uma vez por cena o ídolo pode interferir numa ação, forçando-o a sofrer 1 de estresse ou tornar a ação difícil.' },
+        'Elevation of the Innumerable Mass': { name: 'Elevação da Massa Inumerável', description: 'O ídolo pode elevar membros do culto a pecados menores. Um Apóstolo (Pecado, talismã de execução 4+CAT, força sobrenatural e lâminas mutantes) pode aparecer por cena ao lutar contra o ídolo ou seu culto. Ataques do Apóstolo: (1) 4 estresse, (2/3) 3, (4+) 2. Ele pode criar um clone carnal, desencadear uma rajada, mutar ou se mover impossivelmente rápido. Exortar (1-3): um aliado cura cortes (1: 2, 2-3: 1) e inflige +1 estresse em seu próximo ataque.' },
+        'Hold My Darlings': { name: 'Segurem Meus Queridos', description: 'O ídolo cultiva um vínculo insidioso com seu culto. Uma vez por cena, quando sofreria cortes da ação de um exorcista, pode transferir o dano para qualquer cultista presente (incluindo NPCs adicionados). Pode ver pelos olhos de qualquer membro do culto e falar por suas bocas com sua voz.' },
+        'That Pliable Flesh': { name: 'Aquela Carne Maleável', description: 'O ídolo pode torcer sua forma rapidamente e mudar de forma. Como movimento de tensão, revele que alguém com quem os exorcistas estão falando é na verdade o ídolo (todos que testemunham sofrem 1 de estresse não-letal). Como complicação, pode se transformar numa cópia exata de um exorcista; até ser resolvido, quando sofreria cortes role um d6 - em 1-2 reduza os cortes a 0 e o exorcista duplicado sofre 2 de estresse.' },
+        'Slumbering, I Saw a Shape in the Door': { name: 'Adormecendo, Vi uma Forma na Porta', description: 'O ídolo entra nas mentes dos exorcistas quando eles baixam a guarda. Sempre que descansam, cada um faz uma rolagem de sorte 1d6 - num 1 ganha uma aflição de ídolo. Uma vez por caçada, como movimento de tensão, o ídolo pode forçar os exorcistas a descansar na próxima cena (não corta tensão, não pode avançar a pressão além de 4, todas as rolagens de descanso são "1"); um exorcista descreve devaneios perturbadores e ganha 1d3 de estresse não-letal.' },
+        'Taking the Ears': { name: 'Tomando os Ouvidos', description: 'A voz e presença psíquica do ídolo é avassaladora. Como movimento de ameaça/tensão pode falar a um grupo de humanos; se bem-sucedido eles são adicionados ao culto como um grupo de cultistas (se cultistas estiverem presentes, +2 ao talismã de execução deles em vez disso). Uma vez por cena, como ameaça, pode dizer uma palavra indizível: um exorcista que a ouve sofre 3d3 de estresse e a aflição Surdo pelo resto da missão (personagens surdos são imunes). No fim da missão, role 1d6 - em 1-2 surdez permanente mas se ajusta antes da próxima missão.' },
+        'The Glory': { name: 'A Glória', description: 'O ídolo pode assumir uma forma que sobrecarrega os sentidos. Uma vez por cena, como complicação com +2 de comprimento de talismã: humanos não-cultistas que a testemunham ficam inconscientes instantaneamente; exorcistas podem sofrer 1 de estresse ao agir contra ela e ignorá-la, ou desviar o olhar (tornando difíceis as ações que dependem da visão). Cultistas presentes podem rerrolar o dado de risco. Um exorcista vê esta forma como alguém querido a ele (descreva quem) e sofre 1 de estresse não-letal ao ferir o ídolo enquanto ativo.' },
+        'The Strong Scented Lips of a Whispering God': { name: 'Os Lábios de Forte Perfume de um Deus Sussurrante', description: 'O ídolo tem grandes conexões no mundo humano (fãs, empresários, políticos), expandindo os problemas de limpeza. Cultistas são armados com armas de fogo de curto alcance e coletes: +1 estresse em reações, +1 talismã de execução. Coloque um talismã de exposição de comprimento 10; cada cena de conflito corta-o 1d3, outros atos barulhentos/violentos/de alta exposição cortam 1 (uma vez por cena). Em 3+, autoridades locais tentam prender os exorcistas; em 6+, a resposta é mais severa e pesadamente armada. Exorcistas podem remover cortes com ações. Se encher antes do ídolo ser resolvido, a limpeza é catastrófica e os exorcistas não recebem pagamento em scrip.' }
+      },
+      examples: [
+        { name: 'Príncipe Sangrento', story: 'Forma I, manifestado à sujeita I887, ex-membra popular do grupo idol {redacted:7}. Marginalizada por sua agência de talentos, com alegações posteriormente comprovadas de abuso e perseguição por parte da gerência. Especulação online sobre seu desaparecimento levou à investigação pela SEER do clube de cabaré {redacted:9}. Demais registros apagados.' },
+        { name: 'Nosso Amigo', story: 'Forma II, fundido ao empresário fracassado de meia-idade {redacted:7}. O sujeito era recém-divorciado e afastado de seus filhos adultos. Ele iniciou o populoso culto "Igreja da Família", prometendo laços familiares próximos e renovação por meio de eventos comunitários. Prosperou por muitos anos, de {redacted:4} a {redacted:4}, como uma organização grande e próspera, até ser detectado pela SEER após múltiplos casos de sequestro. Tempo até execução 3h35min, 52 baixas. Desprogramação extensa.' },
+        { name: 'O Homem que Ri', story: 'Manifestação de Forma III, controlada pelo binder {redacted:6} (falecido, executado em cativeiro sob a doutrina de João, o Redentor). Um popular séquito de culto online votava em alvos para produção de vídeos de "pegadinha" postados na dark web, muitas vezes escolhendo indivíduos de prestígio e poder, incluindo as celebridades {redacted:6} e {redacted:6}. Localizado pela SEER após o sequestro de {redacted:8} e a morte do renomado ator {redacted:6}. Palácio localizado anexado ao laptop do sujeito e executado após 9 horas.' }
+      ]
+    },
+    centipede: {
+      description: 'Um pecado odioso que espalha um veneno mutagênico, formando uma horda. Emoção: Ódio.',
+      primaryEmotion: 'Ódio',
+      traumas: [
+        'Do que você está tentando escapar?',
+        'O que você mais odeia na humanidade?',
+        'Do que você mais se arrepende?'
+      ],
+      attacksWith: 'Presas gotejantes, garras numerosas, corpo sinuoso, cuspe pressurizado (curto alcance): (1) 5 estresse, (2/3) 3, (4+) 2.',
+      complications: 'Escavar no chão ou paredes, cuspir teia venenosa, soltar enxames de moscas, pulverizar poças de veneno, revelar tocas escondidas, desabar o piso, escapulir escondida na escuridão, adicionar um espectador, usar um domínio.',
+      threats: 'Convocar a horda. Dilacerar um exorcista. Revelar fileiras de ocelos hipnóticos. Explodir um bubão cáustico. Dissolver algo com ácido. Cometer um massacre. Infligir um gancho. Usar um domínio. Fazer algo sujo, rancoroso ou gotejante de veneno.',
+      afflictions: '1. Ferver: escolha outro exorcista; para cada "6" que ele rolar numa ação, ganhe 1 de estresse não-letal.\n2. Necrose de Membro: um membro incha e apodrece (1-2 braço, 3-4 perna, 5-6 mão/pé); atividade que o exige é difícil.\n3. Degradação Ácida: marque 1d3 KP imediatamente, depois mais 1 quando descansar.\n4. Alienação: adicione permanentemente à agenda: ignorar um pedido de ajuda.\n5. Cérebro de Colmeia: alucinação por veneno aerossol; atividade mental complicada como pesquisa ou investigação é difícil.\n6. Que Acabe: adicione permanentemente à agenda: matar desnecessariamente.',
+      pressureEffect: 'O veneno de uma centopeia, injetado na corrente sanguínea humana, causa uma reação psico-biótica que em cerca de uma hora transforma um humano num monstro forte, agressivo e violento - um zangão sem mente sob o controle da centopeia, que pode ele mesmo produzir veneno, criando uma horda exponencial. Um humano infectado se encasula e se transforma em exatamente 44 minutos (um exorcista ganha a aflição Mordida de Centopeia em vez disso). Não há cura, mas pode ser retardada; a única forma confiável de acabar com uma infestação é matar a centopeia (o que faz o veneno evaporar, salvando exorcistas infectados e vítimas não-transformadas). Cada vez que a pressão aumenta, 10% da população local é infectada e transformada (30% em 3 cortes).',
+      outOfControl: 'Se a pressão chega ao máximo, a centopeia aumenta em CAT por +1 e a perda populacional sobe para 90%.',
+      traces: 'Infestados (pecados): humanos mutados, essencialmente pecados menores de Forma II afetados pelo veneno psico-biótico, formando grandes enxames animalescos de colmeia que a centopeia controla mentalmente. Começam com aparência humana, tornam-se mais insetoides com o tempo. Talismã de execução 1 (solo), 3 (grupo), 5 (grupo grande), 7 (horda completa); só aparecem em grupo grande/horda em pressão 3+. Lentos, desajeitados, pouco inteligentes mas numerosos e resistentes; poderes de área ganham +1D contra grupos. Ataca com garras mutadas, dentes, mandíbulas: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: ejetar espinhos venenosos, derrubar alguém, alertar uma horda maior, explodir com bile cáustica, saltar de algum lugar surpreendente. Infindáveis (1-2): mais infestados chegam, +1d3 ao talismã. Mordida infectada (1): infligir a aflição Mordida de Centopeia. Nota: exorcistas recebem uma dose de Antídoto de Centopeia cada (marque 1 KP para injetar em alguém ao alcance).',
+      severeAttack: 'Vitríolo: usável num "1" na rolagem de risco, uma vez por missão. Escolha um exorcista como alvo; exorcistas próximos podem voar em auxílio. Comece com uma reserva de 6d6, depois remova um dado por "sim": Você pode se mover rápido e desimpedido? Alguém que te ajuda consegue te empurrar ou agarrar? Você consegue perdoar o hospedeiro da centopeia? A centopeia está atrapalhada, distraída ou sob pressão? (Para um "não", alguém pode agir para corrigir.) A centopeia dispara um jato pressurizado de veneno mutagênico, dissolvendo obstáculos e carne. O exorcista e quem ajuda sofrem 1 de estresse por dado; o alvo rola para uma cicatriz permanente. Ao menos um "1": o alvo sofre um ferimento. Dois ou mais "1": o alvo sofre morte instantânea (ou desafia o destino), ou sofre um ferimento e rola três vezes na tabela de cicatrizes em vez disso.',
+      domains: {
+        'The Heralds of Venom': { name: 'Os Arautos do Veneno', description: 'O veneno na centopeia e sua horda torna-se fervente e pressurizado. A horda pode cuspir veneno a curto alcance ao infligir estresse; a centopeia pode cuspir a alcance extremo como um rifle de precisão. Ela ganha uma nova aflição, FEBRE CEGANTE (como ameaça ou gancho): os olhos ficam brancos leitosos, o exorcista não consegue ver, tornando difíceis as atividades que dependem da visão. No fim da missão, role 1d6 - em 1-2 torna-se permanente (se ajusta antes da próxima missão). Exorcistas cegos são imunes.' },
+        'Crumbling Into the Darkling Womb': { name: 'Ruindo no Ventre das Trevas', description: 'O veneno torna-se um aerossol ambiental que degrada tudo na área de investigação. Atravessar estruturas normalmente seguras torna-se arriscado ou difícil à medida que pisos desmoronam, janelas derretem, paredes desabam. Qualquer item de kit mundano usado se degrada e fica inutilizável quando os exorcistas descansam. Quando a pressão aumenta, 10% das estruturas são destruídas; se a pressão enche, 90%.' },
+        'The Knights of Decay': { name: 'Os Cavaleiros da Podridão', description: 'A horda ganha infestados perigosos e blindados. Quando os infestados aparecem, um Juggernaut geralmente aparece (Pecado, talismã de execução 4; em pressão 3+ aumenta por CAT+1). Causa +1 estresse a exorcistas sozinhos ou amedrontados; foca num alvo; praticamente imune a armas mundanas a menos que sua armadura esteja exposta. Ataca com massa blindada, espinhos, mandíbulas: (1) 4 estresse, (2/3) 3, (4+) 2. Manto de colmeia (1/2): libera nuvens ácidas que obscurecem e queimam - todos os seus aliados sofrem -1 corte até o Juggernaut ser resolvido (não acumula).' },
+        'Gently Rolling Down the Slope of the Abyss': { name: 'Rolando Suavemente pela Encosta do Abismo', description: 'O veneno é tão potente e de rápida propagação que causa disseminação catastrófica. Dobre as baixas por pressão (para 20%). Em segmentos completos (6), a propagação sai da zona de quarentena, exigindo limpeza da CAIN e descontando 2 scrip dos exorcistas.' },
+        'My Children Crawl Quietly': { name: 'Meus Filhos Rastejam em Silêncio', description: 'A horda ganha infestados furtivos com pele camaleônica - Espreitadores, aparecendo em pares (Pecado; talismã de execução 4 entre os dois; em pressão 3+ aumenta por CAT). Cegos e facilmente distraídos. Como movimento de tensão, o Mestre pode revelar que um exorcista ou NPC não-infectado que lutou contra os infestados foi mordido (Mordida de Centopeia). Ataca com garras foice, espinhos venenosos: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: sequestrar alguém, arrastar para a escuridão, saltar/voar com asas de gafanhoto. Escamas Camaleônicas (1/2): torna-se quase invisível (difícil de combater/encontrar pela visão); a próxima reação causa +1 estresse e encerra o efeito. Quando os jogadores conhecem um NPC, o Mestre rola 1d6 - em 1-3 ele já foi mordido e esconde.' },
+        'At the Core, My Rot Unfurls': { name: 'No Cerne, Minha Podridão se Desdobra', description: 'A Centopeia é tão movida por rancor que se recusa a morrer, assumindo uma forma momentaneamente mais poderosa. Quando seu talismã de execução enche, em vez disso reduz em 6 e assume uma forma final aterrorizante: role o dado de risco duas vezes e escolha o menor resultado, ela sofre -1 corte no talismã e causa +1 estresse com todas as ações. Porém, esta forma é extremamente instável - no fim da rodada, após todos os exorcistas terem agido, sua forma se desestabiliza, derrotando-a instantaneamente e deixando os exorcistas finalizá-la.' },
+        'I Hide My Knife in the Soft Supple Walls': { name: 'Escondo Minha Faca nas Paredes Macias e Flexíveis', description: 'A Centopeia arma armadilhas purulentas, extrudindo partes de seu corpo ou usando a carne transformada de sua horda infestada. Como movimento de tensão, o Mestre pode declarar que na próxima cena os exorcistas entram numa área armadilhada (mesmo uma já explorada) - mover-se por ela torna-se arriscado por padrão. Armadilhas podem infligir 1 estresse a um ou dois exorcistas, tornar uma área perigosa/difícil de atravessar, afligir um exorcista ou infligir um gancho. Em qualquer cena de conflito com a Centopeia, num resultado de risco "1" uma armadilha também dispara.' },
+        'Making Friends With the Abattoir': { name: 'Fazendo Amizade com o Matadouro', description: 'A Centopeia ganha poder do rancor. Uma vez por cena, quando ela ou seus lacaios abatem um inocente ou espectador à vista dos exorcistas, aumente permanentemente seu relógio de execução em 1 (máximo quatro vezes no total). Uma vez por caçada, como movimento de tensão, pode revelar um grupo de sobreviventes humanos sob ameaça - se os exorcistas descansam sem ajudá-los, são abatidos e a centopeia adiciona permanentemente +3 segmentos ao seu relógio de execução.' }
+      },
+      examples: [
+        { name: 'C284', story: 'Forma I, manifestado no sujeito C284 (aguardando doutrinação) após perder sua moradia e emprego pela terceira vez. Túneis de {redacted:7} colocados em quarentena após desaparecimentos e relatos perturbadores de "monstros" por moradores locais. Exorcistas enviados para investigar localizaram o palácio num esgoto e executaram após 1 dia e 13 horas com baixas civis aceitáveis. Recondicionamento traumático necessário para todos os membros da equipe.' },
+        { name: 'Calamidade IV', story: 'Forma II. Notável nos arquivos da CAIN pelo incidente {redacted:9}. Manifestado e fundido com a sujeita C623 (parcialmente falecida e sob custódia da TEMERITY). A sujeita perdeu uma batalha judicial sobre seus direitos de patente de uma potencial droga anticâncer de amplo espectro {redacted:8} após anunciar sua intenção de torná-la gratuita. 10 equipes de exorcistas incluindo Virtudes enviadas, ~11.000 baixas. Tempo até execução 2 dias 6 horas 35 minutos. Exigiu um emprego sem precedentes de modificação de memória SERAPH de amplo espectro.' },
+        { name: 'C155', story: 'Forma I, manifestado no sujeito C155 após fracassos, dívidas crescentes e atividade de gangue rival em seu negócio de distribuição de narcóticos. Armazéns no distrito {redacted:7} da cidade {redacted:5} colocados em quarentena, prendendo aproximadamente 120 humanos incluindo espectadores, guardas armados de armazém, policiais e membros de gangue por 30 horas. Exorcistas {redacted:8} e {redacted:4} mortos em ação. Executado.' }
+      ]
+    },
+    toad: {
+      description: 'Um pecado indulgente que acumula riqueza material por quaisquer meios. Emoção: Indulgência.',
+      primaryEmotion: 'Indulgência',
+      traumas: [
+        'O que você merece que lhe foi negado?',
+        'Enquanto você passava fome, quem festejava?',
+        'Onde você traça o limite?'
+      ],
+      attacksWith: 'Socos e chutes esmagadores, língua musculosa, jato de sangue pressurizado dos olhos (curto alcance): (1) 5 estresse, (2/3) 3, (4+) 2.',
+      complications: 'Saltar para fora de alcance com pernas musculosas ou se espremer num espaço apertado, prender em armadilhas, revelar explosivos escondidos, disparar segurança ou alarmes, vomitar limo ou regurgitar o conteúdo do estômago, adicionar um espectador, usar um domínio.',
+      threats: 'Convocar guarda-costas. Roubar algo dos exorcistas. Desabar ou arremessar algo do ambiente. Detonar uma bomba. Chutar alguém com pernas poderosas. Engolir algo ou alguém inteiro. Infligir um gancho. Usar um domínio. Fazer algo astuto, espalhafatoso ou chocante.',
+      afflictions: '1. Distraído: sempre que você rolar um "1" no risco, marque 1 KP.\n2. Doença Consumptiva: reduza o estresse máximo em 1 cada vez que descansar; se reduzido a 0, sofra morte instantânea.\n3. Inanição: todas as ações são difíceis até você ou um aliado marcar 1 KP e deixá-lo comer algo; reseta após descansar.\n4. Dedos Coçando: uma vez por cena, roubar qualquer coisa dá 1 pulso psíquico e 1d3 de pecado; adicione permanentemente à agenda: roubar.\n5. Desejo Sonhador: quando a pressão aumenta, gaste 1 pulso psíquico para devanear sobre coisas que você quer ou sofra 2 de estresse.\n6. A Vontade: adicione permanentemente à agenda: pegar mais do que precisa.',
+      pressureEffect: 'O principal desejo de um sapo é adquirir o máximo de riqueza material possível para seu hospedeiro, roubando por vários meios e armazenando prêmios em seu papo expansivo para regurgitar depois em seu palácio. Sua larcênia começa pequena mas cresce fora de controle (de roubar um carro veloz, para o carro mais veloz da cidade, para uma equipe inteira de restaurante e tudo mais). O sapo ganha poder de seu tesouro; toda vez que a pressão aumenta, sua ganância cresce: 0-2: itens de alto valor mas mundanos (dinheiro, carros, armas, remédios, comida, moda, arte fina); 3-4: quantidades irreais do acima; 5+: lojas inteiras, comércios, restaurantes, iates, ônibus, celebridades.',
+      outOfControl: 'Em 6+, o CAT do sapo aumenta em 1 e ele ganha a habilidade de roubar itens conceituais ou intangíveis como riqueza abstrata, ações de uma empresa, luz, habilidade artística ou felicidade.',
+      traces: 'Prole do Sapo (humanos): humanos que seguem o sapo ou seu hospedeiro pela promessa muito real de riqueza incrível - de gângsteres comuns a segurança privada contratada, muitas vezes alheios, submetidos a lavagem cerebral ou deliberadamente ignorantes. Talismã de execução 1 (solo), 4 (grupo), 6 (grupo grande). Humanos mundanos com armamento mundano (não menos letal); muitas vezes têm acesso a carros ou vans de segurança. Ataca com armas de fogo, combate corpo a corpo: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: disparar uma arma de choque, investir contra um exorcista, aplicar uma chave de artes marciais, imobilizar com tiros, entrar num veículo, arremessar uma granada. Ameaça - chamar reforços (1): adicione 1d3 ao talismã de execução se puder concretizar.',
+      severeAttack: 'Grande Finesse: usável num "1" na rolagem de risco, uma vez por missão. Escolha um exorcista como alvo; exorcistas próximos podem voar em auxílio. Comece com uma reserva de 6d6, depois remova um dado por "sim": Você aceita seus poderes? Seus aliados estão perto o bastante para te tocar pele a pele? Você está disposto a se separar do seu kit? (Se sim, o Sapo se distrai roubando cada item de equipamento marcado de você e você marca todo o seu KP; eles desaparecem até o Sapo ser derrotado.) O Sapo está atrapalhado, distraído ou sob pressão? Role os dados: o exorcista e quem ajuda sofrem 1 de estresse por dado. O Sapo rouba a capacidade do alvo de usar poderes psíquicos, que se aglutinam numa sombra psíquica (um pecado, talismã de execução 4, usa reações para fugir); se destruída ou capturada, funde-se de volta, encerrando o efeito. Ao menos um "1": o talismã é 6 em vez disso. Dois ou mais "1": o talismã é 10 em vez disso.',
+      domains: {
+        'Hotel for One': { name: 'Hotel para Um', description: 'O sapo usa seus pulmões poderosos para sugar pessoas para dentro de suas fauces, empurrando-as para um minúsculo espaço-prisão dentro de seu papo. Como complicação com +2 de comprimento de talismã, pode sugar um exorcista com quem está lutando: ele fica preso numa minúscula sala extradimensional em forma de jaula, sofrendo 1 de estresse antes de agir até ele ou seus aliados o libertarem (então é vomitado para fora). Como movimento de tensão, pode sequestrar qualquer NPC que os exorcistas conheceram fora de cena e aprisioná-lo em geral ileso; libertá-lo exige lutar contra o Sapo.' },
+        'Greasing the Palms': { name: 'Untando as Mãos', description: 'O Sapo é habilidoso em surrupiar itens dos exorcistas. Quando um exorcista sofre estresse do Sapo, ele também (o Sapo escolhe um): marca 1 KP (se não tem nenhum para gastar, +1 estresse a mais), ou perde uma peça de equipamento já marcada pelo resto da caçada em vez de marcar KP.' },
+        'The Granting of Gifts': { name: 'A Concessão de Presentes', description: 'O sapo guarda quantidades de itens estranhos para regurgitar numa emergência. Como reação (1-3), pode regurgitar à força itens de tamanho combinado até CAT+1 (infligindo estresse, uma ameaça ou uma complicação). Role aleatoriamente a categoria: 1. Veículo (dirigível), 2. Explosivos, 3. Armas/munição, 4. Narcóticos, 5. Riqueza material (barras de ouro, joias), 6. Álcool. Depois role 1d3 para tamanho/volume (1: comicamente menor -1 estresse; 2: esperado; 3: inacreditavelmente maior +1 estresse).' },
+        'Wolf Down the Earth': { name: 'Devorar a Terra', description: 'O Sapo desarticula a mandíbula para um espaço semelhante ao vazio e engole enormes pedaços do cenário. Pode escavar por rocha sólida ao se mover. Uma vez por cena, como ameaça, pode tentar devorar uma área próxima, obliterando toda matéria inanimada não importa sua resistência (área depende do CAT); um ou dois exorcistas apanhados sofrem 3d3 de estresse se a ameaça se concretizar.' },
+        'Sticky Fingers': { name: 'Dedos Pegajosos', description: 'Como complicação, movimento de tensão ou ameaça, o sapo vomita um limo grosso e nauseante fedendo a perfume caro - incrivelmente pegajoso ou incrivelmente escorregadio (o sapo escolhe), forrando uma área CAT. Ações que exigem concentração, movimento rápido ou destreza manual tornam-se difíceis ali; manter o equilíbrio é difícil (rolagens de movimento usam dois dados de risco, pega o menor); o sapo inflige +1 estresse a um alvo que esteja lento, desequilibrado, imóvel ou preso. O limo seca quando a pressão aumenta.' },
+        'The Artful Dodger': { name: 'O Esquivador Astuto', description: 'O Sapo é cuidadoso e astuto, montando planos de contingência. Três vezes por caçada, quando os exorcistas agem, o Mestre pode narrar um flashback do Sapo montando uma contingência, plano reserva ou armadilha que agora aciona. Role 3d6: para cada 3+, o sapo pode infligir 1 estresse no exorcista que disparou ou reduzir em 1 os cortes sofridos da ação disparadora.' },
+        'Keeper of the Ludic Menagerie': { name: 'Guardião do Zoológico Lúdico', description: 'O Sapo armazena humanos sob lavagem cerebral em seu papo, puxando-os conforme necessário (libertados quando o sapo é derrotado, sem memória). Pode puxar um humano para qualquer tarefa servil mundana (cozinhar, limpar, dirigir), completamente obediente e convenientemente equipado (um guarda com a chave da porta, um taxista). Como reação (1-3) pode puxar um capanga, criando um traço de prole do sapo (talismã de execução 1) ou +1 a um traço existente. Como ameaça, pode sequestrar um humano mundano ou NPC presente, fazendo lavagem cerebral e adicionando-o à sua coleção.' },
+        'The Great Glittering Adversary': { name: 'O Grande Adversário Reluzente', description: 'Uma alquimia vil se agita nas entranhas do sapo - ele pode transformar matéria em riqueza material. Ao tocar qualquer superfície ou matéria viva, transforma-a em pedra preciosa ou ouro (como ameaça/complicação para infligir estresse, bloquear os exorcistas ou infligir a aflição). Toque de Midas (ameaça ou gancho): a pele de um braço ou perna lentamente se torna pedra preciosa/rocha a partir da área de contato; ações que exigem velocidade ou destreza tornam-se difíceis; quando terminam um descanso sofrem 3 de estresse, e se fosse infligir um ferimento em vez disso sofrem morte instantânea e viram uma estátua enjoiada.' }
+      },
+      examples: [
+        { name: 'Bolsos', story: 'Forma I, CAT 1. Manifestado num raro arranjo cooperativo pelo hospedeiro {redacted:9} atuando como um ladrão "lobo solitário" após repetidos conflitos com empresas de reintegração de posse e encarceramento reincidente. Acumulou um tesouro de valor estimado em {redacted:4} milhões em oito dias, incluindo trinta e cinco veículos de luxo, mantidos em sua maioria dentro de um palácio localizado na garagem da residência do hospedeiro {redacted:6} em {redacted:7}. Sem registro de execução; a manifestação foi dispersada. Exorcistas {redacted:5} e {redacted:7} disciplinados.' },
+        { name: 'Dracul', story: 'Forma III, CAT 3. Uma variante de Forma III que se vinculou à sua dona, hospedeira T493, num casamento indesejado com o renomado bilionário {redacted:8} (falecido). Formou gradualmente um palácio avançado e um cofre-tesouro no prédio de cobertura de {redacted:8} e assumiu as operações de seus negócios, incluindo a contratação de uma empresa mercenária privada. Executado. Tempo até execução 2 dias 34 minutos, sem perdas, 25 baixas. Notável: perdas líquidas da empresa {redacted:9} levaram a uma pequena queda no mercado de ações em {redacted:4}.' },
+        { name: 'Mr Worldwide', story: 'Forma II. Manifestado no hospedeiro T777 (falecido) após ele sofrer perda extrema no jogo e ser despejado de sua residência em {redacted:6}. Ao longo de três meses o hospedeiro {redacted:8} formou um sindicato criminoso que obteve controle completo sobre o cassino {redacted:6} em {redacted:5}, {redacted:6} e extraiu poder de suas operações. Atingiu CAT 4 antes da execução. Tempo até execução 6h55min; exorcistas {redacted:6}, {redacted:6} e {redacted:5} mortos em ação.' }
+      ]
+    },
+    lord: {
+      description: 'Um pecado temeroso que constrói um Reino parasita onde governa a realidade. Emoção: Medo.',
+      primaryEmotion: 'Medo',
+      traumas: [
+        'O que você perdeu?',
+        'Qual a principal coisa que você consertaria no mundo?',
+        'De quem você se arrependeu de deixar para trás quando ascendeu ao seu Reino?'
+      ],
+      attacksWith: 'Lâminas cintilantes, manoplas blindadas, armamento medieval reluzente, feixes de fogo (longo alcance): (1) 5 estresse, (2/3) 3, (4+) 2.',
+      complications: 'Torcer o mundo ou a paisagem, estender o Reino, lançar falsas acusações, prender um exorcista em correntes, cegar com luz escaldante, estender placas de armadura reluzente, erguer um escudo cintilante, adicionar um espectador, usar um domínio.',
+      threats: 'Fulminar com fogo. Passar julgamento dos céus. Arremessar numa prisão psíquica. Forçar um exorcista a confrontar seus próprios crimes. Agarrar com um punho blindado. Empalar com espinhos sagrados. Infligir um gancho. Usar um domínio. Fazer algo justo, mordaz ou dominador.',
+      afflictions: '1. Controle da Realidade: deve gastar 1 de estresse para marcar qualquer quantidade de KP no reino.\n2. Dor da Perda: forçado a vivenciar psiquicamente a catástrofe do hospedeiro do Senhor; quando o senhor ou seu hospedeiro é ferido, sofra também 1 de estresse não-letal; termina se você sofrer um ferimento.\n3. Infecção do Reino: marque 1 KP quando a pressão aumenta, então manifeste algo reconfortante e pequeno (um agrado ou livro).\n4. Caroneiro: sempre conta como estando no Reino para os poderes do Senhor.\n5. Bem-Vindo ao Lar: ganhe +1 pulso psíquico máximo no reino e recupere pulsos psíquicos ao máximo ao descansar ali, mas não pode usar blasfêmias fora; adicione permanentemente à agenda: negligenciar suas responsabilidades.\n6. Justiceiro: adicione permanentemente à agenda: punir a maldade.',
+      pressureEffect: 'O Senhor cria um Reino, uma realidade-parasita alternativa que cresce para fora de seu palácio e se sobrepõe à nossa, acessível livremente pelo senhor e seu hospedeiro e escondida em espaços impossíveis (portas de armário, corredores, becos). Ela transborda e puxa partes do mundo real para dentro de si, consumindo espaço e os humanos dentro (que, de fora, não conseguem vê-la). Dentro, a realidade se conforma aos desejos do hospedeiro: tudo o que perdeu é devolvido, eventos/história/humanos podem ser drasticamente alterados, e o hospedeiro é o governante absoluto que pode mudar as leis da realidade (preceitos que consomem humanos mundanos e afetam até os exorcistas). Cada vez que a pressão aumenta, o reino se expande para uma nova área do mundo real, cada vez mais rápido.',
+      outOfControl: 'Se a pressão é 6+, o reino consome toda a área de investigação e o CAT do Senhor aumenta em +1. Um reino colapsa quando o hospedeiro ou o Senhor é derrotado, ejetando tudo que foi trazido para dentro (humanos normalmente não têm memória de seu tempo lá dentro).',
+      traces: 'Guardas (pecados): o reino de um senhor sempre tem guardas patrulhando - pecados que assumem a forma de figuras de autoridade ou soldados, completamente subservientes ao Senhor, moldados a seu bel-prazer (soldados humanos com rostos sombreados, ou demônios bestiais com armamento medieval). Talismã de execução 2 (solo), 4 (esquadrão), 6 (pelotão), 10 (pequeno exército). Armados com armamento cruel e sentidos excepcionais; incapazes de existir fora do reino. Ataca com armas cruéis de combate próximo, socos e chutes: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: prender um exorcista e amontoar-se sobre ele, arrastar um exorcista em correntes, incapacitar com um golpe doloroso, ameaçar espectadores como colaboradores, chamar um veículo de prisão, produzir uma arma pesada. Soar o Alarme (ameaça, 1-2): alertar o Senhor ou guardas próximos; se mais guardas aparecem, +1d3 ao talismã de execução.',
+      severeAttack: 'Julgamento: usável num "1" na rolagem de risco, uma vez por missão. O senhor prende o alvo com correntes divinas e inicia um julgamento sumário. Escolha um exorcista como alvo; exorcistas próximos podem voar em auxílio. Comece com uma reserva de 6d6, depois remova um dado por "sim" (corrigir um "não" pode tomar a forma de um argumento verbal de qualquer exorcista que ajuda): Você é inocente de crimes? Você é uma pessoa honesta? Você viveu uma vida de acordo com seus ideais? O senhor está atrapalhado, distraído ou sob pressão? Role os dados enquanto o Senhor passa julgamento, fulminando com fogo: o exorcista e quem ajuda sofrem 1 de estresse por dado. Para cada "1" rolado, o alvo é forçado a confrontar sua inadequação e ganha adicionalmente 1d6 de pecado (pode ocorrer múltiplas vezes).',
+      domains: {
+        'Stricture of Manifestation': { name: 'Preceito da Manifestação', description: 'O Senhor ou seu hospedeiro ganham controle aumentado sobre a realidade dentro de seu Reino (como ameaças ou complicações): fazer qualquer objeto de tamanho até CAT+1 se aglutinar e aparecer em momentos; inverter ou escolher a direção e força da gravidade, ou tornar o espaço curvo; mudar o clima ou bioma de uma área; rearranjar os interiores e plantas de prédios, ruas ou corredores. Como ameaça ou movimento de tensão, pode dispensar qualquer poder psíquico sustentado que os exorcistas causaram (invocação, maldição). Só funciona dentro do reino.' },
+        'Stricture of Superiority': { name: 'Preceito da Superioridade', description: 'O Senhor luta mais ferozmente quanto menos os exorcistas jogam pelas regras do Reino. No início de cada rodada numa cena de conflito, o Senhor assume uma postura (deve trocar a cada rodada): Combate Honroso (exorcistas que participam de trabalho em equipe ou preparação primeiro sofrem 1d3 de estresse); Grande Refrega (exorcistas que agem sem trabalho em equipe ou preparação acham difícil); Duelo (o Senhor escolhe um exorcista que causa +1 corte em seu talismã, mas todos os outros exorcistas causam 1 corte a menos nesta rodada).' },
+        'Stricture of Banishment': { name: 'Preceito do Banimento', description: 'O senhor pode banir exorcistas, deslocando-os para fora da realidade dentro do reino. Como movimento de tensão ou ameaça, dá a aflição BANIDO: interagir com o mundo físico dentro do reino sem poderes psíquicos torna-se difícil (mas podem atravessar paredes e objetos como um fantasma); quando a pressão aumenta sofrem 1 de estresse, e se fosse infligir um ferimento em vez disso sofrem morte instantânea e desaparecem completamente.' },
+        'Stricture of Control': { name: 'Preceito do Controle', description: 'O poder do senhor transborda pela área de investigação como uma rede de ferro. O Mestre proíbe três itens de: Xingar; Falar o nome do Senhor ou de seu hospedeiro; Descobrir pele entre tornozelos, pulsos e pescoço à vista do sexo oposto; Beber/comer/fumar qualquer coisa não abençoada pelo Senhor; Tocar outra pessoa pele a pele sem o consentimento do Senhor; Entrar no palácio sem orar primeiro. Essas regras são conhecidas instantaneamente ao entrar no reino. Uma vez por cena, quando um exorcista quebraria uma delas por suas ações, sofre 2d3 de estresse. Se o Mestre deixa passar uma ocorrência mas um exorcista o lembra, esse exorcista ganha 1 xp (uma vez por sessão por exorcista).' },
+        'Stricture of Memory': { name: 'Preceito da Memória', description: 'O poder do senhor é regressivo e nostálgico. Dentro de seu Reino ele retorna tudo a uma era anterior (real ou imaginada) desejável a seu hospedeiro (Idade Média europeia, Japão Edo, EUA dos anos 1950, Judeia do século I). Armas, equipamentos e tecnologia que não existiriam então são convertidos em equivalentes similares ou simplesmente não existem lá dentro (armas de fogo viram bestas, um GPS vira um mapa desenhado à mão); se isso afetaria uma rolagem, o Mestre pode torná-la difícil. Todas as roupas, penteados etc. mudam para se adequar, revertendo ao sair.' },
+        'Stricture of Narrative': { name: 'Preceito da Narrativa', description: 'O senhor e seu hospedeiro ganham controle sobre a realidade a ponto de reverter a causalidade. Três vezes por caçada, quando um exorcista rola uma ação e vê o resultado final, o senhor ou seu hospedeiro pode declarar que os eventos não se deram daquela forma (como se narrasse uma história), desfazendo completamente o resultado. O exorcista alvo ganha 1 pulso psíquico, então ou rerrola a ação (segundo resultado final) ou perde o resultado e ganha 1d3 pulsos psíquicos adicionais.' },
+        'Stricture of Alignment': { name: 'Preceito do Alinhamento', description: 'Sempre que a pressão aumenta, o Senhor dá uma aflição de Papel rolada aleatoriamente a um exorcista dentro de seu reino. Um Papel dá um novo item de agenda temporário até o fim da missão mais atividades proibidas (difíceis para o afligido dentro do reino), e muda sua vestimenta ao entrar/sair (um papel por vez): 1. Camponês (Agenda: agir em extrema deferência; Proibido: agir em desafio a uma ordem); 2. Sacerdote (Agenda: obedecer ao Senhor; Proibido: mentir, trapacear, tomar o nome do Senhor em vão); 3. Bandido (Agenda: roubar algo; Proibido: preparação ou trabalho em equipe); 4. Sábio (Agenda: demonstrar erudição; Proibido: atividade fisicamente exigente); 5. Cavaleiro (Agenda: proteger os residentes; Proibido: golpear uma mulher, mentir, trapacear, lutar sujo); 6. Nobre (Agenda: humilhar seus inferiores; Proibido: ceder a um inferior, sujar as mãos).' },
+        'Stricture of The Flaming Sword': { name: 'Preceito da Espada Flamejante', description: 'O Senhor tem um Guardião, um construto-pecado que patrulha o Reino (um oficial da lei, um humanoide alado ou um construto geométrico metálico); se destruído, reforma-se no palácio do Senhor quando a pressão aumenta. Guardião (pecado): talismã de execução 4+CAT; pesadamente blindado e imune a armamento mundano; move-se a velocidade CAT+2 dentro do reino (não pode existir fora); axiomático - incapaz de engano e sempre sabe quando alguém está mentindo em sua presença. Ataca com uma arma de longo alcance (alcance extremo) e corpo a corpo brutal: (1) 5 estresse, (2/3) 3, (4+) 2. Complicações: aprisionar alguém numa jaula de luz, cegar com feixes ofuscantes, mergulhar alto no ar, invocar lâminas escaldantes, empalar com uma lança reluzente.' }
+      },
+      examples: [
+        { name: 'Decurião', story: 'Forma I. Manifestado no hospedeiro L99 após sua dispensa das forças armadas de {redacted:6}, subsequente a múltiplos diagnósticos de transtorno {redacted:6} após as campanhas {redacted:6} e {redacted:6}. O Reino se manifestou como uma recriação perfeita da cidade natal de sua infância nas montanhas {redacted:9}, onde L99 era um membro querido da igreja e da comunidade que nunca havia ido à guerra. Executado (tempo até execução ~500 min, 50 baixas).' },
+        { name: 'Baldur', story: 'Forma III. Manifestado a partir do hospedeiro L545, que então conseguiu vinculá-lo. Assumiu a forma de um cão basset. O Reino se manifestou como uma típica narrativa noir de cidade dos anos 1930, onde o hospedeiro era um detetive durão em busca de sua esposa desaparecida. Na realidade, a esposa do hospedeiro estava falecida há 6 meses devido a um câncer ósseo avançado. Executado. Tempo até execução 2 dias 2h34min. L545 colocado sob observação.' },
+        { name: 'Rainha Pálida', story: 'Forma II. Manifestado e fundido com a hospedeira L44, que havia se recolhido a um mundo de videogames após uma lesão esportiva deixá-la sem o uso das pernas. O Reino se manifestou como um típico mundo de fantasia de videogame pseudomedieval baseado na propriedade {redacted:12}, que consumiu até 60% da cidade {redacted:6} antes da dispersão pela equipe enviada. 3 exorcistas mortos em ação, reforços enviados por helicóptero. Executado. Tempo até execução 9 horas 54 minutos.' }
+      ]
+    },
+  },
   // Agenda items & bolded items
   agendaItems: {
     doomed: { items: ['Demonstrar sua humanidade'], bolded: ['Demonstrar sua distância da humanidade'] },
@@ -3037,6 +3386,97 @@ var KIT_EXPANSION = [
   }
 ];
 
+// Perfect Sins (GFF-3) — special-grade hardened sins (GM). Global rules +
+// shared complications. Per-type statblocks live in PERFECT_SINS.sins (added later).
+var PERFECT_SINS = {
+  rules: [
+    { en: 'Execution talisman is 12 base, and scales twice as fast: total = 12 + 2\u00D7pressure + 2\u00D7CAT. (A CAT 4 perfect sin at 0 pressure has a 20 talisman.)',
+      pt: 'Talismã de execução base 12, e escala duas vezes mais rápido: total = 12 + 2\u00D7pressão + 2\u00D7CAT. (Um pecado perfeito CAT 4 a 0 de pressão tem talismã 20.)' },
+    { en: 'Perfect Sins are Category 3+ only, and can be up to Category 6.',
+      pt: 'Pecados Perfeitos são apenas Categoria 3+, e podem chegar à Categoria 6.' },
+    { en: 'All traces the sin creates have their execution talisman increased by +2.',
+      pt: 'Todos os traços que o pecado cria têm o talismã de execução aumentado em +2.' },
+    { en: 'All perfect sins have a stronger severe attack and improved abilities (noted in each type\'s entry).',
+      pt: 'Todos os pecados perfeitos têm um ataque severo mais forte e habilidades melhoradas (indicadas na entrada de cada tipo).' },
+    { en: 'Each Perfect Sin starts with one complication active and activates another for free when it takes a reaction at 50% talisman or lower. These don\'t count against the maximum and don\'t take a reaction to activate. Each has a 6 talisman to clear.',
+      pt: 'Cada Pecado Perfeito começa com uma complicação ativa e ativa outra de graça quando reage com o talismã a 50% ou menos. Elas não contam contra o máximo e não gastam uma reação. Cada uma tem um talismã 6 para ser resolvida.' },
+    { en: 'Category 6 note: CAT 6 sins are above the baseline ability of even the most senior exorcists. Against them, follow general CAT rules (all actions are hard, risky, or may be impossible without setup or circumstance).',
+      pt: 'Nota sobre Categoria 6: pecados CAT 6 estão acima da capacidade básica até dos exorcistas mais experientes. Contra eles, siga as regras gerais de CAT (todas as ações são difíceis, arriscadas, ou podem ser impossíveis sem preparação ou circunstância).' }
+  ],
+  complications: [
+    { name: 'EK Armor', namePt: 'Armadura EK', en: '-1 slash taken from harm without teamwork or setup.', pt: '-1 corte sofrido de dano sem trabalho em equipe ou preparação.' },
+    { name: 'EK Stress Field', namePt: 'Campo de Estresse EK', en: 'Stress dealt cannot be reduced.', pt: 'O estresse causado não pode ser reduzido.' },
+    { name: 'Misery', namePt: 'Miséria', en: 'Exorcists cannot roll more than 3 dice on any action.', pt: 'Exorcistas não podem rolar mais de 3 dados em nenhuma ação.' },
+    { name: 'Malice', namePt: 'Malícia', en: 'The first reaction taken each round rolls 3d6 for risk, picking the lowest.', pt: 'A primeira reação tomada a cada rodada rola 3d6 de risco, pegando o menor.' },
+    { name: 'Annihilation', namePt: 'Aniquilação', en: 'Start a 6 talisman; slash it once after the exorcists act. When it fills to 6, the sin regains its Severe Attack if already used; if it wasn\'t used, it may immediately use its Severe Attack as a free reaction.', pt: 'Inicie um talismã 6; corte-o uma vez após os exorcistas agirem. Quando enche até 6, o pecado recupera seu Ataque Severo se já usado; se não foi usado, pode usar imediatamente seu Ataque Severo como reação gratuita.' }
+  ],
+  sins: [
+    {
+      id: 'perfect_ogre', baseSinType: 'ogre', name: 'Perfect Ogre', image: 'img/enemies/perfect_ogre.png',
+      quote: 'You see it too? For me, it\u2019s always like this.',
+      quote2: 'Only the dead receive flowers.',
+      upgrades: [
+        { name: 'Suffocate', namePt: 'Sufocar', slot: 'extraRules', en: 'Exorcists cannot rest inside the miasma for any reason, nor can they use any kit with the Consumable tag inside it.', pt: 'Exorcistas não podem descansar dentro do miasma por motivo nenhum, nem usar qualquer kit com a tag Consumível dentro dele.' },
+        { name: 'Perfect Decay', namePt: 'Decomposição Perfeita', slot: 'threats', en: 'Any stress taken from the ogre or its traces on a 1-3 reaction grants the Rotting affliction (take 1 irreducible stress each time tension fills; if it inflicts an injury, it inflicts instant death).', pt: 'Qualquer estresse sofrido do ogro ou de seus traços numa reação 1-3 concede a aflição Apodrecimento (sofra 1 de estresse irredutível cada vez que a tensão enche; se causar um ferimento, causa morte instantânea).' },
+        { name: 'Sunkiller', namePt: 'Mata-Sol', slot: 'behavior', en: 'The Perfect Ogre deals +1 stress with reactions to exorcists that have an injury.', pt: 'O Ogro Perfeito causa +1 de estresse com reações contra exorcistas que têm um ferimento.' },
+        { name: 'Field of the Limbless', namePt: 'Campo dos Sem-Membros', slot: 'severeAttack', en: 'Pulverize rips off a limb for EACH 1 rolled, instead of just a single limb. If an exorcist has 3 or more limbs ripped off, they also suffer instant death.', pt: 'Pulverizar arranca um membro por CADA 1 rolado, em vez de apenas um. Se um exorcista tem 3 ou mais membros arrancados, também sofre morte instantânea.' }
+      ]
+    },
+    {
+      id: 'perfect_hound', baseSinType: 'hound', name: 'Perfect Hound', image: 'img/enemies/perfect_hound.png',
+      quote: 'I alone will stand before God.',
+      quote2: 'When will your bloodlust be sated, Exorcist?',
+      upgrades: [
+        { name: 'Perfect Reflex', namePt: 'Reflexo Perfeito', slot: 'behavior', en: 'The hound takes two free reactions at the start of the first round of any conflict scene (still roll 1d6 for each).', pt: 'O cão toma duas reações gratuitas no início da primeira rodada de qualquer cena de conflito (ainda rola 1d6 para cada).' },
+        { name: 'Berserk', namePt: 'Berserk', slot: 'threats', en: 'At 50% talisman or less, deals +1 stress with all reactions, and may use a threat to inflict instant death with a 1-3 reaction.', pt: 'Com talismã a 50% ou menos, causa +1 de estresse com todas as reações, e pode usar uma ameaça para infligir morte instantânea com reação 1-3.' },
+        { name: 'Perfect Body', namePt: 'Corpo Perfeito', slot: 'behavior', en: 'When exorcists rest, the hound heals to full on its execution talisman.', pt: 'Quando os exorcistas descansam, o cão se cura totalmente no talismã de execução.' },
+        { name: 'Blood Sated Sword Soul', namePt: 'Alma-Espada Saciada de Sangue', slot: 'severeAttack', en: "Every exorcist flying to aid another exorcist targeted by Apoplexy takes +1 stress and a flay scar. All humans in a CAT-sized area centered on the hound are instantly slaughtered.", pt: 'Todo exorcista que voa em auxílio de outro exorcista alvo de Apoplexia sofre +1 de estresse e uma cicatriz de esfolamento. Todos os humanos em uma área do tamanho do CAT centrada no cão são instantaneamente massacrados.' }
+      ]
+    },
+    {
+      id: 'perfect_idol', baseSinType: 'idol', name: 'Perfect Idol', image: 'img/enemies/perfect_idol.png',
+      quote: 'Poor things. Needless suffering. Too much <b>thinking</b>.', quoteHtml: true,
+      upgrades: [
+        { name: 'Mock', namePt: 'Zombar', slot: 'extraRules', en: 'The Idol\u2019s base execution talisman is 6 instead of 12. However, at the start of the hunt, the Idol may ask the following trauma questions to any exorcist. During a conflict scene, the Idol may use the answers to counter an exorcist\u2019s action, reducing slashes taken by 1d3 and inflicting the same amount of stress on the triggering exorcist. Each answer can only be used once. Questions: "Are you human?", "When did you realize you are a tool?", "What precious thing have you lost forever?"', pt: 'O talismã de execução base do Ídolo é 6 em vez de 12. Porém, no início da caçada, o Ídolo pode fazer as seguintes perguntas de trauma a qualquer exorcista. Durante uma cena de conflito, o Ídolo pode usar as respostas para neutralizar a ação de um exorcista, reduzindo os cortes sofridos em 1d3 e infligindo a mesma quantidade de estresse no exorcista que disparou. Cada resposta só pode ser usada uma vez. Perguntas: "Você é humano?", "Quando você percebeu que é uma ferramenta?", "Que coisa preciosa você perdeu para sempre?"' },
+        { name: 'Perfect Dream', namePt: 'Sonho Perfeito', slot: 'behavior', en: 'When the exorcists rest, two exorcists of the Idol\u2019s choice gain an idol affliction.', pt: 'Quando os exorcistas descansam, dois exorcistas à escolha do Ídolo ganham uma aflição de ídolo.' },
+        { name: 'Perfect Divinity', namePt: 'Divindade Perfeita', slot: 'extraRules', en: 'Divine Agony cannot be invoked against the Idol.', pt: 'A Agonia Divina não pode ser invocada contra o Ídolo.' },
+        { name: 'Ritual of Flesh', namePt: 'Ritual da Carne', slot: 'severeAttack', en: 'Marriage can target and fuse 3 exorcists, and inflicts 1d3 sin on each.', pt: 'Casamento pode ter como alvo e fundir 3 exorcistas, e inflige 1d3 de pecado em cada.' }
+      ]
+    },
+    {
+      id: 'perfect_centipede', baseSinType: 'centipede', name: 'Perfect Centipede', image: 'img/enemies/perfect_centipede.png',
+      quote: '<span style="font-size:0.75em">TOO LOUD.</span> <b>TOO LOUD.</b> <b style="font-size:1.6em;color:#7614B5">TOO LOUD.</b>', quoteHtml: true,
+      upgrades: [
+        { name: 'Perfect Venom', namePt: 'Veneno Perfeito', slot: 'extraRules', en: 'Exorcists get a single dose of centipede antivenom for the entire hunt.', pt: 'Os exorcistas recebem uma única dose de antídoto de centopeia para toda a caçada.' },
+        { name: 'Dead Century World', namePt: 'Mundo do Século Morto', slot: 'behavior', en: 'All exorcists present take 1 nonlethal stress at the end of every conflict scene round.', pt: 'Todos os exorcistas presentes sofrem 1 de estresse não-letal ao fim de cada rodada de cena de conflito.' },
+        { name: 'Perfect Massacre', namePt: 'Massacre Perfeito', slot: 'pressure', en: 'Depopulation of the area increases to 40% per tick of pressure. Spillover over 100% represents casualties OUTSIDE of the area.', pt: 'A despopulação da área aumenta para 40% por avanço de pressão. O excedente acima de 100% representa baixas FORA da área.' },
+        { name: 'Eternal Hatred', namePt: 'Ódio Eterno', slot: 'severeAttack', en: 'Vitriol targets a second exorcist. Exorcists flying to aid must choose which to aid, excluding the targeted exorcists.', pt: 'Vitríolo tem como alvo um segundo exorcista. Exorcistas que voam em auxílio devem escolher quem ajudar, excluindo os exorcistas alvos.' }
+      ]
+    },
+    {
+      id: 'perfect_lord', baseSinType: 'lord', name: 'Perfect Lord', image: 'img/enemies/perfect_lord.png',
+      quote: 'Open the Gates, and I will reveal to you the Kingdom.',
+      upgrades: [
+        { name: 'Perfect Kingdom', namePt: 'Reino Perfeito', slot: 'behavior', en: 'Resting anywhere causes you to enter or exit the Lord\u2019s Kingdom (its choice).', pt: 'Descansar em qualquer lugar faz você entrar ou sair do Reino do Senhor (escolha dele).' },
+        { name: 'Immutable Control', namePt: 'Controle Imutável', slot: 'complications', en: 'When the Lord creates a complication, it can inflict 2 stress on an exorcist and the complication takes +2 more slashes to deal with (this includes the free complications from being a Perfect Sin).', pt: 'Quando o Senhor cria uma complicação, ele pode infligir 2 de estresse em um exorcista e a complicação exige +2 cortes para ser resolvida (isso inclui as complicações gratuitas por ser um Pecado Perfeito).' },
+        { name: 'Perfect Purity', namePt: 'Pureza Perfeita', slot: 'extraRules', en: 'Exorcists gain +1 sin when gaining sin inside the kingdom.', pt: 'Exorcistas ganham +1 de pecado ao ganhar pecado dentro do reino.' },
+        { name: 'Immaculate Prosecution', namePt: 'Acusação Imaculada', slot: 'severeAttack', en: 'Judgement allows no other exorcist to aid.', pt: 'Julgamento não permite que nenhum outro exorcista ajude.' }
+      ]
+    },
+    {
+      id: 'perfect_toad', baseSinType: 'toad', name: 'Perfect Toad', image: 'img/enemies/perfect_toad.png',
+      quote: 'Nice toys. I think I\u2019ll take them.',
+      quote2: 'They bled you dry/They bled you dry/The pandaemonium is nigh.',
+      upgrades: [
+        { name: 'Perfect Larceny', namePt: 'Furto Perfeito', slot: 'behavior', en: 'The Toad steals 1d3 resting dice from the exorcists when they rest, and may roll and spend them to heal.', pt: 'O Sapo rouba 1d3 dados de descanso dos exorcistas quando eles descansam, e pode rolá-los e gastá-los para se curar.' },
+        { name: 'Get a New Trick', namePt: 'Truque Novo', slot: 'threats', en: 'Once a round, as a 1-3 reaction in a conflict scene, the Toad may seal an exorcist\u2019s blasphemy power. That power may not be used again this scene without first taking 1d3+1 sin each time.', pt: 'Uma vez por rodada, como reação 1-3 em uma cena de conflito, o Sapo pode selar um poder de blasfêmia de um exorcista. Esse poder não pode ser usado de novo nesta cena sem antes sofrer 1d3+1 de pecado a cada vez.' },
+        { name: 'Perfect Spawn', namePt: 'Prole Perfeita', slot: 'traces', en: 'Toadspawn are Sins and deal +1 stress on all reactions.', pt: 'Os Girinos são Pecados e causam +1 de estresse em todas as reações.' },
+        { name: 'Shadow of the True Self', namePt: 'Sombra do Verdadeiro Eu', slot: 'severeAttack', en: "Grand Finesse's shadow execution talisman gains +CAT and +PRESSURE length and it now becomes a combatant (stat it as a binder, pg 153, CAIN). It can react alongside the sin once a round for free, like a Trace.", pt: 'O talismã de execução da sombra de Grande Finesse ganha +CAT e +PRESSÃO de comprimento e agora se torna um combatente (use os stats de um vinculador, pg 153, CAIN). Pode reagir junto com o pecado uma vez por rodada de graça, como um Traço.' }
+      ]
+    }
+  ]
+};
+
 /** Translate a kit-expansion tag label. */
 function tKitTag(tag) {
   var pt = { Consumable: 'Consumível', Conspicuous: 'Notável', Focus: 'Foco', adjacent: 'adjacente', short: 'curto', long: 'longo', extreme: 'extremo' };
@@ -3628,8 +4068,8 @@ var OFFICIAL_ENEMIES = [
   {
     officialId: 'security', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Security', type: 'human', category: 0,
     image: 'img/enemies/security.png',
-    talismanSize: 'short', talismanSegments: 2, expansion: 'base',
-    description: 'Execution talisman: 2 (solo), 4 (group), 6 (large group). Graceless humans, blissfully unaware of the world of psychic phenomena, dispatched to deal with disturbances or guard facilities.',
+    talismanSize: 'short', talismanSegments: 2, talismanDisplay: '2 (solo), 4 (group), 6 (large group)', expansion: 'base',
+    description: 'Graceless humans, blissfully unaware of the world of psychic phenomena, dispatched to deal with disturbances or guard facilities.',
     facts: 'General human capabilities.\nUsually alert and can raise some kind of alarm.\nMost mundane humans are incapacitated by any amount of stress and usually instantly killed by 4+ stress; go catatonic if they directly witness a sin. (These are made of tougher stuff.)',
     attacksWith: 'Batons, close quarters combat techniques.',
     complications: 'Fire a stun gun, punch an alarm, pull out a firearm, pin down an exorcist.',
@@ -3639,8 +4079,8 @@ var OFFICIAL_ENEMIES = [
   {
     officialId: 'mercenaries', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Mercenaries', type: 'human', category: 0,
     image: 'img/enemies/mercenaries.png',
-    talismanSize: 'medium', talismanSegments: 2, expansion: 'base',
-    description: 'Execution talisman: 2 (solo), 5 (squad), 8 (platoon). Graceless human mercenaries, highly skilled, sometimes hired by sin hosts or world governments for defense or wetwork.',
+    talismanSize: 'medium', talismanSegments: 2, talismanDisplay: '2 (solo), 5 (squad), 8 (platoon)', expansion: 'base',
+    description: 'Graceless human mercenaries, highly skilled, sometimes hired by sin hosts or world governments for defense or wetwork.',
     facts: 'Well armed and compensated.\nArmored well against small arms and has thermal and night vision.',
     attacksWith: 'Disciplined gunfire (long range).',
     complications: 'Throw a stun grenade, take heavy cover, throw down a barrage of suppressing fire.',
@@ -3650,8 +4090,8 @@ var OFFICIAL_ENEMIES = [
   {
     officialId: 'illuminati', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Illuminati', type: 'human', category: 0,
     image: 'img/enemies/illuminati.png',
-    talismanSize: 'short', talismanSegments: 1, expansion: 'base',
-    description: 'Execution talisman: 1 (solo), 3 (group), 5 (large group). Brainwashed or fanatical humans formed around the manipulation and worship of sins, often puppeted by shadowy organizations or a sin themselves.',
+    talismanSize: 'short', talismanSegments: 1, talismanDisplay: '1 (solo), 3 (group), 5 (large group)', expansion: 'base',
+    description: 'Brainwashed or fanatical humans formed around the manipulation and worship of sins, often puppeted by shadowy organizations or a sin themselves.',
     facts: 'Often hide their faces under masks.',
     attacksWith: 'Overwhelming but crude attacks.',
     complications: 'Corner an exorcist, attack with fervor (+1 stress), start chanting ominously (1 slash taken).',
@@ -3661,8 +4101,8 @@ var OFFICIAL_ENEMIES = [
   {
     officialId: 'binder', kind: 'opponent', bestiaryGroup: 'mundane', name: 'Binder', type: 'exorcist', category: 3,
     image: 'img/enemies/binder.png',
-    talismanSize: 'medium', talismanSegments: 4, expansion: 'base',
-    description: 'Exorcist. CAT 0-6 depending on strength. Execution talisman: 1+CAT (rank and file), 4+CAT (upper rank), 7+CAT (elites). A rogue exorcist, self-taught or organized, manifesting wilder and sometimes more powerful blasphemies than CAIN training allows. CAIN demands they be subdued and submit on pain of execution.',
+    talismanSize: 'medium', talismanSegments: 4, talismanDisplay: '1+CAT (rank and file), 4+CAT (upper rank), 7+CAT (elites)', expansion: 'base',
+    description: 'Exorcist. CAT 0-6 depending on strength. A rogue exorcist, self-taught or organized, manifesting wilder and sometimes more powerful blasphemies than CAIN training allows. CAIN demands they be subdued and submit on pain of execution.',
     facts: 'Uses blasphemies that mirror the exorcists\', but stranger and wilder.\nMay work in formation with other binders or control a mass produced sin.',
     attacksWith: 'Psychic bursts of power and mundane weaponry (both short range).',
     complications: '',
@@ -3672,8 +4112,8 @@ var OFFICIAL_ENEMIES = [
   {
     officialId: 'mass_produced_sin', kind: 'opponent', bestiaryGroup: 'sin', name: 'Mass Produced Sin', type: 'sin', category: 2,
     image: 'img/enemies/mass_produced_sin.png',
-    talismanSize: 'medium', talismanSegments: 3, expansion: 'base',
-    description: 'Sin. CAT 0-4 depending on strength. Execution talisman: 3 (solo), 5 (group), 7 (large group). A weak sin produced through unspeakable methods by shadowy PMCs or secret government projects, sometimes from human stock.',
+    talismanSize: 'medium', talismanSegments: 3, talismanDisplay: '3 (solo), 5 (group), 7 (large group)', expansion: 'base',
+    description: 'Sin. CAT 0-4 depending on strength. A weak sin produced through unspeakable methods by shadowy PMCs or secret government projects, sometimes from human stock.',
     facts: 'Barely intelligent, but armed with brute strength.\nHas a control unit implanted in it; destroying it usually makes the sin berserk.\nOptional typing: Type A (Shock troop - close combat against it is hard; smashes through buildings). Type B (Infiltration - can go invisible as a complication, sight-reliant actions hard). Type C (Control - can control mundane humans present to body-block -1 stress or attack +1 stress while active).',
     attacksWith: 'Brute strength, corruptive fluids.',
     complications: 'Spew black corruptive fluid, ear-splitting screaming, hurl an exorcist through a wall or floor.',
@@ -3683,12 +4123,46 @@ var OFFICIAL_ENEMIES = [
   {
     officialId: 'imago', kind: 'opponent', bestiaryGroup: 'sin', name: 'Imago', type: 'sin', category: 3,
     image: 'img/enemies/imago.png',
-    talismanSize: 'long', talismanSegments: 8, expansion: 'base',
-    description: 'Sin. CAT 1-5 based on the exorcist. Execution talisman: 6+CAT. A nascent true sin, created when an exorcist suffers sin overflow and gives up. More intelligent, spiteful, and vengeful based on their past; hunted with extreme prejudice by CAIN.',
+    talismanSize: 'long', talismanSegments: 8, talismanDisplay: '6+CAT', expansion: 'base',
+    description: 'Sin. CAT 1-5 based on the exorcist. A nascent true sin, created when an exorcist suffers sin overflow and gives up. More intelligent, spiteful, and vengeful based on their past; hunted with extreme prejudice by CAIN.',
     facts: 'Acts based on the worst impulses of the exorcist it was created from.\nNearly always has a strong instinct to flee and become stronger, maturing into a true sin and creating a palace (triggering a new hunt). Usually fights to run away.\nBasic form (chosen by the transformed exorcist) gives cues: Ogre/Idol/Hound/Centipede/Toad/Lord type.',
     attacksWith: 'Claws, teeth, dripping appendages, psychic powers: (1) 5 stress +2 sin, (2/3) 3 stress +1 sin, (4+) 2 stress.',
     complications: 'Make appeals to the exorcists\' humanity, show a little of their former self, demonstrate a surprising new ability, outpace the exorcists.',
     threat: '(1-2) Flee: flee the scene to pupate and become a full sin, perpetuating the cycle.',
+    stress: 5, stressRisk23: 3, stressRisk1: 2
+  },
+  // ─── Mother (GFF-3) — infectious Sin/Anomaly, three grades ───────────
+  {
+    officialId: 'mothers_sweet', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Sweet", type: 'sin', category: 1, expansion: 'gff3',
+    image: 'img/enemies/mothers_sweet.png',
+    talismanSize: 'short', talismanSegments: 2, talismanDisplay: '2 (solo), 6 (swarm)',
+    description: 'Sin/Anomaly. CAT 0-4. Relatively weak, the result of the colonization of the graceless. They act in perfect synchronicity around other parts of Mother.',
+    facts: 'Acts in perfect synchronicity with other parts of Mother.\nWeakest grade of Mother; appears in swarms.\nSeveral reactions from fighting Mother can infect exorcists with her. Gaining Mother this way does NOT lower sin cap, grant a power immediately, or raise xp cap - otherwise treat her like a normal blasphemy and gain her passive.',
+    attacksWith: 'Spiny extrusions, venomous bite: (1) 3 stress and 1 sin, (2/3) 2 stress, (4+) 2 stress.',
+    complications: '',
+    threat: '(1-2) Join (Swarm Only): erase up to 4 slashes on its execution talisman if successful, then become a Mother\'s Dear, replacing all reactions.\n(1-2) Colonize: jab with a sharp spine. If successful, kills self, but then deals 5 stress to its target and infects that exorcist with Mother.',
+    stress: 3, stressRisk23: 2, stressRisk1: 2
+  },
+  {
+    officialId: 'mothers_dear', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Dear", type: 'sin', category: 2, expansion: 'gff3',
+    image: 'img/enemies/mothers_dear.png',
+    talismanSize: 'medium', talismanSegments: 4, talismanDisplay: '4 (solo), 8 (duo)',
+    description: 'Sin/Anomaly. CAT 1-4. High-priority target for execution. The result of multiple graceless subjects fusing. Very slow, but methodical. Barely flinches when struck. Has no individual sense of preservation.',
+    facts: 'Armored: takes -1 slash from direct attacks of equal or lower category unless the armor is dealt with through setup or circumstance (finding weak points, cracking with overwhelming force, etc).',
+    attacksWith: 'Carapace, horned headbutt, retractable spines: (1) 4 stress and Smashed Rib affliction (physical exertion of any kind is hard), (2/3) 3 stress, (4+) 2 stress.',
+    complications: '',
+    threat: '(1-2) Colonize: jab with a sharp spine. If successful, kills self, but then deals 5 stress to its target and infects that exorcist with Mother.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  {
+    officialId: 'mothers_favorite', kind: 'opponent', bestiaryGroup: 'mother', name: "Mother's Favorite", type: 'sin', category: 3, expansion: 'gff3',
+    image: 'img/enemies/mothers_favorite.png',
+    talismanSize: 'long', talismanSegments: 8, talismanDisplay: '8 + pressure + CAT (solo)',
+    description: 'Sin/Anomaly. CAT 1-5. Three types observed: (1) latent fusion of many other fused parts of Mother, even the graceless, creating a gestalt grace; (2) colonization of a graceless individual of high willpower, granting them Mother\'s grace wholesale; (3) colonization of an individual with high grace concentration, typically an exorcist.',
+    facts: 'Armored: takes -1 slash from direct attacks of equal or lower category unless the armor is dealt with through setup or circumstance (finding weak points, cracking with overwhelming force, etc).\nMother Knows Best: any exorcist that becomes a Mother\'s Favorite can suggest to the GM what their reactions should be. The GM ignores this and does what Mother would do (Mother wants to survive, feed, and multiply).\nTo run a Mother\'s Favorite as a hunt target, run it as a reskinned Centipede or Ogre sin, choosing one for the base and picking domains from either, plus these harm reactions, threat, and complication.',
+    attacksWith: 'Whipping spirals of flesh, coral spines, super-pressurized blood jets (long range): (1) 5 stress +2 sin, (2/3) 3 stress +1 sin, (4+) 2 stress.',
+    complications: 'Reinforce armor, grow extra spines, unravel body, burrow into wall or floor, overwhelm with psychic scream.\nNest (1-3, once per scene): releases a vaporized form of Mother into the air; coral polyps grow over all surfaces. Start a 6 talisman to deal with the complication and a 6 talisman to track actions against it. Slash the complication once after each player turn. At 4+ slashes, all exorcists take 1 nonlethal stress after acting if they must breathe. When it fills, all exorcists take 1d3 sin and 3 irreducible stress, and the effect ends as the polyps explode.',
+    threat: '(1) True Colonize: jab with a sharp spine. If successful, deals 5 stress to its target and infects that exorcist with Mother.',
     stress: 5, stressRisk23: 3, stressRisk1: 2
   },
   // Full Sins built from SIN_TEMPLATES. 'sinTemplate' means resolve via createSinFromType.
@@ -3893,6 +4367,7 @@ var OFFICIAL_ENEMIES = [
 function resolveOfficialEnemy(o) {
   if (o.sinTemplate) {
     var s = createSinFromType(o.sinTemplate);
+    s.officialId = o.officialId; // preserve for translation lookups in the view
     s.name = o.name;
     s.category = o.category != null ? o.category : s.category;
     s.expansion = o.expansion || 'base';
@@ -3941,6 +4416,7 @@ function createBlankSin() {
     outOfControl: '',        // effect when pressure hits 6+ (beyond +1 CAT)
     palace: '',              // location/appearance of the palace
     traces: '',              // lesser sins / minions
+    extraRules: '',          // extra rules block (e.g. Perfect Sin rules/complications)
     expansion: 'base'
   };
 }
@@ -3965,6 +4441,40 @@ function createSinFromType(typeId) {
   s.afflictions = tpl.afflictions || '';
   s.tensionMoves = tpl.tensionMoves || '';
   s.severeAttack = tpl.severeAttack || '';
+  return s;
+}
+
+/**
+ * Build a Perfect Sin of the given base type: the base sin plus the perfect
+ * upgrades and global rules folded into editable fields, with the perfect
+ * talisman (12 base) and CAT bumped to the 3+ minimum. Returns a sin object.
+ */
+function createPerfectSinFromType(typeId) {
+  var s = createSinFromType(typeId);
+  var ps = PERFECT_SINS.sins.find(function(x) { return x.baseSinType === typeId; });
+  s.name = ps ? ps.name : ('Perfect ' + tSinType(typeId));
+  if (ps && ps.image) s.image = ps.image;
+  if ((s.category || 0) < 3) s.category = 3;
+  s.talismanSegments = 12; // perfect base; GM adds +2xCAT +2xpressure live
+  var pt = currentLang === 'pt';
+  var pfx = pt ? '[Perfeito] ' : '[Perfect] ';
+  // Distribute each upgrade into its matching sheet field (slot); everything else
+  // (global rules + shared complications + unslotted upgrades) goes to extraRules.
+  function appendField(field, text) { s[field] = (s[field] ? s[field] + '\n' : '') + text; }
+  var slotMap = { severeAttack: 'severeAttack', threats: 'threats', complications: 'complications', behavior: 'behavior', traces: 'traces', pressure: 'outOfControl' };
+  var extraLines = [];
+  (ps ? ps.upgrades : []).forEach(function(u) {
+    var line = pfx + (pt && u.namePt ? u.namePt : u.name) + ': ' + (pt ? u.pt : u.en);
+    var field = slotMap[u.slot];
+    if (field) appendField(field, line); else extraLines.push('\u2022 ' + (pt && u.namePt ? u.namePt : u.name) + ': ' + (pt ? u.pt : u.en));
+  });
+  // Global Perfect Sin rules + shared complications always go to extraRules.
+  var rulesTxt = PERFECT_SINS.rules.map(function(r) { return '\u2022 ' + (pt ? r.pt : r.en); }).join('\n');
+  var compTxt = PERFECT_SINS.complications.map(function(c) { return '\u2022 ' + (pt ? c.namePt : c.name) + ': ' + (pt ? c.pt : c.en); }).join('\n');
+  s.extraRules = (pt ? 'PECADO PERFEITO\n' : 'PERFECT SIN\n') +
+    (extraLines.length ? extraLines.join('\n') + '\n\n' : '') +
+    (pt ? 'Regras:\n' : 'Rules:\n') + rulesTxt + '\n\n' +
+    (pt ? 'Complicações (começa com uma ativa; ativa outra de graça com talismã <=50%):\n' : 'Complications (starts with one active; activates another free at <=50% talisman):\n') + compTxt;
   return s;
 }
 
@@ -7476,7 +7986,8 @@ function renderEnemyCombat(enemyId) {
           return '<div class="combat-ref-block"><strong>' + escHtml(x.question) + '</strong>' + (x.answer ? '<p>' + escHtml(x.answer) + '</p>' : '') + '</div>';
         }).join('') + '</div>' : '') +
       (en.traces ? '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.traces) + '</p></div></div>' : '') +
-      (en.palace ? '<div class="combat-section"><h3>' + (pt ? 'Palácio' : 'Palace') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.palace) + '</p></div></div>' : '');
+      (en.palace ? '<div class="combat-section"><h3>' + (pt ? 'Palácio' : 'Palace') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.palace) + '</p></div></div>' : '') +
+      (en.extraRules ? '<div class="combat-section"><h3>' + (pt ? 'Regras Extras' : 'Extra Rules') + '</h3><div class="combat-ref-block"><p>' + escHtml(en.extraRules).replace(/\n/g, '<br>') + '</p></div></div>' : '');
   } else {
     quickRef =
       (en.description ? '<p class="combat-meta muted">' + escHtml(en.description) + '</p>' : '') +
@@ -7564,28 +8075,58 @@ function renderOfficialView(officialId) {
 
   var body;
   if (o.kind === 'sin') {
+    var sid = o.officialId; // sin-template id (ogre/idol/...) for translations
     var domains = (o.domains || []).filter(function(d) { return d.name || d.description; });
+    var sAttacks = tEnemyField(sid, 'attacksWith', o.attacksWith);
+    var sComps = tEnemyField(sid, 'complications', o.complications);
+    var sThreats = tEnemyField(sid, 'threats', o.threats);
+    var sSevere = tEnemyField(sid, 'severeAttack', o.severeAttack);
+    var sAffl = tEnemyField(sid, 'afflictions', o.afflictions);
+    var sPressEff = tEnemyField(sid, 'pressureEffect', o.pressureEffect);
+    var sOOC = tEnemyField(sid, 'outOfControl', o.outOfControl);
+    var sTraces = tEnemyField(sid, 'traces', o.traces);
+    var domTr = (PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].domains) || null; // {name: {name,description}} by base name
     body =
-      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tSinType(o.sinType) + ' \u2022 ' + (pt ? 'Forma' : 'Form') + ' ' + (o.form || 'I') + ' \u2022 CAT ' + (o.category || 0) + ' \u2022 ' + (pt ? 'Talismã' : 'Talisman') + ' ' + (o.talismanSegments || 8) + '</p>' +
-      (o.primaryEmotion ? '<p class="combat-meta"><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(o.primaryEmotion) + '</p>' : '') +
-      (o.attacksWith ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.attacksWith).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (o.complications ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.complications).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (o.threats ? '<div class="combat-section"><h3>' + (pt ? 'Ameaças' : 'Threats') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.threats).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (domains.length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios' : 'Domains') + '</h3>' + domains.map(function(d) { return '<div class="combat-ref-block"><strong>' + escHtml(d.name) + '</strong>' + (d.description ? '<p>' + escHtml(d.description) + '</p>' : '') + '</div>'; }).join('') + '</div>' : '') +
-      (o.severeAttack ? '<div class="combat-section"><h3>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.severeAttack) + '</p></div></div>' : '') +
-      (o.afflictions ? '<div class="combat-section"><h3>' + (pt ? 'Aflições' : 'Afflictions') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.afflictions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      ((o.traumas || []).some(function(x) { return x && (x.question || x.answer); }) ? '<div class="combat-section"><h3>' + (pt ? 'Traumas' : 'Traumas') + '</h3>' + o.traumas.filter(function(x) { return x && x.question; }).map(function(x) { return '<div class="combat-ref-block"><strong>' + escHtml(x.question) + '</strong></div>'; }).join('') + '</div>' : '') +
-      (o.pressureName ? '<div class="combat-section"><h3>' + (pt ? 'Pressão' : 'Pressure') + ': ' + escHtml(o.pressureName) + '</h3>' + (o.pressureEffect ? '<div class="combat-ref-block"><p>' + escHtml(o.pressureEffect) + '</p></div>' : '') + (o.outOfControl ? '<div class="combat-ref-block"><p><strong>' + (pt ? 'Fora de Controle' : 'Out of Control') + ':</strong> ' + escHtml(o.outOfControl) + '</p></div>' : '') + '</div>' : '') +
-      (o.traces ? '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.traces) + '</p></div></div>' : '');
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + (pt ? 'Pecado' : 'Sin') + ' ' + tSinType(o.sinType) + '</p>' +
+      '<p class="combat-meta"><span class="label">CAT:</span> 1+</p>' +
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> 8 + CAT + ' + (pt ? 'Pressão' : 'Pressure') + '</p>' +
+      (o.primaryEmotion ? '<p class="combat-meta"><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(tEnemyField(sid, 'primaryEmotion', o.primaryEmotion)) + '</p>' : '') +
+      (sAttacks ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(sAttacks).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (sComps ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(sComps).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (sThreats ? '<div class="combat-section"><h3>' + (pt ? 'Ameaças' : 'Threats') + '</h3><div class="combat-ref-block"><p>' + escHtml(sThreats).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (domains.length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios' : 'Domains') + '</h3>' + domains.map(function(d) { var dt = domTr && domTr[d.name]; var dn = dt ? dt.name : d.name; var dd = dt ? dt.description : d.description; return '<div class="combat-ref-block"><strong>' + escHtml(dn) + '</strong>' + (dd ? '<p>' + escHtml(dd) + '</p>' : '') + '</div>'; }).join('') + '</div>' : '') +
+      (sSevere ? '<div class="combat-section"><h3>' + (pt ? 'Ataque Severo' : 'Severe Attack') + '</h3><div class="combat-ref-block"><p>' + escHtml(sSevere) + '</p></div></div>' : '') +
+      (sAffl ? '<div class="combat-section"><h3>' + (pt ? 'Aflições' : 'Afflictions') + '</h3><div class="combat-ref-block"><p>' + escHtml(sAffl).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      ((o.traumas || []).some(function(x) { return x && (x.question || x.answer); }) ? '<div class="combat-section"><h3>' + (pt ? 'Traumas' : 'Traumas') + '</h3>' + o.traumas.filter(function(x) { return x && x.question; }).map(function(x, ti) { var trs = (PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].traumas); var q = (currentLang === 'pt' && trs && trs[ti]) ? trs[ti] : x.question; return '<div class="combat-ref-block"><strong>' + escHtml(q) + '</strong></div>'; }).join('') + '</div>' : '') +
+      (o.pressureName ? '<div class="combat-section"><h3>' + (pt ? 'Pressão' : 'Pressure') + ': ' + escHtml(o.pressureName) + '</h3>' + (sPressEff ? '<div class="combat-ref-block"><p>' + escHtml(sPressEff) + '</p></div>' : '') + (sOOC ? '<div class="combat-ref-block"><p><strong>' + (pt ? 'Fora de Controle' : 'Out of Control') + ':</strong> ' + escHtml(sOOC) + '</p></div>' : '') + '</div>' : '') +
+      (sTraces ? '<div class="combat-section"><h3>' + (pt ? 'Traços' : 'Traces') + '</h3><div class="combat-ref-block"><p>' + escHtml(sTraces) + '</p></div></div>' : '');
   } else {
+    // Localized field values (fall back to EN when no PT translation).
+    var oid = o.officialId;
+    var fDesc = tEnemyField(oid, 'description', o.description);
+    var fFacts = tEnemyField(oid, 'facts', o.facts);
+    var fAttacks = tEnemyField(oid, 'attacksWith', o.attacksWith);
+    var fComps = tEnemyField(oid, 'complications', o.complications);
+    var fThreat = tEnemyField(oid, 'threat', o.threat);
+    var fReactions = tEnemyField(oid, 'reactions', o.reactions);
+    // Pull any "Execution: ..." / "Execution talisman: ..." clause out of the
+    // description so it can live in the Talisman field instead of loose in the text.
+    var oDesc = fDesc || '';
+    var oTalisman = o.talismanDisplay || null;
+    var execMatch = oDesc.match(/Execution(?: talisman)?:\s*([^.]*(?:\([^)]*\)[^.]*)*)\.?/i);
+    if (execMatch) {
+      if (!oTalisman) oTalisman = execMatch[1].trim();
+      oDesc = oDesc.replace(execMatch[0], '').replace(/\s{2,}/g, ' ').trim();
+    }
+    if (!oTalisman) oTalisman = o.talismanSegments || 2;
     body =
-      (o.description ? '<p class="combat-meta muted">' + escHtml(o.description) + '</p>' : '') +
-      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(o.type) + ' \u2022 <span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> ' + (o.talismanSegments || 2) + '</p>' +
-      (o.facts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.facts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (o.attacksWith ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.attacksWith).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (o.complications ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.complications).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (o.threat ? '<div class="combat-section"><h3>' + (pt ? 'Ameaça' : 'Threat') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.threat).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
-      (o.reactions ? '<div class="combat-section"><h3>' + (pt ? 'Reações' : 'Reactions') + '</h3><div class="combat-ref-block"><p>' + escHtml(o.reactions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (oDesc ? '<p class="combat-meta muted">' + escHtml(oDesc) + '</p>' : '') +
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + tEnemyType(o.type) + ' \u2022 <span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> ' + oTalisman + '</p>' +
+      (fFacts ? '<div class="combat-section"><h3>' + (pt ? 'Fatos / Capacidades' : 'Facts / Capabilities') + '</h3><div class="combat-ref-block"><p>' + escHtml(fFacts).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (fAttacks ? '<div class="combat-section"><h3>' + (pt ? 'Ataca Com' : 'Attacks With') + '</h3><div class="combat-ref-block"><p>' + escHtml(fAttacks).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (fComps ? '<div class="combat-section"><h3>' + (pt ? 'Complicações' : 'Complications') + '</h3><div class="combat-ref-block"><p>' + escHtml(fComps).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (fThreat ? '<div class="combat-section"><h3>' + (pt ? 'Ameaça' : 'Threat') + '</h3><div class="combat-ref-block"><p>' + escHtml(fThreat).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
+      (fReactions ? '<div class="combat-section"><h3>' + (pt ? 'Reações' : 'Reactions') + '</h3><div class="combat-ref-block"><p>' + escHtml(fReactions).replace(/\n/g, '<br>') + '</p></div></div>' : '') +
       '<div class="combat-section"><h3>' + (pt ? 'Estresse Infligido' : 'Stress Inflicted') + '</h3>' +
         '<p class="combat-meta">(1): ' + (o.stress != null ? o.stress : 2) + ' \u2022 (2-3): ' + (o.stressRisk23 != null ? o.stressRisk23 : 3) + ' \u2022 (4+): ' + (o.stressRisk1 != null ? o.stressRisk1 : 2) + '</p>' +
       '</div>';
@@ -7606,8 +8147,11 @@ function renderOfficialView(officialId) {
       '<div class="combat-ref">' + body +
         ((o.examplesImage || (o.examples && o.examples.length)) ? '<div class="combat-section"><h3>' + (pt ? 'Exemplos' : 'Examples') + '</h3>' +
           (o.examplesImage ? '<img class="enemy-examples-img" src="' + o.examplesImage + '" alt="' + escAttr(o.name) + ' examples">' : '') +
-          ((o.examples && o.examples.length) ? o.examples.map(function(ex) {
-            return '<div class="combat-ref-block"><strong>' + escHtml(ex.name) + '</strong>' + (ex.story ? '<p>' + escStory(ex.story) + '</p>' : '') + '</div>';
+          ((o.examples && o.examples.length) ? o.examples.map(function(ex, exi) {
+            var exPt = (currentLang === 'pt' && PT_CONTENT.enemies[o.officialId] && PT_CONTENT.enemies[o.officialId].examples && PT_CONTENT.enemies[o.officialId].examples[exi]) || null;
+            var exName = exPt ? exPt.name : ex.name;
+            var exStory = exPt ? exPt.story : ex.story;
+            return '<div class="combat-ref-block"><strong>' + escHtml(exName) + '</strong>' + (exStory ? '<p>' + escStory(exStory) + '</p>' : '') + '</div>';
           }).join('') : '') +
         '</div>' : '') +
       '</div>' +
@@ -7702,6 +8246,11 @@ function renderBestiary() {
     { id: 'anomaly', label: pt ? 'Anomalias' : 'Anomalies' },
     { id: 'sin', label: pt ? 'Pecados' : 'Sins' }
   ];
+  // Mother + Perfect Sins sub-tabs only when GFF-3 is active
+  if (isExpansionActive('gff3')) {
+    tabs.push({ id: 'mother', label: 'Mother' });
+    tabs.push({ id: 'perfectsin', label: pt ? 'Pecados Perfeitos' : 'Perfect Sins' });
+  }
   var savedTab = null;
   try { savedTab = localStorage.getItem('bestiaryTab'); } catch (e) {}
   if (!savedTab || !tabs.some(function(t) { return t.id === savedTab; })) savedTab = tabs[0].id;
@@ -7744,11 +8293,49 @@ function renderBestiaryGroup(group) {
     return isExpansionActive(o.expansion) && (o.bestiaryGroup || 'mundane') === group;
   });
 
-  if (list.length === 0) {
-    content.innerHTML = '<div class="empty-state"><p class="muted">' + (pt ? 'Nada aqui ainda.' : 'Nothing here yet.') + '</p></div>';
+  // Perfect Sins tab opens with a rules/complications reference block.
+  var introHtml = '';
+  if (group === 'perfectsin') {
+    introHtml = '<div class="enemy-card enemy-card-sin perfectsin-intro">' +
+      '<h3 class="enemy-name">' + (pt ? 'Pecados Perfeitos' : 'Perfect Sins') + '</h3>' +
+      '<p class="enemy-desc">' + (pt ? 'Alvos de grau especial, temidos até por exorcistas experientes. Manifestam-se apenas em CAT 3-6, como um desafio significativo para grupos poderosos. Têm os tipos e formas normais, mas são muito mais fortes. Aplique as regras abaixo sobre um pecado base do tipo escolhido.' : 'Special-grade hardened targets, feared even by experienced exorcists. They manifest only at CAT 3-6, as a significant challenge for powerful groups. They use the normal types and forms, but are vastly more powerful. Apply the rules below on top of a base sin of the chosen type.') + '</p>' +
+      '<h4 class="reference-subhead">' + (pt ? 'Regras gerais' : 'General rules') + '</h4>' +
+      '<ul class="reference-list">' +
+        PERFECT_SINS.rules.map(function(r) { return '<li>' + (pt ? r.pt : r.en) + '</li>'; }).join('') +
+      '</ul>' +
+      '<h4 class="reference-subhead">' + (pt ? 'Complicações compartilhadas' : 'Shared complications') + '</h4>' +
+      '<ul class="reference-list">' +
+        PERFECT_SINS.complications.map(function(c) { return '<li><strong>' + (pt ? c.namePt : c.name) + ':</strong> ' + (pt ? c.pt : c.en) + '</li>'; }).join('') +
+      '</ul>' +
+    '</div>';
+  }
+
+  // Perfect Sins: intro block + a card per perfect-sin type (click to open detail).
+  if (group === 'perfectsin') {
+    var psCards = PERFECT_SINS.sins.map(function(ps) {
+      var base = SIN_TEMPLATES[ps.baseSinType];
+      return '<div class="enemy-card official-card enemy-card-sin" data-psid="' + ps.id + '">' +
+        (ps.image ? '<img class="enemy-card-img" src="' + ps.image + '" alt="' + escAttr(ps.name) + '">' : '') +
+        '<div class="enemy-card-header"><h3 class="enemy-name">' + escHtml(pt ? (ps.namePt || ps.name) : ps.name) + '</h3>' +
+          '<span class="enemy-cat">CAT 3-6</span></div>' +
+        '<div class="enemy-card-body">' +
+          '<p><span class="label">' + (pt ? 'Base' : 'Base') + ':</span> ' + tSinType(ps.baseSinType) + '</p>' +
+          '<p><span class="label">' + (pt ? 'Bônus' : 'Upgrades') + ':</span> ' + (ps.upgrades || []).map(function(u) { return (pt && u.namePt) ? u.namePt : u.name; }).join(', ') + '</p>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    content.innerHTML = introHtml + (psCards ? '<div class="enemy-list">' + psCards + '</div>' : '');
+    content.querySelectorAll('[data-psid]').forEach(function(card) {
+      card.addEventListener('click', function() { navigate('perfectsin-view/' + card.dataset.psid); });
+    });
     return;
   }
-  content.innerHTML = '<div class="enemy-list">' + list.map(renderOfficialCard).join('') + '</div>';
+
+  if (list.length === 0) {
+    content.innerHTML = introHtml + (introHtml ? '' : '<div class="empty-state"><p class="muted">' + (pt ? 'Nada aqui ainda.' : 'Nothing here yet.') + '</p></div>');
+    return;
+  }
+  content.innerHTML = introHtml + '<div class="enemy-list">' + list.map(renderOfficialCard).join('') + '</div>';
 
   content.querySelectorAll('.official-card').forEach(function(card) {
     var oid = card.dataset.oid;
@@ -7758,6 +8345,64 @@ function renderBestiaryGroup(group) {
       alert(pt ? 'Adicionado à sua lista de inimigos.' : 'Added to your enemy list.');
     });
     card.addEventListener('click', function() { navigate('official-view/' + oid); });
+  });
+}
+
+/** Detail view for a Perfect Sin: perfect upgrades on top, then the full base sin. */
+function renderPerfectSinView(psId) {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var ps = PERFECT_SINS.sins.find(function(x) { return x.id === psId; });
+  if (!ps) { navigate('bestiary'); return; }
+  var base = SIN_TEMPLATES[ps.baseSinType] || {};
+
+  // Build the base-sin reference sections (reuse the sin fields).
+  function sect(title, body) { return body ? '<div class="combat-section"><h3>' + title + '</h3><div class="combat-ref-block"><p>' + body + '</p></div></div>' : ''; }
+  var domains = (base.domainOptions || []).map(function(d) { return '<strong>' + escHtml(d.name) + '</strong>' + (d.description ? '<br>' + escHtml(d.description) : ''); }).join('</p><p>');
+
+  app.innerHTML =
+    '<div class="page enemy-combat-page combat-sin">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Pecados Perfeitos' : 'Perfect Sins') + '</button>' +
+        '<h1 class="title">' + escHtml(pt ? (ps.namePt || ps.name) : ps.name) + ' <span class="subtitle">CAT 3-6</span></h1>' +
+      '</header>' +
+      '<div class="actions-bar">' +
+        '<button class="btn btn-primary" id="btn-dup-perfect">' + (pt ? 'Duplicar para meu bestiário' : 'Duplicate to my bestiary') + '</button>' +
+      '</div>' +
+      (ps.image ? '<img class="enemy-detail-img" src="' + ps.image + '" alt="' + escAttr(ps.name) + '">' : '') +
+      (ps.quote ? '<p class="help-text" style="font-style:italic">\u201C' + (ps.quoteHtml ? ps.quote : escHtml(ps.quote)) + '\u201D</p>' : '') +
+      // Perfect upgrades (the star of the card)
+      '<div class="combat-ref"><div class="combat-section"><h3>' + (pt ? 'Bônus de Pecado Perfeito' : 'Perfect Sin Upgrades') + '</h3>' +
+        (ps.upgrades || []).map(function(u) { return '<div class="combat-ref-block"><strong>' + escHtml(pt && u.namePt ? u.namePt : u.name) + '</strong><p>' + escHtml(pt ? u.pt : u.en) + '</p></div>'; }).join('') +
+      '</div>' +
+      (ps.quote2 ? '<p class="help-text" style="font-style:italic">\u201C' + (ps.quote2Html ? ps.quote2 : escHtml(ps.quote2)) + '\u201D</p>' : '') +
+      // Reminder of the global perfect-sin rules
+      '<div class="combat-section"><h3>' + (pt ? 'Regras de Pecado Perfeito' : 'Perfect Sin Rules') + '</h3>' +
+        '<div class="combat-ref-block"><p>' + PERFECT_SINS.rules.map(function(r) { return escHtml(pt ? r.pt : r.en); }).join('<br><br>') + '</p></div>' +
+        '<div class="combat-ref-block"><strong>' + (pt ? 'Complicações' : 'Complications') + '</strong>' + PERFECT_SINS.complications.map(function(c) { return '<p><strong>' + escHtml(pt ? c.namePt : c.name) + ':</strong> ' + escHtml(pt ? c.pt : c.en) + '</p>'; }).join('') + '</div>' +
+      '</div>' +
+      // Base sin (reused from SIN_TEMPLATES)
+      '<div class="combat-section"><h3>' + (pt ? 'Pecado Base' : 'Base Sin') + ': ' + tSinType(ps.baseSinType) + '</h3></div>' +
+      sect(pt ? 'Emoção' : 'Emotion', base.primaryEmotion ? escHtml(base.primaryEmotion) : '') +
+      (base.pressureName ? '<div class="combat-section"><h3>' + (pt ? 'Pressão' : 'Pressure') + ': ' + escHtml(base.pressureName) + '</h3>' + (base.pressureEffect ? '<div class="combat-ref-block"><p>' + escHtml(base.pressureEffect) + '</p></div>' : '') + (base.outOfControl ? '<div class="combat-ref-block"><p><strong>' + (pt ? 'Fora de Controle' : 'Out of Control') + ':</strong> ' + escHtml(base.outOfControl) + '</p></div>' : '') + '</div>' : '') +
+      sect(pt ? 'Ataca Com' : 'Attacks With', base.attacksWith ? escHtml(base.attacksWith) : '') +
+      sect(pt ? 'Complicações (base)' : 'Complications (base)', base.complications ? escHtml(base.complications) : '') +
+      sect(pt ? 'Ameaças' : 'Threats', base.threats ? escHtml(base.threats) : '') +
+      sect(pt ? 'Aflições' : 'Afflictions', base.afflictions ? escHtml(base.afflictions).replace(/\n/g, '<br>') : '') +
+      sect(pt ? 'Ataque Severo' : 'Severe Attack', base.severeAttack ? escHtml(base.severeAttack) : '') +
+      sect(pt ? 'Traços' : 'Traces', base.traces ? escHtml(base.traces) : '') +
+      ((base.domainOptions || []).length ? '<div class="combat-section"><h3>' + (pt ? 'Domínios (escolha 3)' : 'Domains (choose 3)') + '</h3><div class="combat-ref-block"><p>' + domains + '</p></div></div>' : '') +
+      '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('bestiary'); });
+  document.getElementById('btn-dup-perfect').addEventListener('click', function() {
+    var sin = createPerfectSinFromType(ps.baseSinType);
+    sin.id = generateId();
+    sin.expansion = 'gff3';
+    saveEnemy(sin);
+    navigate('admin');
   });
 }
 
@@ -7771,7 +8416,7 @@ function renderOfficialCard(o) {
       '<span class="enemy-cat">' + typeLabel + '</span>' +
     '</div>' +
     '<div class="enemy-card-body">' +
-      (o.description ? '<p class="enemy-desc muted">' + escHtml(o.description) + '</p>' : '') +
+      ((function() { var d = tEnemyField(o.officialId, 'description', o.description); return d ? '<p class="enemy-desc muted">' + escHtml(d) + '</p>' : ''; })()) +
     '</div>' +
     '<div class="enemy-card-actions">' +
       '<button class="btn btn-sm btn-duplicate">' + (pt ? 'Duplicar' : 'Duplicate') + '</button>' +
@@ -7830,6 +8475,10 @@ function renderEnemyTypeChooser() {
           '<h3>' + (pt ? 'Pecado (Sin)' : 'Sin') + '</h3>' +
           '<p class="muted">' + (pt ? 'Modelo completo: domínios, traumas, movimentos de tensão, pressão e palácio.' : 'Full model: domains, traumas, tension moves, pressure and palace.') + '</p>' +
         '</button>' +
+        (isExpansionActive('gff3') ? '<button class="enemy-type-choice enemy-type-choice-sin" id="choose-perfect">' +
+          '<h3>' + (pt ? 'Pecado Perfeito' : 'Perfect Sin') + '</h3>' +
+          '<p class="muted">' + (pt ? 'Um Pecado base do tipo escolhido, já com as modificações de Pecado Perfeito (talismã 12, CAT 3+, bônus e complicações).' : 'A base Sin of the chosen type, already with Perfect Sin modifications (12 talisman, CAT 3+, upgrades and complications).') + '</p>' +
+        '</button>' : '') +
       '</div>' +
       '<div class="sin-type-picker" id="sin-type-picker" style="display:none">' +
         '<h3 class="form-subhead">' + (pt ? 'Escolha um tipo de Pecado' : 'Choose a Sin type') + '</h3>' +
@@ -7841,16 +8490,36 @@ function renderEnemyTypeChooser() {
           '<button class="btn btn-secondary sin-type-btn" data-type="custom">' + (pt ? 'Personalizado' : 'Custom') + '</button>' +
         '</div>' +
       '</div>' +
+      '<div class="sin-type-picker" id="perfect-type-picker" style="display:none">' +
+        '<h3 class="form-subhead">' + (pt ? 'Escolha o tipo base do Pecado Perfeito' : 'Choose the Perfect Sin base type') + '</h3>' +
+        '<p class="help-text">' + (pt ? 'O Pecado base é preenchido e as modificações de Pecado Perfeito (bônus + regras + complicações) são adicionadas. Você pode editar tudo.' : 'The base Sin is pre-filled and the Perfect Sin modifications (upgrades + rules + complications) are added. You can edit everything.') + '</p>' +
+        '<div class="sin-type-choices">' +
+          PERFECT_SINS.sins.map(function(ps) {
+            return '<button class="btn btn-secondary perfect-type-btn" data-type="' + ps.baseSinType + '">' + tSinType(ps.baseSinType) + '</button>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
     '</div>';
   renderLangToggle();
   document.getElementById('btn-back').addEventListener('click', function() { navigate('admin'); });
   document.getElementById('choose-opponent').addEventListener('click', function() { navigate('opponent-new'); });
   document.getElementById('choose-sin').addEventListener('click', function() {
     document.getElementById('sin-type-picker').style.display = 'block';
+    if (document.getElementById('perfect-type-picker')) document.getElementById('perfect-type-picker').style.display = 'none';
     document.getElementById('choose-sin').classList.add('selected');
   });
+  if (document.getElementById('choose-perfect')) {
+    document.getElementById('choose-perfect').addEventListener('click', function() {
+      document.getElementById('perfect-type-picker').style.display = 'block';
+      document.getElementById('sin-type-picker').style.display = 'none';
+      document.getElementById('choose-perfect').classList.add('selected');
+    });
+  }
   app.querySelectorAll('.sin-type-btn').forEach(function(btn) {
     btn.addEventListener('click', function() { navigate('sin-new/' + btn.dataset.type); });
+  });
+  app.querySelectorAll('.perfect-type-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { navigate('perfectsin-new/' + btn.dataset.type); });
   });
 }
 
@@ -8024,17 +8693,31 @@ function tSinType(typeId) {
   return (currentLang === 'pt' ? pt[typeId] : en[typeId]) || typeId;
 }
 
+/**
+ * Return the PT translation of an official-enemy or sin-template field when the
+ * UI is in Portuguese and a translation exists; otherwise the original EN value.
+ * `id` is the enemy officialId or sin-template type (e.g. 'ogre').
+ */
+function tEnemyField(id, field, enValue) {
+  if (currentLang === 'pt' && id && PT_CONTENT.enemies[id] && PT_CONTENT.enemies[id][field] != null) {
+    return PT_CONTENT.enemies[id][field];
+  }
+  return enValue;
+}
+
 function tSinForm(formId) {
   var pt = { 'I': 'I / Cortado (Severed)', 'II': 'II / Fundido (Fused)', 'III': 'III / Vinculado (Bound)' };
   var en = { 'I': 'I / Severed', 'II': 'II / Fused', 'III': 'III / Bound' };
   return (currentLang === 'pt' ? pt[formId] : en[formId]) || formId;
 }
 
-function renderSinForm(sinId, startingType) {
+function renderSinForm(sinId, startingType, isPerfect) {
   var app = document.getElementById('app');
   var pt = currentLang === 'pt';
   var isEdit = !!sinId;
-  var s = isEdit ? getEnemy(sinId) : (startingType ? createSinFromType(startingType) : createBlankSin());
+  var s = isEdit ? getEnemy(sinId)
+    : (isPerfect ? createPerfectSinFromType(startingType)
+      : (startingType ? createSinFromType(startingType) : createBlankSin()));
   if (!s) { navigate('admin'); return; }
   // Guard: ensure structure exists on older/edited records
   if (!s.domains) s.domains = [{ name: '', description: '' }, { name: '', description: '' }, { name: '', description: '' }];
@@ -8139,6 +8822,8 @@ function renderSinForm(sinId, startingType) {
           '<textarea id="s-severeAttack" rows="3">' + escHtml(s.severeAttack) + '</textarea>' +
           '<label>' + (pt ? 'Palácio (local e aparência)' : 'Palace (location & appearance)') + '</label>' +
           '<textarea id="s-palace" rows="3">' + escHtml(s.palace) + '</textarea>' +
+          '<label>' + (pt ? 'Regras Extras' : 'Extra Rules') + '</label>' +
+          '<textarea id="s-extraRules" rows="4">' + escHtml(s.extraRules || '') + '</textarea>' +
         '</div>' +
         '<div class="form-section">' +
           '<label>' + (pt ? 'Expansão' : 'Expansion') + '</label>' +
@@ -8201,6 +8886,7 @@ function renderSinForm(sinId, startingType) {
     target.severeAttack = document.getElementById('s-severeAttack').value.trim();
     target.palace = document.getElementById('s-palace').value.trim();
     target.traces = document.getElementById('s-traces').value.trim();
+    var trTarget = document.getElementById('s-extraRules'); if (trTarget) target.extraRules = trTarget.value.trim();
     target.expansion = document.getElementById('s-expansion').value;
   }
   var sPortraitInput = document.getElementById('s-portrait-input');
@@ -8259,6 +8945,7 @@ function renderSinForm(sinId, startingType) {
     s.severeAttack = document.getElementById('s-severeAttack').value.trim();
     s.palace = document.getElementById('s-palace').value.trim();
     s.traces = document.getElementById('s-traces').value.trim();
+    var srEl = document.getElementById('s-extraRules'); if (srEl) s.extraRules = srEl.value.trim();
     s.expansion = document.getElementById('s-expansion').value;
     if (!s.name) { alert(pt ? 'Dê um nome ao pecado.' : 'Please name the sin.'); return; }
     saveEnemy(s);
@@ -8462,9 +9149,11 @@ route('enemy-new', renderEnemyTypeChooser);
 route('opponent-new', function() { renderEnemyForm(null); });
 route('enemy-edit', function(id) { renderEnemyForm(id); });
 route('sin-new', function(type) { renderSinForm(null, type); });
+route('perfectsin-new', function(type) { renderSinForm(null, type, true); });
 route('sin-edit', function(id) { renderSinForm(id); });
 route('enemy-combat', function(id) { renderEnemyCombat(id); });
 route('official-view', function(id) { renderOfficialView(id); });
+route('perfectsin-view', function(id) { renderPerfectSinView(id); });
 route('bestiary', renderBestiary);
 route('hunt', renderHunt);
 route('investigation', renderInvestigation);
