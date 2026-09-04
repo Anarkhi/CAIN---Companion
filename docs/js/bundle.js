@@ -2761,7 +2761,7 @@ function createBlankCharacter() {
     agenda: { id: '', abilities: [] },
     blasphemies: [],
     stress: 0, maxStress: 6, injuries: 0, psycheBursts: 3, maxPsycheBursts: 3,
-    pathos: 0, sin: 0, sinOverflowCap: 10, sinMarks: [],
+    pathos: 0, sin: 0, sinOverflowCap: 10, sinCapModel: 'derived', sinMarks: [],
     hooks: [], afflictions: [],
     kitPoints: 5, maxKitPoints: 5, kitItems: [], ownedKit: [],
     weapons: { firearm: { name: 'Service Firearm', category: 0 }, melee: { name: 'Service Melee', category: 0 } },
@@ -3115,14 +3115,27 @@ function getOwnedKitDeployables(char) {
   });
 }
 
-/** Effective sin overflow cap (base + kit passives). */
+/**
+ * Effective sin overflow cap. Derived from the base cap minus 1 per blasphemy
+ * beyond the first, plus kit passives. char.sinOverflowCap holds the BASE cap
+ * (default 10); the blasphemy penalty is computed here so it always tracks the
+ * current number of blasphemies (whether added via advance or the Edit page).
+ */
 function getEffectiveSinCap(char) {
-  return (char.sinOverflowCap || 10) + getKitMod(char, 'sinCap');
+  var base = char.sinOverflowCap || 10;
+  var extraBlasphemies = Math.max(0, (char.blasphemies || []).length - 1);
+  return Math.max(1, base - extraBlasphemies + getKitMod(char, 'sinCap'));
 }
 
 /** Effective max injuries (base 3 + kit passives). */
 function getEffectiveMaxInjury(char) {
   return 3 + getKitMod(char, 'maxInjury');
+}
+
+/** XP cap for cashing an advance: base 4, +1 per blasphemy beyond the first. */
+function getXpCap(char) {
+  var extra = Math.max(0, (char.blasphemies || []).length - 1);
+  return 4 + extra;
 }
 
 /**
@@ -3291,8 +3304,35 @@ var STORAGE_KEY = 'cain_companion_characters';
 function getAllCharacters() {
   try {
     var data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    var chars = data ? JSON.parse(data) : [];
+    if (migrateSinCapModel(chars)) {
+      // Persist the one-time normalization so it doesn't run again.
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(chars));
+    }
+    return chars;
   } catch (e) { return []; }
+}
+
+/**
+ * One-time migration: the blasphemy sin-cap penalty (-1 per extra blasphemy)
+ * used to be baked imperatively into char.sinOverflowCap. It is now derived in
+ * getEffectiveSinCap. To avoid double-counting, restore the BASE cap by adding
+ * the previously-baked reduction back. Guarded by char.sinCapModel so it runs
+ * once per character. Returns true if anything changed.
+ */
+function migrateSinCapModel(chars) {
+  var changed = false;
+  (chars || []).forEach(function(c) {
+    if (c && c.sinCapModel !== 'derived') {
+      var extra = Math.max(0, (c.blasphemies || []).length - 1);
+      if (extra > 0 && typeof c.sinOverflowCap === 'number') {
+        c.sinOverflowCap = c.sinOverflowCap + extra; // un-bake old reduction -> base
+      }
+      c.sinCapModel = 'derived';
+      changed = true;
+    }
+  });
+  return changed;
 }
 
 function getCharacter(id) {
@@ -4586,8 +4626,9 @@ function renderView(characterId) {
         // Identity
         '<section class="sheet-section"><div class="identity-header">' +
           '<img class="char-portrait" src="' + getPortrait(char) + '" alt="' + escAttr(char.name) + '">' +
-          '<div class="identity-header-main"><div class="sheet-row"><h2 class="char-name-large">' + (char.name || 'Unnamed Exorcist') + '</h2><span class="cat-badge">CAT ' + char.category + '</span></div>' +
-          '<div class="identity-details"><span><strong>' + t('id') + ':</strong> ' + (char.exorcistId || '\u2014') + '</span><span><strong>' + t('sinSeed') + ':</strong> ' + t(char.sinSeedLocation) + '</span><span><strong>' + t('missions') + ':</strong> ' + char.missionsSurvived + '</span><span><strong>' + t('scrip') + ':</strong> ' + char.scrip + '</span></div>' +
+          '<div class="identity-header-main"><div class="sheet-row"><h2 class="char-name-large">' + (char.name || 'Unnamed Exorcist') + '</h2>' +
+            '<span class="cat-badge cat-badge-ctrl"><button class="btn btn-tiny cat-adjust" data-d="-1" title="CAT -1">\u2212</button>CAT ' + char.category + '<button class="btn btn-tiny cat-adjust" data-d="1" title="CAT +1">+</button></span></div>' +
+          '<div class="identity-details"><span><strong>' + t('id') + ':</strong> ' + (char.exorcistId || '\u2014') + '</span><span><strong>' + t('sinSeed') + ':</strong> ' + t(char.sinSeedLocation) + '</span><span><strong>' + t('missions') + ':</strong> ' + char.missionsSurvived + '</span></div>' +
           (char.look ? '<p class="char-look">' + escHtml(char.look) + '</p>' : '') +
           '</div></div>' +
         '</section>' +
@@ -4619,7 +4660,7 @@ function renderView(characterId) {
           '<div class="state-box"><label>' + t('psycheBursts') + '</label><span class="state-value large">' + char.psycheBursts + ' / ' + char.maxPsycheBursts + '</span></div>' +
           '<div class="state-box"><label>' + t('pathos') + '</label><span class="state-value large">' + char.pathos + ' / 3</span></div>' +
           '<div class="state-box"><label>' + t('sin') + '</label><span class="state-value large ' + (char.sin >= getEffectiveSinCap(char) ? 'danger' : '') + '">' + char.sin + ' / ' + getEffectiveSinCap(char) + '</span></div>' +
-          '<div class="state-box"><label>' + t('xp') + '</label><span class="state-value large">' + char.experience + ' / 4</span></div>' +
+          '<div class="state-box"><label>' + t('xp') + '</label><span class="state-value large">' + char.experience + ' / ' + getXpCap(char) + '</span></div>' +
           '<div class="state-box"><label>' + t('session_advances') + '</label><span class="state-value large">' + (char.advances || 0) + '</span></div>' +
         '</div></section>' +
         // Agenda
@@ -4662,6 +4703,7 @@ function renderView(characterId) {
         // Weapons
         '<section class="sheet-section"><h3>' + t('kitWeapons') + '</h3>' +
           '<p><strong>' + t('kitPoints') + ':</strong> ' + (char.session ? (getEffectiveMaxKP(char) - (char.session.kitPointsUsed || 0)) + ' / ' + getEffectiveMaxKP(char) : char.kitPoints + ' / ' + getEffectiveMaxKP(char)) + '</p>' +
+          '<p class="scrip-ctrl"><strong>' + t('scrip') + ':</strong> <button class="btn btn-tiny scrip-adjust" data-d="-1" title="Scrip -1">\u2212</button> ' + char.scrip + ' <button class="btn btn-tiny scrip-adjust" data-d="1" title="Scrip +1">+</button></p>' +
           // Weapon pairs — editable names + per-pair CAT upgrade (3 scrip each, max CAT 3)
           '<div class="weapon-sets">' +
             getWeaponSets(char).map(function(ws, wi) {
@@ -4728,6 +4770,28 @@ function renderView(characterId) {
   if (document.getElementById('btn-kitshop')) {
     document.getElementById('btn-kitshop').addEventListener('click', function() { navigate('kitshop/' + characterId); });
   }
+
+  // ─── Quick CAT / Scrip adjust (from the View) ──────────
+  app.querySelectorAll('.cat-adjust').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var d = parseInt(btn.dataset.d, 10);
+      var next = (char.category || 1) + d;
+      if (next < 1 || next > 7) return;
+      char.category = next;
+      saveCharacter(char);
+      renderView(characterId);
+    });
+  });
+  app.querySelectorAll('.scrip-adjust').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var d = parseInt(btn.dataset.d, 10);
+      var next = (char.scrip || 0) + d;
+      if (next < 0) return;
+      char.scrip = next;
+      saveCharacter(char);
+      renderView(characterId);
+    });
+  });
 
   // ─── Weapon pairs ──────────────────────────────────────
   function saveWeaponsAndRerender() { syncLegacyWeapons(char); saveCharacter(char); renderView(characterId); }
@@ -4966,7 +5030,7 @@ function renderEditForm(app) {
           '</div><div class="form-row">' +
             '<div class="form-group"><label>' + t('pathos') + '</label><input type="number" id="e-pathos" min="0" max="3" value="' + editChar.pathos + '"></div>' +
             '<div class="form-group"><label>' + t('sin') + '</label><input type="number" id="e-sin" min="0" value="' + editChar.sin + '"></div>' +
-            '<div class="form-group"><label>' + t('sinCap') + '</label><input type="number" id="e-sincap" min="1" value="' + editChar.sinOverflowCap + '"></div>' +
+            '<div class="form-group"><label>' + t('sinCap') + ' <span class="muted">(' + (currentLang === 'pt' ? 'base' : 'base') + ')</span></label><input type="number" id="e-sincap" min="1" value="' + editChar.sinOverflowCap + '"><span class="muted" style="font-size:0.75rem">' + (currentLang === 'pt' ? 'Efetivo: ' : 'Effective: ') + getEffectiveSinCap(editChar) + '</span></div>' +
           '</div>' +
         '</section>' +
         '<section class="sheet-section"><h3>' + t('skills') + '</h3><div class="skills-edit-grid">' +
@@ -5230,8 +5294,7 @@ function renderSession(characterId) {
   }
 
   var maxStress = getEffectiveMaxStress(char) - s.injuries;
-  var extraBlasphemies = Math.max(0, (char.blasphemies || []).length - 1);
-  var xpCap = 4 + extraBlasphemies;
+  var xpCap = getXpCap(char);
   var psyche = getPsycheValue(char.category);
   var agenda = AGENDAS.find(function(a) { return a.id === (char.agenda || {}).id; });
 
@@ -5464,7 +5527,11 @@ function renderSession(characterId) {
       '<section class="sheet-section">' +
         '<div class="section-header-row"><h3>' + t('session_powers') + '</h3>' +
           '<div class="session-controls">' +
-            '<label class="kit-label">' + t('psycheBursts') + ':</label>' +
+            '<label class="kit-label">' + t('category') + ':</label>' +
+            '<button class="btn btn-tiny" id="cat2-dec">\u2212</button>' +
+            '<span class="session-value">' + char.category + '</span>' +
+            '<button class="btn btn-tiny" id="cat2-inc">+</button>' +
+            '<label class="kit-label" style="margin-left:var(--space-md)">' + t('psycheBursts') + ':</label>' +
             '<button class="btn btn-tiny" id="pb-dec">\u2212</button>' +
             '<span class="session-value">' + s.psycheBursts + ' / ' + char.maxPsycheBursts + '</span>' +
             '<button class="btn btn-tiny" id="pb-inc">+</button>' +
@@ -5660,13 +5727,13 @@ function renderSession(characterId) {
     if (s.stress > 0) { s.stress--; saveAndRerender(); }
   });
 
-  // CAT +/-
-  document.getElementById('cat-inc').addEventListener('click', function() {
-    if (char.category < 10) { char.category++; saveAndRerender(); }
-  });
-  document.getElementById('cat-dec').addEventListener('click', function() {
-    if (char.category > 1) { char.category--; saveAndRerender(); }
-  });
+  // CAT +/- (both the top tracker and the copy near the blasphemies edit the same value)
+  function catInc() { if (char.category < 10) { char.category++; saveAndRerender(); } }
+  function catDec() { if (char.category > 1) { char.category--; saveAndRerender(); } }
+  document.getElementById('cat-inc').addEventListener('click', catInc);
+  document.getElementById('cat-dec').addEventListener('click', catDec);
+  if (document.getElementById('cat2-inc')) document.getElementById('cat2-inc').addEventListener('click', catInc);
+  if (document.getElementById('cat2-dec')) document.getElementById('cat2-dec').addEventListener('click', catDec);
 
   // Injuries +/-
   document.getElementById('inj-inc').addEventListener('click', function() {
@@ -6747,9 +6814,10 @@ function handleAdvanceOption(opt, char, characterId) {
         card.addEventListener('click', function() {
           var blasId = card.dataset.blas;
           if (!confirm(t('adv_confirm_blasphemy'))) return;
-          // Add blasphemy with empty powers (user will pick one power next)
+          // Add blasphemy with empty powers (user will pick one power next).
+          // Sin cap penalty (-1 per extra blasphemy) is now derived in
+          // getEffectiveSinCap, so we no longer mutate sinOverflowCap here.
           char.blasphemies.push({ id: blasId, powers: [] });
-          char.sinOverflowCap = Math.max(1, char.sinOverflowCap - 1);
           s.advances--;
           char.session = s;
           saveCharacter(char);

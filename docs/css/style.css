@@ -3414,3 +3414,30 @@ input[type="number"] {
   font-weight: 700;
   margin-right: var(--space-xs);
 }
+
+/* ─── View quick CAT / Scrip adjust ─────────────────────────────── */
+
+.cat-badge-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.cat-badge-ctrl .cat-adjust {
+  min-width: 22px;
+  padding: 0 0.35rem;
+  line-height: 1.4;
+}
+
+.scrip-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.scrip-ctrl .scrip-adjust {
+  min-width: 22px;
+  padding: 0 0.35rem;
+  line-height: 1.4;
+}
