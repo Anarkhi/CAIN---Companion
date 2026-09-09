@@ -3176,7 +3176,41 @@ var KIT_EXPANSION = [
         descriptionPt: 'Sobretudo que veste sobre todos os uniformes. Resistente ao clima, sob medida e de qualidade extremamente alta. Algumas opções de personalização. Disponível apenas para exorcistas CAT 4+.' },
       { id: 'aes_dress_uniform', name: 'Dress Uniform', namePt: 'Uniforme de Gala', scrip: 3, tags: ['Conspicuous'], reqCat: 3,
         description: 'Formal uniform including half cape, originally for ceremonial event wear. Available only to CAT 3+ exorcists.',
-        descriptionPt: 'Uniforme formal com meia-capa, originalmente para uso em eventos cerimoniais. Disponível apenas para exorcistas CAT 3+.' }
+        descriptionPt: 'Uniforme formal com meia-capa, originalmente para uso em eventos cerimoniais. Disponível apenas para exorcistas CAT 3+.' },
+      // ── GFF-4 aesthetic expansion (pg 46) — only shown when GFF-4 is active ──
+      { id: 'aes_comfort_animal', name: 'Designated Comfort Animal', namePt: 'Animal de Conforto Designado', scrip: 1, expansion: 'gff4',
+        description: 'Comfort item for base use only.',
+        descriptionPt: 'Item de conforto para uso apenas na base.' },
+      { id: 'aes_book_tote', name: 'Book Tote', namePt: 'Bolsa de Livros', scrip: 1, expansion: 'gff4',
+        description: 'Reinforced canvas. Registered students may borrow for free.',
+        descriptionPt: 'Lona reforçada. Estudantes registrados podem pegar emprestado gratuitamente.' },
+      { id: 'aes_control_collar', name: 'Control Collar', namePt: 'Coleira de Controle', scrip: 3, tags: ['Conspicuous'], expansion: 'gff4',
+        description: 'Suppresses powers when worn, limiting to max CAT 1. Takes a rest to remove safely.',
+        descriptionPt: 'Suprime poderes quando usada, limitando ao CAT 1 máximo. Requer um descanso para remover com segurança.' },
+      { id: 'aes_summer_longcoat', name: 'Summer Longcoat', namePt: 'Sobretudo de Verão', scrip: 2, reqCat: 3, expansion: 'gff4',
+        description: 'Lighter, breathable material. Designed with ease of movement in mind. CAT 3+ only.',
+        descriptionPt: 'Material mais leve e respirável. Desenhado pensando na liberdade de movimento. Apenas CAT 3+.' },
+      { id: 'aes_varsity_jacket', name: 'Varsity Jacket', namePt: 'Jaqueta Universitária', scrip: 3, reqCat: 3, expansion: 'gff4',
+        description: 'Logo selection approved for campus sports and recreation activities. CAT 3+ only.',
+        descriptionPt: 'Seleção de logotipos aprovada para esportes e atividades de recreação do campus. Apenas CAT 3+.' },
+      { id: 'aes_downpour_overcoat', name: '"Downpour" Overcoat', namePt: 'Sobretudo "Downpour"', scrip: 4, reqCat: 4, expansion: 'gff4',
+        description: "Heavier, cold weather version of the classic 'Well' (model has attached anti-psychic ops patch, not included). CAT 4+ only.",
+        descriptionPt: "Versão mais pesada, para clima frio, do clássico 'Well' (o modelo tem emblema de operações antipsíquicas, não incluído). Apenas CAT 4+." },
+      { id: 'aes_armagen_headphones', name: '"Armagen" Headphones', namePt: 'Fones "Armagen"', scrip: 2, reqCat: 2, expansion: 'gff4',
+        description: 'Excellent quality headphones, usually for staff use during lab testing. Music player provided separately. CAT 2+ only.',
+        descriptionPt: 'Fones de excelente qualidade, normalmente para uso da equipe em testes de laboratório. Tocador de música fornecido à parte. Apenas CAT 2+.' },
+      { id: 'aes_operations_coat', name: 'Operations Coat', namePt: 'Casaco de Operações', scrip: 1, reqCat: 2, expansion: 'gff4',
+        description: 'Simple, mass produced coat usually disbursed for active anti-sin combat missions. CAT 2+ only.',
+        descriptionPt: 'Casaco simples, produzido em massa, normalmente distribuído para missões ativas de combate a pecados. Apenas CAT 2+.' },
+      { id: 'aes_kiren_footwear', name: 'Kiren Custom Footwear', namePt: 'Calçado Personalizado Kiren', scrip: 5, reqCat: 2, expansion: 'gff4',
+        description: "Improved and fitted footwear from the 'Heated Wave' base atelier, shipping time around 2-3 wks. CAT 2+ only.",
+        descriptionPt: "Calçado aprimorado e sob medida do ateliê de base 'Heated Wave', prazo de entrega de cerca de 2-3 semanas. Apenas CAT 2+." },
+      { id: 'aes_blackwell_overcoat', name: '"Blackwell" Leather Overcoat', namePt: 'Sobretudo de Couro "Blackwell"', scrip: 4, reqCat: 4, expansion: 'gff4',
+        description: "Modified by owner, variant of the basic 'Well'. Worn by the advanced discipline committee. CAT 4+ only.",
+        descriptionPt: "Modificado pelo dono, variante do 'Well' básico. Usado pelo comitê de disciplina avançada. Apenas CAT 4+." },
+      { id: 'aes_banneret_longcoat', name: '"Banneret" Longcoat', namePt: 'Sobretudo "Banneret"', scrip: 4, reqCat: 4, expansion: 'gff4',
+        description: 'Tailored to fit. Typical uniform for those allowed to audit Board meetings or employed as security for higher clearance AUTHORITY facilities. CAT 4+ only.',
+        descriptionPt: 'Ajustado sob medida. Uniforme típico de quem pode assistir a reuniões do Conselho ou trabalha como segurança em instalações da AUTORIDADE de alta credencial. Apenas CAT 4+.' }
     ]
   },
   {
@@ -3482,6 +3516,104 @@ function tKitTag(tag) {
   var pt = { Consumable: 'Consumível', Conspicuous: 'Notável', Focus: 'Foco', adjacent: 'adjacente', short: 'curto', long: 'longo', extreme: 'extremo' };
   return (currentLang === 'pt' && pt[tag]) ? pt[tag] : tag;
 }
+
+// Recreation (GFF-4, pg 40) — between-hunt downtime activities. Pure flavor:
+// the group picks one, takes the keycard, and answers reflection questions.
+var RECREATION_RULES = {
+  en: "Once between hunts, the whole group may optionally choose ONE activity together and take its keycard, answering the attached questions.<br>•  The group must agree on the same activity, and it costs nothing.<br>•  An exorcist may split off for a different activity, but pays 1 scrip (even if someone already bought access to it).<br>•  If an activity is morning OR evening only, pick one time period.<br>•  Exorcists must be well behaved: cameras and keycard doors are everywhere. Letting in unapproved personnel, tampering with surveillance, damaging or untidying facilities, or removing items is punishable by sanction (bans activities next downtime; repeat/severe offenders are docked 1-2 scrip or disciplined).",
+  pt: "Uma vez entre caçadas, o grupo todo pode opcionalmente escolher UMA atividade em conjunto e pegar seu cartão-chave, respondendo às perguntas anexas.<br>•  O grupo deve concordar na mesma atividade, e ela não custa nada.<br>•  Um exorcista pode se separar para outra atividade, mas paga 1 scrip (mesmo que alguém já tenha comprado acesso a ela).<br>•  Se uma atividade é só de manhã OU só à noite, escolha um período.<br>•  Exorcistas devem se comportar: há câmeras e portas com cartão por toda parte. Deixar entrar pessoal não autorizado, adulterar a vigilância, danificar ou bagunçar as instalações, ou remover itens é punível com sanção (bane atividades no próximo descanso; reincidentes/casos graves perdem 1-2 scrip ou são disciplinados)."
+};
+
+var RECREATION = [
+  {
+    id: 'kitchen', name: 'Kitchen Access', namePt: 'Acesso à Cozinha',
+    access: 'All day', accessPt: 'Dia todo',
+    description: 'All-day access to private dormitory kitchen facilities, with a large stock of non-perishable or frozen ingredients. Sterile and too brightly lit, but well stocked, with an attached windowless, underlit dining area. On formal occasions (holidays, founding day, the thirteen days of mourning), formalwear is required and provided. May pay 1 scrip to stock better ingredients (fresh vegetables, fruit, etc).',
+    descriptionPt: 'Acesso o dia todo à cozinha privativa do dormitório, com grande estoque de ingredientes não perecíveis ou congelados. Estéril e clara demais, mas bem abastecida, com uma sala de jantar anexa sem janelas e mal iluminada. Em ocasiões formais (feriados, dia da fundação, os treze dias de luto), traje formal é exigido e fornecido. Pode pagar 1 scrip para estocar ingredientes melhores (vegetais frescos, frutas, etc).',
+    questions: [
+      'Who cooks, one or many? How is the labor split? Who eats or doesn\'t eat?',
+      'What is your relationship to food?',
+      'How did the food turn out? What did you end up cooking?',
+      'Share a conversation over food, something others noticed about you (or didn\'t), or choose not to share.'
+    ],
+    questionsPt: [
+      'Quem cozinha, um ou vários? Como o trabalho é dividido? Quem come ou não come?',
+      'Qual é a sua relação com a comida?',
+      'Como ficou a comida? O que vocês acabaram cozinhando?',
+      'Compartilhe uma conversa durante a refeição, algo que os outros notaram sobre você (ou não notaram), ou escolha não compartilhar.'
+    ]
+  },
+  {
+    id: 'gym', name: 'Gym Access', namePt: 'Acesso à Academia',
+    access: 'All day', accessPt: 'Dia todo',
+    description: 'All-day access to the CASTLE recreation center. Dated but well-lit, stocked and maintained; gymwear/swimwear conforming to dress codes is provided and required. Amenities: swimming pool (cold, sterile), a cavernous ball court (basketball, tennis, squash, soccer, hockey), and a gym with mats, weights, and equipment for martial arts, wrestling, tumbling, or strength training. Competitive games encouraged.',
+    descriptionPt: 'Acesso o dia todo ao centro de recreação da CASTLE. Datado mas bem iluminado, abastecido e mantido; roupa de ginástica/natação conforme o código de vestimenta é fornecida e obrigatória. Comodidades: piscina (fria, estéril), uma quadra cavernosa (basquete, tênis, squash, futebol, hóquei) e uma academia com tatames, pesos e equipamentos para artes marciais, luta, ginástica ou musculação. Jogos competitivos são incentivados.',
+    questions: [
+      'How do you spend your time? Do you try to spend it alone or with others?',
+      'What is your relationship to sports and fitness?',
+      'Do you believe in self improvement?',
+      'How competitive are you? Do you play for fun or for keeps? (For games, use skill roll-offs; set a powers / no-powers rule first.)'
+    ],
+    questionsPt: [
+      'Como você passa o tempo? Tenta ficar sozinho ou com os outros?',
+      'Qual é a sua relação com esportes e condicionamento físico?',
+      'Você acredita em autoaperfeiçoamento?',
+      'Quão competitivo você é? Joga por diversão ou pra valer? (Para jogos, use disputas de perícia; combinem antes a regra de com/sem poderes.)'
+    ]
+  },
+  {
+    id: 'lab', name: 'Lab Access', namePt: 'Acesso ao Laboratório',
+    access: 'All day', accessPt: 'Dia todo',
+    description: 'All-day access to spare Temerity facilities: the Training Room ("the Block"), a barren, reinforced industrial room walled with rare psychic-resistant Y-alloy (near impervious to CAT 3 and lower), with training dioramas; an observation deck that monitors forces and grace/veil fluctuation (with a two-layer kill switch and incident paperwork); and a research alcove with a small library and a PC with slow CAIN intranet access.',
+    descriptionPt: 'Acesso o dia todo a instalações reservas da Temerity: a Sala de Treino ("o Bloco"), uma sala industrial vazia e reforçada, com paredes da rara liga-Y resistente a poderes psíquicos (quase impenetrável a CAT 3 ou menos), com dioramas de treino; um deck de observação que monitora forças e flutuação de graça/véu (com uma chave de desligamento de duas camadas e papelada de incidentes); e um nicho de pesquisa com uma pequena biblioteca e um PC com acesso lento à intranet da CAIN.',
+    questions: [
+      'Do you spend your time in practice or observation?',
+      'Do you embrace or reject your powers?',
+      'Do you believe you are a weapon?',
+      'What quirk, oddity, or feature of your powers do you show us or notice? (Showing off powers costs no sin or psyche burst here.)'
+    ],
+    questionsPt: [
+      'Você passa seu tempo praticando ou observando?',
+      'Você abraça ou rejeita seus poderes?',
+      'Você acredita que é uma arma?',
+      'Que peculiaridade, esquisitice ou característica dos seus poderes você mostra ou nota? (Exibir poderes aqui não custa pecado nem pulso psíquico.)'
+    ]
+  },
+  {
+    id: 'surface', name: 'Surface Access', namePt: 'Acesso à Superfície',
+    access: 'Morning or evening', accessPt: 'Manhã ou noite',
+    description: 'Morning OR evening access to the surface of the current CAIN facility. Most facilities are buried a mile underground or set in the middle of the ocean; the surroundings are remote and inhospitable (mountain forest, red desert, arctic ice, endless ocean). Security is extreme (perimeter is kill-on-sight, clearly signed). Acclimatization sunglasses are provided for those long underground. Mostly a chance to see the sun, breathe unfiltered air, and get a walk in.',
+    descriptionPt: 'Acesso de manhã OU à noite à superfície da instalação atual da CAIN. A maioria das instalações fica soterrada a mais de um quilômetro de profundidade ou no meio do oceano; o entorno é remoto e inóspito (floresta de montanha, deserto vermelho, gelo ártico, oceano sem fim). A segurança é extrema (o perímetro é de atirar para matar, claramente sinalizado). Óculos de aclimatação são fornecidos para quem passou muito tempo no subsolo. Basicamente uma chance de ver o sol, respirar ar não filtrado e caminhar um pouco.',
+    questions: [
+      'How do you spend your time on the surface?',
+      'Do you have any special permissions up here?',
+      'What does it feel like to see the sun again?',
+      'Do you love, hate, or notice something interesting in the natural environment on this particular visit?'
+    ],
+    questionsPt: [
+      'Como você passa o tempo na superfície?',
+      'Você tem alguma permissão especial aqui em cima?',
+      'Como é a sensação de ver o sol de novo?',
+      'Você ama, odeia ou nota algo interessante no ambiente natural nesta visita específica?'
+    ]
+  },
+  {
+    id: 'lounge', name: 'Lounge Access', namePt: 'Acesso à Sala de Estar',
+    access: 'Morning or evening', accessPt: 'Manhã ou noite',
+    description: 'Morning OR evening access to a private facility lounge (highly in demand). Amenities: a TV and cassette player with a mostly-donated collection of movies and recorded shows (out of date by months, no live TV); a small bookshelf with battered books, periodicals, comics and board games; large worn furniture and two blankets; broken climate control; a barren little kitchen (stained coffee maker, kettle, tea, ration snacks); a curated CD/cassette player with two headphones; and a Centura Vamigo game console with ~10 cartridges and two controllers (one has jammy buttons).',
+    descriptionPt: 'Acesso de manhã OU à noite a uma sala de estar privativa da instalação (muito disputada). Comodidades: uma TV e um videocassete com uma coleção majoritariamente doada de filmes e programas gravados (desatualizados em meses, sem TV ao vivo); uma pequena estante com livros surrados, periódicos, quadrinhos e jogos de tabuleiro; móveis grandes e gastos e dois cobertores; controle de clima quebrado; uma cozinha minúscula e vazia (cafeteira manchada, chaleira, chá, petiscos de ração); um tocador de CD/cassete com curadoria e dois fones; e um console Centura Vamigo com ~10 cartuchos e dois controles (um tem botões que travam).',
+    questions: [
+      'How do you spend your time?',
+      'How do you manage to share what\'s available?',
+      'What surprising or interesting things do you find, play, read, or discover buried in the shelves and cabinets? (You may find something not listed!)'
+    ],
+    questionsPt: [
+      'Como você passa o tempo?',
+      'Como vocês conseguem dividir o que está disponível?',
+      'Que coisas surpreendentes ou interessantes você acha, joga, lê ou descobre enterradas nas prateleiras e armários? (Você pode achar algo que não está na lista!)'
+    ]
+  }
+];
 
 /** Find a kit-expansion item (and its category) by item id. */
 function findKitExpansionItem(itemId) {
@@ -4853,7 +4985,22 @@ var routes = {};
 
 function route(path, handler) { routes[path] = handler; }
 
-function navigate(path) { window.location.hash = path; }
+// ── Scroll persistence ──────────────────────────────────────────────
+// Remember each page's scroll position so that:
+//  • navigating forward to a sub-page starts at the top;
+//  • navigating back (browser Back) restores where you were.
+var scrollPositions = {};          // hash -> scrollY of the page when we left it
+var lastHash = window.location.hash.slice(1) || 'home';
+
+function currentScroll() {
+  return window.pageYOffset || document.documentElement.scrollTop || 0;
+}
+
+function navigate(path) {
+  // Save the scroll of the page we're leaving so we can restore it if we return.
+  scrollPositions[lastHash] = currentScroll();
+  window.location.hash = path;
+}
 
 function initRouter() {
   window.addEventListener('hashchange', handleRoute);
@@ -4867,6 +5014,19 @@ function handleRoute() {
   var params = parts.slice(1);
   if (routes[path]) { routes[path].apply(null, params); }
   else if (routes['home']) { routes['home'](); }
+
+  // If we have a remembered position for this hash (we left it earlier and are
+  // now returning), restore it and consume it (so a later fresh visit starts at
+  // the top); otherwise start at the top. Wait a frame so the freshly-rendered
+  // DOM has its full height before scrolling.
+  var saved = scrollPositions[hash];
+  if (saved != null) {
+    delete scrollPositions[hash];
+    requestAnimationFrame(function() { window.scrollTo(0, saved); });
+  } else {
+    window.scrollTo(0, 0);
+  }
+  lastHash = hash;
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -5533,7 +5693,7 @@ function renderView(characterId) {
               '</div>';
             }).join('') +
           '</div>' +
-          '<button class="btn btn-secondary btn-sm" id="btn-add-weaponset">' + (currentLang === 'pt' ? '+ Novo par de armas' : '+ New weapon pair') + '</button>' +
+
           (char.session && char.session.itemsDeployed && char.session.itemsDeployed.length > 0 ? '<div class="items-deployed-view"><h4>' + t('session_items') + '</h4>' + char.session.itemsDeployed.map(function(item) { return '<div class="kit-item-deployed"><strong>' + escHtml(item.name) + '</strong>' + (item.kp ? ' <span class="kit-kp-tag">' + item.kp + ' KP</span>' : '') + (item.description ? ' — <span class="muted">' + escHtml(item.description) + '</span>' : '') + '</div>'; }).join('') + '</div>' : '') +
           // Owned Kit Expansion — deployable items + kit groups
           (function() {
@@ -5557,7 +5717,13 @@ function renderView(characterId) {
           })() +
           // Owned Kit Expansion — passives / mission-use / consumables
           renderKitPassivesHtml(char, false) +
-          '<button class="btn btn-secondary btn-sm" id="btn-kitshop" style="margin-top:var(--space-md)">' + t('kit_expansion_shop') + '</button>' +
+          '<div class="sheet-actions-row" style="margin-top:var(--space-md)">' +
+            '<div class="sheet-actions-left">' +
+              '<button class="btn btn-secondary btn-sm" id="btn-add-weaponset">' + (currentLang === 'pt' ? '+ Novo par de armas' : '+ New weapon pair') + '</button>' +
+              '<button class="btn btn-secondary btn-sm" id="btn-kitshop">' + t('kit_expansion_shop') + '</button>' +
+            '</div>' +
+            (isExpansionActive('gff4') ? '<div class="sheet-actions-right"><button class="btn btn-secondary btn-sm" id="btn-recreation">' + (currentLang === 'pt' ? 'Recreação' : 'Recreation') + '</button></div>' : '') +
+          '</div>' +
         '</section>' +
         // Notes
         '<section class="sheet-section"><h3>' + t('notes') + '</h3><p class="notes-display">' + (char.notes ? escHtml(char.notes) : '<span class="muted">' + t('noNotes') + '</span>') + '</p></section>' +
@@ -5577,6 +5743,9 @@ function renderView(characterId) {
   document.getElementById('btn-export').addEventListener('click', function() { exportCharacter(char); });
   if (document.getElementById('btn-kitshop')) {
     document.getElementById('btn-kitshop').addEventListener('click', function() { navigate('kitshop/' + characterId); });
+  }
+  if (document.getElementById('btn-recreation')) {
+    document.getElementById('btn-recreation').addEventListener('click', function() { navigate('recreation/' + characterId); });
   }
 
   // ─── Quick CAT / Scrip adjust (from the View) ──────────
@@ -5653,6 +5822,38 @@ function renderView(characterId) {
 // PAGE: KIT EXPANSION SHOP
 // ════════════════════════════════════════════════════════════════════
 
+// Recreation reference page (GFF-4): lists the between-hunt downtime activities.
+function renderRecreation(characterId) {
+  var app = document.getElementById('app');
+  var char = getCharacter(characterId);
+  if (!char) { navigate('home'); return; }
+  var pt = currentLang === 'pt';
+
+  app.innerHTML =
+    '<div class="page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + escHtml(char.name || (pt ? 'Personagem' : 'Character')) + '</button>' +
+        '<h1 class="title">' + (pt ? 'Recreação' : 'Recreation') + '</h1>' +
+      '</header>' +
+      '<div class="sheet-single-col">' +
+        '<section class="sheet-section"><p class="recreation-intro">' + (pt ? RECREATION_RULES.pt : RECREATION_RULES.en) + '</p></section>' +
+        RECREATION.map(function(a) {
+          return '<section class="sheet-section recreation-activity">' +
+            '<h3>' + escHtml(pt ? a.namePt : a.name) + ' <span class="recreation-access">' + escHtml(pt ? a.accessPt : a.access) + '</span></h3>' +
+            '<p>' + escHtml(pt ? a.descriptionPt : a.description) + '</p>' +
+            '<h4 class="recreation-q-head">' + (pt ? 'Perguntas' : 'Questions') + '</h4>' +
+            '<ul class="recreation-questions">' +
+              (pt ? a.questionsPt : a.questions).map(function(q) { return '<li>' + escHtml(q) + '</li>'; }).join('') +
+            '</ul>' +
+          '</section>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('view/' + characterId); });
+}
+
 function renderKitShop(characterId) {
   var app = document.getElementById('app');
   var char = getCharacter(characterId);
@@ -5671,10 +5872,13 @@ function renderKitShop(characterId) {
         '<p class="muted">' + (pt ? 'Scrip só pode ser gasto entre missões. Itens comprados ficam permanentes no kit e são sacados com KP na missão.' : 'Scrip can only be spent between missions. Purchased items stay in your kit permanently and are pulled out with KP during a mission.') + '</p>' +
       '</div>' +
       KIT_EXPANSION.map(function(cat) {
+        // Only show items whose expansion is active (base items always show).
+        var visibleItems = cat.items.filter(function(it) { return isExpansionActive(it.expansion); });
+        if (!visibleItems.length) return '';
         return '<div class="sheet-section kitshop-cat">' +
           '<h3>' + (pt ? cat.namePt : cat.name) + '</h3>' +
           ((pt ? cat.notePt : cat.note) ? '<p class="muted">' + escStory(pt ? cat.notePt : cat.note) + '</p>' : '') +
-          cat.items.map(function(it) {
+          visibleItems.map(function(it) {
             var meetsCat = !it.reqCat || (char.category || 1) >= it.reqCat;
             var reqNote = it.reqCat ? '<span class="kit-req' + (meetsCat ? '' : ' unmet') + '">CAT ' + it.reqCat + '+</span>' : '';
             var tags = (it.tags || []).map(function(tg) { return '<span class="kit-item-tag">' + tKitTag(tg) + '</span>'; }).join('');
@@ -5739,6 +5943,9 @@ function renderKitShop(characterId) {
       if ((char.scrip || 0) < found.item.scrip) { alert(pt ? 'Scrip insuficiente.' : 'Not enough scrip.'); return; }
       char.scrip = (char.scrip || 0) - found.item.scrip;
       if (char.ownedKit.indexOf(found.item.id) === -1) char.ownedKit.push(found.item.id);
+      // Buying an expansion item stamps the character with that expansion, so
+      // the character can only be accessed while the expansion is active.
+      tagCharacterExpansion(char, found.item.expansion);
       saveCharacter(char);
       renderKitShop(characterId);
     });
@@ -5765,6 +5972,7 @@ function renderKitShop(characterId) {
       char.ownedKit = char.ownedKit.filter(function(e) { return parseOwnedEntry(e).itemId !== found.item.id; });
       char.scrip = (char.scrip || 0) - v.scrip;
       char.ownedKit.push(found.item.id + ':' + v.id);
+      tagCharacterExpansion(char, found.item.expansion);
       saveCharacter(char);
       renderKitShop(characterId);
     });
@@ -7993,12 +8201,15 @@ function renderCompendiumTab(tabId) {
         '</ul>' +
       '</div>' +
 
-      // Kit expansion catalog (data-driven, grows as categories are added)
+      // Kit expansion catalog (data-driven, grows as categories are added).
+      // Only list items whose expansion is active (base items always show).
       KIT_EXPANSION.map(function(cat) {
+        var visibleItems = cat.items.filter(function(it) { return isExpansionActive(it.expansion); });
+        if (!visibleItems.length) return '';
         return '<div class="compendium-card reference-card kit-cat-card">' +
           '<h3 class="compendium-card-name">' + (pt ? cat.namePt : cat.name) + '</h3>' +
           ((pt ? cat.notePt : cat.note) ? '<p class="muted">' + escStory(pt ? cat.notePt : cat.note) + '</p>' : '') +
-          cat.items.map(function(it) {
+          visibleItems.map(function(it) {
             var tags = (it.tags || []).map(function(tg) { return '<span class="kit-item-tag">' + tKitTag(tg) + '</span>'; }).join('');
             // Price label: variant items show their options' prices; others show scrip.
             var price = it.type === 'variant'
@@ -10184,6 +10395,7 @@ route('swapagenda', renderSwapAgenda);
 route('quirks', renderQuirks);
 route('sinmarks', renderSinMarks);
 route('kitshop', renderKitShop);
+route('recreation', renderRecreation);
 initRouter();
 
 })();

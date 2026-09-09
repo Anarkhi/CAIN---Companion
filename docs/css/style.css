@@ -3492,3 +3492,59 @@ input[type="number"] {
 .dup-check input {
   width: auto;
 }
+
+/* View: row of section action buttons — left group (weapons/kit) + right (recreation) */
+.sheet-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  justify-content: space-between;
+  align-items: center;
+}
+.sheet-actions-left,
+.sheet-actions-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.sheet-actions-right {
+  margin-left: auto;
+}
+
+/* Recreation intro: lighter than default muted for readability */
+.recreation-intro {
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* Recreation reference page */
+.sheet-single-col {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.recreation-activity h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.recreation-access {
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0 0.4rem;
+  white-space: nowrap;
+}
+.recreation-q-head {
+  margin: var(--space-sm) 0 var(--space-xs);
+  color: var(--text-secondary);
+}
+.recreation-questions {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.recreation-questions li {
+  margin-bottom: var(--space-xs);
+}
