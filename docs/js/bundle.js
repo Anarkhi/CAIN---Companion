@@ -161,7 +161,7 @@ var LOCALES = {
     // Blasphemy names
     bl_tension: 'Tension', bl_ardence: 'Ardence', bl_flux: 'Flux', bl_vector: 'Vector',
     bl_gate: 'Gate', bl_smother: 'Smother', bl_whisper: 'Whisper', bl_edit: 'Edit',
-    bl_bind: 'Bind', bl_palace: 'Palace', bl_jaunt: 'Jaunt', bl_sympathy: 'Sympathy', bl_tongue: 'Tongue', bl_playlist: 'Track', bl_wire: 'Wire', bl_mother: 'Mother', bl_gunpowder: 'Gunpowder'
+    bl_bind: 'Bind', bl_palace: 'Palace', bl_jaunt: 'Jaunt', bl_sympathy: 'Sympathy', bl_tongue: 'Tongue', bl_track: 'Track', bl_wire: 'Wire', bl_mother: 'Mother', bl_gunpowder: 'Gunpowder'
   },
   pt: {
     app_title: 'CAIN', app_subtitle: 'Companheiro', app_tagline: 'Limpe a mancha.',
@@ -309,12 +309,59 @@ var LOCALES = {
     // Blasphemy names
     bl_tension: 'Tensão', bl_ardence: 'Ardor', bl_flux: 'Fluxo', bl_vector: 'Vetor',
     bl_gate: 'Portão', bl_smother: 'Sufoco', bl_whisper: 'Sussurro', bl_edit: 'Edit',
-    bl_bind: 'Vínculo', bl_palace: 'Palácio', bl_jaunt: 'Assombração', bl_sympathy: 'Simpatia', bl_tongue: 'Língua', bl_playlist: 'Track', bl_wire: 'Fio', bl_mother: 'Mãe', bl_gunpowder: 'Pólvora'
+    bl_bind: 'Vínculo', bl_palace: 'Palácio', bl_jaunt: 'Assombração', bl_sympathy: 'Simpatia', bl_tongue: 'Língua', bl_track: 'Track', bl_wire: 'Fio', bl_mother: 'Mãe', bl_gunpowder: 'Pólvora'
   }
 };
 
 /** Get a translated string by key */
 function t(key) { return LOCALES[currentLang][key] || LOCALES['en'][key] || key; }
+
+/** Get translated name from an object with namePt field */
+function tName(obj) {
+  if (!obj) return '';
+  return (currentLang === 'pt' && obj.namePt) ? obj.namePt : obj.name;
+}
+
+/** Get translated virtue name */
+function tVirtueName(v) {
+  if (!v) return '';
+  return (currentLang === 'pt' && PT_CONTENT.virtues && PT_CONTENT.virtues.names && PT_CONTENT.virtues.names[v.id]) 
+    ? PT_CONTENT.virtues.names[v.id] : v.name;
+}
+
+/** Get translated virtue title */
+function tVirtueTitle(v) {
+  if (!v) return '';
+  return (currentLang === 'pt' && PT_CONTENT.virtues && PT_CONTENT.virtues.titles && PT_CONTENT.virtues.titles[v.id]) 
+    ? PT_CONTENT.virtues.titles[v.id] : v.title;
+}
+
+/** Get translated sin mark data */
+function tSinMark(loc) {
+  if (!loc) return { name: '', appearance: '', abilities: [] };
+  if (currentLang === 'pt' && PT_CONTENT.sinMarks && PT_CONTENT.sinMarks[loc.id]) {
+    var pt = PT_CONTENT.sinMarks[loc.id];
+    return {
+      name: pt.name || loc.name,
+      appearance: pt.appearance || loc.appearance,
+      abilities: pt.abilities || loc.abilities
+    };
+  }
+  return { name: loc.name, appearance: loc.appearance, abilities: loc.abilities || [] };
+}
+
+/** Translate a sin mark ability (stored in English, display in current lang) */
+function tSinMarkAbility(locId, abilityEn) {
+  if (currentLang !== 'pt') return abilityEn;
+  var loc = SIN_MARKS.find(function(m) { return m.id === locId; });
+  if (!loc) return abilityEn;
+  var idx = loc.abilities.indexOf(abilityEn);
+  if (idx === -1) return abilityEn;
+  if (PT_CONTENT.sinMarks && PT_CONTENT.sinMarks[locId] && PT_CONTENT.sinMarks[locId].abilities) {
+    return PT_CONTENT.sinMarks[locId].abilities[idx] || abilityEn;
+  }
+  return abilityEn;
+}
 
 /** Get translated skill name by skill id */
 function tSkill(id) { return t('sk_' + id); }
@@ -416,12 +463,12 @@ function getEffectivePassives(bl, char) {
       var replaced = basePassives.find(function(p) { return p.id === targetPassiveId; });
       result = result.filter(function(p) { return p.id !== targetPassiveId; });
       // Optionally keep the original passive's name (e.g. Gunpowder keeps "The Arsenal")
-      var effName = (quirk.keepPassiveName && replaced) ? replaced.name : quirk.name;
-      result.unshift({ id: quirk.id, name: effName, image: quirk.image, description: quirk.description });
+      var effName = (quirk.keepPassiveName && replaced) ? tName(replaced) : tName(quirk);
+      result.unshift({ id: quirk.id, name: effName, namePt: quirk.namePt, image: quirk.image, description: quirk.description });
     } else if (quirk.type === 'add' || quirk.type === 'add_free') {
       // Add quirk as additional passive-like entry (but NOT if it grants a power instead)
       if (!quirk.grantsPower) {
-        result.push({ id: quirk.id, name: quirk.name, image: quirk.image, description: quirk.description });
+        result.push({ id: quirk.id, name: tName(quirk), namePt: quirk.namePt, image: quirk.image, description: quirk.description });
       }
     }
   });
@@ -473,7 +520,7 @@ function renderPassivesHtml(bl, char) {
   var flavor = flavorText ? '<div class="blasphemy-flavor"><em>' + flavorText + '</em></div>' : '';
   var passives = char ? getEffectivePassives(bl, char) : getPassives(bl);
   return flavor + passives.map(function(p) {
-    return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + p.name + '">' : '') + '<div class="passive-display"><strong>' + t('passive') + ' \u2014 ' + p.name + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</div>';
+    return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + tName(p) + '">' : '') + '<div class="passive-display"><strong>' + t('passive') + ' \u2014 ' + tName(p) + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</div>';
   }).join('');
 }
 
@@ -499,7 +546,7 @@ function renderPassivesHtmlSession(bl, cat, char) {
     }
     if (hasNotes && char) {
       var noteVal = (char.quirkNotes && char.quirkNotes[p.id]) || '';
-      var noteLabel = p.id === 'playlist_playlist' ? 'Playlist:' : (currentLang === 'pt' ? 'Notas:' : 'Notes:');
+      var noteLabel = p.id === 'track_playlist' ? 'Playlist:' : (currentLang === 'pt' ? 'Notas:' : 'Notes:');
       notesHtml = '<div class="quirk-notes"><label class="muted" style="font-size:0.75rem">' + noteLabel + '</label><textarea class="quirk-note-input" data-quirk="' + p.id + '" rows="3" placeholder="...">' + escHtml(noteVal) + '</textarea></div>';
     }
     if (passiveUses && char) {
@@ -508,7 +555,7 @@ function renderPassivesHtmlSession(bl, cat, char) {
       var isUsed = usedCount >= maxU;
       usesHtml = '<div class="passive-uses"><button class="power-uses-toggle' + (isUsed ? ' used' : '') + '" data-char="' + char.id + '" data-passive="' + p.id + '" data-max="' + maxU + '">' + (isUsed ? (currentLang === 'pt' ? 'Usado' : 'Used') : (currentLang === 'pt' ? 'Disponível' : 'Available')) + (maxU > 1 ? ' (' + usedCount + '/' + maxU + ')' : '') + '</button></div>';
     }
-    return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + p.name + '">' : '') + '<div class="passive-display' + (passiveUses && char && ((char.usedPassives && char.usedPassives[p.id]) || 0) >= (passiveUses.maxUses || 1) ? ' power-used' : '') + '"><strong>' + t('passive') + ' \u2014 ' + p.name + ':</strong> ' + resolveCatTags(tPassiveDescRaw(p.id, p.description), cat) + usesHtml + notesHtml + '</div>';
+    return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + tName(p) + '">' : '') + '<div class="passive-display' + (passiveUses && char && ((char.usedPassives && char.usedPassives[p.id]) || 0) >= (passiveUses.maxUses || 1) ? ' power-used' : '') + '"><strong>' + t('passive') + ' \u2014 ' + tName(p) + ':</strong> ' + resolveCatTags(tPassiveDescRaw(p.id, p.description), cat) + usesHtml + notesHtml + '</div>';
   }).join('');
 }
 
@@ -518,7 +565,7 @@ function renderPassivesCard(bl) {
   if (currentLang === 'pt' && PT_CONTENT.flavors && PT_CONTENT.flavors[bl.id]) flavorText = PT_CONTENT.flavors[bl.id];
   var flavor = flavorText ? '<p class="blasphemy-flavor muted"><em>' + flavorText + '</em></p>' : '';
   return flavor + getPassives(bl).map(function(p) {
-    return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + p.name + '">' : '') + '<p class="passive"><strong>' + t('passive') + ' - ' + p.name + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</p>';
+    return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + tName(p) + '">' : '') + '<p class="passive"><strong>' + t('passive') + ' - ' + tName(p) + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</p>';
   }).join('');
 }
 
@@ -528,7 +575,7 @@ function renderPassivesReview(bl) {
   if (currentLang === 'pt' && PT_CONTENT.flavors && PT_CONTENT.flavors[bl.id]) flavorText = PT_CONTENT.flavors[bl.id];
   var flavor = flavorText ? '<p class="blasphemy-flavor"><em>' + flavorText + '</em></p>' : '';
   return flavor + getPassives(bl).map(function(p) {
-    return '<p><strong>' + t('passive') + ':</strong> ' + p.name + ' \u2014 ' + tPassiveDesc(p.id, p.description) + '</p>';
+    return '<p><strong>' + t('passive') + ':</strong> ' + tName(p) + ' \u2014 ' + tPassiveDesc(p.id, p.description) + '</p>';
   }).join('');
 }
 
@@ -627,9 +674,13 @@ function toggleLanguage() {
     collectCreateStepData();
     saveCreateState();
   }
+  // Save scroll position before re-render
+  var scrollY = window.scrollY;
   currentLang = currentLang === 'en' ? 'pt' : 'en';
   localStorage.setItem(LANG_KEY, currentLang);
   handleRoute();
+  // Restore scroll position after re-render
+  window.scrollTo(0, scrollY);
 }
 
 /** Render the language toggle button (call after rendering page) */
@@ -1383,7 +1434,7 @@ var PT_CONTENT = {
     jaunt: 'Separar corpo e alma com uma faca de esculpir.',
     sympathy: 'Humanos deixam impressões em tudo que tocam. Você pode fazer mais.',
     tongue: 'Sua palavra é lei.',
-    playlist: 'Testando, um dois, um dois.',
+    track: 'Testando, um dois, um dois.',
     wire: 'São como veias, se você parar pra pensar. Você até consegue ouvir o batimento cardíaco.',
     mother: 'ELA NÃO SAI DA MINHA CABEÇA.',
     gunpowder: 'Manifestar e comandar as armas de fogo de uma era passada, alimentadas por pólvora psíquica.'
@@ -1403,7 +1454,7 @@ var PT_CONTENT = {
     jaunt: 'Usuários de Assombração são os mais propensos de todos os exorcistas a "esvaziar" durante o sono e deixar uma casca vazia. Esta ocorrência é muito rara mas sua causa é desconhecida e é 100% fatal.',
     sympathy: 'PSICOMETRIA É PROIBIDA NO CAMPUS - CASTLE REF 0094',
     tongue: "...enraizado no centro de linguagem do cérebro, sugerindo conexões com manifestações registradas de 'fala extática' e 'linguagem divina'.<br><br>Manifestar blasfêmias de Tongue requer condicionamento especial de terapia da fala X285 e sistema de contenção 25 de acordo com o Código Castle para evitar exposição acidental. Pode ser necessário manter silêncio por longos períodos de tempo. Sua língua também pode ficar 'preta como piche' ou 'preta como tinta', ou se tornar bifurcada. Isso é normal.",
-    playlist: 'Fato: Os objetos amaldiçoados avulsos ou residuais criados por este poder são curados no arquivo 52 da Temerity. A coleção é bastante extensa e tem seguidores bastante fervorosos entre certas subseções da equipe da CAIN.',
+    track: 'Fato: Os objetos amaldiçoados avulsos ou residuais criados por este poder são curados no arquivo 52 da Temerity. A coleção é bastante extensa e tem seguidores bastante fervorosos entre certas subseções da equipe da CAIN.',
     wire: 'Fato: FIO foi descoberto pela CAIN apenas nos últimos dois anos, mas a organização o compreende razoavelmente bem. Usuários podem desenvolver a habilidade de "ouvir" linhas telefônicas e sinais elétricos. Modificação corporal involuntária através deste poder é comum. Não se alarme. Retornará ao normal em 1-2 horas.',
     mother: "...esforços contínuos para conter Mother estão mostrando eficácia reduzida (tão alta quanto [CENSURADO] ano após ano). Portanto, o diretor do OS Alhambra faz uma recomendação firme para implementar doutrina 8 ([CENSURADO]) dadas as condições operacionais atuais.<br><br>07-04-1998<br><br>Pedido negado. A eficácia HOP dos ativos infectados de Mother supera seu risco potencial, apesar da antipatia crescente da Casa em relação a ela. Continuaremos a coletá-los e treiná-los quando possível, e despachar execução instantânea quando não for possível recuperar ativos com segurança.<br><br>Assim na terra, como no céu.<br><br>O menor primeiro, <b style=\"font-size:1.1em\">F. ESPADA</b><br><br>Diretor do Castle F. Espada",
     gunpowder: "\"Com pontaria e pólvora suficientes, um homem já governou o mundo. Talvez você o faça mais uma vez.\"<br><br>Fato: Pólvora só pode manifestar armas de fogo concebidas pela primeira vez entre 25 de fevereiro de 1836 e 1 de julho de 1916. Nenhuma arma concebida antes ou depois dessas datas jamais foi manifestada com sucesso."
@@ -1424,7 +1475,7 @@ var PT_CONTENT = {
     jaunt_ghostwire: "Você pode unir sua mente telepaticamente com um número de outras pessoas voluntárias que toque igual a CAT [CALC:CAT]. Enquanto a longa distância um do outro, podem falar telepaticamente e sentir o estado emocional ambiente um do outro. Este efeito dura até você usá-lo novamente, até alguém ficar inconsciente, ou até você ou outra pessoa fechar a conexão.",
     sympathy_resonance: "No início da missão, role na tabela de ressonância. Role 1d3, depois 1d6, e confira as tabelas de ressonância. Quando fizer uma rolagem de ação e estiver usando um item com o qual é ressonante, ganhe +1D de bônus. Pode gastar um pulso psíquico a qualquer momento para rolar uma ressonância adicional. Pode manter até três ao mesmo tempo, e só se beneficiar de uma por vez.<br><br><b>Ressonâncias</b> (Role 1d3, depois 1d6):<table class=\"virtue-rupture-table\"><tbody><tr><td class=\"rupture-duration\">11</td><td class=\"rupture-cost\">Telefones</td><td class=\"rupture-duration\">21</td><td class=\"rupture-cost\">Bolas</td><td class=\"rupture-duration\">31</td><td class=\"rupture-cost\">Cordas</td></tr><tr><td class=\"rupture-duration\">12</td><td class=\"rupture-cost\">Luzes</td><td class=\"rupture-duration\">22</td><td class=\"rupture-cost\">Armas de Fogo</td><td class=\"rupture-duration\">32</td><td class=\"rupture-cost\">Martelos</td></tr><tr><td class=\"rupture-duration\">13</td><td class=\"rupture-cost\">Facas</td><td class=\"rupture-duration\">23</td><td class=\"rupture-cost\">Canecas</td><td class=\"rupture-duration\">33</td><td class=\"rupture-cost\">Carros</td></tr><tr><td class=\"rupture-duration\">14</td><td class=\"rupture-cost\">Chaves</td><td class=\"rupture-duration\">24</td><td class=\"rupture-cost\">Computadores</td><td class=\"rupture-duration\">34</td><td class=\"rupture-cost\">Portas</td></tr><tr><td class=\"rupture-duration\">15</td><td class=\"rupture-cost\">Livros</td><td class=\"rupture-duration\">25</td><td class=\"rupture-cost\">Sapatos</td><td class=\"rupture-duration\">35</td><td class=\"rupture-cost\">Bolsas</td></tr><tr><td class=\"rupture-duration\">16</td><td class=\"rupture-cost\">Tacos de Beisebol</td><td class=\"rupture-duration\">26</td><td class=\"rupture-cost\">Ferramentas Elétricas</td><td class=\"rupture-duration\">36</td><td class=\"rupture-cost\">Luvas</td></tr></tbody></table>",
     tongue_the_word: "Seus poderes não têm efeito se você não puder falar, ou se o som estiver suprimido de alguma forma. Usar o mesmo poder desta blasfêmia mais de uma vez antes de descansar tem efeitos crescentes (não opcionais).<br>•  Segunda vez: +1 CAT (mín CAT 2), sofra 1 de estresse irredutível.<br>•  Terceira vez: +2 CAT (mín CAT 3, máx CAT 7), +1D, sofra 3 de estresse irredutível, qualquer um a curta distância sofre a aflição ensurdecido pelo resto da caçada.<br>•  Quarta vez: Poder resolve em CAT 7, não role (sucessos automáticos). Após, sofra morte instantânea. Qualquer um a curta distância fica permanentemente ensurdecido.",
-    playlist_playlist: "Você tem um poderoso objeto amaldiçoado, que é o foco dos seus poderes. É um player de música, tipicamente um toca-fitas ou CD player com fones acoplados. Não gasta PK, e você pode formá-lo e reformá-lo sobrenaturalmente em suas mãos à vontade. Faça uma playlist (real) de 6 músicas no início de cada caçada. Alguns dos seus poderes usam esta playlist. Qualquer música que você tocar desta playlist pode ser ouvida diegeticamente (no jogo) se desejar. Parece vir de um local visível a curta distância, seu player, ou de lugar nenhum em particular (como uma trilha sonora), e pode ligar e desligar à vontade.",
+    track_playlist: "Você tem um poderoso objeto amaldiçoado, que é o foco dos seus poderes. É um player de música, tipicamente um toca-fitas ou CD player com fones acoplados. Não gasta PK, e você pode formá-lo e reformá-lo sobrenaturalmente em suas mãos à vontade. Faça uma playlist (real) de 6 músicas no início de cada caçada. Alguns dos seus poderes usam esta playlist. Qualquer música que você tocar desta playlist pode ser ouvida diegeticamente (no jogo) se desejar. Parece vir de um local visível a curta distância, seu player, ou de lugar nenhum em particular (como uma trilha sonora), e pode ligar e desligar à vontade.",
     wire_main_artery: "Você tem um celular com funções melhores (acesso à internet sem fio). Não gasta PK. Pode produzi-lo ou removê-lo à vontade, formando-o de energia psíquica, mesmo se perdê-lo.",
     mother_knows_best: "Quando sofrer inundação de pecado, pode ganhar uma <b>Marca de Mother</b> ao invés de uma marca de pecado regular, e rolar 2d6, escolhendo o menor, se escolher manter o controle.<br><br><b>Marca de Mother</b><br><br>Uma Marca de Mother não reduz o limite de inundação de pecado, mas ainda conta como marca de pecado em todos os outros aspectos. Não tem outros efeitos de gameplay. Role 1d6 para seu aspecto. Pode ganhar a mesma marca mais de uma vez.<br>•  1. <b>Novo olho</b> no centro da testa. Olha ao redor sozinho. Você não pode ver através dele. <i>Não é seu.</i><br>•  2. <b>Grande mancha de pele ou cabelo</b> perde toda cor, depois ganha listras em faixas.<br>•  3. <b>Nova pupila</b> no olho.<br>•  4. <b>Nova língua</b>.<br>•  5. <b>Novo membro</b>. Alongado e com articulação dupla.<br>•  6. <b>Padrões espiralados</b>, distorcendo pele e músculo. Padrões mudam e se deslocam com o tempo.",
     // Quirk passives (GFF-4.1)
@@ -1470,6 +1521,8 @@ var PT_CONTENT = {
     tension_fortress: "Uma vez por cena, você pode criar um campo de tensão pontual com tamanho determinado por até CAT [CAT:size] que aparece como um grande plano de força cintilante, invisível para humanos. Só pode existir como plano plano (sem curvas), e pode cruzar ou sobrepor qualquer material não-vivo, mas de outra forma é tão duro quanto um objeto sólido e previne toda matéria viva e não-viva e energia de cruzá-lo. Tem um talismã 2+CAT [CALC:2+CAT] para sua durabilidade, que pode sofrer dano e ser marcado como um talismã de execução por oponentes. O campo dura até ser destruído, até ser usado novamente, ou até descanso.",
     ardence_fury: "Crie uma rajada feroz de energia destrutiva em um local ao alcance com área de explosão até CAT [CAT:area]. Role PSIQUE e responda as seguintes perguntas, ganhando +1D por cada sim:<br>•  Você está disposto a causar dano indiscriminado?<br>•  Está disposto a deixar sua raiva controlar o resultado?<br><br>Se pelo menos um sim, a área é SEMPRE igual ao CAT máximo, e aliados na área ou a curta distância sofrem 2 de estresse.",
     ardence_sabre: "Libere uma rajada de energia em um feixe altamente destrutivo. O feixe vai em linha reta em um alcance igual a CAT [CAT:distance], perfurando paredes, portas e obstruções sem esforço. É extremamente alto e brilhante. Role PSIQUE para seus efeitos, gastando um pulso psíquico apenas em sucesso.<br><br>Você pode opcionalmente levantar o limitador desta habilidade ao usá-la. Se o fizer, para cada resultado 6 que rolar, esta habilidade inflige 1 corte extra em um talismã, mas você também sofre 2 de estresse, que pode te matar ou causar um ferimento. Este estresse não pode ser reduzido ou ignorado de forma alguma.",
+    ardence_blackmatter: "Você dispersa calor instantaneamente em uma área, criando um congelamento letal em um local ao alcance com área de explosão até 1/2 CAT [HALF_CAT:area]. Isso causa dano a qualquer coisa viva na área e congela instantaneamente líquidos e ambientes, causando dano. Role PSIQUE para seus efeitos, e gaste um pulso psíquico apenas em sucesso.<br><br>Ao usar este poder, você pode infligir 1 de estresse não-letal mas irredutível em si mesmo para ganhar +1D na rolagem enquanto seu corpo parcialmente congela. Se fizer isso, aumente o estresse não-letal sofrido na próxima vez que usar este poder em +1. Este efeito acumula mas reseta ao descansar.",
+    ardence_nihil: "Colocando as palmas para fora, você libera uma força aniquiladora aterrorizante ao alcance das mãos, afetando uma área base de 1/2 CAT [HALF_CAT:area] imediatamente adjacente a você. Role PSIQUE para seus efeitos, e gaste um pulso psíquico apenas em sucesso. Esta força é tremenda mas lenta, dando-lhe o seguinte:<br>•  Ganha +2D ao rolar para explodir alvos imóveis (vivos ou não-vivos), paredes, construções ou objetos inanimados.<br>•  A menos que você seja preparado por outro exorcista, usar este poder quando uma rolagem é arriscada é sempre difícil.",
     ardence_void: "Você cria um vácuo instantâneo queimando o ar. O vácuo cria um trovão alto, afetando uma área até CAT [CAT:area], excluindo você. Escolha um dos seguintes efeitos, então você pode ganhar ou conceder +1D quando você ou qualquer aliado agir para aproveitar este poder:<br>•  Fraco: Puxa objetos soltos que não estejam segurados, vestidos ou aparafusados.<br>•  Médio: Todos os humanos e exorcistas na área são derrubados e puxados, excluindo você.<br>•  Forte: Pecados e veículos de até tamanho CAT são desequilibrados ou puxados dependendo de seu tamanho. Vidro é estilhaçado. O trovão é momentaneamente ensurdecedor.<br><br>Este poder pode afetar os parâmetros de rolagens, como dificuldade e risco.",
     ardence_hell: "Você pode despejar energia no chão e em qualquer coisa tocando o chão em uma área determinada por CAT+2 [CAT+2:area], escolhendo quente ou frio. Escolha um dos seguintes efeitos, que dura até você descansar. Você pode ganhar ou conceder +1D quando você ou qualquer aliado agir para aproveitar este poder:<br>•  Ferver: Desconforto para humanos, temperatura alterada, superfícies quentes ou frias, etc.<br>•  Escaldar: Grande desconforto para humanos, que não podem permanecer na área, e desconforto para pecados e exorcistas. Congele ou ferva água, canos, quebre vidro, etc.<br>•  Fervura: Mortal para humanos, pecados e exorcistas sofrem 2 de estresse se permanecerem na área por mais de uma cena. Acenda fogo ou congele o ar em salas, derreta janelas ou queime portas, ou congele objetos.<br><br>Este poder pode afetar os parâmetros de rolagens, como dificuldade e risco.",
     ardence_storm: "Você pode gastar qualquer número de pulsos psíquicos para enviar energia potencial à atmosfera, afetando um microclima em uma área igual a CAT+2 [CAT+2{max7}:area], com máximo de CAT 7. Escolha um dos efeitos abaixo, mais um por pulso psíquico gasto. Os efeitos escolhidos duram toda a missão ou até serem dispensados.<br>•  Limpar: Limpe os céus na área, cancelando qualquer clima.<br>•  Chuva: Chuva encharca a área pela duração de uma intensidade à sua escolha (garoa, forte, torrencial).<br>•  Frio: O ar congela, congelando água e criando gelo em estradas e caminhos. Qualquer precipitação se torna neve.<br>•  Neblina: Neblina densa se instala, limitando visibilidade.<br>•  Vendaval: Vento forte sopra pela área, dispersando neblina, fumaça ou poeira, e tornando difícil ouvir ou estar ao ar livre.<br><br>Este poder pode facilmente afetar os parâmetros de rolagens, como dificuldade e risco.<br><br>Uma vez usado, perca o uso deste poder até descansar.",
@@ -1530,11 +1583,11 @@ var PT_CONTENT = {
     tongue_narrate: "Escolha até um grupo de tamanho CAT [CAT:people] de humanos ou exorcistas ao alcance (pode incluir a si mesmo), um objeto ou local ao alcance, e um verbo. Então narre uma frase usando a seguinte estrutura:<br>(Ele/ela/eles) estava(m) (verbo)ando o/a (substantivo).<br><br>Por exemplo:<br>•  Ele estava abrindo a porta.<br>•  Ela estava caindo no ar.<br>•  Ele estava dirigindo o carro.<br>•  Eles estavam deitados no chão.<br><br>Role PSIQUE para seus efeitos, apenas gaste um pulso psíquico em sucesso. Após a frase terminar e se a rolagem for bem-sucedida, ela se torna verdade, incluindo mover quaisquer pessoas afetadas para onde precisam estar como se sempre estivessem lá. Este poder não ajusta memória humana nem pode criar nada, mudar ninguém, ou prejudicar alguém diretamente (mas pode facilmente prejudicar indiretamente).",
     tongue_die: "Você diz 'morra' e mata instantaneamente todos os humanos em uma área de até tamanho CAT [CAT:area], centrada em você. Não é opcional, você não escolhe quem matar ou poupar, e não requer rolagem. Se usou este poder pelo menos uma vez para matar uma pessoa, no fim da caçada preencha permanentemente uma caixa de pecado. Se usou pelo menos uma vez para matar mais de uma pessoa, preencha permanentemente 1d3 caixas de pecado.",
     tongue_snap_click_pop: "Você diz 'Snap', 'Click', ou 'Pop', e produz um efeito que normalmente produziria um desses sons. Por exemplo, pode usar 'click' para abrir uma porta trancada, apertar um botão, ou digitar em um teclado. Pode usar 'snap' para quebrar uma arma ou um braço. Pode usar 'pop' para estourar um pneu ou disparar uma arma que outra pessoa segura.<br><br>Se necessário, role PSIQUE para efeitos que seriam arriscados, incertos ou causar dano, apenas gaste pulso em sucesso. Caso contrário, este poder é sempre bem-sucedido. Quando você ou um aliado agir para ganhar vantagem deste poder, pode ganhar +1D.",
-    playlist_vibe: "Quando uma cena começa, você pode usar este poder para tocar uma faixa da sua playlist. Decida se a faixa é Melancólica, Tranquila ou Agressiva. Ganhe um bônus baseado no tipo da faixa pelo resto da cena.<br>•  Melancólica: Você ou qualquer aliado apaga 1 de estresse quando falhar uma rolagem.<br>•  Agressiva: Após você ou aliado ganhar um ferimento, gancho ou aflição, ganha +1D na próxima ação.<br>•  Tranquila: No fim da cena, todos a curta distância de você apagam 1 de estresse se não houve rolagens arriscadas ou difíceis nesta cena.",
-    playlist_replay: "Passiva: Sem gastar pulso psíquico, você ou aliado a curta distância realiza uma atividade de no máximo 10 segundos, que você grava no seu player. Grava você ou seu aliado no momento da gravação, incluindo roupa, fala e objetos segurados ou vestidos, mas nada ao redor. Pode manter 3 gravações.<br><br>Ativa: Pode reproduzir uma gravação gastando um pulso psíquico. Isso reproduz imediatamente um duplo psíquico da gravação. O duplo é fisicamente tangível, parece e soa convincente, pode causar dano e interage com o mundo físico, mas desmanifesta após 10 segundos e não pode interagir de forma alguma que não foi previamente gravada. Role PSIQUE para seus efeitos se forem incertos, contestados ou arriscados, apenas gaste pulso em sucesso.",
-    playlist_boost: "Pode ativar este poder uma vez por cena antes de você ou aliado ao alcance usar uma blasfêmia e fazer uma rolagem de PSIQUE. Escolha uma faixa da playlist. Registre os três primeiros dígitos da duração (como 3, 3, 5). Zeros não contam, então uma faixa de 10:35 registraria 1, 3, 5. Para cada dado rolado, a ação ganha +1 CAT adicional para cada dado que corresponda a um número registrado da duração (mín +1 CAT, máx +3, máx CAT 7).",
-    playlist_shuffle: "Pode escolher qualquer número de objetos, veículos ou pessoas na área afetada. Qualquer coisa trocada pode ter tamanho de até metade do CAT [HALF_CAT:size] (mín 0). Troque instantaneamente suas posições e momento. Deve trocar coisas de aproximadamente mesmo tamanho e massa. Se tentar diferente, ou se precisar rolar para efeitos como dano, role PSIQUE e apenas gaste pulso em sucesso. Quando você ou aliado agir para ganhar vantagem deste poder, pode ganhar +1D.",
-    playlist_title: "Toque uma faixa da playlist. Pode manifestar a curta distância uma manifestação psíquica baseada em qualquer parte do título, de até CAT [CAT:magnitude] em tamanho ou magnitude. O efeito pode criar:<br>•  Uma cópia psíquica de qualquer objeto nomeado no título.<br>•  Uma cópia psíquica de qualquer humano ou animal no título.<br>•  Uma rajada breve de energia, clima ou força física (fogo/chuva/vento/empurrão/puxão/pressão) nomeada no título.<br><br>A manifestação dura até você rolar para seus efeitos ou ações, usar este poder novamente, ou a cena passar, então se dissipa. Qualquer coisa criada é tangível mas tem uma aura de irrealidade ou 'estranheza' para humanos comuns. Pode causar dano tangível ou força e interagir com o mundo físico, mas não é obrigada a seguir suas instruções se puder agir independentemente. Se o uso deste poder causar dano, ou for arriscado ou incerto, role PSIQUE para seus efeitos quando usado, apenas manifestando e gastando pulso em sucesso. Caso contrário, sempre tem efeito.",
+    track_vibe: "Quando uma cena começa, você pode usar este poder para tocar uma faixa da sua playlist. Decida se a faixa é Melancólica, Tranquila ou Agressiva. Ganhe um bônus baseado no tipo da faixa pelo resto da cena.<br>•  Melancólica: Você ou qualquer aliado apaga 1 de estresse quando falhar uma rolagem.<br>•  Agressiva: Após você ou aliado ganhar um ferimento, gancho ou aflição, ganha +1D na próxima ação.<br>•  Tranquila: No fim da cena, todos a curta distância de você apagam 1 de estresse se não houve rolagens arriscadas ou difíceis nesta cena.",
+    track_replay: "Passiva: Sem gastar pulso psíquico, você ou aliado a curta distância realiza uma atividade de no máximo 10 segundos, que você grava no seu player. Grava você ou seu aliado no momento da gravação, incluindo roupa, fala e objetos segurados ou vestidos, mas nada ao redor. Pode manter 3 gravações.<br><br>Ativa: Pode reproduzir uma gravação gastando um pulso psíquico. Isso reproduz imediatamente um duplo psíquico da gravação. O duplo é fisicamente tangível, parece e soa convincente, pode causar dano e interage com o mundo físico, mas desmanifesta após 10 segundos e não pode interagir de forma alguma que não foi previamente gravada. Role PSIQUE para seus efeitos se forem incertos, contestados ou arriscados, apenas gaste pulso em sucesso.",
+    track_boost: "Pode ativar este poder uma vez por cena antes de você ou aliado ao alcance usar uma blasfêmia e fazer uma rolagem de PSIQUE. Escolha uma faixa da playlist. Registre os três primeiros dígitos da duração (como 3, 3, 5). Zeros não contam, então uma faixa de 10:35 registraria 1, 3, 5. Para cada dado rolado, a ação ganha +1 CAT adicional para cada dado que corresponda a um número registrado da duração (mín +1 CAT, máx +3, máx CAT 7).",
+    track_shuffle: "Pode escolher qualquer número de objetos, veículos ou pessoas na área afetada. Qualquer coisa trocada pode ter tamanho de até metade do CAT [HALF_CAT:size] (mín 0). Troque instantaneamente suas posições e momento. Deve trocar coisas de aproximadamente mesmo tamanho e massa. Se tentar diferente, ou se precisar rolar para efeitos como dano, role PSIQUE e apenas gaste pulso em sucesso. Quando você ou aliado agir para ganhar vantagem deste poder, pode ganhar +1D.",
+    track_title: "Toque uma faixa da playlist. Pode manifestar a curta distância uma manifestação psíquica baseada em qualquer parte do título, de até CAT [CAT:magnitude] em tamanho ou magnitude. O efeito pode criar:<br>•  Uma cópia psíquica de qualquer objeto nomeado no título.<br>•  Uma cópia psíquica de qualquer humano ou animal no título.<br>•  Uma rajada breve de energia, clima ou força física (fogo/chuva/vento/empurrão/puxão/pressão) nomeada no título.<br><br>A manifestação dura até você rolar para seus efeitos ou ações, usar este poder novamente, ou a cena passar, então se dissipa. Qualquer coisa criada é tangível mas tem uma aura de irrealidade ou 'estranheza' para humanos comuns. Pode causar dano tangível ou força e interagir com o mundo físico, mas não é obrigada a seguir suas instruções se puder agir independentemente. Se o uso deste poder causar dano, ou for arriscado ou incerto, role PSIQUE para seus efeitos quando usado, apenas manifestando e gastando pulso em sucesso. Caso contrário, sempre tem efeito.",
     wire_disk: "Você toca um humano ou exorcista adjacente voluntário, ou um objeto, veículo ou construção de tamanho CAT [CAT:size] (incluindo qualquer coisa sobre ou dentro desse objeto), e armazena-o como um CD. Pode manter um número de CDs igual a CAT+1 [CALC:CAT+1]. Reiniciam entre missões e seus conteúdos são liberados. Uma pessoa armazenada fica em uma espécie de estase sem consciência ou sensação, não pode sofrer dano ou ser afetada de forma alguma, embora ganchos, talismãs e aflições em exorcistas dentro possam continuar acumulando, afetando-os instantaneamente ao serem liberados. Colocar um CD armazenado em um drive permite ler informações sobre seu cativo como um documento de texto. Quando ativar o CD novamente, ou se for quebrado antes, a pessoa ou objeto armazenado reaparece em um espaço a curta distância de você, independente de haver espaço ou não. Role PSIQUE para quaisquer efeitos.",
     wire_terminal: "Você manifesta um terminal de computador que emerge inofensivamente (mas de forma um tanto perturbadora) do seu corpo, geralmente do peito ou costas. Enquanto manifestando este terminal, atividades são difíceis se estiver se movendo ou sob pressão, mas pode agir normalmente de outra forma, incluindo digitar ou interfacear de si mesmo. O terminal tem conexão rápida de internet e energia, independente de localização. Qualquer outro personagem interagindo com o terminal pode usar suas perícias relevantes para coletar informação usando você. A primeira vez na cena que alguém coleta informação assim, também ganhe +1D. Encerre este poder com alguns momentos de concentração, retraindo o terminal.",
     wire_deck: "Você projeta um teclado de qualquer objeto, construção, veículo, humano ou exorcista. O teclado dura até produzir um novo ou até o fim da cena. Enquanto o teclado estiver fora e puder digitar nele, ao coletar informação sobre seu sujeito, pode interagir com ele como se fosse um computador. Pode rolar PSIQUE ou a perícia de interfaceamento, o que for maior. A primeira vez que fizer isso para cada teclado, ganhe +1D. Pode projetá-lo de superfícies impossíveis, pode ser feito de materiais incomuns, e não machuca a pessoa de onde emerge, embora seja difícil digitar neles se forem relutantes ou enquanto se movem.",
@@ -1553,8 +1606,24 @@ var PT_CONTENT = {
   },
   // Virtue translations (GFF-1)
   virtues: {
+    names: {
+      justice: 'Justiça',
+      faith: 'Fé',
+      charity: 'Caridade',
+      fortitude: 'Fortitude',
+      hope: 'Esperança',
+      prudence: 'Prudência'
+    },
+    titles: {
+      justice: 'O Carrasco',
+      faith: 'A Tímida',
+      charity: 'Os Gêmeos',
+      fortitude: 'O Desastre',
+      hope: 'O Sonhador',
+      prudence: 'O Negociador'
+    },
     compendiumDescs: {
-      justice: "Justiça é geralmente considerado o exorcista mais poderoso no arsenal atual de CAIN, um solitário de poucas palavras com extrema liberdade de ação e permissão incomum para vagar. Isso deve-se ao fato de que a alta blasfêmia de Justice, Law, não permite que ele desobedeça ordens de um superior de forma alguma, tornando-o o cão de ataque perfeito. Ele tem o maior número de execuções registradas na história de CAIN e um histórico de combate quase impecável, sendo objeto de temor entre os soldados comuns.<br><br>Em sua maioria, ele parece considerar sua posição como uma realidade aceita e passaram a incorporar seu papel como carrasco de CAIN. Ele é extremamente eficiente e a natureza avassaladora de suas habilidades lhes permite trivializar até mesmo os oponentes mais tenebrosos.<br><br><em class=\"virtue-desc-note\">É comumente teorizado que Temerity possui uma subdivisão especial inteiramente dedicada à contingência de que Justice consiga contornar sua própria blasfêmia.</em>",
+      justice: "Justiça é geralmente considerado o exorcista mais poderoso no arsenal atual de CAIN, um solitário de poucas palavras com extrema liberdade de ação e permissão incomum para vagar. Isso deve-se ao fato de que a alta blasfêmia de Justiça, Lei, não permite que ele desobedeça ordens de um superior de forma alguma, tornando-o o cão de ataque perfeito. Ele tem o maior número de execuções registradas na história de CAIN e um histórico de combate quase impecável, sendo objeto de temor entre os soldados comuns.<br><br>Em sua maioria, ele parece considerar sua posição como uma realidade aceita e passaram a incorporar seu papel como carrasco de CAIN. Ele é extremamente eficiente e a natureza avassaladora de suas habilidades lhes permite trivializar até mesmo os oponentes mais tenebrosos.<br><br><em class=\"virtue-desc-note\">É comumente teorizado que Temerity possui uma subdivisão especial inteiramente dedicada à contingência de que Justiça consiga contornar sua própria blasfêmia.</em>",
       faith: "Fé não é só uma anomalia dentro de CAIN, ela também é uma anomalia como um todo. Ela nasceu em um vilarejo na Europa Oriental em 1672 e desde jovem foi forçada a entrar numa ordem monástica devido à suspeita que estava amaldiçoada ou fazendo pacto com o Diabo. Não importa o quanto Fé crescia, ela nunca parecia envelhecer muito além dos 20 anos e mantinha um exemplo de saúde e condicionamento físico exemplar, manifestando força e constituição sobrenatural. Depois dela se tornar um eremita cerca de cem anos após seu nascimento, ela foi descoberta pela antiga CAIN, quando foi determinado que ela era o único indivíduo do mundo inteiro que não possuía nenhuma Graça ou Pecado.<br><br>A maioria dos humanos manifesta uma pequena quantidade de Graça ou Pecado devido a um trauma psíquico latente, mas Fé é um completo vazio. Agora é teorizado que é devido ela ter manifestado uma 'anti-blasfêmia', uma blasfêmia que absorve todas as outras. Isso fez ela ser completamente imune aos fenômenos psíquicos e também biologicamente imortal.<br><br>Fé tem o menor número de mortes confirmadas que qualquer virtude. Há rumores que a CAIN usa ela principalmente para missões de controle e captura de vinculadores, algo que ela demonstra ser assustadoramente eficaz em.",
       charity: "Uma virtude amplamente temida, Caridade imediatamente se destaca entre seus colegas devido a sua situação única. Caridade é funcionalmente a mesma pessoa que ocupa dois corpos - ou alternativamente duas pessoas separadas com a mesma personalidade e aparência física até cada fio de cabelo individual. Eles podem até compartilhar emoções e podem reagir ou falar previamente de um corpo para o outro como se fosse reflexo. Isso é devido a alta blasfêmia da Caridade, Entrelaçar, embora extremamente poderosa, forçar uma fusão de seus usuários para que, com o decorrer do tempo, eles se tornem gêmeos perfeitos - um amálgama dos dois, misturados juntos, fisicamente e mentalmente. Já que a habilidade de Caridade funciona a qualquer distância, eles são frequentemente enviadas separadas para diferentes engajamentos através do globo, contudo elas preferem trabalhar juntos.<br><br>É conhecimento comum que houve várias gerações de Caridade com o decorrer dos anos, desde pelo menos os anos 1850, e nenhum dos corpos é o original. Quando um morre, CAIN exige uma substituição a partir de um grupo selecionado.<br><br><em style=\"color:var(--vc)\">Tendo criado vínculos com Caridade, você acabou de entrar nessa lista. Parabéns.</em>",
       fortitude: "Considerada uma 'arma de eliminação de nível de calamidade reserva' e uma das poucas exorcistas na história consideradas próximas de ultrapassar a categoria 7 em suas habilidades, Fortitude é mantida em um rigoroso ciclo de congelamento. Uma lutadora extremamente volátil e potente, sua capacidade de executar pecados só é comparável à sua sede por destruição completa e desenfreada. Liberar Fortitude em uma situação é muitas vezes o equivalente a tentar quebrar uma noz com uma prensa hidráulica industrial.<br><br>A alta blasfêmia da Fortitude, Força, permite-lhe habilidades físicas incomparáveis, mas sem o treinamento adequado, seus usuários podem literalmente se despedaçar. Seu notável desprezo pela vida humana e misantropia desenfreada a tornou relativamente impopular nos altos escalões da organização e eles têm relativamente poucos admiradores, mesmo entre os exorcistas juniores mais pessimistas.<br><br><em style=\"color:var(--vc)\">Existe uma divisão especial na divisão de armas da CASTLE, chamada de \"Divisão de Quebra\", dedicada a \"temperar\" armas para uso da Fortitude, pois sem materiais adequados elas não resistem às forças físicas envolvidas. A equipe de pesquisa especializada sente grande prazer em seu trabalho e suas descobertas avançaram muito o armamento da CAIN.</em>",
@@ -1570,20 +1639,20 @@ var PT_CONTENT = {
       prudence: 'Nozes'
     },
     likes: {
-      justice: ['Debate Religioso', 'Música Clássica', 'Cleanliness'],
+      justice: ['Debate Religioso', 'Música Clássica', 'Limpeza'],
       faith: ['Cachorros', 'Tardes lentas', 'Tirar fotos', 'Gachapon', 'Jogos de celular', 'Jogos de luta'],
       charity: ['Moda', 'Discutir online', 'Viajar', 'Dias chuvosos'],
-      fortitude: ['Enfrentar oponentes fortes'],
+      fortitude: ['Lutar', 'Oponentes fortes'],
       hope: ['Video Games', 'Banhos luxuosos', 'Feriados'],
       prudence: ['Uísque puro', 'Romances', 'Trens', 'Caminhadas longas']
     },
     dislikes: {
-      justice: ['Charity', 'Tardiness', 'Cachorros'],
-      faith: ['Fortitude', 'Pessoas rudes', 'Trabalho', 'Filmes de horror'],
-      charity: ['Justice', 'Faith', 'Pessoas chatas', 'Conversas longas'],
+      justice: ['Caridade', 'Atrasos', 'Cachorros'],
+      faith: ['Fortitude', 'Pessoas rudes', 'Trabalho', 'Filmes de terror'],
+      charity: ['Justiça', 'Fé', 'Pessoas chatas', 'Conversas longas'],
       fortitude: ['Humanos', 'Exorcistas', 'Todas as outras virtudes', 'Pecados', 'Liderança da CAIN'],
-      hope: ['Barulhos altos', 'Pessoas barulhentas', 'Justice', 'Fortitude'],
-      prudence: ['Charity', 'Justice', 'Explicar coisas para pessoas lentas']
+      hope: ['Barulhos altos', 'Pessoas barulhentas', 'Justiça', 'Fortitude'],
+      prudence: ['Caridade', 'Justiça', 'Explicar coisas para pessoas lentas']
     },
     strictures: {
       justice: 'Você não pode ignorar ordens de um superior. Role 0d em qualquer ação que você ache que viole a lei.',
@@ -1665,6 +1734,72 @@ var PT_CONTENT = {
     },
     termsOfLaw: ['Rápido', 'Lento', 'Gravetos', 'Pedras', 'Papel', 'Pano', 'Sangue', 'Pregos', 'Pele', 'Fundas ou Balas', 'Flechas', 'Lâminas', 'Sólido', 'Líquido', 'Metal', 'Macio', 'Afiado', 'Peso', 'Luz', 'Terra', 'Fogo', 'Água', 'Ar', 'Proibido', 'Puxado', 'Repelido'],
     games: ['O Chão é Lava (Não toque no chão)', 'Rei da Colina (Deve permanecer dentro de uma pequena área)', 'Pega-pega Invertido (Não toque em um pecado, humano ou exorcista)', 'Olha, Sem Mãos (Não use as mãos)', 'Competição de Silêncio (Não fale nem faça barulho)', 'Marco Polo (Não abra os olhos. Alvos devem dizer Polo quando disser Marco)', 'Batatinha Frita (Pare de se mover no sinal vermelho)']
+  },
+  sinMarks: {
+    1: {
+      name: 'Olhos',
+      appearance: 'Esclera preta ou alterada, íris branca, pupila dividida, em fenda ou duplicada.',
+      abilities: [
+        'Você pode ver claramente até distância extrema, como se pudesse "dar zoom" em sua visão.',
+        'Você pode ver através de paredes e matéria não-viva em distância curta.',
+        'Quando fechados, você pode sentir o estado emocional ambiente de humanos ou exorcistas próximos. Uma vez por caçada, ganhe +1D ao agir com base nisso.',
+        'Uma vez por caçada, você pode paralisar momentaneamente um humano apenas olhando para ele. O efeito dura até você quebrar contato visual, um minuto passar, ou qualquer um dos dois sofrer dano.',
+        'Você pode ver claramente no escuro e não é afetado por escuridão, clima ou obscurecimento.',
+        'Ganhe +1D em Vigilância ou Investigação. Isso pode colocá-lo em 4D base.'
+      ]
+    },
+    2: {
+      name: 'Mandíbula',
+      appearance: 'Mandíbula dividida ou estendida, mandíbula faríngea, presas, língua preta, saliva viscosa.',
+      abilities: [
+        'Você pode cuspir veneno negro até distância curta. É uma arma à distância mundana com aproximadamente a mesma eficácia de uma pistola.',
+        'Você pode ganhar 1d3 de pecado para re-rolar qualquer rolagem que requeira fala, aceitando o segundo resultado como final.',
+        'Você pode sussurrar mensagens curtas ao vento de 6 palavras ou menos que um alvo de sua escolha pode ouvir em seu ouvido dentro de distância longa. O alvo não pode responder.',
+        'Você ganha +1D ao negociar com, comandar ou convencer humanos.',
+        'Uma vez por caçada, você pode dar um comando curto de uma palavra a um humano, que então imediatamente tenta segui-lo da melhor forma possível. Humanos não obedecerão comandos obviamente prejudiciais.',
+        'Ganhe +1D em Autoridade, Conexão ou Negociação. Isso pode colocá-lo em 4D base.'
+      ]
+    },
+    3: {
+      name: 'Costas ou Peito',
+      appearance: 'Espinhos, lesões, descoloração ou deformação da pele, regeneração rápida, pele endurecida ou solta ou escamas, asas vestigiais, costelas extras.',
+      abilities: [
+        'Você pode rolar um dado de descanso extra enquanto descansa. Se fizer isso, ganhe a mesma quantidade de pecado.',
+        'Você não precisa mais respirar. Você não é mais afetado por toxina ou veneno mundano. Você não pode ficar intoxicado por álcool.',
+        'Quando você descansa, você pode ganhar 1 de pecado para remover uma aflição.',
+        'Você tem chance de ignorar qualquer ferimento (role um d6, ignore em um 6).',
+        'Apague automaticamente 1 de estresse quando a pressão aumentar.',
+        'Ganhe +1D em Condicionamento. Isso pode colocá-lo em 4D base.'
+      ]
+    },
+    4: {
+      name: 'Braços ou Mãos',
+      appearance: 'Garras, mão ou braço dividido, braço extra, pele ou músculos torcidos, descoloração, dedos extras.',
+      abilities: [
+        'Você pode ganhar 1d3 de pecado ao realizar um feito de força física para aumentar a CAT desse feito em +2.',
+        'Uma vez por caçada, você pode fundir qualquer arma mundana ou item que poderia segurar em sua carne, capaz de ocultá-lo ou produzi-lo à vontade.',
+        'Uma vez por caçada, você pode dissolver toda matéria não-viva em um cubo de aproximadamente metade do tamanho CAT em uma gosma preta com um toque de seu terceiro dedo (anelar).',
+        'Uma vez por caçada, você pode ganhar 1d3 de pecado para transformar seu braço ou mão em uma arma corpo a corpo por uma cena. É uma arma corpo a corpo sobrenatural de metade da potência CAT.',
+        'Você pode re-rolar qualquer rolagem de força ou interface, aceitando o segundo resultado como final. Se fizer isso, ganhe 1d3 de pecado.',
+        'Ganhe +1D em Força ou Coordenação. Isso pode colocá-lo em 4D base.'
+      ]
+    },
+    5: {
+      name: 'Pele, Cabelo ou Pernas',
+      appearance: 'Descoloração ou branqueamento maior, pele transparente, deformação do andar, pernas digitígradas ou múltiplas, manchas, mudança na cor do cabelo.',
+      abilities: [
+        'Você pode ganhar 1d3 de pecado para saltar até um objeto de tamanho CAT em altura sem rolar. Você pode fazer isso como parte de uma rolagem de ação.',
+        'Enquanto os toca com sua carne nua, você pode escalar ou andar em paredes como se fossem superfícies planas.',
+        'Você tem +1D ao correr ou sprintar em terreno aberto, como uma estrada.',
+        'Você pode ganhar 1 de pecado durante uma rolagem de ação para planar uma distância longa pelo ar como parte da ação. Você precisa começar em altura para ganhar esse benefício.',
+        'Você pode ganhar 1d3 de pecado para ficar completamente invisível à percepção mundana pela duração de uma rolagem de ação.',
+        'Ganhe +1D em Furtividade ou Interface. Isso pode colocá-lo em 4D base.'
+      ]
+    },
+    6: {
+      name: 'Escolha uma Localização',
+      appearance: 'Jogador escolhe qualquer localização das acima.'
+    }
   }
 };
 
@@ -1677,17 +1812,17 @@ const QUIRKS = {
     replaces: 'tension_iron_soul',
     expansion: 'gff4',
     options: [
-      { id: 'steel_soul', name: 'Steel Soul', image: 'img/quirks/steel_soul.png', type: 'replace', grantsPower: 'tension_severance', description: "You specialize in projecting tension fields over bladed weapons. You gain the Severance power for free (even past the cap of 5 powers). You always use it at +1 CAT. However, you can only use Severance while wielding a bladed weapon in one or both hands. Additionally, you can project a psychic cutting force at short range by rolling PSYCHE. This doesn't cost a psyche burst but doesn't have enough force to significantly harm someone - enough to sever a strap, cord, or cause minor cuts." },
-      { id: 'silver_soul', name: 'Silver Soul', image: 'img/quirks/silver_soul.png', type: 'replace', description: "Your body is infused with psychic fields that are stronger when you follow your convictions, and weaker when you don't. When you end a conflict scene, you automatically erase 1 stress if you followed any agenda item in that scene. If you didn't follow any, gain 2 nonlethal stress instead." },
-      { id: 'lead_soul', name: 'Lead Soul', image: 'img/quirks/lead_soul.png', type: 'replace', description: "Your body is suffused with tension fields that make you extremely dense, heavy, and tough. Your weight is tripled and only forces 2 categories higher than your current category can move you against your will. Your unarmed strikes count as service weapons (and can be upgraded). In addition, you can only take a maximum of 1 stress from falling or impacts from vehicles or objects, no matter the category.<br><br>In return, actions that require you to move quickly are hard for you by default." }
+      { id: 'steel_soul', name: 'Steel Soul', namePt: 'Alma de Aço', image: 'img/quirks/steel_soul.png', type: 'replace', grantsPower: 'tension_severance', description: "You specialize in projecting tension fields over bladed weapons. You gain the Severance power for free (even past the cap of 5 powers). You always use it at +1 CAT. However, you can only use Severance while wielding a bladed weapon in one or both hands. Additionally, you can project a psychic cutting force at short range by rolling PSYCHE. This doesn't cost a psyche burst but doesn't have enough force to significantly harm someone - enough to sever a strap, cord, or cause minor cuts." },
+      { id: 'silver_soul', name: 'Silver Soul', namePt: 'Alma de Prata', image: 'img/quirks/silver_soul.png', type: 'replace', description: "Your body is infused with psychic fields that are stronger when you follow your convictions, and weaker when you don't. When you end a conflict scene, you automatically erase 1 stress if you followed any agenda item in that scene. If you didn't follow any, gain 2 nonlethal stress instead." },
+      { id: 'lead_soul', name: 'Lead Soul', namePt: 'Alma de Chumbo', image: 'img/quirks/lead_soul.png', type: 'replace', description: "Your body is suffused with tension fields that make you extremely dense, heavy, and tough. Your weight is tripled and only forces 2 categories higher than your current category can move you against your will. Your unarmed strikes count as service weapons (and can be upgraded). In addition, you can only take a maximum of 1 stress from falling or impacts from vehicles or objects, no matter the category.<br><br>In return, actions that require you to move quickly are hard for you by default." }
     ]
   },
   flux: {
     replaces: 'flux_steal_time',
     expansion: 'gff4',
     options: [
-      { id: 'clockstopper', name: 'Clock Stopper', image: 'img/quirks/clockstopper.png', type: 'replace', description: "You can use the Stop power without spending any psyche bursts, lasting a full minute, and it does not cause temporal instability. Using the power this way 'steals time' from your future lifespan and supernaturally ages you.<br><br>Draw an actual clock on your sheet, starting at 12:00 noon, then advance time by 1d3 hours. Also advance the clock by 1 hour if you suffer sin overflow, or you may advance it any time you would gain temporal instability (1 hour for 1 temporal instability). This clock cannot be affected in any other way.<br>•  12-5pm: ages you 1d3 years.<br>•  6-9pm: ages you 1d6+2 years.<br>•  10-12: ages you 2d6+8 years.<br><br>This has no effect on your abilities. At midnight, you die of old age (this cannot be ignored)." },
-      { id: 'timesplitter', name: 'Time Splitter', image: 'img/quirks/timesplitter.png', type: 'replace', uses: 'hunt', description: "Once a hunt, without spending a psyche burst, you may cause a temporal fracture when undertaking any course of action. This fracture ends when an action roll is made, when you would die or suffer sin overflow, or after exactly 777 seconds have expired in the fiction.<br><br>This activity takes place in an alternate timeline, in which everything is otherwise exactly the same. When the fracture expires, you revert to the main timeline, undoing all outcomes, resources spent, harm taken, or consequences, but keeping any knowledge or memory from the alternate timeline.<br><br>You or an ally may take +1D on the next roll that takes advantage of this information. Then play forward as normal." }
+      { id: 'clockstopper', name: 'Clock Stopper', namePt: 'Cronobloqueador', image: 'img/quirks/clockstopper.png', type: 'replace', description: "You can use the Stop power without spending any psyche bursts, lasting a full minute, and it does not cause temporal instability. Using the power this way 'steals time' from your future lifespan and supernaturally ages you.<br><br>Draw an actual clock on your sheet, starting at 12:00 noon, then advance time by 1d3 hours. Also advance the clock by 1 hour if you suffer sin overflow, or you may advance it any time you would gain temporal instability (1 hour for 1 temporal instability). This clock cannot be affected in any other way.<br>•  12-5pm: ages you 1d3 years.<br>•  6-9pm: ages you 1d6+2 years.<br>•  10-12: ages you 2d6+8 years.<br><br>This has no effect on your abilities. At midnight, you die of old age (this cannot be ignored)." },
+      { id: 'timesplitter', name: 'Time Splitter', namePt: 'Fragmentador Temporal', image: 'img/quirks/timesplitter.png', type: 'replace', uses: 'hunt', description: "Once a hunt, without spending a psyche burst, you may cause a temporal fracture when undertaking any course of action. This fracture ends when an action roll is made, when you would die or suffer sin overflow, or after exactly 777 seconds have expired in the fiction.<br><br>This activity takes place in an alternate timeline, in which everything is otherwise exactly the same. When the fracture expires, you revert to the main timeline, undoing all outcomes, resources spent, harm taken, or consequences, but keeping any knowledge or memory from the alternate timeline.<br><br>You or an ally may take +1D on the next roll that takes advantage of this information. Then play forward as normal." }
     ]
   },
   ardence: {
@@ -1695,10 +1830,10 @@ const QUIRKS = {
     expansion: 'gff4',
     replacedPowers: { fury: 'ardence_blackmatter', sabre: 'ardence_nihil' },
     options: [
-      { id: 'void_furnace', name: 'Void Furnace', image: 'img/quirks/void_furnace.png', type: 'replace', description: "Your powers focus on the cold at the end of the universe, the fathomless emptiness of entropy. This changes the following:<br>•  Pallor: You are always cold to the touch and can't be warmed up. You can't suffer negative effects or harm due to cold weather or temperature (even extreme cold), but you still feel it. You subtract 1 from all your resting rolls if the area where you are resting isn't warm.<br>•  Void Affinity: No power you take can ever produce heat.<br>•  Rise from Abyss: Your powers from this blasphemy increase in potency the closer you are to death. They gain +1 CAT in all capabilities if you have an injury, a further +1 CAT if you have two or more, and a further +1 CAT if another exorcist has died this mission.<br>•  Collapse: If you die, your body snap freezes and begins collapsing into a non-space. Touching it without protection can inflict incredible harm from the cold (around 3-4 stress). It will require special removal by CAIN, therefore it cannot be recovered by your compatriots.<br>•  Cold Swap: Instead of Fury, you can choose Black Matter. Instead of Sabre you can choose Nihil.",
+      { id: 'void_furnace', name: 'Void Furnace', namePt: 'Fornalha do Vazio', image: 'img/quirks/void_furnace.png', type: 'replace', description: "Your powers focus on the cold at the end of the universe, the fathomless emptiness of entropy. This changes the following:<br>•  Pallor: You are always cold to the touch and can't be warmed up. You can't suffer negative effects or harm due to cold weather or temperature (even extreme cold), but you still feel it. You subtract 1 from all your resting rolls if the area where you are resting isn't warm.<br>•  Void Affinity: No power you take can ever produce heat.<br>•  Rise from Abyss: Your powers from this blasphemy increase in potency the closer you are to death. They gain +1 CAT in all capabilities if you have an injury, a further +1 CAT if you have two or more, and a further +1 CAT if another exorcist has died this mission.<br>•  Collapse: If you die, your body snap freezes and begins collapsing into a non-space. Touching it without protection can inflict incredible harm from the cold (around 3-4 stress). It will require special removal by CAIN, therefore it cannot be recovered by your compatriots.<br>•  Cold Swap: Instead of Fury, you can choose Black Matter. Instead of Sabre you can choose Nihil.",
         altPowers: [
-          { id: 'ardence_blackmatter', name: 'Black Matter', replaces: 'ardence_fury', tags: ['Instant', 'Long'], burst: 'required', description: "You instantly disperse heat in an area, creating a killing flash freeze at a location in range with a blast area up to 1/2 CAT [HALF_CAT:area]. This inflicts harm on anything living in the area and instantly freezes liquids and environments, causing damage. Roll PSYCHE for its effects, and only spend a psyche burst on success.<br><br>When you use this power, you may inflict 1 nonlethal but irreducible stress on yourself to gain +1D on the roll as your body partly freezes over. If you do, increase the nonlethal stress suffered the next time you use this power by +1. This effect stacks but resets when you rest." },
-          { id: 'ardence_nihil', name: 'Nihil', replaces: 'ardence_sabre', tags: ['Instant', 'Adjacent'], burst: 'required', description: "By placing your palms outwards, you release a terrifying annihilative force at hand's reach, affecting a base 1/2 CAT [HALF_CAT:area] area immediately adjacent to you. Roll PSYCHE for its effects, and only spend a psyche burst on success. This force is tremendous but slow, giving it the following:<br>•  It gains +2D when rolling to blast through immobile targets (living or nonliving), walls, constructions, or inanimate objects.<br>•  Unless you are set up by another exorcist, using this power when a roll is risky is always hard." }
+          { id: 'ardence_blackmatter', name: 'Black Matter', namePt: 'Matéria Negra', replaces: 'ardence_fury', tags: ['Instant', 'Long'], burst: 'required', description: "You instantly disperse heat in an area, creating a killing flash freeze at a location in range with a blast area up to 1/2 CAT [HALF_CAT:area]. This inflicts harm on anything living in the area and instantly freezes liquids and environments, causing damage. Roll PSYCHE for its effects, and only spend a psyche burst on success.<br><br>When you use this power, you may inflict 1 nonlethal but irreducible stress on yourself to gain +1D on the roll as your body partly freezes over. If you do, increase the nonlethal stress suffered the next time you use this power by +1. This effect stacks but resets when you rest." },
+          { id: 'ardence_nihil', name: 'Nihil', namePt: 'Niilismo', replaces: 'ardence_sabre', tags: ['Instant', 'Adjacent'], burst: 'required', description: "By placing your palms outwards, you release a terrifying annihilative force at hand's reach, affecting a base 1/2 CAT [HALF_CAT:area] area immediately adjacent to you. Roll PSYCHE for its effects, and only spend a psyche burst on success. This force is tremendous but slow, giving it the following:<br>•  It gains +2D when rolling to blast through immobile targets (living or nonliving), walls, constructions, or inanimate objects.<br>•  Unless you are set up by another exorcist, using this power when a roll is risky is always hard." }
         ]
       }
     ]
@@ -1707,109 +1842,109 @@ const QUIRKS = {
     replaces: 'vector_brake',
     expansion: 'gff4',
     options: [
-      { id: 'axis', name: 'Axis', image: 'img/quirks/axis.png', type: 'replace', description: "Your powers rely on rotational velocity.<br><br><b>Inscribe Axis</b>: The Fling and Current powers from this blasphemy move things either clockwise or counter clockwise around you or a point you choose in hand's reach, instead of in a straight line. The range of these abilities instead becomes the radius of this circular path.<br><br><b>Holy Chakra</b>: You may roll 1d6 when an object or projectile equal or lower than your CAT would impact you. If you roll a 4+, it instead orbits harmlessly around you and away from you, missing you and inflicting a max of 1 stress. If successful, lose the use of this passive until you rest." },
-      { id: 'rail', name: 'Rail', image: 'img/quirks/rail.png', type: 'replace', description: "When moving, you automatically increase your own velocity. All your own movement (not movement granted to others), is +1 CAT higher, including movement without your powers. You can 'skate' on a small bubble of vectorized air underneath your feet, allowing you to move across water or slippery surfaces.<br><br>However, none of your powers work if you are unable to move while using them." }
+      { id: 'axis', name: 'Axis', namePt: 'Eixo', image: 'img/quirks/axis.png', type: 'replace', description: "Your powers rely on rotational velocity.<br><br><b>Inscribe Axis</b>: The Fling and Current powers from this blasphemy move things either clockwise or counter clockwise around you or a point you choose in hand's reach, instead of in a straight line. The range of these abilities instead becomes the radius of this circular path.<br><br><b>Holy Chakra</b>: You may roll 1d6 when an object or projectile equal or lower than your CAT would impact you. If you roll a 4+, it instead orbits harmlessly around you and away from you, missing you and inflicting a max of 1 stress. If successful, lose the use of this passive until you rest." },
+      { id: 'rail', name: 'Rail', namePt: 'Trilho', image: 'img/quirks/rail.png', type: 'replace', description: "When moving, you automatically increase your own velocity. All your own movement (not movement granted to others), is +1 CAT higher, including movement without your powers. You can 'skate' on a small bubble of vectorized air underneath your feet, allowing you to move across water or slippery surfaces.<br><br>However, none of your powers work if you are unable to move while using them." }
     ]
   },
   tongue: {
     replaces: 'tongue_the_word',
     expansion: 'gff4',
     options: [
-      { id: 'taboo', name: 'Taboo', image: 'img/quirks/taboo.png', type: 'replace', hasNotes: true, description: "Certain words are banned for you. When you, the character or the player, speak those words (even inadvertently) in any language and in any voice louder than a whisper, resolve any powers triggered by your speech, then it inflicts a supernatural destructive shockwave on everything other than you in a CAT+1 [CAT+1:area] area centered on you (roll PSYCHE for effects, including harm, etc), and temporarily deafens everyone in that area. Your voice is blown out and your character is unable to speak or use powers from any blasphemy until you rest.<br><br>Banned Words: Sin, Cain, the name of any blasphemies or blasphemy powers, including your own, the name of any sin or sin type (If you don't know a word is a Blasphemy/Power or a Sin Name/Type, it does not trigger Taboo)." }
+      { id: 'taboo', name: 'Taboo', namePt: 'Tabu', image: 'img/quirks/taboo.png', type: 'replace', hasNotes: true, description: "Certain words are banned for you. When you, the character or the player, speak those words (even inadvertently) in any language and in any voice louder than a whisper, resolve any powers triggered by your speech, then it inflicts a supernatural destructive shockwave on everything other than you in a CAT+1 [CAT+1:area] area centered on you (roll PSYCHE for effects, including harm, etc), and temporarily deafens everyone in that area. Your voice is blown out and your character is unable to speak or use powers from any blasphemy until you rest.<br><br>Banned Words: Sin, Cain, the name of any blasphemies or blasphemy powers, including your own, the name of any sin or sin type (If you don't know a word is a Blasphemy/Power or a Sin Name/Type, it does not trigger Taboo)." }
     ]
   },
-  playlist: {
-    replaces: 'playlist_playlist',
+  track: {
+    replaces: 'track_playlist',
     expansion: 'gff4',
     options: [
-      { id: 'catch_vibe', name: 'Catch Vibe', image: 'img/quirks/catch_vibe.png', type: 'add', description: "Your starting playlist is smaller (4 tracks). However, you can add or swap in and out any (real life) music track played during the session by you, your GM, or any of the players into your active playlist for the remainder of the hunt, or any music track played diagetically (in the game). This could push it up to 10 tracks." }
+      { id: 'catch_vibe', name: 'Catch Vibe', namePt: 'Pegar a Vibe', image: 'img/quirks/catch_vibe.png', type: 'add', description: "Your starting playlist is smaller (4 tracks). However, you can add or swap in and out any (real life) music track played during the session by you, your GM, or any of the players into your active playlist for the remainder of the hunt, or any music track played diagetically (in the game). This could push it up to 10 tracks." }
     ]
   },
   gate: {
     replaces: 'gate_pocket',
     expansion: 'gff4',
     options: [
-      { id: 'stroll', name: 'Stroll', image: 'img/quirks/stroll.png', type: 'replace', uses: 'scene', description: "Once a scene, without spending a psyche burst, you can attempt to teleport yourself to a point in short distance you can see (even just partly) with enough space for you to arrive by rolling 1d6. On a 3+, you are successful. On a 1-2, you teleport anyway to a point in range, but the Admin tells you where you end up." },
-      { id: 'rummage', name: 'Rummage', image: 'img/quirks/rummage.png', type: 'replace', uses: 'scene', description: "Once a scene, you can spend 1 kp to pull a random item out of a space that an item could be stored (clothing, suit pocket, in a desk drawer, etc). This only works if you are not looking while you're pulling the item out. The item that comes out may not necessarily logically fit the space, but comes out anyway. Roll 1d6, then the Admin picks something from the rolled list.<br>•  1. Fountain pen, Live Grenade, Leather gloves, Lighter (small, plain), Pack of cigarettes (2 missing), Phone charger.<br>•  2. Roll of coins, Crowbar, Stapler, Claw hammer, Camcorder (1 hour tape), Chapstick.<br>•  3. Handgun (unloaded), two cigarettes, Faded photograph, Instruction manual for building furniture (in Swedish), Map of the area (folded, well used, in Swedish), Large pack of caramel candies.<br>•  4. Cell phone (10% battery), Thick sheathe of printer paper, Large amount of cash, Full bottle of wine, Fire Axe, Huge box of nails.<br>•  5. Chewing Gum, Lipstick, Coffee Mug (novelty), Folded Letter, Hat (situation appropriate), Clip of 9mm ammo for a handgun.<br>•  6. Useful key, Pocket Knife, Lighter (oversized, novelty), Bicycle (foldable), Dictionary for translating Swedish, six sided die." }
+      { id: 'stroll', name: 'Stroll', namePt: 'Passeio', image: 'img/quirks/stroll.png', type: 'replace', uses: 'scene', description: "Once a scene, without spending a psyche burst, you can attempt to teleport yourself to a point in short distance you can see (even just partly) with enough space for you to arrive by rolling 1d6. On a 3+, you are successful. On a 1-2, you teleport anyway to a point in range, but the Admin tells you where you end up." },
+      { id: 'rummage', name: 'Rummage', namePt: 'Vasculhar', image: 'img/quirks/rummage.png', type: 'replace', uses: 'scene', description: "Once a scene, you can spend 1 kp to pull a random item out of a space that an item could be stored (clothing, suit pocket, in a desk drawer, etc). This only works if you are not looking while you're pulling the item out. The item that comes out may not necessarily logically fit the space, but comes out anyway. Roll 1d6, then the Admin picks something from the rolled list.<br>•  1. Fountain pen, Live Grenade, Leather gloves, Lighter (small, plain), Pack of cigarettes (2 missing), Phone charger.<br>•  2. Roll of coins, Crowbar, Stapler, Claw hammer, Camcorder (1 hour tape), Chapstick.<br>•  3. Handgun (unloaded), two cigarettes, Faded photograph, Instruction manual for building furniture (in Swedish), Map of the area (folded, well used, in Swedish), Large pack of caramel candies.<br>•  4. Cell phone (10% battery), Thick sheathe of printer paper, Large amount of cash, Full bottle of wine, Fire Axe, Huge box of nails.<br>•  5. Chewing Gum, Lipstick, Coffee Mug (novelty), Folded Letter, Hat (situation appropriate), Clip of 9mm ammo for a handgun.<br>•  6. Useful key, Pocket Knife, Lighter (oversized, novelty), Bicycle (foldable), Dictionary for translating Swedish, six sided die." }
     ]
   },
   smother: {
     replaces: 'smother_absentia',
     expansion: 'gff4',
     options: [
-      { id: 'digit', name: 'Digit', image: 'img/quirks/digit.png', type: 'replace', description: "You can instantly (and cleanly) lose a finger to gain +1D and +1 CAT to any power when you use it. It disappears as if it had been cut off a long time ago. Roll 1d6 (2-3: left hand, 4-5 right hand).<br><br>If you run out of fingers on one hand, you automatically lose fingers on the other. If you roll a 1, you lose another finger and roll again (this can keep going!). If you roll a 6, you can choose which hand you lose a finger on.<br><br>Gain -1D on any rolls that would require using the affected hand until the next hunt, when you have time to adjust to the disability. If you have no fingers left, you lose your head instead and suffer (gruesome) instant death, which cannot be ignored." },
-      { id: 'ban', name: 'Ban', image: 'img/quirks/ban.png', type: 'replace', uses: 'hunt', grantsPower: 'smother_abstract', description: "Gain the Abstract power from this Blasphemy for free (even past the limit of 5 powers). Once per hunt, you can use it to affect a single human or exorcist, leaving them an unrecognizable blur and preventing them from taking action. They recover if taking harm or if the scene passes.<br><br>Roll PSYCHE for effects and only spend a psyche burst and expend the special use of this power on success. Take or grant +1D on the next action taking advantage of this as normal." }
+      { id: 'digit', name: 'Digit', namePt: 'Dígito', image: 'img/quirks/digit.png', type: 'replace', description: "You can instantly (and cleanly) lose a finger to gain +1D and +1 CAT to any power when you use it. It disappears as if it had been cut off a long time ago. Roll 1d6 (2-3: left hand, 4-5 right hand).<br><br>If you run out of fingers on one hand, you automatically lose fingers on the other. If you roll a 1, you lose another finger and roll again (this can keep going!). If you roll a 6, you can choose which hand you lose a finger on.<br><br>Gain -1D on any rolls that would require using the affected hand until the next hunt, when you have time to adjust to the disability. If you have no fingers left, you lose your head instead and suffer (gruesome) instant death, which cannot be ignored." },
+      { id: 'ban', name: 'Ban', namePt: 'Banimento', image: 'img/quirks/ban.png', type: 'replace', uses: 'hunt', grantsPower: 'smother_abstract', description: "Gain the Abstract power from this Blasphemy for free (even past the limit of 5 powers). Once per hunt, you can use it to affect a single human or exorcist, leaving them an unrecognizable blur and preventing them from taking action. They recover if taking harm or if the scene passes.<br><br>Roll PSYCHE for effects and only spend a psyche burst and expend the special use of this power on success. Take or grant +1D on the next action taking advantage of this as normal." }
     ]
   },
   edit: {
     replaces: 'edit_mimic',
     expansion: 'gff4',
     options: [
-      { id: 'scenery', name: 'Scenery', image: 'img/quirks/scenery.png', type: 'replace', uses: 'scene', description: "Once a scene, when using any power from this blasphemy, if you can pull from a work of art nearby, it does not cost a psyche burst. The same work of art does not work twice in the same hunt, and the quality of the end result is dependent on the quality of the artwork." },
-      { id: 'alter', name: 'Alter', image: 'img/quirks/alter.png', type: 'replace', description: "When you rest or go to sleep, you disappear and are replaced by a different version of yourself with similar memories. These versions of yourself rotate in from another reality where this power activated. Your appearance changes as if you used the Mimic passive. Choose one:<br>• You are holding something small but useful (a tool, a weapon, a key, a map).<br>• You have faint memories of a piece of information pertinent to the current investigation. Ask the GM a yes or no question about the current hunt and get a truthful answer.<br>• You are slightly less stressed (-1 stress) than your current version." }
+      { id: 'scenery', name: 'Scenery', namePt: 'Cenário', image: 'img/quirks/scenery.png', type: 'replace', uses: 'scene', description: "Once a scene, when using any power from this blasphemy, if you can pull from a work of art nearby, it does not cost a psyche burst. The same work of art does not work twice in the same hunt, and the quality of the end result is dependent on the quality of the artwork." },
+      { id: 'alter', name: 'Alter', namePt: 'Alterar', image: 'img/quirks/alter.png', type: 'replace', description: "When you rest or go to sleep, you disappear and are replaced by a different version of yourself with similar memories. These versions of yourself rotate in from another reality where this power activated. Your appearance changes as if you used the Mimic passive. Choose one:<br>• You are holding something small but useful (a tool, a weapon, a key, a map).<br>• You have faint memories of a piece of information pertinent to the current investigation. Ask the GM a yes or no question about the current hunt and get a truthful answer.<br>• You are slightly less stressed (-1 stress) than your current version." }
     ]
   },
   whisper: {
     replaces: 'whisper_shadow',
     expansion: 'gff4',
     options: [
-      { id: 'the_future_rules', name: 'The Future Rules!', image: 'img/quirks/the_future_rules.png', type: 'add', hasNotes: true, description: "You cannot die, except from causes which aren't ignorable. If you would die, you miraculously survive in an improbable way, pass out, and come to consciousness at the start of the next scene with 1 remaining injury and half your stress full.<br><br>However, roll 1d6 at the end of each mission you complete. On a 1, foreboding doom sets in, and you become certain that the next mission is the one you die on. Increase the range of this number by +1 for each mission it doesn't trigger (so the next time would be on a roll of 1-2).<br><br>While you are affected by foreboding doom, you lose your ability to ignore death and suffer instant death instead any time you suffer an injury. You can defy this fate as normal." }
+      { id: 'the_future_rules', name: 'The Future Rules!', namePt: 'O Futuro Manda!', image: 'img/quirks/the_future_rules.png', type: 'add', hasNotes: true, description: "You cannot die, except from causes which aren't ignorable. If you would die, you miraculously survive in an improbable way, pass out, and come to consciousness at the start of the next scene with 1 remaining injury and half your stress full.<br><br>However, roll 1d6 at the end of each mission you complete. On a 1, foreboding doom sets in, and you become certain that the next mission is the one you die on. Increase the range of this number by +1 for each mission it doesn't trigger (so the next time would be on a roll of 1-2).<br><br>While you are affected by foreboding doom, you lose your ability to ignore death and suffer instant death instead any time you suffer an injury. You can defy this fate as normal." }
     ]
   },
   bind: {
     replaces: 'bind_sin_binding',
     expansion: 'gff4',
     options: [
-      { id: 'sin_strike', name: 'Sin Strike', type: 'add_free', grantsPower: 'bind_sin_strike', description: "You can command an active sin to attack by spending a psyche burst as long as both your sin and its target are in range, and you can communicate with it. Roll PSYCHE for its effects. The attack has supernatural potency." },
-      { id: 'sin_evolve', name: 'Sin Evolve', type: 'add_free', description: "Your bound sins increase in ability as you gain category.<br>•  CAT 2+: Your sins gain the ability to speak and develop a humanlike intelligence. Only psychically sensitive people can hear them.<br>•  CAT 3+: Your sins can take on a humanlike form, or a larger animal-like form, or switch between.<br>•  CAT 4+: Your bound sins can appear visible and audible to humans. Graceless humans typically find this traumatic (roll PSYCHE for any effects).<br>•  CAT 5+: You can have two active sins out at once. Any action you take with them must apply to one or the other. Failing to absorb stress for an action taken by a sin banishes both of them." },
-      { id: 'menagerie', name: 'Menagerie', image: 'img/quirks/menagerie.png', type: 'add_free', description: "When you defeat a sin during a hunt, you may bind it as a new bound sin during a rest. This applies even for minor sins or foes with the type 'sin'. A captive sin is mechanically identical to your original bound sin but may differ in aesthetics and personality. You can swap your active bound sin in and out, including your original bound sin, and keep up to six. Inactive sins retract into a dormant state inside your sin seed." },
-      { id: 'wretched_host', name: 'Wretched Host', image: 'img/quirks/wretched_host.png', type: 'replace', grantsPower: 'bind_surrender', description: "You don't have a bound sin. Instead, you are a former type II sin host, where the sin is fused to your flesh and is part of you.<br><br>You gain the Surrender blasphemy power for free, it loses the charm tag, and its effects can stack up to three times on you. Instead of costing Psyche burst, it always costs 1 sin to activate.<br><br>All powers that would apply to your sin instead apply to you, and physically transform you." },
-      { id: 'ten_thousand_sword_king', name: 'Summon the Ten Thousand Sword King', image: 'img/quirks/ten_thousand_sword_king.png', type: 'add_free', specialRender: 'sword_king', grantsPower: 'bind_sword_king', description: "If you have the bind blasphemy and are either CAT 5 or on the brink of death, you can beckon the infinite blue. Summoning the King immediately initiates an apocalyptic force in an area around the size of a town (around CAT 5), centered on you. Sins and exorcists in the area, including you, roll 1d6 and add their category. If the result is 9 or higher, they survive, otherwise they are obliterated. Exorcists suffer instant death, sins are reduced to ashes. This fate can be defied as normal. Perfect Sins always survive. Everything else in the area CAT 5 or under is annihilated.<br><br>Summoning the King can only be done once in a game of CAIN." }
+      { id: 'sin_strike', name: 'Sin Strike', namePt: 'Golpe de Pecado', type: 'add_free', grantsPower: 'bind_sin_strike', description: "You can command an active sin to attack by spending a psyche burst as long as both your sin and its target are in range, and you can communicate with it. Roll PSYCHE for its effects. The attack has supernatural potency." },
+      { id: 'sin_evolve', name: 'Sin Evolve', namePt: 'Pecado Evolutivo', type: 'add_free', description: "Your bound sins increase in ability as you gain category.<br>•  CAT 2+: Your sins gain the ability to speak and develop a humanlike intelligence. Only psychically sensitive people can hear them.<br>•  CAT 3+: Your sins can take on a humanlike form, or a larger animal-like form, or switch between.<br>•  CAT 4+: Your bound sins can appear visible and audible to humans. Graceless humans typically find this traumatic (roll PSYCHE for any effects).<br>•  CAT 5+: You can have two active sins out at once. Any action you take with them must apply to one or the other. Failing to absorb stress for an action taken by a sin banishes both of them." },
+      { id: 'menagerie', name: 'Menagerie', namePt: 'Zoológico', image: 'img/quirks/menagerie.png', type: 'add_free', description: "When you defeat a sin during a hunt, you may bind it as a new bound sin during a rest. This applies even for minor sins or foes with the type 'sin'. A captive sin is mechanically identical to your original bound sin but may differ in aesthetics and personality. You can swap your active bound sin in and out, including your original bound sin, and keep up to six. Inactive sins retract into a dormant state inside your sin seed." },
+      { id: 'wretched_host', name: 'Wretched Host', namePt: 'Hospedeiro Miserável', image: 'img/quirks/wretched_host.png', type: 'replace', grantsPower: 'bind_surrender', description: "You don't have a bound sin. Instead, you are a former type II sin host, where the sin is fused to your flesh and is part of you.<br><br>You gain the Surrender blasphemy power for free, it loses the charm tag, and its effects can stack up to three times on you. Instead of costing Psyche burst, it always costs 1 sin to activate.<br><br>All powers that would apply to your sin instead apply to you, and physically transform you." },
+      { id: 'ten_thousand_sword_king', name: 'Summon the Ten Thousand Sword King', namePt: 'Invocar o Rei das Dez Mil Espadas', image: 'img/quirks/ten_thousand_sword_king.png', type: 'add_free', specialRender: 'sword_king', grantsPower: 'bind_sword_king', description: "If you have the bind blasphemy and are either CAT 5 or on the brink of death, you can beckon the infinite blue. Summoning the King immediately initiates an apocalyptic force in an area around the size of a town (around CAT 5), centered on you. Sins and exorcists in the area, including you, roll 1d6 and add their category. If the result is 9 or higher, they survive, otherwise they are obliterated. Exorcists suffer instant death, sins are reduced to ashes. This fate can be defied as normal. Perfect Sins always survive. Everything else in the area CAT 5 or under is annihilated.<br><br>Summoning the King can only be done once in a game of CAIN." }
     ]
   },
   wire: {
     replaces: 'wire_main_artery',
     expansion: 'gff4',
     options: [
-      { id: 'worm', name: 'Worm', image: 'img/quirks/worm.png', type: 'replace', description: "You can produce light reading material (novels, magazines, etc) at will, without costing KP, though it dissolves after a few minutes of losing contact with your body.<br><br>In addition, all wire powers apply to books instead of computers or phones and can be used with books. When you'd produce a computer terminal with Terminal or Deck, you instead produce an appropriate book (almanac, encyclopedia, comic book, etc), including from people's bodies. Surge works with books (you must have read or be familiar with the destination book), and Disk turns your target into a book. Call creates a duplicate journal on both you and your target if the target picks up. Writing in the journal causes the writing to supernaturally and instantly appear on the duplicate, regardless of distance." }
+      { id: 'worm', name: 'Worm', namePt: 'Verme', image: 'img/quirks/worm.png', type: 'replace', description: "You can produce light reading material (novels, magazines, etc) at will, without costing KP, though it dissolves after a few minutes of losing contact with your body.<br><br>In addition, all wire powers apply to books instead of computers or phones and can be used with books. When you'd produce a computer terminal with Terminal or Deck, you instead produce an appropriate book (almanac, encyclopedia, comic book, etc), including from people's bodies. Surge works with books (you must have read or be familiar with the destination book), and Disk turns your target into a book. Call creates a duplicate journal on both you and your target if the target picks up. Writing in the journal causes the writing to supernaturally and instantly appear on the duplicate, regardless of distance." }
     ]
   },
   palace: {
     replaces: 'palace_sanctum',
     expansion: 'gff4',
     options: [
-      { id: 'recluse', name: 'Recluse', image: 'img/quirks/recluse.png', type: 'replace', description: "<div class=\"sanctum-base-box\"><b>Sanctum base:</b><br>• The palace is a mental projection, a dream space that takes the form of a large home, residence, or mansion in a locale of your choosing. You can control its appearance and decor.<br>• Taking harm in a palace instantly shunts a person out of it, waking them up, instead of dealing them real harm.<br>• Entering the palace mentally requires only closing your eyes and concentrating, leaving your outside body defenseless and insensate.</div>Only you can enter your palace (with the exception of the bar power, and psychic doubles, such as from Parlor). It grants no resting benefits, but otherwise functions as the normal Sanctum power. In addition, you can enter it any time you like by concentrating for a few moments.<br><br>When you enter your palace, you physically disappear and are replaced by a palace port, which is a small reflective object. Historically, these have been things like gemstones, mirrors, or basins of water, but in modern times have sometimes become things like phone screens, laptops, or portable video game consoles. Outside observers, including mundane humans can see and talk to you inside your palace, though your voice and appearance may seem distant or distorted. While inside your palace, you can use powers from this blasphemy normally to affect the outside world.<br><br>You remain in the palace until you voluntarily leave. If the object is damaged, you are shunted out, take stress as if you were targeted by that damage, and you cannot re-enter until you rest. The port can be supernaturally repaired during a rest at no cost." },
-      { id: 'manifold', name: 'Manifold', image: 'img/quirks/manifold.png', type: 'replace', uses: 'hunt', description: "<div class=\"sanctum-base-box\"><b>Sanctum base:</b><br>• You and allies you rest with can enter your psychic palace while resting. This improves the resting rolls of yourself and one ally of your choice resting with you by +1.<br>• The palace is a mental projection, a dream space that takes the form of a large home, residence, or mansion in a locale of your choosing. You can control its appearance and decor.<br>• Taking harm in a palace instantly shunts a person out of it, waking them up, instead of dealing them real harm.<br>• Entering the palace mentally requires only closing your eyes and concentrating, leaving your outside body defenseless and insensate.</div>Your palace functions as the normal Sanctum power, except:<br><br>Once a hunt, when you open any door or cross any threshold, you can instead open a door to a single room of your choice in your palace, physically manifesting it. Doing so does not require spending a PSYCHE burst. Opening any door out of this room opens and connects to a random door nearby, determined by the Admin. The space inside your palace could be larger than is physically possible from the outside.<br><br>When you use any palace power, including its passive, you must physically manifest the corresponding part of your palace as part of that power, as prior, though you can do this any number of times. If you don't have a door on hand to do this with, you can't activate the power, though any door will qualify (car doors, microwave or fridge doors, etc).<br><br>Other beings can enter your manifested palace rooms, even those hostile to you. The rooms stop existing when you are no longer physically inside or are outside and let go of the door handle, and push out anyone or anything from the outside reality when they collapse back into their original form." }
+      { id: 'recluse', name: 'Recluse', namePt: 'Recluso', image: 'img/quirks/recluse.png', type: 'replace', description: "<div class=\"sanctum-base-box\"><b>Sanctum base:</b><br>• The palace is a mental projection, a dream space that takes the form of a large home, residence, or mansion in a locale of your choosing. You can control its appearance and decor.<br>• Taking harm in a palace instantly shunts a person out of it, waking them up, instead of dealing them real harm.<br>• Entering the palace mentally requires only closing your eyes and concentrating, leaving your outside body defenseless and insensate.</div>Only you can enter your palace (with the exception of the bar power, and psychic doubles, such as from Parlor). It grants no resting benefits, but otherwise functions as the normal Sanctum power. In addition, you can enter it any time you like by concentrating for a few moments.<br><br>When you enter your palace, you physically disappear and are replaced by a palace port, which is a small reflective object. Historically, these have been things like gemstones, mirrors, or basins of water, but in modern times have sometimes become things like phone screens, laptops, or portable video game consoles. Outside observers, including mundane humans can see and talk to you inside your palace, though your voice and appearance may seem distant or distorted. While inside your palace, you can use powers from this blasphemy normally to affect the outside world.<br><br>You remain in the palace until you voluntarily leave. If the object is damaged, you are shunted out, take stress as if you were targeted by that damage, and you cannot re-enter until you rest. The port can be supernaturally repaired during a rest at no cost." },
+      { id: 'manifold', name: 'Manifold', namePt: 'Múltiplo', image: 'img/quirks/manifold.png', type: 'replace', uses: 'hunt', description: "<div class=\"sanctum-base-box\"><b>Sanctum base:</b><br>• You and allies you rest with can enter your psychic palace while resting. This improves the resting rolls of yourself and one ally of your choice resting with you by +1.<br>• The palace is a mental projection, a dream space that takes the form of a large home, residence, or mansion in a locale of your choosing. You can control its appearance and decor.<br>• Taking harm in a palace instantly shunts a person out of it, waking them up, instead of dealing them real harm.<br>• Entering the palace mentally requires only closing your eyes and concentrating, leaving your outside body defenseless and insensate.</div>Your palace functions as the normal Sanctum power, except:<br><br>Once a hunt, when you open any door or cross any threshold, you can instead open a door to a single room of your choice in your palace, physically manifesting it. Doing so does not require spending a PSYCHE burst. Opening any door out of this room opens and connects to a random door nearby, determined by the Admin. The space inside your palace could be larger than is physically possible from the outside.<br><br>When you use any palace power, including its passive, you must physically manifest the corresponding part of your palace as part of that power, as prior, though you can do this any number of times. If you don't have a door on hand to do this with, you can't activate the power, though any door will qualify (car doors, microwave or fridge doors, etc).<br><br>Other beings can enter your manifested palace rooms, even those hostile to you. The rooms stop existing when you are no longer physically inside or are outside and let go of the door handle, and push out anyone or anything from the outside reality when they collapse back into their original form." }
     ]
   },
   jaunt: {
     replaces: 'jaunt_ghostwire',
     expansion: 'gff4',
     options: [
-      { id: 'corpus', name: 'Corpus', image: 'img/quirks/corpus.png', type: 'replace', description: "You specialize in the bodies of the recently deceased. Once a scene, when you touch a corpse, you can tell exactly how long ago it died, and get brief visions of its death, granting you +1D when next you act on the answers in the same scene.<br><br>Additionally, you can use the Possession power on corpses without spending a psyche burst, and you can use the Desecrate power on living but unconscious humans." },
-      { id: 'hollow', name: 'Hollow', image: 'img/quirks/hollow.png', type: 'replace', description: "You specialize in the incorporeal remnants of psyche.<br><br>You can use the Geist blasphemy power without spending a psyche burst, once between rests.<br><br>If you have only one passenger from the Passenger power, they can now use psychic powers using your body, and you can use powers normally. When they use a power, you take any effects or consequences as if you used the power, though they spend any resources (sin, bursts, etc). These powers immediately end if your passenger exits." },
-      { id: 'silver_sight', name: 'Silver Sight', image: 'img/quirks/silver_sight.png', type: 'replace', grantsPower: 'jaunt_threads', description: "You are completely blind, but permanently benefit from the Threads power from this blasphemy and gain it for free. It can overlap with other powers. Since you are used to seeing this way, actions against living things are not hard for you, but other actions that require sight are. If you participate in teamwork or gain setup, you can ignore this restriction in addition to the normal benefits of teamwork or setup.<br><br>In addition, your extreme sensitivity to grace lets you immediately sense (with some imprecision) if anyone in a 1/2 CAT [HALF_CAT:area] area centered on you has any psychic sensitivity, and how much, or if there are any supernatural beings in a similar area, how close they are, and how strong they are." }
+      { id: 'corpus', name: 'Corpus', namePt: 'Corpus', image: 'img/quirks/corpus.png', type: 'replace', description: "You specialize in the bodies of the recently deceased. Once a scene, when you touch a corpse, you can tell exactly how long ago it died, and get brief visions of its death, granting you +1D when next you act on the answers in the same scene.<br><br>Additionally, you can use the Possession power on corpses without spending a psyche burst, and you can use the Desecrate power on living but unconscious humans." },
+      { id: 'hollow', name: 'Hollow', namePt: 'Oco', image: 'img/quirks/hollow.png', type: 'replace', description: "You specialize in the incorporeal remnants of psyche.<br><br>You can use the Geist blasphemy power without spending a psyche burst, once between rests.<br><br>If you have only one passenger from the Passenger power, they can now use psychic powers using your body, and you can use powers normally. When they use a power, you take any effects or consequences as if you used the power, though they spend any resources (sin, bursts, etc). These powers immediately end if your passenger exits." },
+      { id: 'silver_sight', name: 'Silver Sight', namePt: 'Visão Prateada', image: 'img/quirks/silver_sight.png', type: 'replace', grantsPower: 'jaunt_threads', description: "You are completely blind, but permanently benefit from the Threads power from this blasphemy and gain it for free. It can overlap with other powers. Since you are used to seeing this way, actions against living things are not hard for you, but other actions that require sight are. If you participate in teamwork or gain setup, you can ignore this restriction in addition to the normal benefits of teamwork or setup.<br><br>In addition, your extreme sensitivity to grace lets you immediately sense (with some imprecision) if anyone in a 1/2 CAT [HALF_CAT:area] area centered on you has any psychic sensitivity, and how much, or if there are any supernatural beings in a similar area, how close they are, and how strong they are." }
     ]
   },
   sympathy: {
     replaces: 'sympathy_resonance',
     expansion: 'gff4',
     options: [
-      { id: 'locus', name: 'Locus', image: 'img/quirks/locus.png', type: 'replace', description: "You specialize in a particular object, but have aversion to others. Choose an object on the list of resonances. You are automatically resonant with that object, but roll two other items on the list randomly. You have antipathy with those objects and find actions hard when you are touching, wearing, or in hand's reach of those objects.<br><br>You can swap this focus around and re-roll your antipathies at the start of each hunt, or when you rest.<br><br><b>Resonances</b> (Roll 1d3, then 1d6):<table class=\"virtue-rupture-table\"><tbody><tr><td class=\"rupture-duration\">11</td><td class=\"rupture-cost\">Phones</td><td class=\"rupture-duration\">21</td><td class=\"rupture-cost\">Balls</td><td class=\"rupture-duration\">31</td><td class=\"rupture-cost\">Ropes</td></tr><tr><td class=\"rupture-duration\">12</td><td class=\"rupture-cost\">Lights</td><td class=\"rupture-duration\">22</td><td class=\"rupture-cost\">Guns</td><td class=\"rupture-duration\">32</td><td class=\"rupture-cost\">Hammers</td></tr><tr><td class=\"rupture-duration\">13</td><td class=\"rupture-cost\">Knives</td><td class=\"rupture-duration\">23</td><td class=\"rupture-cost\">Mugs</td><td class=\"rupture-duration\">33</td><td class=\"rupture-cost\">Cars</td></tr><tr><td class=\"rupture-duration\">14</td><td class=\"rupture-cost\">Keys</td><td class=\"rupture-duration\">24</td><td class=\"rupture-cost\">Computers</td><td class=\"rupture-duration\">34</td><td class=\"rupture-cost\">Doors</td></tr><tr><td class=\"rupture-duration\">15</td><td class=\"rupture-cost\">Books</td><td class=\"rupture-duration\">25</td><td class=\"rupture-cost\">Shoes</td><td class=\"rupture-duration\">35</td><td class=\"rupture-cost\">Bags</td></tr><tr><td class=\"rupture-duration\">16</td><td class=\"rupture-cost\">Baseball Bats</td><td class=\"rupture-duration\">26</td><td class=\"rupture-cost\">Power Tools</td><td class=\"rupture-duration\">36</td><td class=\"rupture-cost\">Gloves</td></tr></tbody></table>" }
+      { id: 'locus', name: 'Locus', namePt: 'Locus', image: 'img/quirks/locus.png', type: 'replace', description: "You specialize in a particular object, but have aversion to others. Choose an object on the list of resonances. You are automatically resonant with that object, but roll two other items on the list randomly. You have antipathy with those objects and find actions hard when you are touching, wearing, or in hand's reach of those objects.<br><br>You can swap this focus around and re-roll your antipathies at the start of each hunt, or when you rest.<br><br><b>Resonances</b> (Roll 1d3, then 1d6):<table class=\"virtue-rupture-table\"><tbody><tr><td class=\"rupture-duration\">11</td><td class=\"rupture-cost\">Phones</td><td class=\"rupture-duration\">21</td><td class=\"rupture-cost\">Balls</td><td class=\"rupture-duration\">31</td><td class=\"rupture-cost\">Ropes</td></tr><tr><td class=\"rupture-duration\">12</td><td class=\"rupture-cost\">Lights</td><td class=\"rupture-duration\">22</td><td class=\"rupture-cost\">Guns</td><td class=\"rupture-duration\">32</td><td class=\"rupture-cost\">Hammers</td></tr><tr><td class=\"rupture-duration\">13</td><td class=\"rupture-cost\">Knives</td><td class=\"rupture-duration\">23</td><td class=\"rupture-cost\">Mugs</td><td class=\"rupture-duration\">33</td><td class=\"rupture-cost\">Cars</td></tr><tr><td class=\"rupture-duration\">14</td><td class=\"rupture-cost\">Keys</td><td class=\"rupture-duration\">24</td><td class=\"rupture-cost\">Computers</td><td class=\"rupture-duration\">34</td><td class=\"rupture-cost\">Doors</td></tr><tr><td class=\"rupture-duration\">15</td><td class=\"rupture-cost\">Books</td><td class=\"rupture-duration\">25</td><td class=\"rupture-cost\">Shoes</td><td class=\"rupture-duration\">35</td><td class=\"rupture-cost\">Bags</td></tr><tr><td class=\"rupture-duration\">16</td><td class=\"rupture-cost\">Baseball Bats</td><td class=\"rupture-duration\">26</td><td class=\"rupture-cost\">Power Tools</td><td class=\"rupture-duration\">36</td><td class=\"rupture-cost\">Gloves</td></tr></tbody></table>" }
     ]
   },
   mother: {
     replaces: 'mother_knows_best',
     expansion: 'gff4',
     options: [
-      { id: 'mothers_love', name: "Mother's Love", image: 'img/quirks/mothers_love.png', type: 'replace', uses: 'hunt', maxUses: 2, description: "Your strain of Mother is less detectable, and you look more human. Twice a hunt, you may listen to the whispers of Mother (ask the GM what She is saying) when using a blasphemy from this power.<br><br>If you follow her advice or direction, you may use that power without spending a psyche burst, it gains +1D on any PSYCHE rolls, +1 CAT, and all sin costs from that power are reduced to 1 for its duration.<br><br>However, using the power becomes risky if it wasn't already, and the risk die becomes a '1' automatically." }
+      { id: 'mothers_love', name: "Mother's Love", namePt: 'Amor da Mãe', image: 'img/quirks/mothers_love.png', type: 'replace', uses: 'hunt', maxUses: 2, description: "Your strain of Mother is less detectable, and you look more human. Twice a hunt, you may listen to the whispers of Mother (ask the GM what She is saying) when using a blasphemy from this power.<br><br>If you follow her advice or direction, you may use that power without spending a psyche burst, it gains +1D on any PSYCHE rolls, +1 CAT, and all sin costs from that power are reduced to 1 for its duration.<br><br>However, using the power becomes risky if it wasn't already, and the risk die becomes a '1' automatically." }
     ]
   },
   gunpowder: {
     replaces: 'gunpowder_the_arsenal',
     expansion: 'thegreatwar',
     options: [
-      { id: 'fanning', name: 'Fanning', image: 'img/quirks/fanning.png', type: 'replace', keepPassiveName: true, swapNote: 'quirk_swap_fanning', description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>FANNING</b>: You fire the manifested weapon using your psychic focus - roll PSYCHE for the shots. You forgo careful aim for overwhelming volume of fire. When you take a shot, you may spend 1 additional psyche burst to fire again at the same or another target as part of the same action (up to CAT extra shots, one for each burst spent)." }
+      { id: 'fanning', name: 'Fanning', namePt: 'Leque', image: 'img/quirks/fanning.png', type: 'replace', keepPassiveName: true, swapNote: 'quirk_swap_fanning', description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>FANNING</b>: You fire the manifested weapon using your psychic focus - roll PSYCHE for the shots. You forgo careful aim for overwhelming volume of fire. When you take a shot, you may spend 1 additional psyche burst to fire again at the same or another target as part of the same action (up to CAT extra shots, one for each burst spent)." }
     ]
   }
 };
@@ -2084,14 +2219,14 @@ const BLASPHEMIES = [
     description: 'Project a spot psychic field of incredible density and durability.',
     passive: {
       id: 'tension_iron_soul',
-      name: 'Iron Soul',
+      name: 'Iron Soul', namePt: 'Alma de Ferro',
       image: 'img/passives/iron_soul.png',
       description: 'When you would fill up your execution talisman, you may roll 1d6. On a 4+, go to 1 stress under maximum instead and ignore any excess, then lose the use of this passive until you rest.'
     },
     powers: [
       {
         id: 'tension_aegis',
-        name: 'Aegis',
+        name: 'Aegis', namePt: 'Égide',
         tags: ['Instant', 'Short'],
         burst: 'none',
         uses: 'rest',
@@ -2099,28 +2234,28 @@ const BLASPHEMIES = [
       },
       {
         id: 'tension_stasis',
-        name: 'Stasis',
+        name: 'Stasis', namePt: 'Estase',
         tags: ['1 scene', 'Curse', 'Short'],
         burst: 'required',
         description: 'With a gesture, you can lock yourself or a CAT sized group [CAT:people] of humans or exorcists in a tension cage that covers them like a second skin, paralyzing them. If a human is hostile or unwilling, roll PSYCHE, and only spend the burst on success.<br><br>Once trapped, your target is locked in, unable to move or act for the scene, and is immune to all harm and effects from the outside. The effect only ends once the scene passes and you cannot end it earlier. They can be moved around like a (very stiff) object and are fully sensate while inside, though they can see as though looking through a thick pane of glass and don\'t need to breathe.'
       },
       {
         id: 'tension_severance',
-        name: 'Severance',
+        name: 'Severance', namePt: 'Ruptura',
         tags: ['Instant', 'Short'],
         burst: 'required',
         description: 'You can project a tension field of incredible strength over any edge, as obvious as a blade and as subtle as a fingernail, and use it as a cutting implement. Roll PSYCHE to cut an object or opponent with a clean and decisive blow, only spending a psyche burst on success.<br>•  Gain +1D if you are striking to protect another person.<br>•  Gain +1D against immobile objects or opponents.'
       },
       {
         id: 'tension_malleate',
-        name: 'Malleate',
+        name: 'Malleate', namePt: 'Maleabilizar',
         tags: ['Until rest', 'Transmute', 'Adjacent'],
         burst: 'required',
         description: 'You can invert and infuse a tension field to make an area of nonliving matter incredibly pliable and soft. The size of this block of matter you can affect is affected by CAT [CAT:size]. Choose one of the following effects, then you may gain or grant +1D when you or any ally next acts to take advantage of this power:<br>•  Rubber: The matter becomes bouncy and springy.<br>•  Mud: The matter melts into a thick mud, becomes pliable and sticky and difficult to move through.<br>•  Liquid: The matter melts into liquid.<br><br>This power may easily affect the parameters of rolls, such as difficulty and risk. When the effect expires, the matter slowly reverts to its original state and form.'
       },
       {
         id: 'tension_fortress',
-        name: 'Fortress',
+        name: 'Fortress', namePt: 'Fortaleza',
         tags: ['Until rest', 'Summon', 'Short'],
         burst: 'required',
         uses: 'scene',
@@ -2135,42 +2270,42 @@ const BLASPHEMIES = [
     description: 'Manipulate potential energy into flashes of extreme heat or cold.',
     passive: {
       id: 'ardence_inner_furnace',
-      name: 'Inner Furnace',
+      name: 'Inner Furnace', namePt: 'Fornalha Interior',
       image: 'img/passives/inner_furnace.png',
       description: 'You can take an Unstable Power hook as part of using any Ardence power to increase the CAT of the power up to +2. When the hook fills up, you burn up from the inside, gaining an injury and ending the hook. If this injury would kill you, you explode in an area equal to your CAT, annihilating yourself and everything inside in a massive explosion. Nothing can survive this.'
     },
     powers: [
       {
         id: 'ardence_fury',
-        name: 'Fury',
+        name: 'Fury', namePt: 'Fúria',
         tags: ['Instant', 'Long'],
         burst: 'required',
         description: 'Create a fierce blast of destructive energy at a location in range with blast area up to CAT [CAT:area]. Roll PSYCHE, gain +1D for each yes answer:<br>•  Are you willing to cause indiscriminate harm?<br>•  Are you willing to let anger control the outcome?<br><br>If at least one yes, area is ALWAYS max CAT and allies in area take 2 stress.'
       },
       {
         id: 'ardence_sabre',
-        name: 'Sabre',
+        name: 'Sabre', namePt: 'Sabre',
         tags: ['Instant', 'CAT range'],
         burst: 'required',
         description: 'Release a blast of energy in a highly destructive beam. The beam goes in a straight line in a range equal to CAT [CAT:distance], piercing through walls, doors, and obstructions effortlessly. It is extremely loud and bright. Roll PSYCHE for its effects, only spending a psyche burst on success.<br><br>You may optionally lift the limiter on this ability when using it. If you do, for every 6 result you roll when using this ability, this ability inflicts 1 extra slash on a talisman, but you also take 2 stress, which could kill you or cause you an injury. This stress cannot be reduced or ignored in any way.'
       },
       {
         id: 'ardence_void',
-        name: 'Void',
+        name: 'Void', namePt: 'Vácuo',
         tags: ['Instant', 'Short'],
         burst: 'required',
         description: 'You create a flash vacuum by burning the air away. The void creates a loud thunderclap, affecting an area up to CAT [CAT:area], excluding you. Choose one of the following effects, then you may gain or grant +1D when you or any ally next acts to take advantage of this power:<br>•  Weak: Sucks in loose objects not held, worn, or bolted down.<br>•  Medium: All humans and exorcists in the area are thrown off their feet and pulled in, excluding you.<br>•  Strong: Sins and vehicles up to CAT size are thrown off balance or pulled depending on their size. Glass is shattered. The thunderclap is momentarily deafening.<br><br>This power may affect the parameters of rolls, such as difficulty and risk.'
       },
       {
         id: 'ardence_hell',
-        name: 'Hell',
+        name: 'Hell', namePt: 'Inferno',
         tags: ['Until Rest', 'Transmute', 'Adjacent'],
         burst: 'required',
         description: 'You may dump energy into the ground and anything touching the ground in an area determined by CAT+2 [CAT+2:area], choosing hot or cold. Choose one of the following effects, which lasts until you rest. You may gain or grant +1D when you or any ally next acts to take advantage of this power:<br>•  Simmer: Discomfort for humans, lowered or raised temperature, hot or cold surfaces, etc.<br>•  Poach: Major discomfort for humans, who cannot remain in the area, and discomfort for sins and exorcists. Freeze or boil water, pipes, crack glass, etc.<br>•  Boil: Deadly to humans, sins and exorcists take 2 stress if they remain in the area for longer than a scene. Light fires or freeze the air in rooms, melt windows or burn doors, or freeze objects.<br><br>This power may affect the parameters of rolls, such as difficulty and risk.'
       },
       {
         id: 'ardence_storm',
-        name: 'Storm',
+        name: 'Storm', namePt: 'Tempestade',
         tags: ['Entire Hunt', 'Transmute', 'Extreme'],
         burst: 'variable',
         uses: 'rest',
@@ -2185,55 +2320,55 @@ const BLASPHEMIES = [
     description: 'Manipulate the direction and flow of time itself.',
     passive: {
       id: 'flux_steal_time',
-      name: 'Steal Time',
+      name: 'Steal Time', namePt: 'Roubar Tempo',
       image: 'img/passives/steal_time.png',
       description: 'For one rest per hunt, anyone in your group may re-roll all their resting dice, taking the second result as final. This may cause them déjà vu. Please reassure them.'
     },
     passives: [
       {
         id: 'flux_steal_time',
-        name: 'Steal Time',
+        name: 'Steal Time', namePt: 'Roubar Tempo',
         image: 'img/passives/steal_time.png',
         description: 'For one rest per hunt, anyone in your group may re-roll all their resting dice, taking the second result as final. This may cause them déjà vu. Please reassure them.'
       },
       {
         id: 'flux_temporal_instability',
-        name: 'Temporal Instability',
+        name: 'Temporal Instability', namePt: 'Instabilidade Temporal',
         description: 'Many of your Flux powers give you this hook. When the hook resolves, roll 1d6:<br>•  1. Permanently add to your agenda "Prove that you are the real you." If you gain this result again, you immediately suffer sin overflow.<br>•  2. Mysterious injuries open up. You take an injury, which could kill you.<br>•  3. You disappear until rest. You return if there\'s a conflict scene (and right away if one is ongoing). You have no memory of where you were. When you return, you take 2 stress.<br>•  4. You find you are wearing someone else\'s clothes. Erase your entire kit this mission, but regain any spent kit points.<br>•  5. Your body is different. For the remainder of this mission, pick a skill you have 1 or more dice in. It now rolls 0d. After the mission, you have time to train and get used to this, reverting this effect, though keeping any physical changes.<br>•  6. Your face looks a little different. The changes are permanent.'
       }
     ],
     powers: [
       {
         id: 'flux_stop',
-        name: 'Stop',
+        name: 'Stop', namePt: 'Parar',
         tags: ['Instant', 'Transmute', 'Self'],
         burst: 'variable',
         description: 'You spend up to three psyche bursts to stop local time in an area around you equal to CAT [CAT:area]. Roll 1d6 per psyche burst spent and add them together - that is how many seconds you have. Anything that enters this area is immediately affected (including anything put into or out of the area), but time flows normally outside the area. In this stopped time, you are unaffected and:<br>•  You cannot use psychic powers, but neither can you be affected by them. Any power currently active from you or affecting you other than this one dissipates.<br>•  You can perform one activity or course of action that fits in the duration.<br>•  After you would make an action roll for anything, the effect ends no matter what.<br><br>Then, gain temporal instability.'
       },
       {
         id: 'flux_quickening',
-        name: 'Quickening',
+        name: 'Quickening', namePt: 'Aceleração',
         tags: ['Instant', 'Adjacent'],
         burst: 'required',
         description: 'You can accelerate the natural healing of your body or those of others, giving you the following benefits:<br>•  Immediately heal 1d3 stress on yourself or another target. If your target is injured, increase this by +1.<br>•  You may heal a CAT sized group [CAT:people] of dying or injured humans in short range. Dying humans are stabilized and are no longer in danger of expiring, but fall unconscious. Otherwise, badly injured humans are healed to the point of being able to (slowly) move by themselves. Minor injuries are fully healed.<br><br>Then, gain temporal instability.'
       },
       {
         id: 'flux_reversal',
-        name: 'Reversal',
+        name: 'Reversal', namePt: 'Reversão',
         tags: ['Instant', 'Adjacent'],
         burst: 'required',
         description: 'By touching an object up to CAT [CAT:size] size, you can reverse its passage through time for the last hour.<br>•  This could physically move the object, revert damage on an object, etc.<br>•  It can still affect the physical world, so anything in a reversing object\'s way would get hit, and anything placed on it will move with it.<br>•  If it would cause damage or impact, roll PSYCHE for it.<br>•  It cannot reverse life on non-living matter, such as corpses, but can temporarily move them and revert damage as if they were alive.<br><br>You can stop this effect by willing it, but to resume it requires using this power again.'
       },
       {
         id: 'flux_schism',
-        name: 'Schism',
+        name: 'Schism', namePt: 'Cisma',
         tags: ['1 Scene', 'Transmute', 'Adjacent'],
         burst: 'required',
         description: "You can create a bubble of altered time equal to CAT [CAT:area] area, opening a window into one day in the past or future from the moment the bubble was created. Gain or grant +1D when you or any ally next acts to take advantage of this power.<br>•  The state of the area inside the bubble is confined only to the bubble and includes objects or people inside. You and allies can enter or exit the bubble at will.<br>•  Supernatural beings, including exorcists, in the present timeline caught in the bubble when it is created are unaffected. Humans and the present timeline world caught in the bubble are paused, cease existing for its duration, and have no memory of the incident.<br>•  Things removed from the bubble from the past or future timeline, including living beings, simply disappear until they move back into the bubble.<br><br>The bubble represents an alternate timeline, so anything altered inside of it will not show up in the present or future timeline."
       },
       {
         id: 'flux_stutter',
-        name: 'Stutter',
+        name: 'Stutter', namePt: 'Gagueira',
         tags: ['Instant', 'CAT range'],
         burst: 'required',
         description: 'You can briefly reverse time in order to alter causality for any event that happened as a result of an action roll made by you or a visible ally in CAT range [CAT:distance], instantly after you see the result. Re-roll the action roll completely, taking the second result as final.<br><br>When you use this power, gain temporal instability. If you use it again before you rest, gain 1d3 temporal instability instead.'
@@ -2247,42 +2382,42 @@ const BLASPHEMIES = [
     description: 'Imbue objects or living beings with sudden and sharp bursts of velocity.',
     passive: {
       id: 'vector_brake',
-      name: 'Brake',
+      name: 'Brake', namePt: 'Freio',
       image: 'img/passives/brake.png',
       description: 'Automatically remove velocity from all projectiles that would hit you, taking -1 stress from them.'
     },
     powers: [
       {
         id: 'vector_fling',
-        name: 'Fling',
+        name: 'Fling', namePt: 'Arremessar',
         tags: ['Instant', 'Adjacent'],
         burst: 'required',
         description: 'With a touch, you can imbue velocity into yourself or another object or living being and send it flying. The combined size of the object or being and the range you send them must equal your CAT+2 [CAT+2:size] or less. Once sent flying, the direction of your target cannot be changed.<br><br>You can alternately remove all velocity by touching an object or person of CAT+2 size, bringing it to a complete stop.<br><br>Roll PSYCHE for this power\'s effects, including any harm inflicted, and only spend a psyche burst on at least one success.'
       },
       {
         id: 'vector_lift',
-        name: 'Lift',
+        name: 'Lift', namePt: 'Elevar',
         tags: ['1 scene', 'Charm', 'Self'],
         burst: 'required',
         description: 'You reverse gravity\'s effect on yourself and a CAT sized group [CAT:people] of other exorcists or humans with a low but constant Vector effect. For this scene, any affected gain the following benefits:<br>•  You can run, walk, or climb up vertical surfaces.<br>•  You can slow your fall at will, and you cannot take harm from falling.<br>•  You can glide a distance equal to CAT range [CAT:distance] — you must start at height to gain this benefit.<br><br>This power may easily affect the parameters of rolls, such as difficulty and risk.'
       },
       {
         id: 'vector_current',
-        name: 'Current',
+        name: 'Current', namePt: 'Corrente',
         tags: ['Until rest', 'Transmute', 'CAT+2 range'],
         burst: 'required',
         description: 'You create a weaker, but persistent Vector force in an area that lasts until you rest. It creates a line that goes about CAT+2 range [CAT+2:distance] in length and covers about the width of a street. It pushes constantly in one direction (including up or down) like a strong wind. Allies moving in that direction gain +1D on actions to move with the current. Anything moving against that direction struggles, and anything falling falls slowly. It becomes hard for allies to move against the current, and actions taken against anyone trying to struggle against the current gain +1D. You can dismiss this effect at will.'
       },
       {
         id: 'vector_bullet',
-        name: 'Bullet',
+        name: 'Bullet', namePt: 'Projétil',
         tags: ['Instant', 'CAT+1 range'],
         burst: 'required',
         description: 'You can imbue strong bursts of velocity into the air at your fingertips, creating pressurized air bullets that hit with extreme force. Roll PSYCHE for its effects, only spending a psyche burst on success.<br>•  Gain +1D when making shots from an elevated position.<br>•  Gain +1D when making shots to disarm, distract, or disable instead of harm.'
       },
       {
         id: 'vector_finesse',
-        name: 'Finesse',
+        name: 'Finesse', namePt: 'Finesse',
         tags: ['Instant', 'CAT range'],
         burst: 'none',
         description: 'Passive: You may finely manipulate threads of force to perform fine motor skills you could perform with your hands at half CAT range [HALF_CAT:distance], such as opening doors, picking up objects, or even skills like typing on a keyboard, etc. Roll a relevant skill such as interfacing for this.<br>•  You have to be able to see your target, even if it\'s far away. However, you can perform this manipulation even if your path to the target is blocked, such as if you could see it through a window, etc.<br>•  You can pick up objects and move them around through the air but they cannot be any bigger or heavier than a laptop or a full briefcase.'
@@ -2296,42 +2431,42 @@ const BLASPHEMIES = [
     description: 'Manipulate space as a sculptor works with clay.',
     passive: {
       id: 'gate_pocket',
-      name: 'Pocket',
+      name: 'Pocket', namePt: 'Bolso',
       image: 'img/passives/pocket.png',
       description: 'You can fit a compressed tear in space into a piece of clothing that you are wearing.<br>•  You gain +1 KP.<br>•  You can stow or retrieve items inside your pocket, which can hold a combined total of items worth up to 3 KP. Once inside, the items are stored in an extra dimensional space and hidden and safe, no matter their size. The pocket is attached to your clothes and if they are destroyed, items inside pop out.'
     },
     powers: [
       {
         id: 'gate_tear',
-        name: 'Tear',
+        name: 'Tear', namePt: 'Rasgo',
         tags: ['Until Rest', 'Summon', 'CAT range'],
         burst: 'required',
         description: 'You create a point in CAT range [CAT:distance], and another point within the same range, though you have to be able to see both points when you use this ability. The two points are connected by a slash in the fabric of reality, a portal that can be moved through and connects the two points as though they were right next to each other. Objects, beings, and forces up to half CAT [HALF_CAT:size] in size can freely move through the tear for the duration, and momentum is preserved.<br><br>You may gain or grant +1D when you or any ally next acts to take advantage of this power.'
       },
       {
         id: 'gate_pinch',
-        name: 'Pinch',
+        name: 'Pinch', namePt: 'Beliscão',
         tags: ['Instant', 'Special range'],
         burst: 'required',
         description: 'You can choose a single living being or object you can see. The combined size of the object or being and the distance you attempt to move them must be CAT+2 [CAT+2:size] or less. Roll PSYCHE if your target is unwilling, only spending a psyche burst on success. As long as you can see your target, on at least one success, you can pinch space between the two of you to move your target right next to you. From the target\'s perspective, they don\'t appear to move at all, but the world smears around them. They ignore all physical obstructions between them and you - as long as you can see your target, they simply appear next to you.<br><br>You may gain or grant +1D when you or any ally next acts to take advantage of this power.'
       },
       {
         id: 'gate_bloom',
-        name: 'Bloom',
+        name: 'Bloom', namePt: 'Florescer',
         tags: ['1 scene', 'Summon', 'Short'],
         burst: 'required',
         description: 'By splitting space in creative ways, you create a number of controllable duplicates of any of your limbs or hands equal to CAT+1 [CALC:CAT+1] on any surfaces in short range from you, emerging from a tear in space. They are stuck in place and cannot move. Gain or grant +1D when you or any ally next acts to take advantage of this power.<br>•  You can control them like your normal limbs, making action rolls through them and you have normal sensation with them.<br>•  They can be placed on any surface, including moving surfaces or living beings.<br>•  You take any stress they would take from your actions made through them.'
       },
       {
         id: 'gate_maze',
-        name: 'Maze',
+        name: 'Maze', namePt: 'Labirinto',
         tags: ['Entire Hunt', 'Transmute', 'Adjacent'],
         burst: 'required',
         description: 'You rearrange an area equal to CAT [CAT:area] around you, causing the rearrangement of human built structures in the area. Gain or grant +1D when you or any ally next acts to take advantage of this power. You may:<br>•  Create or remove doors and windows, or change the existing arrangement of doors and windows.<br>•  Add corridors, or rearrange the floor plan of rooms.<br>•  Change the direction of gravity inside of a room (for example, you could make a wall the floor).<br>•  Make a room larger or smaller.<br>•  Arrange or remove the furniture inside a room any way you like.<br><br>You cannot remove rooms entirely, make any room smaller than a closet or larger than a ballroom, or add anything that does not already exist in a building other than corridors. This could cause a structure to be bigger on the inside than outside. For each choice, the Admin rolls 1d6. If they roll at least one 1, the Admin gains one use of this power against you at your current CAT and can activate it any time they like.'
       },
       {
         id: 'gate_transmission',
-        name: 'Transmission',
+        name: 'Transmission', namePt: 'Transmissão',
         tags: ['Instant', 'CAT+2 range'],
         burst: 'required',
         description: 'Instantly move to any other area in CAT+2 range [CAT+2:distance]. However, the Admin asks you the following questions and rolls 1d6 per no answer:<br>•  Are you familiar with your destination?<br>•  Can you see where you are going?<br>•  Are you calm and concentrated?<br><br>On at least one 1, you end up in a different location nearby your destination, but the Admin chooses where. On a double 1, you end up somewhere else briefly before arriving at your final destination. Not only are you off target, but you also take 2d3 stress.'
@@ -2345,42 +2480,42 @@ const BLASPHEMIES = [
     description: 'Suppress the innate properties of the universe. Lie to God.',
     passive: {
       id: 'smother_absentia',
-      name: 'Absentia',
+      name: 'Absentia', namePt: 'Absência',
       image: 'img/passives/absentia.png',
       description: 'You can improve the CAT of any of your Smother powers by +2 when you use them, to a max CAT of 7. However, when you do, gain the Absentia Hook.<br><br><b>ABSENTIA HOOK</b>: You can gain this hook with your passive. If this hook fills up, you take an injury and black out for a few moments. When you wake up, you are missing a body part (roll 1d6). It simply disappears (cleanly) as though it had never existed, leaving a stump or hole. It doesn\'t come back, even if you heal the injury. If you have no body part left to lose (when you roll), reduce the result by 1. If the result is 0, you lose your head and suffer (gruesome) instant death instead. Missing body parts might make some rolls hard or risky, dependent on the situation. You adjust to any disability after the mission, and it has no further effect.<br>•  1. Eye<br>•  2. Nose<br>•  3. Ear<br>•  4. Finger<br>•  5. Toe<br>•  6. Nothing'
     },
     powers: [
       {
         id: 'smother_abstract',
-        name: 'Abstract',
+        name: 'Abstract', namePt: 'Abstrato',
         tags: ['1 scene', 'Transmute', 'Short'],
         burst: 'required',
         description: 'With a gesture, you remove recognizable properties of CAT+1 [CALC:CAT+1] number of distinct tools, vehicles, windows, doors, or any other objects that can be held or worn. The chosen objects can no longer be used for their intended purpose and no human, sin, or exorcist (including you!) can recognize them - staring at them for too long causes extreme discomfort, even for exorcists. For example, weapons can no longer fire, doors can no longer open, or windows can no longer be looked through.<br><br>Gain or grant +1D when you or any ally next acts to take advantage of this power. It may also affect the parameters of rolls while active.'
       },
       {
         id: 'smother_smooth',
-        name: 'Smooth',
+        name: 'Smooth', namePt: 'Suavizar',
         tags: ['1 scene', 'Transmute', 'Short'],
         burst: 'required',
         description: 'You temporarily remove almost all friction from a CAT sized group [CAT:people] of humans or exorcists, or an area up to CAT. The area or target(s) become incredibly slippery. If targeting an area, it becomes hard for anyone to stand, climb, or move normally in the area, though people are able to slide around.<br>•  Roll PSYCHE to affect hostile targets with this power, only spending a psyche burst on success.<br>•  You can sculpt this area if you wish to affect just part of it, or sculpt a path.<br><br>Gain or grant +1D when you or any ally next acts to take advantage of this power. This power may also easily affect the parameters of rolls, such as difficulty and risk.'
       },
       {
         id: 'smother_hollow',
-        name: 'Hollow',
+        name: 'Hollow', namePt: 'Oco',
         tags: ['Until Rest', 'Charm', 'Adjacent'],
         burst: 'required',
         description: 'You temporarily remove weight from a single object, human, or exorcist, giving them the total weight of 1 lb if heavier. The size of the object must be CAT [CAT:size] or lower, and you can end this modification any time, though you must use this power again to regain its effects. Roll PSYCHE for any creative uses of this power, only spending a burst on at least one success.<br>•  Gain or grant +1D when you or any ally next acts to take advantage of this power.<br>•  This power ends on its previous target if used again.<br><br>This power may easily affect the parameters of rolls, such as difficulty and risk.'
       },
       {
         id: 'smother_blind',
-        name: 'Blind',
+        name: 'Blind', namePt: 'Cegar',
         tags: ['1 scene', 'Transmute', 'Adjacent'],
         burst: 'required',
         description: 'A number of objects or living beings equal to CAT [CALC:CAT], or location of a size up to CAT [CAT:area] you touch ceases producing sound, reflecting light, or both for the scene. Gain or grant +1D when you or any ally next acts to take advantage of this power:<br>•  Targeting a person allows the effect to move with them for the scene.<br>•  Targeting a location affects an area, removing all sound and/or light. You can filter this effect by allowing light or sound inside the location to operate normally, but not enter or exit the area.<br><br>This power may easily affect the parameters of rolls, such as difficulty and risk.'
       },
       {
         id: 'smother_dark_age',
-        name: 'Dark Age',
+        name: 'Dark Age', namePt: 'Idade das Trevas',
         tags: ['Until Rest', 'Charm', 'Short'],
         burst: 'required',
         description: 'You produce a strong field from your body disabling even the simplest human advancements from working in CAT area [CAT:area]. The effect moves with you. You can choose up to three of the following to suppress, ceasing their operation, then gain or grant +1D when you or any ally next acts to take advantage of this power:<br>•  Electricity<br>•  Internet<br>•  Combustion engines<br>•  Running Water<br>•  Door handles, window latches, zippers, catches<br>•  Open fires<br><br>These things stop working even if it would not make sense, i.e. suppressing running water would mean water pressure simply stops working. You can end this effect willingly, but must end all effects at once.'
@@ -2394,42 +2529,42 @@ const BLASPHEMIES = [
     description: 'Your shadow is animate and hungry. It knows the future.',
     passive: {
       id: 'whisper_shadow',
-      name: 'Shadow',
+      name: 'Shadow', namePt: 'Sombra',
       image: 'img/passives/shadow.png',
       description: 'You harbor a separate being that follows you everywhere, even when you sleep.<br><br><b>THE SHADOW</b> is intangible and invisible to everyone, even the psychically sensitive. It can only weakly interact with the physical world and has its own mind and senses. It can move in about short range from you. It can pass through walls and surfaces easily but retreats into your body in bright light, preventing it from doing anything.<br><br>You can talk to it telepathically, but talking to it is dangerous and causes 1 stress after any interaction ends. It has no obligation to tell you the truth unless you use your powers.<br><br>You may talk to it safely using your abilities, and it knows the future. The Admin will answer for it.'
     },
     powers: [
       {
         id: 'whisper_omen',
-        name: 'Omen',
+        name: 'Omen', namePt: 'Presságio',
         tags: ['Instant', 'Self'],
         burst: 'required',
         description: 'Ask your shadow \'What will happen if I X\', where X is a simple course of activity you plan to take in the next hour or so (open this door, attend the meeting, attack this person, go down this street). The shadow gives you a brief impression of the future:<br>•  Gain +1D when you or an ally next acts on the answer.<br>•  Pre-roll the risk die before you take the action. You can decide to back out of the action if you like, but if you follow the same course of activity in the future, use the pre-rolled risk die.'
       },
       {
         id: 'whisper_shiver',
-        name: 'Shiver',
+        name: 'Shiver', namePt: 'Arrepio',
         tags: ['1 scene', 'Charm', 'Self'],
         burst: 'required',
         description: 'When you are looking for a human, sin, exorcist, location, or object, you can declare \'I feel a shiver\'. You send a psychic pulse out to CAT range [CAT:distance] in a radius around you, which remains active for this scene. While your target is close enough to be in range, you feel a strong sense of cold and discomfort. You can home in on this feeling easily. It\'s never hard to track your target while this power is active. If your target is in short range of you, you also gain +1D on any rolls to track or locate them.'
       },
       {
         id: 'whisper_dissect',
-        name: 'Dissect',
+        name: 'Dissect', namePt: 'Dissecar',
         tags: ['Instant', 'CAT range'],
         burst: 'required',
         description: 'Examine a human or exorcist you can see in CAT range [CAT:distance], roll PSYCHE, and ask your shadow one of the following questions, plus one more per success. They answer truthfully, but can use a maximum of three words to answer each:<br>•  Is this person lying?<br>•  What is the main emotion this person is feeling?<br>•  Where has this person just come from?<br>•  Where are they planning to go next?<br><br>Gain or grant +1D when you or any ally next acts to take advantage of each answer.'
       },
       {
         id: 'whisper_precognition',
-        name: 'Precognition',
+        name: 'Precognition', namePt: 'Precognição',
         tags: ['Instant', 'Self'],
         burst: 'required',
         description: 'When the Admin is describing a scene or you are about to take a course of action, you can \'flash back\'. Make an action roll or play a scene out in the past, where you had a vision of the present moment. This cannot completely alter the established facts of the present (you can\'t have knocked someone out in the past if you just finished having a conversation with them in the present, for example), but could change the situation or alter present details, or it could set up yourself or any ally. For example you could have made preparations for the current moment (locked or unlocked a door, stowed some gear, made a phone call, etc). If you use this power for gear, mark KP for it as normal.<br><br>If the situation is complicated, also take 1 nonlethal stress. If it\'s convoluted or far fetched, take 3 nonlethal stress.'
       },
       {
         id: 'whisper_omnipresence',
-        name: 'Omnipresence',
+        name: 'Omnipresence', namePt: 'Onipresença',
         tags: ['Instant', 'CAT+2 range'],
         burst: 'none',
         uses: 'rest',
@@ -2444,42 +2579,42 @@ const BLASPHEMIES = [
     description: 'The way things are is not the way they had to be. Filter threads of possibilities.',
     passive: {
       id: 'edit_mimic',
-      name: 'Mimic',
+      name: 'Mimic', namePt: 'Mimetismo',
       image: 'img/passives/mimic.png',
       description: 'You can alter minor things about your appearance. You can change any of the following about yourself when resting, within a variation of your original body:<br>•  Body features such as height and weight.<br>•  Aesthetics such as facial features, skin color, hair, gender presentation.<br>•  Age, down to 13 and up to 88.<br><br>You always look faintly similar, like a distant relative of yourself. Your clothes always change to fit you, though you cannot alter them.<br><br>This doesn\'t change anything about your skills or general ability, and also cannot restore missing body parts or hide sin marks or scars.'
     },
     powers: [
       {
         id: 'edit_uniform',
-        name: 'Uniform',
+        name: 'Uniform', namePt: 'Uniforme',
         tags: ['Until Rest', 'Charm', 'Self'],
         burst: 'required',
         description: 'You make a brief edit of yourself. You can\'t do this in public (you need privacy, no matter how tenuous). This power makes you officially part of any profession or group with more than 5 members, with any necessary uniform, equipment, id cards, memberships, etc, and alters reality to make it so.<br><br>Even if people don\'t particularly remember you being part of a group, they may get a vague sense that you were a member.<br><br>You don\'t actually gain any particular skills and any changes you make have to be to your own person and must include things you could wear or carry in one or both hands.<br><br>Gain or grant +1D when you or any ally next acts to take advantage of this power.'
       },
       {
         id: 'edit_absurd',
-        name: 'Absurd',
+        name: 'Absurd', namePt: 'Absurdo',
         tags: ['1 scene', 'Curse', 'Short'],
         burst: 'required',
         description: 'You swap up to a group of humans or exorcists with a different version of themselves from an alternate timeline. You must roll PSYCHE for this power to take effect on hostile targets, only spending a psyche burst on success. This can change:<br>•  What the target is wearing, but not holding (so anything held in hand remains the same).<br>•  Physical appearances of the targets, as your MIMIC power.<br><br>Targets retain their memories, and this does not alter reality to accommodate the change, so it can easily disorient unprepared humans. The change is otherwise perfect.<br><br>Gain or grant +1D when you or any ally next acts to take advantage of this power.'
       },
       {
         id: 'edit_utility',
-        name: 'Utility',
+        name: 'Utility', namePt: 'Utilidade',
         tags: ['Until Rest', 'Short'],
         burst: 'required',
         description: 'When you need any mundane object, tool, or vehicle that could fit in a small room, you can cause it to appear on a surface in range as though it was always there, without spending KP. However, the admin chooses one, or two if the item is dangerous or rare:<br>•  The item is used, dented, scuffed, or poor quality.<br>•  The item is a real item that someone nearby owned and has now disappeared, and they will come looking for it.<br>•  The item is off somehow and appears as a cheap knockoff made of odd materials that feel spongey or organic.<br>•  The item is missing some parts and doesn\'t work as well as it could with them.<br><br>The item cannot be a unique item, you cannot create a particular car, key, book, etc, but is rather a generic representative of a category. It disappears after a rest.'
       },
       {
         id: 'edit_filter',
-        name: 'Filter',
+        name: 'Filter', namePt: 'Filtro',
         tags: ['1 scene', 'Transmute', 'Adjacent'],
         burst: 'required',
         description: 'You produce a strong field affecting all matter in an area about the size of a small room, which must contain you. In this area you gain +1D to examine its contents and:<br>•  You can cause any matter to become transparent or opaque.<br>•  You can change the lighting in the room as though lit by an invisible light source, or snuff out any light sources in the room.<br>•  You can move around any objects in the area without touching them and pin them to any point in space in the area, causing them to float.<br>•  You can safely dissect any loose inanimate object or furniture into its constituent parts or reassemble any broken object, providing any parts are present.<br><br>This effect expires when the scene ends, or if you leave the area for any reason.'
       },
       {
         id: 'edit_copy',
-        name: 'Copy',
+        name: 'Copy', namePt: 'Cópia',
         tags: ['1 scene', 'Summon', 'Adjacent'],
         burst: 'required',
         description: 'You create a temporary, exact copy of a human or exorcist.<br>•  This creates a doppelganger: a simple, obedient clone, without much intelligence or ability to speak.<br>•  You may give it simple instructions of one or two sentences, which it follows to the best of its ability.<br>•  It dissolves into a pale sludge when the scene ends, when touched by anyone except you, or if it takes any harm.<br><br>This ability creates a copy of the target in its present state, including anything mundane a person is carrying or wearing. A doppelganger cannot gain, use, or benefit from psychic powers and rolls just 1d6 to do anything.'
@@ -2493,21 +2628,21 @@ const BLASPHEMIES = [
     description: 'Bind weak sins to your service and use them as servants or weapons.',
     passive: {
       id: 'bind_sin_binding',
-      name: 'Sin Binding',
+      name: 'Sin Binding', namePt: 'Vínculo de Pecado',
       image: 'img/passives/sin_binding.png',
       description: 'You have the forbidden ability to bind Sins. You have the obedient essence of a minor sin bound to you, under your control.<br><br>Your <b>BOUND SIN</b> is animalistic in form and ability - you can determine what form it takes. It can understand language but cannot speak, and is invisible to humans.<br>•  It can follow you around at short distance, follow simple orders, and uses your skills to do anything. Its general capabilities are CAT 0.<br>•  If it takes any stress, it is banished for the remainder of the scene, however you can psychically absorb all stress taken for it instead to prevent this effect.<br>•  In a conflict scene, you may sacrifice your ability to act on your turn to allow your sin to act instead, giving it commands. Otherwise it doesn\'t act independently in these scenes.'
     },
     powers: [
       {
         id: 'bind_sin_strike',
-        name: 'Sin Strike',
+        name: 'Sin Strike', namePt: 'Golpe de Pecado',
         tags: ['Instant', 'Short'],
         burst: 'required',
         description: "You can command an active sin to attack by spending a psyche burst as long as both your sin and its target are in range, and you can communicate with it. Roll PSYCHE for its effects. The attack has supernatural potency."
       },
       {
         id: 'bind_sword_king',
-        name: 'Summon the Ten Thousand Sword King',
+        name: 'Summon the Ten Thousand Sword King', namePt: 'Invocar o Rei das Dez Mil Espadas',
         tags: [],
         burst: 'none',
         uses: 'forever',
@@ -2515,35 +2650,35 @@ const BLASPHEMIES = [
       },
       {
         id: 'bind_forbidden_spirit',
-        name: 'Forbidden Spirit',
+        name: 'Forbidden Spirit', namePt: 'Espírito Proibido',
         tags: ['Instant', 'Self'],
         burst: 'required',
         description: 'You can empower your sin for one action. As part of this action:<br>•  You lift limiters on your spirit. The action gains +1D and causes it to undergo a monstrous transformation similar to its original form. It becomes a size equal to CAT+1 [CAT+1:size] and can easily move, lift, strike, or throw objects or beings of an equal size. Roll PSYCHE for its effects. After the action, it reverts to its normal size.<br>•  When absorbing stress for your sin as a consequence of this action, take 1 less.'
       },
       {
         id: 'bind_surrender',
-        name: 'Surrender',
+        name: 'Surrender', namePt: 'Rendição',
         tags: ['Until Rest', 'Charm', 'Self'],
         burst: 'required',
         description: 'You draw on your sin\'s energy to partially fuse with its essence. Your body mutates slightly to accommodate this change. Immediately manifest a temporary sin mark and roll for the location and ability, which you gain until you end this ability early or rest. You may gain 1 sin to re-roll the mark ability, any number of times, any time while this power is active.<br><br>If you hit sin overflow while this effect is active and successfully resist, you manifest the chosen sin mark permanently instead of rolling for it.'
       },
       {
         id: 'bind_horde_spirit',
-        name: 'Horde Spirit',
+        name: 'Horde Spirit', namePt: 'Espírito de Horda',
         tags: ['1 scene', 'Self'],
         burst: 'required',
         description: 'You empower your sin for one scene. The next time it takes action for traversal or movement, it gains +1D. As part of this action:<br>•  You can transform it into the form of a vehicle or rideable creature of up to CAT size [CAT:size] for the rest of the scene. It can go about CAT speed [CAT:speed], becomes partly visible to humans and has room for a half CAT size group [HALF_CAT:people] of human or exorcist passengers.<br>•  It can glide a short distance while in vehicle form, with or without passengers.'
       },
       {
         id: 'bind_hunter_spirit',
-        name: 'Hunter Spirit',
+        name: 'Hunter Spirit', namePt: 'Espírito Caçador',
         tags: ['1 scene', 'Self'],
         burst: 'required',
         description: 'You empower your sin for one scene. The next time it takes action for tracking or observation, it gains +1D. As part of this action:<br>•  It can now separate from you up to extreme range when released. You can communicate telepathically with it.<br>•  It gains the ability to fly and see and smell extremely well - it can also see in the dark and in the thermal spectrum, and clearly up to long range.<br>•  You can concentrate, dissociating from your body, and becoming extremely vulnerable. While concentrating this way, however, you can use your sin\'s senses instead of your own. You can engage and disengage this effect at will for the scene.'
       },
       {
         id: 'bind_penumbra',
-        name: 'Penumbra',
+        name: 'Penumbra', namePt: 'Penumbra',
         tags: ['Until Rest', 'Summon', 'Adjacent'],
         burst: 'required',
         description: 'You create an area drawn as a large circle, encircling up to a CAT+1 size area [CAT+1:area], and choosing a type from the below list. The prison takes only a moment to create, but takes a few minutes to activate and for its effects to take place. It lasts until you rest or until used again.<br>•  A white mantle prevents entrance by Sins, but allows humans and exorcists to pass normally.<br>•  A black mantle prevents entrance by humans or exorcists. In addition, humans will (generally) be unable to see into the area and will act as if the area doesn\'t exist.<br><br>You can invert this effect if you so choose, preventing exit instead of entrance. The prison can be broken by a determined supernatural attacker, but has a 4+CAT [CALC:4+CAT] talisman for durability, taking stress like an execution talisman.'
@@ -2557,35 +2692,35 @@ const BLASPHEMIES = [
     description: 'The contents of your mind are as solid to you as plain reality.',
     passive: {
       id: 'palace_sanctum',
-      name: 'Sanctum',
+      name: 'Sanctum', namePt: 'Santuário',
       image: 'img/passives/sanctum.png',
       description: 'You and allies you rest with can enter your psychic palace while resting. This improves the resting rolls of yourself and one ally of your choice resting with you by +1.<br>•  The palace is a mental projection, a dream space that takes the form of a large home, residence, or mansion in a locale of your choosing. Walking off the premises merely returns you to the locale. As a purely psychic phenomena, you can control its appearance and decor.<br>•  Taking harm in a palace instantly shunts a person out of it, waking them up, instead of dealing them real harm. Visitors can leave any time.<br>•  Entering the palace mentally requires only closing your eyes and concentrating, leaving your outside body defenseless and insensate. It can be done by you any time, and by your allies by resting with you, or with your powers.'
     },
     powers: [
       {
         id: 'palace_cellar',
-        name: 'Cellar',
+        name: 'Cellar', namePt: 'Porão',
         tags: ['Instant', 'Charm', 'Infinite Range'],
         burst: 'required',
         description: 'You can simulate situations inside your palace before putting them into practice in reality. You can use this power and roll to set up a number of allies equal to half CAT [CALC:HALF_CAT] even if you are not physically present. However, you may only set up a target if you can describe the way in which you trained or prepared with them, or a psychic copy of them, for the current situation. This setup can never be risky, but cannot lower risk. If you fail the setup roll, you may take 1d3 nonlethal stress to re-roll it, taking the second result as final.'
       },
       {
         id: 'palace_foyer',
-        name: 'Foyer',
+        name: 'Foyer', namePt: 'Vestíbulo',
         tags: ['1 scene', 'Summon'],
         burst: 'required',
         description: 'Passive: Your palace has a tulpa, a psychic being that takes the form of a servant or butler. They are loyal to you, and you can determine their personality and appearance when you take this power. Its existence inside your palace is passive and costs nothing.<br><br>Active: You summon your tulpa, choosing one:<br>•  Have your tulpa aid you on a task related to research, crafting, or investigation, granting +1D on your next roll and making an extra slash on a talisman for each 6 you roll.<br>•  Briefly manifest your tulpa outside your palace in short range as a real person for the scene, a mirror of their appearance inside your palace but dressed any way you like. They have roughly the capabilities of an average person (CAT 0) and roll 2d for activities that a typical servant or butler could do and 0d for everything else. Any harm taken by them banishes them back to the palace.'
       },
       {
         id: 'palace_library',
-        name: 'Library',
+        name: 'Library', namePt: 'Biblioteca',
         tags: ['Instant', 'Self'],
         burst: 'none',
         description: 'Your palace has a library of information from the psychic gestalt. When you wish to gather information on or investigate any subject, you can gain +1D on the roll by accessing this library. However, afterwards the Admin rolls 1d6 for each of the following:<br>•  Is the information rare?<br>•  Is the information forbidden in some way?<br>•  Is the information pertinent to a powerful group?<br><br>For each 1, you take 2 nonlethal stress as you read something disturbing in the library.'
       },
       {
         id: 'palace_bar',
-        name: 'Bar',
+        name: 'Bar', namePt: 'Bar',
         tags: ['Instant', 'Self'],
         burst: 'none',
         uses: 'scene',
@@ -2593,7 +2728,7 @@ const BLASPHEMIES = [
       },
       {
         id: 'palace_parlor',
-        name: 'Parlor',
+        name: 'Parlor', namePt: 'Salão',
         tags: ['1 scene', 'Investigation area'],
         burst: 'required',
         description: 'Choose one person or up to a CAT sized group [CAT:people] of people in the investigation area and speak their (real) name(s) aloud. You can bring yourself and their psychic shadow inside your palace, no matter where they are. If your target(s) are willing, you can choose to bring their actual psychic consciousness inside your palace, making them aware and remember what is going on while inside, as though in a dream. Their real body becomes unconscious and vulnerable. They can leave willingly.<br><br>You can instead bring a psychic double of a willing or unwilling person into your palace. For an unwilling person, roll PSYCHE and only spend a burst on success. The double is a psychic copy of their mind at the time of summoning. Any memories formed by the double will not transfer over. The double cannot leave until the scene ends, or until they take harm as usual.<br><br>A person or double summoned this way is not obligated in any way to behave differently than their original.<br><br>Gain or grant +1D on the next roll by yourself or an ally taking advantage of this power.'
@@ -2607,42 +2742,42 @@ const BLASPHEMIES = [
     description: 'Slice the body and soul with a carving knife.',
     passive: {
       id: 'jaunt_ghostwire',
-      name: 'Ghostwire',
+      name: 'Ghostwire', namePt: 'Fio Fantasma',
       image: 'img/passives/ghostwire.png',
       description: 'You can join your mind telepathically with a number of other willing people you touch equal to CAT [CALC:CAT]. While within long distance of each other, you can talk telepathically, and sense each other\'s ambient emotional state. This effect lasts until you use it again, until someone becomes unconscious, or until you or another person closes the connection.'
     },
     powers: [
       {
         id: 'jaunt_threads',
-        name: 'Threads',
+        name: 'Threads', namePt: 'Fios',
         tags: ['Until Rest', 'Charm', 'Self'],
         burst: 'required',
         description: 'You can sense the unseen world of traces of grace. Upon using this power, you close your eyes and can see through your eyelids the patterns the soul leaves in the environment.<br>•  You gain the ability to see living beings, even through walls, for CAT range [CAT:distance].<br>•  You can see the traces a sin or someone strong in grace such as an exorcist leaves, like a faint trail of light through the air.<br>•  You gain +1D on actions to track or locate living beings or traces of sins in the area.<br><br>However, you cannot see any non-living matter (you are effectively blind) while maintaining this power, and find actions that rely on sight hard. This power ends when you open your eyes or when you rest.'
       },
       {
         id: 'jaunt_possession',
-        name: 'Possession',
+        name: 'Possession', namePt: 'Possessão',
         tags: ['1 Scene', 'Curse', 'Short'],
         burst: 'required',
         description: 'You can shunt your perception out of your body to possess a human, animal, or corpse (in good condition) you can see in range for a scene. Supernatural beings are immune to this effect. Unwilling humans might require rolling PSYCHE to possess successfully.<br>•  While possessing another your real body is insensate and defenseless.<br>•  For humans and animals, you cannot force a target to harm itself or take action that would indirectly cause it to come to harm.<br>•  Actions that the target takes use your skills, but the target\'s body or equipment, which might change the circumstances.<br><br>You are kicked out of the body if it takes harm. Gain or grant +1D on the next roll by yourself or an ally taking advantage of this power.'
       },
       {
         id: 'jaunt_geist',
-        name: 'Geist',
+        name: 'Geist', namePt: 'Geist',
         tags: ['1 scene', 'Self'],
         burst: 'required',
         description: 'You can shunt your perception out of your body and roam for CAT+2 range [CAT+2:distance], becoming a being made of purely psychic energy.<br>•  While practicing this power, your real body is insensate and defenseless.<br>•  You can fly at CAT speed [CAT:speed], are invisible to those not psychically sensitive, and may pass through walls, floors, and objects easily while in this form.<br>•  You cannot interact with or be affected by the physical world. You cannot use or benefit from your own psychic powers, but psychic powers or effects from others can still affect you.<br><br>If your form is destroyed somehow (by a supernatural force), you take 1 stress, this power ends, and you can\'t use this power again until the scene passes.<br><br>This power may easily affect the parameters of rolls, such as difficulty and risk.'
       },
       {
         id: 'jaunt_passenger',
-        name: 'Passenger',
+        name: 'Passenger', namePt: 'Passageiro',
         tags: ['1 Scene', 'Curse', 'Extreme'],
         burst: 'required',
         description: 'You choose a group of willing humans or exorcists with a group size equal or less than half CAT [CALC:HALF_CAT] in extreme range, who must be able to either hear you (even telepathically) or see you. You pull their psychic presence into your body for the duration. Their bodies become limp, vulnerable and insensate. However:<br>•  They now share control of your body with you, including all senses.<br>•  You can surrender control of your body to them to allow them to make action rolls using their skills or abilities, but your body (gear, access, etc).<br>•  You can set them up as normal or aid them on these skills.<br><br>They cannot use psychic powers while possessing you this way, and you suffer any harm or consequences from their actions.'
       },
       {
         id: 'jaunt_desecrate',
-        name: 'Desecrate',
+        name: 'Desecrate', namePt: 'Profanar',
         tags: ['Instant', 'Adjacent'],
         burst: 'none',
         uses: 'rest',
@@ -2657,14 +2792,14 @@ const BLASPHEMIES = [
     description: 'Humans leave impressions on everything they touch. You can do more than touch.',
     passive: {
       id: 'sympathy_resonance',
-      name: 'Resonance',
+      name: 'Resonance', namePt: 'Ressonância',
       image: 'img/passives/resonance.png',
       description: 'At the start of the mission, roll on the resonance table. Roll 1d3, then 1d6, then check the resonance tables. When you are making an action roll and you are using an item you are resonant with, you gain a +1D bonus. You can spend a psyche burst any time to roll an additional resonance. You can keep up to three at a time, and only benefit from one at a time.<br><br><b>Resonances</b> (Roll 1d3, then 1d6):<table class="virtue-rupture-table"><tbody><tr><td class="rupture-duration">11</td><td class="rupture-cost">Phones</td><td class="rupture-duration">21</td><td class="rupture-cost">Balls</td><td class="rupture-duration">31</td><td class="rupture-cost">Ropes</td></tr><tr><td class="rupture-duration">12</td><td class="rupture-cost">Lights</td><td class="rupture-duration">22</td><td class="rupture-cost">Guns</td><td class="rupture-duration">32</td><td class="rupture-cost">Hammers</td></tr><tr><td class="rupture-duration">13</td><td class="rupture-cost">Knives</td><td class="rupture-duration">23</td><td class="rupture-cost">Mugs</td><td class="rupture-duration">33</td><td class="rupture-cost">Cars</td></tr><tr><td class="rupture-duration">14</td><td class="rupture-cost">Keys</td><td class="rupture-duration">24</td><td class="rupture-cost">Computers</td><td class="rupture-duration">34</td><td class="rupture-cost">Doors</td></tr><tr><td class="rupture-duration">15</td><td class="rupture-cost">Books</td><td class="rupture-duration">25</td><td class="rupture-cost">Shoes</td><td class="rupture-duration">35</td><td class="rupture-cost">Bags</td></tr><tr><td class="rupture-duration">16</td><td class="rupture-cost">Baseball Bats</td><td class="rupture-duration">26</td><td class="rupture-cost">Power Tools</td><td class="rupture-duration">36</td><td class="rupture-cost">Gloves</td></tr></tbody></table>'
     },
     powers: [
       {
         id: 'sympathy_psychometry',
-        name: 'Psychometry',
+        name: 'Psychometry', namePt: 'Psicometria',
         tags: ['Instant', 'Adjacent'],
         burst: 'none',
         uses: 'rest',
@@ -2672,28 +2807,28 @@ const BLASPHEMIES = [
       },
       {
         id: 'sympathy_bond',
-        name: 'Bond',
+        name: 'Bond', namePt: 'Vínculo',
         tags: ['1 Scene', 'Charm'],
         burst: 'required',
         description: 'For the scene, you can bond incredibly tightly with an item you are holding in one or both hands.<br>•  You are now resonant with that item. It is still mundane.<br>•  You can now use it as a mundane cutting or bludgeoning weapon even if it wouldn\'t normally be a weapon. It has about the power of a CAT 0 bat or sword.<br>•  The item becomes virtually indestructible, and you can cause the item to recall to your hand, flying through the air, from within short distance.<br>•  You can discharge this power to make a strike with the object, granting it supernatural destructive power equal to CAT. Roll PSYCHE for its effects (it gains +1D on the roll as normal due to resonance). Then end this effect and destroy the item.'
       },
       {
         id: 'sympathy_amplify',
-        name: 'Amplify',
+        name: 'Amplify', namePt: 'Amplificar',
         tags: ['1 Scene', 'Summon', 'Adjacent'],
         burst: 'required',
         description: 'You can expand the mundane properties of a regular non-weapon item to extreme levels. You touch a mundane object up to CAT size [CAT:size]. For the scene, you automatically have resonance with it, and its properties are enhanced to extreme levels, as if they were up to your CAT in scale [CAT:magnitude]. For example:<br>•  A car\'s speed, handling, and resilience.<br>•  A light\'s brightness and intensity, and the area it illuminates.<br>•  A door\'s ability to lock and withstand force.<br><br>This can easily affect the difficulty and risk of rolls. The object is still mundane.'
       },
       {
         id: 'sympathy_diplomacy',
-        name: 'Diplomacy',
+        name: 'Diplomacy', namePt: 'Diplomacia',
         tags: ['Instant', 'Short'],
         burst: 'required',
         description: 'You make a simple request of an object as if it was a person, or ask it a simple yes or no question.<br><br>For example, you can ask a door to open or hold shut (even if it couldn\'t normally lock, or you don\'t have the key), a computer to turn off or find information for you, or a car to turn on without a key or drive by itself.<br><br>If you need to make a roll for this, roll PSYCHE or use a social action, such as negotiation or authority.<br><br>You can affect objects up to CAT size [CAT:size] with this. Objects asked questions can answer only with yes or no answers and can\'t actually vocalize.'
       },
       {
         id: 'sympathy_alliance',
-        name: 'Alliance',
+        name: 'Alliance', namePt: 'Aliança',
         tags: ['1 Scene', 'Summon', 'Short'],
         burst: 'required',
         description: 'An object up to CAT size [CAT:size] in short range can now take action to set up an ally, rolling 1d6, or PSYCHE if you are resonant with that object. The object can take or cause consequences as normal from these actions.<br><br>Allies have to be able to interact with it or use the object to gain its benefits. The object doesn\'t gain the ability to actually move or animate in any way, but fortune simply bends around it.'
@@ -2708,37 +2843,37 @@ const BLASPHEMIES = [
     description: 'Your word is law.',
     passive: {
       id: 'tongue_the_word',
-      name: 'The Word',
+      name: 'The Word', namePt: 'A Palavra',
       image: 'img/passives/tongue.png',
       description: "Your powers have no effect if you can't speak, or if sound is suppressed somehow. Using the same power from this blasphemy more than once before resting has ramping effects (not optional).<br>•  Second time: +1 CAT (min CAT 2), take 1 irreducible stress.<br>•  Third time: +2 CAT (min CAT 3, max CAT 7), +1D, take 3 irreducible stress, anyone in short range takes the deafened affliction for the rest of the hunt.<br>•  Fourth time: Power resolves at CAT 7, do not roll (automatic successes). Afterwards, suffer instant death. Anyone in short range is permanently deafened."
     },
     powers: [
-      { id: 'tongue_bang', name: 'Bang', tags: ['Instant', 'CAT range'], burst: 'required', description: "You say 'bang'. This causes a massive influx of force affecting up to a half CAT [HALF_CAT:area] area with its center in range that typically manifests as an extreme pressure wave. It affects everything except you. Roll PSYCHE for its effects, and only spend a psyche burst on success.<br>•  Gain +1D if the environment around you is quiet or subdued.<br>•  Gain +1D if you are in an area with favorable acoustics, like a canyon, a performance venue, theatre, or a stadium." },
-      { id: 'tongue_silence', name: 'Silence', tags: ['1 scene', 'Transmute', 'Long'], burst: 'required', description: "You say 'silence' and choose an area up to CAT size [CAT:area] with its center at a point in range. Everything in the area completely stops producing noise. Anything mundane that would make a loud noise as part of normal operation completely stops functioning, such as vehicle engines, creaky door hinges, guns, explosives, fireworks, etc. Your powers from this blasphemy or any other blasphemy or psychic effect that would create a loud noise do not work inside this area.<br>•  Gain or grant +1D when next acting on this power.<br>•  This power can easily affect the parameters of rolls." },
-      { id: 'tongue_narrate', name: 'Narrate', tags: ['Instant', 'Short'], burst: 'required', description: "Pick up to a CAT sized group [CAT:people] of humans or exorcists in range (which could include yourself), an object or location in range, and a verb. Then narrate a sentence using the following structure:<br>(He/she/they) was/were (verb)ing the (noun).<br><br>For example:<br>•  He was opening the door.<br>•  She was falling in the air.<br>•  He was driving the car.<br>•  They were lying on the floor.<br><br>Roll PSYCHE for its effects, and only spend a psyche burst on success. After the sentence finishes and if the roll is successful, it becomes true, including moving any affected people where they need to be as if they were always there. This power does not adjust human memory nor can it create anything, change anyone, or directly harm anyone (it could still easily harm someone indirectly)." },
-      { id: 'tongue_die', name: 'Die', tags: ['Instant', 'Curse'], burst: 'required', description: "You say 'die' and instantly kill all humans in an area up to CAT size [CAT:area], centered on you. This is not optional, you don't get to choose who to kill or spare, and you don't require a roll to do so. If you used this power at least once to kill one person, at the end of a hunt, permanently fill in a sin box. If you used it at least once to kill more than one person, permanently fill in 1d3 sin boxes." },
-      { id: 'tongue_snap_click_pop', name: 'Snap, Click, Pop', tags: ['Instant', 'Short'], burst: 'required', description: "You say 'Snap', 'Click', or 'Pop', and produce an effect that would normally produce one of those sounds. For example, you could use 'click' to open a locked door, push a button, or type on a keyboard. You could use 'snap' to break a weapon or an arm. You could use 'pop' to blow a car tire or shoot a gun someone else is holding.<br><br>If necessary, roll PSYCHE for effects that would be risky, unclear, or inflict harm, and only spend a burst on success. Otherwise, this power is always successful. When you or an ally next acts to gain advantage of this power, they may gain +1D." }
+      { id: 'tongue_bang', name: 'Bang', namePt: 'Estrondo', tags: ['Instant', 'CAT range'], burst: 'required', description: "You say 'bang'. This causes a massive influx of force affecting up to a half CAT [HALF_CAT:area] area with its center in range that typically manifests as an extreme pressure wave. It affects everything except you. Roll PSYCHE for its effects, and only spend a psyche burst on success.<br>•  Gain +1D if the environment around you is quiet or subdued.<br>•  Gain +1D if you are in an area with favorable acoustics, like a canyon, a performance venue, theatre, or a stadium." },
+      { id: 'tongue_silence', name: 'Silence', namePt: 'Silêncio', tags: ['1 scene', 'Transmute', 'Long'], burst: 'required', description: "You say 'silence' and choose an area up to CAT size [CAT:area] with its center at a point in range. Everything in the area completely stops producing noise. Anything mundane that would make a loud noise as part of normal operation completely stops functioning, such as vehicle engines, creaky door hinges, guns, explosives, fireworks, etc. Your powers from this blasphemy or any other blasphemy or psychic effect that would create a loud noise do not work inside this area.<br>•  Gain or grant +1D when next acting on this power.<br>•  This power can easily affect the parameters of rolls." },
+      { id: 'tongue_narrate', name: 'Narrate', namePt: 'Narrar', tags: ['Instant', 'Short'], burst: 'required', description: "Pick up to a CAT sized group [CAT:people] of humans or exorcists in range (which could include yourself), an object or location in range, and a verb. Then narrate a sentence using the following structure:<br>(He/she/they) was/were (verb)ing the (noun).<br><br>For example:<br>•  He was opening the door.<br>•  She was falling in the air.<br>•  He was driving the car.<br>•  They were lying on the floor.<br><br>Roll PSYCHE for its effects, and only spend a psyche burst on success. After the sentence finishes and if the roll is successful, it becomes true, including moving any affected people where they need to be as if they were always there. This power does not adjust human memory nor can it create anything, change anyone, or directly harm anyone (it could still easily harm someone indirectly)." },
+      { id: 'tongue_die', name: 'Die', namePt: 'Morrer', tags: ['Instant', 'Curse'], burst: 'required', description: "You say 'die' and instantly kill all humans in an area up to CAT size [CAT:area], centered on you. This is not optional, you don't get to choose who to kill or spare, and you don't require a roll to do so. If you used this power at least once to kill one person, at the end of a hunt, permanently fill in a sin box. If you used it at least once to kill more than one person, permanently fill in 1d3 sin boxes." },
+      { id: 'tongue_snap_click_pop', name: 'Snap, Click, Pop', namePt: 'Estalar, Clicar, Estourar', tags: ['Instant', 'Short'], burst: 'required', description: "You say 'Snap', 'Click', or 'Pop', and produce an effect that would normally produce one of those sounds. For example, you could use 'click' to open a locked door, push a button, or type on a keyboard. You could use 'snap' to break a weapon or an arm. You could use 'pop' to blow a car tire or shoot a gun someone else is holding.<br><br>If necessary, roll PSYCHE for effects that would be risky, unclear, or inflict harm, and only spend a burst on success. Otherwise, this power is always successful. When you or an ally next acts to gain advantage of this power, they may gain +1D." }
     ]
   },
   {
-    id: 'playlist',
+    id: 'track',
     name: 'Track',
     expansion: 'gff3',
     flavor: 'Fact: The loose or leftover cursed objects created by this power are curated in Temerity archive 52. The collection is quite extensive and has a fairly rabid following among certain subsections of CAIN staff.',
     description: 'Check, one two, one two.',
     passive: {
-      id: 'playlist_playlist',
+      id: 'track_playlist',
       name: 'Playlist',
       image: 'img/passives/track.png',
       hasNotes: true,
       description: "You have a powerful cursed object, which is the focus of your powers. It's a music player, typically a tape player or a cd player with attached headphones. It doesn't take KP, and you can supernaturally form and reform it in your hands at will. Make a (real) playlist of 6 songs at the start of each hunt. Some of your powers key off this playlist. Any music you play from this playlist can be heard diagetically (in the game) if you so choose. It appears to come from either a visible location in short range, your player, or nowhere in particular (like a soundtrack), and you can turn it on and off at will."
     },
     powers: [
-      { id: 'playlist_vibe', name: 'Vibe', tags: ['1 scene', 'Self', 'Charm'], burst: 'required', uses: 'scene', description: "When a scene starts, you may use this power to play a track from your playlist. Decide if the track is Melancholy, Chill, or Angsty. Gain a bonus based on the track's type for the rest of the scene.<br>•  Melancholy: You or any ally erase 1 stress when they fail a roll.<br>•  Angst: After you or an ally gains an injury, hook, or affliction, they gain +1D on their next action.<br>•  Chill: At the end of the scene, everyone in short range of you erases 1 stress if there was no risky or hard rolls made this scene." },
-      { id: 'playlist_replay', name: 'Replay', tags: ['Whole Mission', 'Charm', 'Short'], burst: 'required', description: "Passive: Without spending a psyche burst, you or an ally in short range from you performs a course of activity that takes no longer than 10 seconds, which you record on your player. It records you or your ally at the moment of the recording, including dress, speech, and objects held or worn, but nothing else around them. You can keep 3 recordings this way.<br><br>Active: You can playback a recording by spending a psyche burst. This immediately replays a psychic double of the recording. This double is physically tangible, looks and sounds believable, can inflict harm, and can interact with the physical world, though it de-manifests after 10 seconds and cannot interact in any way that was not previously recorded. Roll PSYCHE for its effects if they are unclear, contested, or risky, and only spend a psyche burst on success." },
-      { id: 'playlist_boost', name: 'Boost', tags: ['Instant', 'Short'], burst: 'none', uses: 'scene', description: "You can activate this power once a scene before yourself or any ally in range uses a blasphemy and makes a PSYCHE roll. Pick a track from your playlist. Record the first three digits of the track length (like 3, 3, 5). 0s do not count, so a 10:35 track would record 1, 3, 5. For each die rolled, the action gains +1 additional CAT for every die rolled that matches a number recorded from the track length (min +1 CAT, max +3, max CAT 7)." },
-      { id: 'playlist_shuffle', name: 'Shuffle', tags: ['Instant', 'Transmute', 'CAT area'], burst: 'required', description: "You may choose any number of objects, vehicles, or people in the affected area. Anything swapped may have a size up to half CAT [HALF_CAT:size] (min 0). You instantly swap their positions and momentum. You must swap things of approximately the same size and mass. If attempting otherwise, or if you need to roll for effects such as harm, roll PSYCHE and only spend a burst on success. When you or an ally next acts to gain advantage of this power, they may gain +1D." },
-      { id: 'playlist_title', name: 'Title', tags: ['Instant', 'Short', 'Summon'], burst: 'required', description: "You play a track from your playlist. You can manifest in short range from you a psychic manifestation based on any part of the title, up to CAT [CAT:magnitude] in size or magnitude. The effect can create:<br>•  A psychic copy of any object named in the title.<br>•  A psychic copy of any human or animal in the title.<br>•  A brief burst of energy, weather, or physical force (fire/rain/wind/push/pull/pressure) named in the title.<br><br>The manifestation lasts until you would roll for its effects or actions, until you use this power again, or until the scene passes, then it dissipates. Anything created is tangible but has an aura of unreality or 'wrongness' around it to regular humans. It can cause tangible harm or force and interact with the physical world but is in no way obligated to follow your instructions if it can act independently. If the use of this power would cause harm, or be risky or uncertain in some way, roll PSYCHE for its effects when it is used, only manifesting and spending a burst on success. Otherwise, it always takes effect." }
+      { id: 'track_vibe', name: 'Vibe', tags: ['1 scene', 'Self', 'Charm'], burst: 'required', uses: 'scene', description: "When a scene starts, you may use this power to play a track from your playlist. Decide if the track is Melancholy, Chill, or Angsty. Gain a bonus based on the track's type for the rest of the scene.<br>•  Melancholy: You or any ally erase 1 stress when they fail a roll.<br>•  Angst: After you or an ally gains an injury, hook, or affliction, they gain +1D on their next action.<br>•  Chill: At the end of the scene, everyone in short range of you erases 1 stress if there was no risky or hard rolls made this scene." },
+      { id: 'track_replay', name: 'Replay', tags: ['Whole Mission', 'Charm', 'Short'], burst: 'required', description: "Passive: Without spending a psyche burst, you or an ally in short range from you performs a course of activity that takes no longer than 10 seconds, which you record on your player. It records you or your ally at the moment of the recording, including dress, speech, and objects held or worn, but nothing else around them. You can keep 3 recordings this way.<br><br>Active: You can playback a recording by spending a psyche burst. This immediately replays a psychic double of the recording. This double is physically tangible, looks and sounds believable, can inflict harm, and can interact with the physical world, though it de-manifests after 10 seconds and cannot interact in any way that was not previously recorded. Roll PSYCHE for its effects if they are unclear, contested, or risky, and only spend a psyche burst on success." },
+      { id: 'track_boost', name: 'Boost', tags: ['Instant', 'Short'], burst: 'none', uses: 'scene', description: "You can activate this power once a scene before yourself or any ally in range uses a blasphemy and makes a PSYCHE roll. Pick a track from your playlist. Record the first three digits of the track length (like 3, 3, 5). 0s do not count, so a 10:35 track would record 1, 3, 5. For each die rolled, the action gains +1 additional CAT for every die rolled that matches a number recorded from the track length (min +1 CAT, max +3, max CAT 7)." },
+      { id: 'track_shuffle', name: 'Shuffle', tags: ['Instant', 'Transmute', 'CAT area'], burst: 'required', description: "You may choose any number of objects, vehicles, or people in the affected area. Anything swapped may have a size up to half CAT [HALF_CAT:size] (min 0). You instantly swap their positions and momentum. You must swap things of approximately the same size and mass. If attempting otherwise, or if you need to roll for effects such as harm, roll PSYCHE and only spend a burst on success. When you or an ally next acts to gain advantage of this power, they may gain +1D." },
+      { id: 'track_title', name: 'Title', tags: ['Instant', 'Short', 'Summon'], burst: 'required', description: "You play a track from your playlist. You can manifest in short range from you a psychic manifestation based on any part of the title, up to CAT [CAT:magnitude] in size or magnitude. The effect can create:<br>•  A psychic copy of any object named in the title.<br>•  A psychic copy of any human or animal in the title.<br>•  A brief burst of energy, weather, or physical force (fire/rain/wind/push/pull/pressure) named in the title.<br><br>The manifestation lasts until you would roll for its effects or actions, until you use this power again, or until the scene passes, then it dissipates. Anything created is tangible but has an aura of unreality or 'wrongness' around it to regular humans. It can cause tangible harm or force and interact with the physical world but is in no way obligated to follow your instructions if it can act independently. If the use of this power would cause harm, or be risky or uncertain in some way, roll PSYCHE for its effects when it is used, only manifesting and spending a burst on success. Otherwise, it always takes effect." }
     ]
   },
   {
@@ -2749,16 +2884,16 @@ const BLASPHEMIES = [
     description: "They\'re like veins, if you really think about it. You can even hear its heartbeat.",
     passive: {
       id: 'wire_main_artery',
-      name: 'Main Artery',
+      name: 'Main Artery', namePt: 'Artéria Principal',
       image: 'img/passives/wire.png',
       description: "You have a cell phone with better features (wireless internet access). It doesn\'t take KP. You can produce or remove it at will, forming it from psychic energy, even if you lose it."
     },
     powers: [
-      { id: 'wire_disk', name: 'Disk', tags: ['Instant', 'Adjacent'], burst: 'required', description: "You touch an adjacent willing human or exorcist, or an object, vehicle, or construction of CAT size [CAT:size] (including anything on or inside that object), and store them as a CD. You can keep a number of CDs equal to your CAT+1 [CALC:CAT+1]. They reset between missions, and their contents are freed. A person stored is in a stasis of sort and has no awareness or sensation, and cannot take harm or be affected in any way, though hooks, talismans, and afflictions on exorcists within can continue to build up, affecting them instantly on release if filled. Putting a stored CD into a CD disk drive lets you read information about its captive like a text document. When you activate the CD again, or if it is broken before then, the stored person or object reappears in a space in short range of you, regardless of if there is room for it or not. Roll PSYCHE for any of its effects." },
-      { id: 'wire_terminal', name: 'Terminal', tags: ['Until rest', 'Self', 'Charm'], burst: 'required', description: "You manifest a computer terminal that emerges harmlessly (but somewhat disturbingly) from your body, usually from your chest or back. While manifesting this terminal, activities are hard if you are moving or under duress, but you can otherwise act normally, including typing or interfacing from yourself. The terminal has a fast connection to the internet and is powered, regardless of location. Any other character interacting with the terminal can use your relevant skills to gather information using you. The first time in a scene someone gathers information this way, also gain +1D. You end this power with a few moments' concentration, retracting the terminal." },
-      { id: 'wire_deck', name: 'Deck', tags: ['1 Scene', 'Adjacent', 'Curse'], burst: 'required', description: "You flip a keyboard out from any object, construction, vehicle, human, or exorcist. The keyboard lasts until you produce a new one, or until the end of the scene. While the keyboard is out and you're able to type on it, when gathering information on your subject, you can interact with them as if they were a computer. You may roll either PSYCHE or the interfacing skill, whichever is higher. The first time you do this for each keyboard, gain +1D. You can flip it out from even impossible surfaces, it may be made from unusual materials, and it does not harm a person it is produced from, although it is hard to type on them if they are unwilling or while they are moving." },
-      { id: 'wire_surge', name: 'Surge', tags: ['Instant', 'CAT+2 range'], burst: 'required', description: "You instantly transpose your physical form and a group of up to CAT size [CAT:people] of willing humans or exorcists in short range from you into a psychic electrical charge, then travel rapidly through a phone line or a networked computer, appearing instantly on the other side. However, you must be able to clearly see your destination, or else know the phone number of the target you want to reach, or the network address of the computer on the other side. You can use this power without knowing your destination, but where you end up is entirely up to the Admin." },
-      { id: 'wire_call', name: 'Call', tags: ['Instant'], burst: 'required', description: "You call any human, sin, or exorcist. Only spend a psyche burst if they pick up. If they didn't have a phone on them, this power manifests one when they pick up, and a new number for them (which you don't know unless they tell you). This phone is a little odd and disintegrates into psychic energy when you rest." }
+      { id: 'wire_disk', name: 'Disk', namePt: 'Disco', tags: ['Instant', 'Adjacent'], burst: 'required', description: "You touch an adjacent willing human or exorcist, or an object, vehicle, or construction of CAT size [CAT:size] (including anything on or inside that object), and store them as a CD. You can keep a number of CDs equal to your CAT+1 [CALC:CAT+1]. They reset between missions, and their contents are freed. A person stored is in a stasis of sort and has no awareness or sensation, and cannot take harm or be affected in any way, though hooks, talismans, and afflictions on exorcists within can continue to build up, affecting them instantly on release if filled. Putting a stored CD into a CD disk drive lets you read information about its captive like a text document. When you activate the CD again, or if it is broken before then, the stored person or object reappears in a space in short range of you, regardless of if there is room for it or not. Roll PSYCHE for any of its effects." },
+      { id: 'wire_terminal', name: 'Terminal', namePt: 'Terminal', tags: ['Until rest', 'Self', 'Charm'], burst: 'required', description: "You manifest a computer terminal that emerges harmlessly (but somewhat disturbingly) from your body, usually from your chest or back. While manifesting this terminal, activities are hard if you are moving or under duress, but you can otherwise act normally, including typing or interfacing from yourself. The terminal has a fast connection to the internet and is powered, regardless of location. Any other character interacting with the terminal can use your relevant skills to gather information using you. The first time in a scene someone gathers information this way, also gain +1D. You end this power with a few moments' concentration, retracting the terminal." },
+      { id: 'wire_deck', name: 'Deck', namePt: 'Deck', tags: ['1 Scene', 'Adjacent', 'Curse'], burst: 'required', description: "You flip a keyboard out from any object, construction, vehicle, human, or exorcist. The keyboard lasts until you produce a new one, or until the end of the scene. While the keyboard is out and you're able to type on it, when gathering information on your subject, you can interact with them as if they were a computer. You may roll either PSYCHE or the interfacing skill, whichever is higher. The first time you do this for each keyboard, gain +1D. You can flip it out from even impossible surfaces, it may be made from unusual materials, and it does not harm a person it is produced from, although it is hard to type on them if they are unwilling or while they are moving." },
+      { id: 'wire_surge', name: 'Surge', namePt: 'Surto', tags: ['Instant', 'CAT+2 range'], burst: 'required', description: "You instantly transpose your physical form and a group of up to CAT size [CAT:people] of willing humans or exorcists in short range from you into a psychic electrical charge, then travel rapidly through a phone line or a networked computer, appearing instantly on the other side. However, you must be able to clearly see your destination, or else know the phone number of the target you want to reach, or the network address of the computer on the other side. You can use this power without knowing your destination, but where you end up is entirely up to the Admin." },
+      { id: 'wire_call', name: 'Call', namePt: 'Chamada', tags: ['Instant'], burst: 'required', description: "You call any human, sin, or exorcist. Only spend a psyche burst if they pick up. If they didn't have a phone on them, this power manifests one when they pick up, and a new number for them (which you don't know unless they tell you). This phone is a little odd and disintegrates into psychic energy when you rest." }
     ]
   },
   {
@@ -2769,16 +2904,16 @@ const BLASPHEMIES = [
     description: "SHE WON'T GET OUT OF MY HEAD.",
     passive: {
       id: 'mother_knows_best',
-      name: "Mother's Embrace",
+      name: "Mother's Embrace", namePt: 'Abraço da Mãe',
       image: 'img/passives/mother.png',
       description: "When you sin overflow, you may gain a <b>Mother's Mark</b> instead of a regular sin mark, and roll 2d6, picking the lowest, if you choose to keep control.<br><br><b>Mother's Mark</b><br><br>A Mother's Mark does not lower sin overflow cap, but it still counts as a sin mark in all other aspects. It has no other gameplay effects. Roll 1d6 for its aspect. You can gain the same mark more than once.<br>•  1. <b>New eye</b> in center of forehead. Looks around on its own. You cannot see through it. <i>It is not yours.</i><br>•  2. <b>Large patch of skin or hair</b> loses all color, then gains banded stripes.<br>•  3. <b>New pupil</b> in eye.<br>•  4. <b>New tongue</b>.<br>•  5. <b>New limb</b>. Elongated and double jointed.<br>•  6. <b>Spiraling patterns</b>, warping the skin and muscle. Patterns change and shift over time."
     },
     powers: [
-      { id: 'mother_unravel', name: 'Unravel', tags: ['Until Rest', 'Self', 'Charm'], burst: 'required', description: "You unravel your skin, muscle, and organs into a pulsing mass. You can reform body parts such as hands, mouths, eyes, or teeth anywhere in this mass at will. While in this form:<br>•  You cannot use or benefit from your own psychic powers (other than this one), but psychic powers or effects from others can still affect you.<br>•  You can spread through spaces as small as a sink pipe, spread out your total mass over an area equal to CAT [CAT:area], or compact your mass into a tight shape about the size of a piece of luggage.<br>•  Roll PSYCHE for any effects you'd use this form for while it's active.<br>•  Humans are typically terrified by this form, and the next action against a human or group of humans after taking this form takes +1D.<br><br>When your party rests, or when you end this power, you reform in any area that has enough space for you that your mass is touching. If there is no room for you, you instead reform when there is space." },
-      { id: 'mother_polyp', name: 'Polyp', tags: ['Entire Hunt', 'Charm', 'Adjacent'], burst: 'none', description: "You harmlessly but gruesomely remove and place either or both of your eyes, or your mouth, (or any combination of your eyes and mouth) on a human, exorcist, anomaly, or flat surface you can touch. For unwilling or unaware targets, roll PSYCHE and only spend a burst and activate this power on success.<br><br>You can see and speak normally from your eye and mouth, but they disappear on your face for the duration. You take any stress your eye or mouth would take as a consequence of your actions with them, and they return to your face when you end this power, or after they take harm.<br><br>Additionally, any number of times while active, you can take 1 stress to use a blasphemy power from any eye or mouth in CAT+2 range [CAT+2:distance] as if you were there, spending a burst as normal. Gain +1D if doing so would grant you an advantage." },
-      { id: 'mother_knot', name: 'Knot', tags: ['Entire Hunt', 'Self'], burst: 'none', description: "Passive: When you gain any amount of stress, you can capture its negative energy without spending a burst, appearing as a raised knot in your skin. Reduce stress suffered by 2 for each knot gained. You can capture up to 3 knots. At the end of any scene in which you have one or more knots, roll 1d6. When a knot bursts, you take 2 irreducible stress.<br>•  On a 1-3, take 1d3 stress and burst a knot.<br>•  On a 4-5, take 1 stress and burst a knot.<br>•  On a 6, take no stress and burst a knot." },
-      { id: 'mother_colony', name: 'Colony', tags: ['Self', 'Ally', 'Short'], burst: 'none', description: "Gain 1d3 stress, then you or an ally in range gains a fleshy shield that absorbs 2 stress from external harm. If a character already has such a shield, increase it by +2, but they also take 1d3 stress." },
-      { id: 'mother_coil', name: 'Coil', tags: ['Instant', 'Short'], burst: 'required', description: "Your limb peels apart its flesh and skin, then lashes at a target in short range like a whip, dealing harm or pulling them some distance. Roll PSYCHE for its effects.<br>•  Gain +1D if you have 3 or fewer stress boxes remaining.<br>•  Gain +2 CAT if you have sin overflowed this mission." }
+      { id: 'mother_unravel', name: 'Unravel', namePt: 'Desenrolar', tags: ['Until Rest', 'Self', 'Charm'], burst: 'required', description: "You unravel your skin, muscle, and organs into a pulsing mass. You can reform body parts such as hands, mouths, eyes, or teeth anywhere in this mass at will. While in this form:<br>•  You cannot use or benefit from your own psychic powers (other than this one), but psychic powers or effects from others can still affect you.<br>•  You can spread through spaces as small as a sink pipe, spread out your total mass over an area equal to CAT [CAT:area], or compact your mass into a tight shape about the size of a piece of luggage.<br>•  Roll PSYCHE for any effects you'd use this form for while it's active.<br>•  Humans are typically terrified by this form, and the next action against a human or group of humans after taking this form takes +1D.<br><br>When your party rests, or when you end this power, you reform in any area that has enough space for you that your mass is touching. If there is no room for you, you instead reform when there is space." },
+      { id: 'mother_polyp', name: 'Polyp', namePt: 'Pólipo', tags: ['Entire Hunt', 'Charm', 'Adjacent'], burst: 'none', description: "You harmlessly but gruesomely remove and place either or both of your eyes, or your mouth, (or any combination of your eyes and mouth) on a human, exorcist, anomaly, or flat surface you can touch. For unwilling or unaware targets, roll PSYCHE and only spend a burst and activate this power on success.<br><br>You can see and speak normally from your eye and mouth, but they disappear on your face for the duration. You take any stress your eye or mouth would take as a consequence of your actions with them, and they return to your face when you end this power, or after they take harm.<br><br>Additionally, any number of times while active, you can take 1 stress to use a blasphemy power from any eye or mouth in CAT+2 range [CAT+2:distance] as if you were there, spending a burst as normal. Gain +1D if doing so would grant you an advantage." },
+      { id: 'mother_knot', name: 'Knot', namePt: 'Nó', tags: ['Entire Hunt', 'Self'], burst: 'none', description: "Passive: When you gain any amount of stress, you can capture its negative energy without spending a burst, appearing as a raised knot in your skin. Reduce stress suffered by 2 for each knot gained. You can capture up to 3 knots. At the end of any scene in which you have one or more knots, roll 1d6. When a knot bursts, you take 2 irreducible stress.<br>•  On a 1-3, take 1d3 stress and burst a knot.<br>•  On a 4-5, take 1 stress and burst a knot.<br>•  On a 6, take no stress and burst a knot." },
+      { id: 'mother_colony', name: 'Colony', namePt: 'Colônia', tags: ['Self', 'Ally', 'Short'], burst: 'none', description: "Gain 1d3 stress, then you or an ally in range gains a fleshy shield that absorbs 2 stress from external harm. If a character already has such a shield, increase it by +2, but they also take 1d3 stress." },
+      { id: 'mother_coil', name: 'Coil', namePt: 'Espiral', tags: ['Instant', 'Short'], burst: 'required', description: "Your limb peels apart its flesh and skin, then lashes at a target in short range like a whip, dealing harm or pulling them some distance. Roll PSYCHE for its effects.<br>•  Gain +1D if you have 3 or fewer stress boxes remaining.<br>•  Gain +2 CAT if you have sin overflowed this mission." }
     ]
   },
   {
@@ -2789,14 +2924,14 @@ const BLASPHEMIES = [
     description: 'Manifest and command the firearms of a bygone age, fueled by psychic powder.',
     passive: {
       id: 'gunpowder_the_arsenal',
-      name: 'The Arsenal',
+      name: 'The Arsenal', namePt: 'O Arsenal',
       image: 'img/passives/gunpowder_the_arsenal.jpg',
       description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>DEADEYE</b>: You fire the manifested weapon using your psychic focus - roll PSYCHE for the shot. When you fire, you may take up to half CAT [HALF_CAT:magnitude] nonlethal stress. The shot becomes supernatural, and for each stress taken this way, the shot's CAT increases by +1 (packing in extra powder and shot). This can push a shot's effects well past what the weapon should be capable of - barrels scorch and split."
     },
     powers: [
       {
         id: 'gunpowder_true_shot',
-        name: 'True Shot',
+        name: 'True Shot', namePt: 'Tiro Certeiro',
         tags: ['Instant', 'CAT range'],
         burst: 'required',
         uses: 'rest',
@@ -2804,28 +2939,28 @@ const BLASPHEMIES = [
       },
       {
         id: 'gunpowder_powder_keg',
-        name: 'Powder Keg',
+        name: 'Powder Keg', namePt: 'Barril de Pólvora',
         tags: ['Until Rest', 'Transmute', 'Adjacent'],
         burst: 'required',
         description: "You conjure raw black powder - from a fine dusting to a heavy cache - up to CAT [CAT:size] in volume, at a point you can touch or in your hands. It behaves as real gunpowder: it can be poured, packed, trailed as a fuse line, or packed into a container. It ignites from any spark, flame, or your own shots. If blown up, the explosion covers a CAT area [CAT:area].<br><br>Gain or grant +1D when you or any ally next acts to take advantage of this power."
       },
       {
         id: 'gunpowder_grapeshot',
-        name: 'Grapeshot',
+        name: 'Grapeshot', namePt: 'Metralha',
         tags: ['Instant', 'Short'],
         burst: 'required',
         description: "You lob or fire a manifested explosive - a stick grenade, a black-powder bomb, a cluster of grapeshot - bursting in an area up to half CAT [HALF_CAT:area]. Roll PSYCHE for its effects, only spending a burst on success.<br>•  Everything in the area is affected, including allies.<br>•  Gain +1D against clustered groups or fortified positions.<br>•  The first success inflicts 2 slashes (or 2 stress)."
       },
       {
         id: 'gunpowder_fog_of_war',
-        name: 'Fog of War',
+        name: 'Fog of War', namePt: 'Névoa de Guerra',
         tags: ['1 Scene', 'Charm', 'Short'],
         burst: 'required',
         description: "You belch out a thick, acrid cloud of powder-smoke filling an area up to CAT [CAT:area]. Vision through it is nearly impossible for anyone but you - you can always see clearly through your own smoke.<br>•  It becomes hard to target or track anyone inside the smoke by sight.<br>•  Gain or grant +1D to move, hide, or reposition within it.<br>•  Any Sin or supernatural being partially pierces this smoke, but while acting on sight-reliant senses inside it, its reactions inflict -1 stress.<br>•  The smoke chokes the lungs of the living: a human or exorcist that lingers in it for a whole scene takes 1 nonlethal stress at the end of the scene.<br><br>It disperses if the scene ends, if you dismiss it, or if a strong wind or vacuum effect blows it away. It cannot simply be walked out of by an enemy without leaving the area."
       },
       {
         id: 'gunpowder_iron_curtain',
-        name: 'Iron Curtain',
+        name: 'Iron Curtain', namePt: 'Cortina de Ferro',
         tags: ['1 Scene', 'Summon'],
         burst: 'required',
         description: "You plant your feet and manifest a hovering firing line around you - rifles, revolvers, and cannon-shot, loaded with charges equal to CAT+1 [CALC:CAT+1]. While you hold your position (do not move from your spot), you may spend charges:<br>•  Spend 1 charge: when you take an action to fire (a shot or shooting power), the line fires alongside you at the same target. If your action has at least one success, it inflicts 2 additional slashes.<br>•  Spend 1 charge: lay down covering fire - when you or a visible ally rolls the risk die, roll it twice and you choose which result to keep.<br><br>The line dissipates when its charges run out, if you move from your spot, when the scene ends, or on rest."
@@ -2872,7 +3007,7 @@ const SIN_MARKS = [
     abilities: [
       'You can roll an extra resting die while resting. If you do, gain the same amount of sin.',
       'You no longer need to breathe. You are no longer affected by mundane toxin or poison. You cannot become intoxicated by alcohol.',
-      'When you rest, you can gain 1d3 sin to remove an affliction or hook.',
+      'When you rest, you can gain 1 sin to remove an affliction.',
       'You have a chance of ignoring any injury (roll a d6, ignore on a 6).',
       'Automatically erase 1 stress when pressure increases.',
       'Gain +1D to Conditioning. This could put you up to 4D base.'
@@ -5489,7 +5624,7 @@ function renderPowerChoices(blasId) {
 
   el.innerHTML = blas.powers.map(function(p) {
     return '<div class="power-card ' + (powers.indexOf(p.id) >= 0 ? 'selected' : '') + '" data-id="' + p.id + '">' +
-      '<h5>' + p.name + '</h5><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
+      '<h5>' + tName(p) + '</h5><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
   }).join('');
 
   el.querySelectorAll('.power-card').forEach(function(card) {
@@ -5543,7 +5678,7 @@ function renderReviewStep(container) {
         '<p><strong>' + t('powers') + ':</strong></p><ul>' +
         selPowers.map(function(pid) {
           var pw = blas ? blas.powers.find(function(p) { return p.id === pid; }) : null;
-          return pw ? '<li><strong>' + pw.name + '</strong> [' + pw.tags.join(', ') + '] ' + renderBurstCost(pw.burst) + '<br><br>' + tPowerDesc(pw.id, pw.description) + '</li>' : '';
+          return pw ? '<li><strong>' + tName(pw) + '</strong> [' + pw.tags.join(', ') + '] ' + renderBurstCost(pw.burst) + '<br><br>' + tPowerDesc(pw.id, pw.description) + '</li>' : '';
         }).join('') +
         '</ul></div>' +
     '</div>' +
@@ -5655,7 +5790,7 @@ function renderView(characterId) {
               renderPassivesHtml(bl, char) +
               getEffectivePowerIds(blRef, char).map(function(powId) {
                 var pw = getEffectivePower(bl, powId, char);
-                return pw ? '<div class="power-display"><strong>' + pw.name + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + '<p>' + tPowerDesc(pw.id, pw.description) + '</p></div>' : '';
+                return pw ? '<div class="power-display"><strong>' + tName(pw) + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + '<p>' + tPowerDesc(pw.id, pw.description) + '</p></div>' : '';
               }).join('') + '</div>';
           }).join('') +
         '</section>' +
@@ -5663,9 +5798,10 @@ function renderView(characterId) {
         ((char.sinMarks || []).length > 0 ? '<section class="sheet-section"><h3>' + t('nav_sinmarks') + '</h3>' +
           (char.sinMarks || []).map(function(mark) {
             var loc = SIN_MARKS.find(function(m) { return m.id === mark.locationId; });
-            return '<div class="sinmark-card"><strong>' + (loc ? loc.name : 'Unknown') + '</strong>' +
-              '<p class="muted sinmark-appearance">' + (loc ? loc.appearance : '') + '</p>' +
-              '<ul class="sinmark-abilities">' + (mark.abilities || []).map(function(a) { return '<li>' + a + '</li>'; }).join('') + '</ul></div>';
+            var tLoc = tSinMark(loc);
+            return '<div class="sinmark-card"><strong>' + tLoc.name + '</strong>' +
+              '<p class="muted sinmark-appearance">' + tLoc.appearance + '</p>' +
+              '<ul class="sinmark-abilities">' + (mark.abilities || []).map(function(a) { return '<li>' + tSinMarkAbility(mark.locationId, a) + '</li>'; }).join('') + '</ul></div>';
           }).join('') +
         '</section>' : '') +
         // Weapons
@@ -6096,7 +6232,7 @@ function renderEditForm(app) {
               '<div class="edit-powers-grid">' +
               bl.powers.map(function(pw) {
                 var selected = (blRef.powers || []).indexOf(pw.id) !== -1;
-                return '<label class="edit-power-check"><input type="checkbox" class="power-checkbox" data-blas="' + blRef.id + '" data-power="' + pw.id + '"' + (selected ? ' checked' : '') + '> ' + pw.name + '</label>';
+                return '<label class="edit-power-check"><input type="checkbox" class="power-checkbox" data-blas="' + blRef.id + '" data-power="' + pw.id + '"' + (selected ? ' checked' : '') + '> ' + tName(pw) + '</label>';
               }).join('') +
               '</div></div>';
           }).join('') +
@@ -6105,8 +6241,9 @@ function renderEditForm(app) {
         ((editChar.sinMarks || []).length > 0 ? '<section class="sheet-section"><h3>' + t('edit_sinmarks') + '</h3>' +
           (editChar.sinMarks || []).map(function(sm, idx) {
             var loc = SIN_MARKS.find(function(l) { return l.id === sm.location; });
+            var tLoc = tSinMark(loc);
             var ab = loc ? loc.abilities.find(function(a) { return a.id === sm.ability; }) : null;
-            return '<div class="edit-item-row"><span>' + (loc ? loc.name : '?') + ' \u2014 ' + (ab ? ab.name : '?') + (sm.evolved ? ' (Evolved)' : '') + '</span><button type="button" class="btn btn-tiny btn-danger edit-sm-remove" data-idx="' + idx + '">\u2715</button></div>';
+            return '<div class="edit-item-row"><span>' + tLoc.name + ' \u2014 ' + (ab ? ab.name : '?') + (sm.evolved ? ' (Evolved)' : '') + '</span><button type="button" class="btn btn-tiny btn-danger edit-sm-remove" data-idx="' + idx + '">\u2715</button></div>';
           }).join('') +
         '</section>' : '') +
         '<section class="sheet-section"><h3>' + t('notes') + '</h3><textarea id="e-notes" rows="4">' + escHtml(editChar.notes || '') + '</textarea></section>' +
@@ -6565,7 +6702,7 @@ function renderSession(characterId) {
               var usedPowers = char.usedPowers || [];
               var isUsed = usedPowers.indexOf(pw.id) !== -1;
               var usesToggle = pw.uses ? '<button class="power-uses-toggle' + (isUsed ? ' used' : '') + '" data-char="' + char.id + '" data-power="' + pw.id + '">' + (isUsed ? (currentLang === 'pt' ? 'Usado' : 'Used') : (currentLang === 'pt' ? 'Disponível' : 'Available')) + '</button>' : '';
-              return '<div class="power-display' + (isUsed ? ' power-used' : '') + '"><strong>' + pw.name + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + usesToggle + '<p>' + tPowerDescSession(pw.id, pw.description, char.category) + '</p></div>';
+              return '<div class="power-display' + (isUsed ? ' power-used' : '') + '"><strong>' + tName(pw) + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + usesToggle + '<p>' + tPowerDescSession(pw.id, pw.description, char.category) + '</p></div>';
             }).join('') + '</div>';
         }).join('') +
       '</section>' +
@@ -6597,9 +6734,10 @@ function renderSession(characterId) {
         '<h3>' + t('nav_sinmarks') + '</h3>' +
         (char.sinMarks || []).map(function(mark) {
           var loc = SIN_MARKS.find(function(m) { return m.id === mark.locationId; });
-          return '<div class="sinmark-card"><strong>' + (loc ? loc.name : 'Unknown') + '</strong>' +
-            '<p class="muted sinmark-appearance">' + (loc ? loc.appearance : '') + '</p>' +
-            '<ul class="sinmark-abilities">' + (mark.abilities || []).map(function(a) { return '<li>' + a + '</li>'; }).join('') + '</ul></div>';
+          var tLoc = tSinMark(loc);
+          return '<div class="sinmark-card"><strong>' + tLoc.name + '</strong>' +
+            '<p class="muted sinmark-appearance">' + tLoc.appearance + '</p>' +
+            '<ul class="sinmark-abilities">' + (mark.abilities || []).map(function(a) { return '<li>' + tSinMarkAbility(mark.locationId, a) + '</li>'; }).join('') + '</ul></div>';
         }).join('') +
       '</section>' : '') +
 
@@ -6618,7 +6756,7 @@ function renderSession(characterId) {
             hasBonds = true;
             html += '<div class="virtue-card">';
             html += '<div class="virtue-card-header">';
-            html += '<strong>' + v.name + '</strong> <span class="muted">(' + v.title + ')</span>';
+            html += '<strong>' + tVirtueName(v) + '</strong> <span class="muted">(' + tVirtueTitle(v) + ')</span>';
             if (v.id === activeVirtue) html += ' <span class="cat-resolved">' + t('virtue_active') + '</span>';
             html += '<div class="session-controls">';
             html += '<button class="btn btn-tiny virtue-level-dec" data-virtue="' + v.id + '">\u2212</button>';
@@ -6682,7 +6820,7 @@ function renderSession(characterId) {
         html += '<label>' + t('virtue_select') + '</label>';
         html += '<div class="session-add-row">';
         html += '<select id="virtue-select"><option value="">' + t('virtue_select_none') + '</option>';
-        VIRTUES.forEach(function(v) { html += '<option value="' + v.id + '">' + v.name + ' - ' + v.title + '</option>'; });
+        VIRTUES.forEach(function(v) { html += '<option value="' + v.id + '">' + tVirtueName(v) + ' - ' + tVirtueTitle(v) + '</option>'; });
         html += '</select>';
         html += '<button class="btn btn-small btn-primary" id="btn-confirm-virtue">' + t('virtue_confirm') + '</button>';
         html += '</div>';
@@ -7069,7 +7207,8 @@ function renderSession(characterId) {
       }
       var v = VIRTUES.find(function(vt) { return vt.id === sel.value; });
       if (!v) return;
-      if (!confirm(t('virtue_confirm_msg').replace('{name}', v.name) + '\n\n' + t('virtue_stricture') + ': ' + v.strictures)) return;
+      var stricturePt = (currentLang === 'pt' && PT_CONTENT.virtues && PT_CONTENT.virtues.strictures && PT_CONTENT.virtues.strictures[v.id]) ? PT_CONTENT.virtues.strictures[v.id] : v.strictures;
+      if (!confirm(t('virtue_confirm_msg').replace('{name}', tVirtueName(v)) + '\n\n' + t('virtue_stricture') + ': ' + stricturePt)) return;
       if (!char.virtueBonds) char.virtueBonds = {};
       char.virtueBonds.currentVirtue = sel.value;
       // Grant level 0 if not already bonded
@@ -7237,8 +7376,8 @@ function renderQuirks(characterId) {
               '<div class="sk-page sk-page-5" style="display:none"><br><em>' + (skPt ? 'É por isso que os negam a nós.' : 'That is why they deny them to us.') + '</em><br><br><b style="font-size:1.2em">' + (skPt ? 'NOSSOS SONHOS ORBITARÃO A TERRA PARA SEMPRE' : 'OUR DREAMS WILL ORBIT THE EARTH FOREVER') + '</b></div>' +
               '<div class="sk-page sk-page-6" style="display:none"><span class="sk-glitch">' + (skPt ? 'Você pode também' : 'You may also') + '</span></div>' +
               '<div class="sk-page sk-page-7"' + (isActive ? '' : ' style="display:none"') + '><b>' + (skPt ? 'INVOCAR O' : 'SUMMON THE') + '</b><br><b style="font-size:2.2em;line-height:1.1">' + (skPt ? 'REI DAS<br>DEZ MIL ESPADAS' : 'TEN THOUSAND<br>SWORD KING') + '</b><br><br><p class="quirk-desc">' + tPassiveDesc(quirk.id, quirk.description) + '</p>' +
-                (quirk.image ? '<img class="sword-king-img" src="' + quirk.image + '" alt="' + quirk.name + '">' : '') +
-                '<p class="quirk-swap-note">' + t('quirk_add_template').replace('{0}', quirk.name).replace('{1}', defaultPassive.name) + '</p>' +
+                (quirk.image ? '<img class="sword-king-img" src="' + quirk.image + '" alt="' + tName(quirk) + '">' : '') +
+                '<p class="quirk-swap-note">' + t('quirk_add_template').replace('{0}', tName(quirk)).replace('{1}', tName(defaultPassive)) + '</p>' +
                 '<button class="btn btn-sm quirk-toggle" data-blas="' + blRef.id + '" data-quirk="' + quirk.id + '">' + (isActive ? t('quirks_remove') : t('quirks_apply')) + '</button></div>' +
             '</div>' +
           '</div>';
@@ -7249,14 +7388,14 @@ function renderQuirks(characterId) {
         if (quirk.swapNote) {
           swapNoteHtml = '<p class="quirk-swap-note">' + t(quirk.swapNote) + '</p>';
         } else if (quirk.type === 'replace' && defaultPassive) {
-          swapNoteHtml = '<p class="quirk-swap-note">' + t('quirk_swap_template').replace('{0}', defaultPassive.name).replace('{1}', quirk.name) + '</p>';
+          swapNoteHtml = '<p class="quirk-swap-note">' + t('quirk_swap_template').replace('{0}', tName(defaultPassive)).replace('{1}', tName(quirk)) + '</p>';
         } else if ((quirk.type === 'add' || quirk.type === 'add_free') && defaultPassive) {
-          swapNoteHtml = '<p class="quirk-swap-note">' + t('quirk_add_template').replace('{0}', quirk.name).replace('{1}', defaultPassive.name) + '</p>';
+          swapNoteHtml = '<p class="quirk-swap-note">' + t('quirk_add_template').replace('{0}', tName(quirk)).replace('{1}', tName(defaultPassive)) + '</p>';
         }
         html += '<div class="quirk-card' + (isActive ? ' active' : '') + '">' +
           swapNoteHtml +
-          (quirk.image ? '<img class="quirk-img" src="' + quirk.image + '" alt="' + quirk.name + '">' : '') +
-          '<div class="quirk-header"><strong>' + quirk.name + '</strong> <span class="tags">' + typeLabel + '</span></div>' +
+          (quirk.image ? '<img class="quirk-img" src="' + quirk.image + '" alt="' + tName(quirk) + '">' : '') +
+          '<div class="quirk-header"><strong>' + tName(quirk) + '</strong> <span class="tags">' + typeLabel + '</span></div>' +
           '<div class="quirk-desc">' + tPassiveDesc(quirk.id, quirk.description) + '</div>' +
           '<button class="btn btn-sm quirk-toggle" data-blas="' + blRef.id + '" data-quirk="' + quirk.id + '">' + (isActive ? t('quirks_remove') : t('quirks_apply')) + '</button>' +
           '</div>';
@@ -7355,10 +7494,11 @@ function renderSinMarks(characterId) {
         (char.sinMarks.length === 0 ? '<p class="muted">' + t('sm_none') + '</p>' :
           char.sinMarks.map(function(mark, i) {
             var loc = SIN_MARKS.find(function(m) { return m.id === mark.locationId; });
+            var tLoc = tSinMark(loc);
             return '<div class="sinmark-card">' +
-              '<div class="sinmark-header"><strong>' + (loc ? loc.name : 'Unknown') + '</strong><button class="btn btn-tiny btn-danger btn-remove-mark" data-idx="' + i + '">\u00D7</button></div>' +
-              '<p class="muted sinmark-appearance">' + (loc ? loc.appearance : '') + '</p>' +
-              '<ul class="sinmark-abilities">' + (mark.abilities || []).map(function(a) { return '<li>' + a + '</li>'; }).join('') + '</ul>' +
+              '<div class="sinmark-header"><strong>' + tLoc.name + '</strong><button class="btn btn-tiny btn-danger btn-remove-mark" data-idx="' + i + '">\u00D7</button></div>' +
+              '<p class="muted sinmark-appearance">' + tLoc.appearance + '</p>' +
+              '<ul class="sinmark-abilities">' + (mark.abilities || []).map(function(a) { return '<li>' + tSinMarkAbility(mark.locationId, a) + '</li>'; }).join('') + '</ul>' +
             '</div>';
           }).join('')
         ) +
@@ -7370,9 +7510,10 @@ function renderSinMarks(characterId) {
         '<p class="muted">' + t('sm_add_instructions') + '</p>' +
         '<div class="sinmark-locations" id="sm-locations">' +
           SIN_MARKS.filter(function(m) { return m.id <= 5; }).map(function(loc) {
+            var tLoc = tSinMark(loc);
             return '<div class="sinmark-loc-card" data-loc="' + loc.id + '">' +
-              '<strong>' + loc.id + '. ' + loc.name + '</strong>' +
-              '<p class="muted">' + loc.appearance + '</p>' +
+              '<strong>' + loc.id + '. ' + tLoc.name + '</strong>' +
+              '<p class="muted">' + tLoc.appearance + '</p>' +
             '</div>';
           }).join('') +
           '<div class="sinmark-loc-card" data-loc="6"><strong>6. ' + t('sm_choose') + '</strong><p class="muted">' + t('sm_choose_desc') + '</p></div>' +
@@ -7431,7 +7572,8 @@ function showAbilitySelection(locId, char, characterId) {
     title.textContent = t('sm_choose_location_first');
     var html = '';
     SIN_MARKS.filter(function(m) { return m.id <= 5; }).forEach(function(loc) {
-      html += '<div class="advance-choice" data-loc="' + loc.id + '"><strong>' + loc.id + '. ' + loc.name + '</strong></div>';
+      var tLoc = tSinMark(loc);
+      html += '<div class="advance-choice" data-loc="' + loc.id + '"><strong>' + loc.id + '. ' + tLoc.name + '</strong></div>';
     });
     list.innerHTML = html;
     list.querySelectorAll('.advance-choice').forEach(function(card) {
@@ -7444,18 +7586,20 @@ function showAbilitySelection(locId, char, characterId) {
 
   var loc = SIN_MARKS.find(function(m) { return m.id === locId; });
   if (!loc) return;
+  var tLoc = tSinMark(loc);
 
-  title.textContent = t('sm_pick_ability') + ': ' + loc.name;
+  title.textContent = t('sm_pick_ability') + ': ' + tLoc.name;
   var html2 = '';
-  loc.abilities.forEach(function(abil, i) {
+  tLoc.abilities.forEach(function(abil, i) {
     html2 += '<div class="advance-choice" data-abil-idx="' + i + '"><strong>' + (i + 1) + '.</strong> ' + abil + '</div>';
   });
   list.innerHTML = html2;
   list.querySelectorAll('.advance-choice').forEach(function(card) {
     card.addEventListener('click', function() {
       var abilIdx = parseInt(card.dataset.abilIdx);
-      var ability = loc.abilities[abilIdx];
-      if (!confirm(t('sm_confirm_add') + '\n\n' + loc.name + ': ' + ability)) return;
+      var ability = loc.abilities[abilIdx]; // Store English version
+      var displayAbility = tLoc.abilities[abilIdx]; // Display translated
+      if (!confirm(t('sm_confirm_add') + '\n\n' + tLoc.name + ': ' + displayAbility)) return;
 
       // Check if mark already exists at this location
       var existing = char.sinMarks.find(function(m) { return m.locationId === locId; });
@@ -7795,7 +7939,7 @@ function handleAdvanceOption(opt, char, characterId) {
         if (availPowers.length === 0) return;
         html += '<h4>' + tBlas(bl.id) + '</h4>';
         availPowers.forEach(function(p) {
-          html += '<div class="advance-choice" data-power="' + p.id + '" data-blas="' + bl.id + '"><strong>' + p.name + '</strong><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
+          html += '<div class="advance-choice" data-power="' + p.id + '" data-blas="' + bl.id + '"><strong>' + tName(p) + '</strong><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
         });
       });
       if (!html) { html = '<p class="muted">' + t('adv_no_powers_available') + '</p>'; }
@@ -7909,7 +8053,8 @@ function handleAdvanceOption(opt, char, characterId) {
       var html5 = '';
       (char.sinMarks || []).forEach(function(mark, i) {
         var markData = SIN_MARKS.find(function(m) { return m.id === mark.locationId; });
-        html5 += '<div class="advance-choice" data-mark="' + i + '"><strong>' + (markData ? markData.name : 'Mark ' + (i+1)) + '</strong><p>' + (mark.abilities || []).join('; ') + '</p></div>';
+        var tMarkData = tSinMark(markData);
+        html5 += '<div class="advance-choice" data-mark="' + i + '"><strong>' + tMarkData.name + '</strong><p>' + (mark.abilities || []).map(function(a) { return tSinMarkAbility(mark.locationId, a); }).join('; ') + '</p></div>';
       });
       actionContent.innerHTML = html5 || '<p class="muted">No sin marks to evolve.</p>';
       actionContent.querySelectorAll('.advance-choice').forEach(function(card) {
@@ -7969,7 +8114,7 @@ function handleAdvanceOption(opt, char, characterId) {
         if (!bl) break;
         var html7 = '';
         bl.powers.forEach(function(p) {
-          html7 += '<div class="advance-choice" data-power="' + p.id + '"><strong>' + p.name + '</strong><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
+          html7 += '<div class="advance-choice" data-power="' + p.id + '"><strong>' + tName(p) + '</strong><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
         });
         actionContent.innerHTML = html7;
         actionContent.querySelectorAll('.advance-choice').forEach(function(card) {
@@ -8117,10 +8262,10 @@ function renderCompendiumTab(tabId) {
 
           var vColorStyle = v.color ? ' style="--vc:' + v.color + '"' : '';
           return '<div class="virtue-card virtue-card-clickable" data-virtue-id="' + v.id + '"' + vColorStyle + '>' +
-            (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + v.name + '">' : '') +
+            (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + tVirtueName(v) + '">' : '') +
             '<div class="virtue-card-header">' +
-              '<h3 class="virtue-name">' + v.name + '</h3>' +
-              '<p class="virtue-title">' + v.title + '</p>' +
+              '<h3 class="virtue-name">' + tVirtueName(v) + '</h3>' +
+              '<p class="virtue-title">' + tVirtueTitle(v) + '</p>' +
             '</div>' +
             '<div class="virtue-card-body">' +
               (desc ? '<p class="virtue-desc">' + desc + '</p>' : '') +
@@ -8323,10 +8468,10 @@ function renderVirtueDetail(virtueId) {
     '<div class="compendium-detail">' +
       '<button class="btn btn-sm btn-back" id="detail-back">\u2190 ' + (currentLang === 'pt' ? 'Todas as Virtudes' : 'All Virtues') + '</button>' +
       '<div class="virtue-card"' + vColorStyle + '>' +
-        (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + v.name + '">' : '') +
+        (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + tVirtueName(v) + '">' : '') +
         '<div class="virtue-card-header">' +
-          '<h3 class="virtue-name">' + v.name + '</h3>' +
-          '<p class="virtue-title">' + v.title + '</p>' +
+          '<h3 class="virtue-name">' + tVirtueName(v) + '</h3>' +
+          '<p class="virtue-title">' + tVirtueTitle(v) + '</p>' +
         '</div>' +
         '<div class="virtue-card-body">' +
           (desc ? '<p class="virtue-desc">' + desc + '</p>' : '') +
@@ -8407,12 +8552,12 @@ function renderBlasphemyDetail(blasId) {
         '<p class="compendium-card-desc">' + desc + '</p>' +
         (flavorText ? '<p class="compendium-card-flavor"><em>' + flavorText + '</em></p>' : '') +
         passives.map(function(p) {
-          return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + p.name + '">' : '') +
-            '<div class="passive-display"><strong>' + t('passive') + ' \u2014 ' + p.name + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</div>';
+          return (p.image ? '<img class="passive-img" src="' + p.image + '" alt="' + tName(p) + '">' : '') +
+            '<div class="passive-display"><strong>' + t('passive') + ' \u2014 ' + tName(p) + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</div>';
         }).join('') +
         '<h3 class="compendium-detail-section">' + (currentLang === 'pt' ? 'Poderes' : 'Powers') + '</h3>' +
         bl.powers.map(function(pw) {
-          return '<div class="power-display"><strong>' + pw.name + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + '<p>' + tPowerDesc(pw.id, pw.description) + '</p></div>';
+          return '<div class="power-display"><strong>' + tName(pw) + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + '<p>' + tPowerDesc(pw.id, pw.description) + '</p></div>';
         }).join('') +
       '</div>' +
     '</div>';
