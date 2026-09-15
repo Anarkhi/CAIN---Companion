@@ -3247,6 +3247,7 @@ var VIRTUES = [
     name: 'Order',
     title: 'The Commander',
     image: 'img/virtues/order.png',
+    aiGeneratedImage: true,
     color: '#3ca522',
     compendiumDesc: "There are those who inspire loyalty, and those who demand it. Order is the latter. Their blasphemy does not persuade — it compels. Those who hear Order's voice find their bodies moving before their minds can object.<br><br>The ethics of Direct have been debated within CAIN's upper echelons for decades. Some argue it strips away free will entirely; others counter that in the war against sin, hesitation is death. Order themselves was once deeply troubled by the philosophical implications. Not anymore.<br><br>The kind and caring soldier that would apologize after every command and seek consent before missions died back in 63. They would rather be a tyrant than attend another funeral.<br><br><em class=\"virtue-desc-note\">\"1963, known as the year of <span class=\"redacted-6\"></span>, caused an estimated <span class=\"redacted-4\"></span> exorcist deaths across the globe. This betrayal will never be forgotten, especially by Order and me.\" — Cleanliness</em>",
     favoriteFood: 'Beef',
@@ -8183,6 +8184,7 @@ function handleAdvanceOption(opt, char, characterId) {
 
 // Tracks an open detail sub-view within the compendium: { type: 'agenda'|'blasphemy', id: '...' } or null
 var compendiumDetail = null;
+var compendiumScrollPos = 0; // Tracks scroll position when entering detail view
 
 function renderCompendium() {
   var app = document.getElementById('app');
@@ -8304,6 +8306,7 @@ function renderCompendiumTab(tabId) {
 
           var vColorStyle = v.color ? ' style="--vc:' + v.color + '"' : '';
           return '<div class="virtue-card virtue-card-clickable" data-virtue-id="' + v.id + '"' + vColorStyle + '>' +
+            (v.aiGeneratedImage ? '<p class="ai-image-notice">' + (currentLang === 'pt' ? 'Imagem gerada por IA' : 'AI-generated image') + '</p>' : '') +
             (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + tVirtueName(v) + '">' : '') +
             '<div class="virtue-card-header">' +
               '<h3 class="virtue-name">' + tVirtueName(v) + '</h3>' +
@@ -8470,6 +8473,10 @@ function renderCompendiumTab(tabId) {
 function renderVirtueDetail(virtueId) {
   var content = document.getElementById('compendium-content');
   if (!content) return;
+  
+  // Save scroll position before entering detail
+  compendiumScrollPos = window.scrollY || document.documentElement.scrollTop;
+  
   var v = VIRTUES.find(function(x) { return x.id === virtueId; });
   if (!v) { renderCompendiumTab('virtues'); return; }
   compendiumDetail = { type: 'virtue', id: virtueId };
@@ -8521,6 +8528,7 @@ function renderVirtueDetail(virtueId) {
     '<div class="compendium-detail">' +
       '<button class="btn btn-sm btn-back" id="detail-back">\u2190 ' + (currentLang === 'pt' ? 'Todas as Virtudes' : 'All Virtues') + '</button>' +
       '<div class="virtue-card"' + vColorStyle + '>' +
+        (v.aiGeneratedImage ? '<p class="ai-image-notice">' + (currentLang === 'pt' ? 'Imagem gerada por IA' : 'AI-generated image') + '</p>' : '') +
         (v.image ? '<img class="virtue-img" src="' + v.image + '" alt="' + tVirtueName(v) + '">' : '') +
         '<div class="virtue-card-header">' +
           '<h3 class="virtue-name">' + tVirtueName(v) + '</h3>' +
@@ -8548,7 +8556,14 @@ function renderVirtueDetail(virtueId) {
       '</div>' +
     '</div>';
 
-  document.getElementById('detail-back').addEventListener('click', function() { renderCompendiumTab('virtues'); });
+  document.getElementById('detail-back').addEventListener('click', function() { 
+    renderCompendiumTab('virtues'); 
+    // Restore scroll position
+    setTimeout(function() { window.scrollTo(0, compendiumScrollPos); }, 0);
+  });
+  
+  // Scroll to top when entering detail
+  window.scrollTo(0, 0);
 }
 
 /** Detail view for a single agenda (shown when a card is clicked) */
