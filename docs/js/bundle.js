@@ -5801,13 +5801,13 @@ function renderView(characterId) {
         '</div></section>' +
         // Combat State
         '<section class="sheet-section"><h3>' + t('combatState') + '</h3><div class="state-grid">' +
-          '<div class="state-box"><label>' + t('stress') + '</label><span class="state-value large">' + char.stress + ' / ' + (getEffectiveMaxStress(char) - char.injuries) + '</span></div>' +
-          '<div class="state-box"><label>' + t('injuries') + '</label><span class="state-value large">' + char.injuries + ' / ' + getEffectiveMaxInjury(char) + '</span></div>' +
-          '<div class="state-box"><label>' + t('psycheBursts') + '</label><span class="state-value large">' + char.psycheBursts + ' / ' + char.maxPsycheBursts + '</span></div>' +
-          '<div class="state-box"><label>' + t('pathos') + '</label><span class="state-value large">' + char.pathos + ' / 3</span></div>' +
-          '<div class="state-box"><label>' + t('sin') + '</label><span class="state-value large ' + (char.sin >= getEffectiveSinCap(char) ? 'danger' : '') + '">' + char.sin + ' / ' + getEffectiveSinCap(char) + '</span></div>' +
-          '<div class="state-box"><label>' + t('xp') + '</label><span class="state-value large">' + char.experience + ' / ' + getXpCap(char) + '</span></div>' +
-          '<div class="state-box"><label>' + t('session_advances') + '</label><span class="state-value large">' + (char.advances || 0) + '</span></div>' +
+          '<div class="state-box"><label>' + t('stress') + '</label><span class="state-value large">' + (char.session ? char.session.stress : char.stress) + ' / ' + (getEffectiveMaxStress(char) - (char.session ? char.session.injuries : char.injuries)) + '</span></div>' +
+          '<div class="state-box"><label>' + t('injuries') + '</label><span class="state-value large">' + (char.session ? char.session.injuries : char.injuries) + ' / ' + getEffectiveMaxInjury(char) + '</span></div>' +
+          '<div class="state-box"><label>' + t('psycheBursts') + '</label><span class="state-value large">' + (char.session ? char.session.psycheBursts : char.psycheBursts) + ' / ' + char.maxPsycheBursts + '</span></div>' +
+          '<div class="state-box"><label>' + t('pathos') + '</label><span class="state-value large">' + (char.session ? char.session.pathos : char.pathos) + ' / 3</span></div>' +
+          '<div class="state-box"><label>' + t('sin') + '</label><span class="state-value large ' + ((char.session ? char.session.sin : char.sin) >= getEffectiveSinCap(char) ? 'danger' : '') + '">' + (char.session ? char.session.sin : char.sin) + ' / ' + getEffectiveSinCap(char) + '</span></div>' +
+          '<div class="state-box"><label>' + t('xp') + '</label><span class="state-value large">' + (char.session ? char.session.xp : char.experience) + ' / ' + getXpCap(char) + '</span></div>' +
+          '<div class="state-box"><label>' + t('session_advances') + '</label><span class="state-value large">' + (char.session ? char.session.advances : (char.advances || 0)) + '</span></div>' +
         '</div></section>' +
         // Agenda
         '<section class="sheet-section"><h3>' + t('agenda') + ': ' + (agenda ? tAgenda(agenda.id) : '\u2014') + '</h3>' +
