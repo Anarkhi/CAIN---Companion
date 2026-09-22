@@ -435,6 +435,12 @@ function tPowerDescSession(powerId, fallback, cat) {
   return resolveCatTags(text, cat);
 }
 
+/** Get translated quirk description */
+function tQuirkDesc(quirkId, fallback) {
+  var text = (currentLang === 'pt' && PT_CONTENT.quirks && PT_CONTENT.quirks[quirkId]) ? PT_CONTENT.quirks[quirkId] : fallback;
+  return stripCatTags(text);
+}
+
 /** Get all passives for a blasphemy (supports both single passive and passives array) */
 function getPassives(bl) {
   if (bl.passives) return bl.passives;
@@ -2654,6 +2660,7 @@ const BLASPHEMIES = [
         name: 'Sin Strike', namePt: 'Golpe de Pecado',
         tags: ['Instant', 'Short'],
         burst: 'required',
+        quirkOnly: true,
         description: "You can command an active sin to attack by spending a psyche burst as long as both your sin and its target are in range, and you can communicate with it. Roll PSYCHE for its effects. The attack has supernatural potency."
       },
       {
@@ -2662,6 +2669,7 @@ const BLASPHEMIES = [
         tags: [],
         burst: 'none',
         uses: 'forever',
+        quirkOnly: true,
         description: "If you have the bind blasphemy and are either CAT 5 or on the brink of death, you can beckon the infinite blue. Summoning the King immediately initiates an apocalyptic force in an area around the size of a town (around CAT 5), centered on you. Sins and exorcists in the area, including you, roll 1d6 and add their category. If the result is 9 or higher, they survive, otherwise they are obliterated. Exorcists suffer instant death, sins are reduced to ashes. This fate can be defied as normal. Perfect Sins always survive. Everything else in the area CAT 5 or under is annihilated.<br><br>Summoning the King can only be done once in a game of CAIN."
       },
       {
@@ -5665,7 +5673,7 @@ function renderPowerChoices(blasId) {
   if (!blas || !el) return;
   var powers = createChar.blasphemies[0] ? createChar.blasphemies[0].powers : [];
 
-  el.innerHTML = blas.powers.map(function(p) {
+  el.innerHTML = blas.powers.filter(function(p) { return !p.quirkOnly; }).map(function(p) {
     return '<div class="power-card ' + (powers.indexOf(p.id) >= 0 ? 'selected' : '') + '" data-id="' + p.id + '">' +
       '<h5>' + tName(p) + '</h5><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
   }).join('');
@@ -6273,7 +6281,7 @@ function renderEditForm(app) {
             if (!bl) return '';
             return '<div class="edit-blas-powers"><h4>' + tBlas(bl.id) + '</h4>' +
               '<div class="edit-powers-grid">' +
-              bl.powers.map(function(pw) {
+              bl.powers.filter(function(pw) { return !pw.quirkOnly || (blRef.powers || []).indexOf(pw.id) !== -1; }).map(function(pw) {
                 var selected = (blRef.powers || []).indexOf(pw.id) !== -1;
                 return '<label class="edit-power-check"><input type="checkbox" class="power-checkbox" data-blas="' + blRef.id + '" data-power="' + pw.id + '"' + (selected ? ' checked' : '') + '> ' + tName(pw) + '</label>';
               }).join('') +
@@ -7978,7 +7986,7 @@ function handleAdvanceOption(opt, char, characterId) {
       (char.blasphemies || []).forEach(function(blRef) {
         var bl = BLASPHEMIES.find(function(b) { return b.id === blRef.id; });
         if (!bl) return;
-        var availPowers = bl.powers.filter(function(p) { return (blRef.powers || []).indexOf(p.id) === -1; });
+        var availPowers = bl.powers.filter(function(p) { return (blRef.powers || []).indexOf(p.id) === -1 && !p.quirkOnly; });
         if (availPowers.length === 0) return;
         html += '<h4>' + tBlas(bl.id) + '</h4>';
         availPowers.forEach(function(p) {
@@ -8156,7 +8164,7 @@ function handleAdvanceOption(opt, char, characterId) {
         var bl = BLASPHEMIES.find(function(b) { return b.id === newBlasId; });
         if (!bl) break;
         var html7 = '';
-        bl.powers.forEach(function(p) {
+        bl.powers.filter(function(p) { return !p.quirkOnly; }).forEach(function(p) {
           html7 += '<div class="advance-choice" data-power="' + p.id + '"><strong>' + tName(p) + '</strong><span class="tags">[' + p.tags.join(', ') + ']</span>' + renderBurstCost(p.burst) + '<p>' + tPowerDesc(p.id, p.description) + '</p></div>';
         });
         actionContent.innerHTML = html7;
@@ -8612,6 +8620,39 @@ function renderBlasphemyDetail(blasId) {
   if (currentLang === 'pt' && PT_CONTENT.flavors && PT_CONTENT.flavors[bl.id]) flavorText = PT_CONTENT.flavors[bl.id];
   var desc = (currentLang === 'pt' && PT_CONTENT.blasphemyDescs && PT_CONTENT.blasphemyDescs[bl.id]) ? PT_CONTENT.blasphemyDescs[bl.id] : bl.description;
 
+  // Build quirks section if this blasphemy has quirks
+  var quirksHtml = '';
+  var quirkData = QUIRKS[bl.id];
+  if (quirkData && quirkData.options && quirkData.options.length > 0) {
+    quirksHtml = '<h3 class="compendium-detail-section">' + (currentLang === 'pt' ? 'Mutações (GFF4)' : 'Mutations (GFF4)') + '</h3>';
+    quirkData.options.forEach(function(q) {
+      quirksHtml += '<div class="quirk-display">';
+      if (q.image) quirksHtml += '<img class="quirk-img" src="' + q.image + '" alt="' + tName(q) + '">';
+      quirksHtml += '<div class="quirk-content"><strong>' + tName(q) + '</strong>';
+      if (q.type === 'replace') quirksHtml += ' <span class="quirk-type-badge replace">' + (currentLang === 'pt' ? 'Substitui Passiva' : 'Replaces Passive') + '</span>';
+      else if (q.type === 'add' || q.type === 'add_free') quirksHtml += ' <span class="quirk-type-badge add">' + (currentLang === 'pt' ? 'Adicional' : 'Additional') + '</span>';
+      quirksHtml += '<p>' + tQuirkDesc(q.id, q.description) + '</p>';
+      // If quirk grants a power, show it
+      if (q.grantsPower) {
+        var grantedPower = bl.powers.find(function(p) { return p.id === q.grantsPower; });
+        if (grantedPower) {
+          quirksHtml += '<div class="granted-power"><em>' + (currentLang === 'pt' ? 'Concede Poder:' : 'Grants Power:') + '</em> <strong>' + tName(grantedPower) + '</strong>' + (grantedPower.tags && grantedPower.tags.length ? '<span class="tags">[' + grantedPower.tags.join(', ') + ']</span>' : '') + renderBurstCost(grantedPower.burst) + '<p>' + tPowerDesc(grantedPower.id, grantedPower.description) + '</p></div>';
+        }
+      }
+      // If quirk has altPowers (replacement powers like Ardence), show them
+      if (q.altPowers && q.altPowers.length > 0) {
+        quirksHtml += '<div class="alt-powers"><em>' + (currentLang === 'pt' ? 'Poderes Alternativos:' : 'Alternative Powers:') + '</em>';
+        q.altPowers.forEach(function(ap) {
+          var replacedPower = bl.powers.find(function(p) { return p.id === ap.replaces; });
+          var replacesLabel = replacedPower ? ' <span class="replaces-badge">' + (currentLang === 'pt' ? 'Substitui ' : 'Replaces ') + tName(replacedPower) + '</span>' : '';
+          quirksHtml += '<div class="power-display alt-power"><strong>' + tName(ap) + '</strong>' + replacesLabel + (ap.tags && ap.tags.length ? '<span class="tags">[' + ap.tags.join(', ') + ']</span>' : '') + renderBurstCost(ap.burst) + '<p>' + tPowerDesc(ap.id, ap.description) + '</p></div>';
+        });
+        quirksHtml += '</div>';
+      }
+      quirksHtml += '</div></div>';
+    });
+  }
+
   content.innerHTML =
     '<div class="compendium-detail">' +
       '<button class="btn btn-sm btn-back" id="detail-back">\u2190 ' + (currentLang === 'pt' ? 'Todas as Blasfêmias' : 'All Blasphemies') + '</button>' +
@@ -8625,9 +8666,10 @@ function renderBlasphemyDetail(blasId) {
             '<div class="passive-display"><strong>' + t('passive') + ' \u2014 ' + tName(p) + ':</strong> ' + tPassiveDesc(p.id, p.description) + '</div>';
         }).join('') +
         '<h3 class="compendium-detail-section">' + (currentLang === 'pt' ? 'Poderes' : 'Powers') + '</h3>' +
-        bl.powers.map(function(pw) {
+        bl.powers.filter(function(pw) { return !pw.quirkOnly; }).map(function(pw) {
           return '<div class="power-display"><strong>' + tName(pw) + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + '<p>' + tPowerDesc(pw.id, pw.description) + '</p></div>';
         }).join('') +
+        quirksHtml +
       '</div>' +
     '</div>';
 

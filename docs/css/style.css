@@ -673,11 +673,15 @@ input[type="number"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
 }
 
 .char-name-large {
   font-size: 1.8rem;
   font-family: var(--font-heading);
+  min-width: 0;
+  word-wrap: break-word;
 }
 
 .cat-badge {
@@ -687,6 +691,7 @@ input[type="number"] {
   color: var(--text-accent);
   border-radius: var(--radius);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .identity-details {
@@ -2542,6 +2547,104 @@ input[type="number"] {
   line-height: 1.5;
 }
 
+/* ─── Compendium: Quirks/Mutations section ──────────────────────── */
+
+.quirk-display {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+.quirk-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+
+.quirk-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.quirk-content > strong {
+  color: var(--text-accent);
+  font-size: 1.1rem;
+}
+
+.quirk-content > p {
+  margin: var(--space-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.quirk-type-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius);
+  margin-left: var(--space-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.quirk-type-badge.replace {
+  background: rgba(139, 32, 32, 0.3);
+  color: #e88;
+}
+
+.quirk-type-badge.add {
+  background: rgba(45, 107, 63, 0.3);
+  color: #8e8;
+}
+
+.granted-power, .alt-powers {
+  margin-top: var(--space-md);
+  padding: var(--space-sm);
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.granted-power > em, .alt-powers > em {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.alt-power {
+  margin-top: var(--space-sm);
+}
+
+.replaces-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.35rem;
+  background: rgba(196, 163, 90, 0.2);
+  color: var(--text-accent);
+  border-radius: var(--radius);
+  margin-left: var(--space-xs);
+}
+
+@media (max-width: 640px) {
+  .quirk-display {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .quirk-img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
 /* ─── Compendium: clickable virtue cards & bond blocks ──────────── */
 
 .virtue-card-clickable {
@@ -3592,6 +3695,8 @@ input[type="number"] {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .cat-badge-ctrl .cat-adjust {
