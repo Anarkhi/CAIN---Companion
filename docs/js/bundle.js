@@ -46,6 +46,7 @@ var LOCALES = {
     blastDesc: 'Spend a psyche burst and roll PSYCHE to produce a weaponized form of concentrated psychic energy in melee or short range. The specific look and feel of this basic exorcist skill varies between exorcists. The strength of this blast scales with CAT. When your exorcist produces a blast, they might: Imbue a slash of a blade or a shot with a ranged weapon with psychic energy; Shoot an invisible ball of force from their fingers; Fire scathing lightning; Shoot a bead of ghostly, frigid fire. Unlike your mundane service weapons, blast is a supernatural weapon and therefore doesn\'t become hard by default when used against sins.',
     kitWeapons: 'Kit & Weapons', kitPoints: 'Kit Points', firearm: 'Firearm', melee: 'Melee',
     kit_expansion_shop: 'Kit Expansion', kit_owned: 'Owned Kit', kit_buy: 'Buy', kit_sell: 'Sell', kit_locked: 'Locked', kit_owned_badge: 'Owned',
+    cursed_items: 'Cursed Items',
     notes: 'Notes', noNotes: 'No notes.', noAgenda: 'No agenda selected.',
     id: 'ID', missions: 'Missions', scrip: 'Scrip', category: 'Category',
     progression: 'Progression', pBursts: 'P. Bursts', sinCap: 'Sin Cap', weapons: 'Weapons',
@@ -69,14 +70,14 @@ var LOCALES = {
     adv_improve_skill: 'Improve a Skill by +1',
     adv_gain_scrip: 'Gain 3 Scrip',
     adv_evolve_mark: 'Evolve a Sin Mark (roll new ability)',
-    adv_swap_survivor: 'Swap out of Survivor agenda (costs 2 advances)',
+    adv_swap_locked: 'Swap out of this agenda (costs 2 advances)',
     adv_no_powers_available: 'No new powers available from your current blasphemies.',
     adv_new_blasphemy_warn: 'Taking a new blasphemy reduces your sin overflow cap by 1 and increases your XP cap by 1.',
     adv_max_abilities: 'You already have the maximum of 5 agenda abilities.',
     adv_no_abilities_available: 'No new abilities available from your current agenda.',
     adv_skill_info: 'Skill improvements used: {used}/{max}. Max 2 skills at rank 3.',
     adv_pick_first_power: 'Pick your first power for the new blasphemy',
-    adv_swap_survivor_info: 'This costs 2 advances. Choose your new agenda:',
+    adv_swap_locked_info: 'This costs 2 advances. Choose your new agenda:',
     adv_confirm_scrip: 'Spend 1 advance to gain 3 scrip?',
     adv_confirm_power: 'Spend 1 advance to gain this power?',
     adv_confirm_blasphemy: 'Spend 1 advance to unlock this blasphemy? (This reduces sin cap by 1 and increases XP cap by 1)',
@@ -86,8 +87,8 @@ var LOCALES = {
     adv_confirm_swap: 'Spend 2 advances to swap to this agenda?',
     // Swap Agenda page
     swap_current: 'Current Agenda', swap_extra_bolded: 'Extra Bolded Items',
-    swap_abilities_count: 'Abilities carried', swap_survivor_cost: 'Swapping out of Survivor costs 2 advances.',
-    swap_need_2_advances: 'You need at least 2 advances to swap out of Survivor.',
+    swap_abilities_count: 'Abilities carried', swap_locked_cost: 'Swapping out of this agenda costs 2 advances.',
+    swap_need_2_advances: 'You need at least 2 advances to swap out of this agenda.',
     swap_choose_new: 'Choose New Agenda', swap_confirm_title: 'Confirm Swap',
     swap_carry_bolded: 'Bolded items to carry over:', swap_carry_abilities: 'Abilities to carry over:',
     swap_max_5_abilities: 'You can carry a maximum of 5 abilities total.',
@@ -158,10 +159,15 @@ var LOCALES = {
     ag_doomed: 'Doomed', ag_beast: 'Beast', ag_firebug: 'Firebug', ag_guardian: 'Guardian',
     ag_loner: 'Loner', ag_hardline: 'Hardline', ag_machine: 'Machine', ag_temperance: 'Temperance',
     ag_torch: 'Torch', ag_shadow: 'Shadow', ag_sorcerer: 'Sorcerer', ag_songbird: 'Songbird', ag_departed: 'Departed', ag_moth: 'Moth', ag_survivor: 'Survivor', ag_demon: 'Demon', ag_cradle: 'Cradle', ag_doll: 'Doll', ag_broken: 'Broken',
+    ag_pathfinder: 'Pathfinder', ag_scholar: 'Scholar', ag_hunter: 'Hunter', ag_gambler: 'Gambler',
+    ag_legion: 'Legion', ag_yesman: 'YesMan', ag_human: 'Human', ag_ghost: 'Ghost',
     // Blasphemy names
     bl_tension: 'Tension', bl_ardence: 'Ardence', bl_flux: 'Flux', bl_vector: 'Vector',
     bl_gate: 'Gate', bl_smother: 'Smother', bl_whisper: 'Whisper', bl_edit: 'Edit',
-    bl_bind: 'Bind', bl_palace: 'Palace', bl_jaunt: 'Jaunt', bl_sympathy: 'Sympathy', bl_tongue: 'Tongue', bl_track: 'Track', bl_wire: 'Wire', bl_mother: 'Mother', bl_gunpowder: 'Gunpowder'
+    bl_bind: 'Bind', bl_palace: 'Palace', bl_jaunt: 'Jaunt', bl_sympathy: 'Sympathy', bl_tongue: 'Tongue', bl_track: 'Track', bl_wire: 'Wire', bl_mother: 'Mother', bl_gunpowder: 'Gunpowder',
+    bl_urban: 'Urban', bl_mythic: 'Mythic', bl_diplomacy: 'Diplomacy',
+    bl_gravity: 'Gravity', bl_author: 'Author', bl_weaver: 'Weaver',
+    bl_blood: 'Blood', bl_rotate: 'Rotate', bl_cuisine: 'Cuisine', bl_egoism: 'Egoism'
   },
   pt: {
     app_title: 'CAIN', app_subtitle: 'Companheiro', app_tagline: 'Limpe a mancha.',
@@ -194,6 +200,7 @@ var LOCALES = {
     blastDesc: 'Gaste um pulso psíquico e role PSIQUE para produzir uma forma concentrada e armada de energia psíquica em corpo a corpo ou curta distância. A aparência específica desta habilidade básica de exorcista varia entre exorcistas. A força desta rajada escala com CAT. Quando seu exorcista produz uma rajada, ele pode: Imbuir um golpe de lâmina ou um disparo de arma de longo alcance com energia psíquica; Disparar uma esfera invisível de força a partir dos dedos; Lançar relâmpagos escaldantes; Disparar uma gota de fogo fantasmagórico e gélido. Diferente de suas armas de serviço mundanas, rajada é uma arma sobrenatural e portanto não se torna difícil por padrão quando usada contra pecados.',
     kitWeapons: 'Kit & Armas', kitPoints: 'Pontos de Kit', firearm: 'Arma de Fogo', melee: 'Arma Branca',
     kit_expansion_shop: 'Expansão de Kit', kit_owned: 'Kit Adquirido', kit_buy: 'Comprar', kit_sell: 'Vender', kit_locked: 'Bloqueado', kit_owned_badge: 'Adquirido',
+    cursed_items: 'Itens Amaldiçoados',
     notes: 'Anotações', noNotes: 'Sem anotações.', noAgenda: 'Nenhuma agenda selecionada.',
     id: 'ID', missions: 'Missões', scrip: 'Scrip', category: 'Categoria',
     progression: 'Progressão', pBursts: 'Pulsos Ps.', sinCap: 'Limite Pecado', weapons: 'Armas',
@@ -217,14 +224,14 @@ var LOCALES = {
     adv_improve_skill: 'Melhorar uma Perícia em +1',
     adv_gain_scrip: 'Ganhar 3 Scrip',
     adv_evolve_mark: 'Evoluir uma Marca de Pecado (rolar nova habilidade)',
-    adv_swap_survivor: 'Trocar agenda Sobrevivente (custa 2 avanços)',
+    adv_swap_locked: 'Trocar esta agenda (custa 2 avanços)',
     adv_no_powers_available: 'Nenhum poder novo disponível nas suas blasfêmias atuais.',
     adv_new_blasphemy_warn: 'Ganhar uma nova blasfêmia reduz seu limite de pecado em 1 e aumenta seu limite de XP em 1.',
     adv_max_abilities: 'Você já tem o máximo de 5 habilidades de agenda.',
     adv_no_abilities_available: 'Nenhuma habilidade nova disponível na sua agenda atual.',
     adv_skill_info: 'Melhorias de perícia usadas: {used}/{max}. Máximo 2 perícias no rank 3.',
     adv_pick_first_power: 'Escolha seu primeiro poder para a nova blasfêmia',
-    adv_swap_survivor_info: 'Isso custa 2 avanços. Escolha sua nova agenda:',
+    adv_swap_locked_info: 'Isso custa 2 avanços. Escolha sua nova agenda:',
     adv_confirm_scrip: 'Gastar 1 avanço para ganhar 3 scrip?',
     adv_confirm_power: 'Gastar 1 avanço para ganhar este poder?',
     adv_confirm_blasphemy: 'Gastar 1 avanço para desbloquear esta blasfêmia? (Reduz limite de pecado em 1 e aumenta limite de XP em 1)',
@@ -234,8 +241,8 @@ var LOCALES = {
     adv_confirm_swap: 'Gastar 2 avanços para trocar para esta agenda?',
     // Swap Agenda page
     swap_current: 'Agenda Atual', swap_extra_bolded: 'Itens em Negrito Extras',
-    swap_abilities_count: 'Habilidades carregadas', swap_survivor_cost: 'Trocar a agenda Sobrevivente custa 2 avanços.',
-    swap_need_2_advances: 'Você precisa de pelo menos 2 avanços para trocar a agenda Sobrevivente.',
+    swap_abilities_count: 'Habilidades carregadas', swap_locked_cost: 'Trocar esta agenda custa 2 avanços.',
+    swap_need_2_advances: 'Você precisa de pelo menos 2 avanços para trocar esta agenda.',
     swap_choose_new: 'Escolher Nova Agenda', swap_confirm_title: 'Confirmar Troca',
     swap_carry_bolded: 'Itens em negrito para levar:', swap_carry_abilities: 'Habilidades para levar:',
     swap_max_5_abilities: 'Você pode levar no máximo 5 habilidades no total.',
@@ -306,10 +313,15 @@ var LOCALES = {
     ag_doomed: 'Amaldiçoado', ag_beast: 'Fera', ag_firebug: 'Vagalume', ag_guardian: 'Guardião',
     ag_loner: 'Solitário', ag_hardline: 'Rigoroso', ag_machine: 'Máquina', ag_temperance: 'Temperança',
     ag_torch: 'Tocha', ag_shadow: 'Sombra', ag_sorcerer: 'Feiticeiro', ag_songbird: 'Canário', ag_departed: 'Partido', ag_moth: 'Mariposa', ag_survivor: 'Sobrevivente', ag_demon: 'Demônio', ag_cradle: 'Berço', ag_doll: 'Boneca', ag_broken: 'Quebrado',
+    ag_pathfinder: 'Desbravador', ag_scholar: 'Erudito', ag_hunter: 'Caçador', ag_gambler: 'Apostador',
+    ag_legion: 'Legião', ag_yesman: 'Capacho', ag_human: 'Humano', ag_ghost: 'Fantasma',
     // Blasphemy names
     bl_tension: 'Tensão', bl_ardence: 'Ardor', bl_flux: 'Fluxo', bl_vector: 'Vetor',
     bl_gate: 'Portão', bl_smother: 'Sufoco', bl_whisper: 'Sussurro', bl_edit: 'Edit',
-    bl_bind: 'Vínculo', bl_palace: 'Palácio', bl_jaunt: 'Assombração', bl_sympathy: 'Simpatia', bl_tongue: 'Língua', bl_track: 'Track', bl_wire: 'Fio', bl_mother: 'Mãe', bl_gunpowder: 'Pólvora'
+    bl_bind: 'Vínculo', bl_palace: 'Palácio', bl_jaunt: 'Assombração', bl_sympathy: 'Simpatia', bl_tongue: 'Língua', bl_track: 'Track', bl_wire: 'Fio', bl_mother: 'Mãe', bl_gunpowder: 'Pólvora',
+    bl_urban: 'Urbano', bl_mythic: 'Mítico', bl_diplomacy: 'Diplomacia',
+    bl_gravity: 'Gravidade', bl_author: 'Autor', bl_weaver: 'Tecelão',
+    bl_blood: 'Sangue', bl_rotate: 'Rotação', bl_cuisine: 'Culinária', bl_egoism: 'Egoísmo'
   }
 };
 
@@ -793,7 +805,10 @@ var EXPANSIONS = [
   { id: 'gff2', name: 'GFF-2', version: 'v2.3.5', description: 'New Drifters for the GM.', descriptionPt: 'Novos Andarilhos para o GM.' },
   { id: 'gff3', name: 'GFF-3', version: 'v3.1.5', description: 'New agendas (Cradle, Doll, Broken) and blasphemies (Tongue, Track, Wire, Mother).', descriptionPt: 'Novas agendas (Berço, Boneca, Quebrado) e blasfêmias (Língua, Track, Fio, Mãe).' },
   { id: 'gff4', name: 'GFF-4.1', version: 'v4.1-1', description: 'Blasphemy Quirks — alternate passives and mutations for blasphemies.', descriptionPt: 'Peculiaridades de Blasfêmias — passivas alternativas e mutações para blasfêmias.' },
-  { id: 'thegreatwar', name: 'The Great War', version: 'v0.5', description: 'Gunpowder blasphemy, Order virtue — two relics of the past.', descriptionPt: 'Blasfêmia Pólvora, Virtude Ordem — duas relíquias do passado.' }
+  { id: 'thegreatwar', name: 'The Great War', version: 'v0.5', description: 'Gunpowder blasphemy, Order virtue — two relics of the past.', descriptionPt: 'Blasfêmia Pólvora, Virtude Ordem — duas relíquias do passado.' },
+  { id: 'odysseus', name: 'The Odysseus Protocol', version: 'v1.0', description: 'Urban, Mythic, Diplomacy blasphemies; Cleanliness virtue; Owl sin type.', descriptionPt: 'Blasfêmias Urbano, Mítico, Diplomacia; Virtude Limpeza; Tipo de pecado Coruja.' },
+  { id: 'marchingeveronward', name: 'Marching Ever Onward', version: 'v1.1', description: 'Pathfinder, Scholar, Hunter, Gambler agendas; Gravity, Author, Weaver blasphemies; Auditor sin type.', descriptionPt: 'Agendas Desbravador, Erudito, Caçador, Apostador; Blasfêmias Gravidade, Autor, Tecelão; Tipo de pecado Auditor.' },
+  { id: 'leba', name: 'LEBA Association', version: 'v1.0', description: 'Legion, YesMan, Human, Ghost agendas; Kit expansions; Cursed Items; Blood, Rotate, Cuisine, Egoism blasphemies; Husk, Garden sins.', descriptionPt: 'Agendas Legião, Capacho, Humano, Fantasma; Expansões de Kit; Itens Amaldiçoados; Blasfêmias Sangue, Rotação, Culinária, Egoísmo; Pecados Casca, Jardim.' }
 ];
 
 /** Get active expansion IDs from localStorage */
@@ -1120,6 +1135,7 @@ var PT_CONTENT = {
         'Quem ou o que te impede de ir além da borda?',
         'Do que você mais se envergonha?'
       ],
+      palace: 'O palácio de um ogro tipicamente se assemelha a um espelho de um espaço significativo para o hospedeiro do ogro, mas há muito decaído e significativamente expandido em tamanho para um labirinto ou espaço como um covil. Espalhados pela área estão lixo, entulho e coisas que o ogro coletou. O ogro tipicamente mal cabe dentro e pode ter que dolorosamente se espremer ou agachar para se mover, embora isso não pareça desacelerá-lo de forma alguma. Palácios típicos se assemelham a: Prédios abandonados ou decrépitos, apartamentos em arranha-céus imundos, escolas fechadas ou abandonadas, locais de trabalho ou escritórios vazios e mortos. Palácios de ogro são tipicamente: Escuros, úmidos, frios, mofados, fedorentos, imundos, labirínticos.',
       examples: [
         { name: 'O Minotauro', story: 'Sujeito possuído O76, post mortem, Forma III. O76 trabalhava na grande firma financeira {redacted:8} e sofria de uma cultura de trotes e assédio no trabalho havia cinco anos e sete meses. Na manifestação, o prédio da empresa foi convertido em {redacted:6}, aprisionando 153 humanos dentro; os caçadores conseguiram executar e exfiltrar com apenas 30% de baixas.' },
         { name: 'Bucéfalo', story: 'Sujeito O33, Forma II, fundido com um ogro CAT 4 após ser demitida do emprego por inúmeras infrações de atraso devido a um trajeto extremamente longo. Continuou a vagar pelas rodovias; a família acionou um sujeito de preocupação e os exorcistas {redacted:4}, {redacted:5} e {redacted:4} foram enviados. Um trecho de rodovia {redacted:3} de 5 km de diâmetro virou uma zona de miasma e foi posto em quarentena; os exorcistas localizaram o palácio dentro de um carro estacionado e executaram por volta das 0200, 30 horas após a infiltração. 155 baixas civis, nenhum exorcista morto, missão considerada amplamente bem-sucedida.' },
@@ -1152,6 +1168,7 @@ var PT_CONTENT = {
         'Como você foi injustiçado?',
         'O que você não está disposto a sacrificar?'
       ],
+      palace: 'O palácio de um cão é um lugar sangrento, infernal e árido que se assemelha à cena de um grande massacre ou atrocidade. Ao contrário de outros palácios, muitas vezes pode mudar de localização conforme o cão se move em sua caçada. A entrada geralmente está localizada em algum lugar decrépito ou selvagem, como em prédios abandonados, canais de drenagem, depósitos de lixo, carros queimados, ou em troncos de árvores ocas. Palácios de cão são tipicamente: Infernais, sangrentos, áridos, inóspitos, ferozes, caóticos.',
       attacksWith: 'Dentes como agulhas, garras afiadas, esporas ósseas, lâminas em forma de foice, armamento encharcado de sangue: (1) 5 estresse, (2/3) 3, (4+) 2.',
       complications: 'Mover-se mais rápido que o olho pode ver, incendiar tudo, emitir vapor ou calor massivo, enfurecer-se, expandir-se com lâminas adicionais, aumentar em tamanho e força, adicionar um espectador, usar um domínio.',
       threats: 'Causar dano colateral massivo. Tentar rasgar alguém ao meio. Dilacerar humanos. Cuspir torrentes de sangue fervente. Arremessar alguém através de um teto ou parede. Cortar tudo em tiras. Infligir um gancho. Usar um domínio. Fazer algo violento, obliterante ou maníaco.',
@@ -1184,6 +1201,7 @@ var PT_CONTENT = {
         'Por que você desistiu do seu sonho?',
         'Por que você acredita ser incapaz de ser amado?'
       ],
+      palace: 'O palácio de um ídolo geralmente é um monumento à auto-obsessão e se assemelha a: Propriedades palacianas, casas noturnas ou salas de concerto, belos apartamentos de cobertura em arranha-céus, salões religiosos ou locais de culto. Palácios de ídolo são tipicamente: Luxuosos, dourados, arejados, cativantes, impressionantes, espalhafatosos, sagrados.',
       attacksWith: 'Lâminas bem afiadas, armas de fogo mundanas, garras finas e flexíveis, comandos de voz psíquicos: (1) 5 estresse, (2/3) 3, (4+) 2.',
       complications: 'Incitar uma multidão, enfeitiçar alguém, cegar com glória, sobrecarregar com emoção, forçar segredos à tona, desarmar alguém, cuspir alucinações, adicionar um espectador, usar um domínio.',
       threats: 'Convocar cultistas. Causar dor incapacitante. Sobrecarregar os sentidos. Forçar exorcistas a sacrificar algo. Expor uma fraqueza. Enfeitiçar um exorcista. Fazer reféns. Infligir um gancho. Usar um domínio. Fazer algo emocionalmente esmagador, manipulador ou chocante.',
@@ -1216,6 +1234,7 @@ var PT_CONTENT = {
         'O que você mais odeia na humanidade?',
         'Do que você mais se arrepende?'
       ],
+      palace: 'O palácio de uma centopeia frequentemente se assemelha a uma prisão onde algo terrível (humano ou não) é libertado. Esta prisão pode ser estéril, fria ou semelhante a um laboratório, ou medieval e cheia de ganchos farpados e correntes enferrujadas. Muitas vezes manifesta horrores ou armadilhas para expulsar, capturar ou matar invasores. Palácios de centopeia são tipicamente: Hostis, ressentidos, grotescos, sangrentos, semelhantes a prisões, ctônicos.',
       attacksWith: 'Presas gotejantes, garras numerosas, corpo sinuoso, cuspe pressurizado (curto alcance): (1) 5 estresse, (2/3) 3, (4+) 2.',
       complications: 'Escavar no chão ou paredes, cuspir teia venenosa, soltar enxames de moscas, pulverizar poças de veneno, revelar tocas escondidas, desabar o piso, escapulir escondida na escuridão, adicionar um espectador, usar um domínio.',
       threats: 'Convocar a horda. Dilacerar um exorcista. Revelar fileiras de ocelos hipnóticos. Explodir um bubão cáustico. Dissolver algo com ácido. Cometer um massacre. Infligir um gancho. Usar um domínio. Fazer algo sujo, rancoroso ou gotejante de veneno.',
@@ -1248,6 +1267,7 @@ var PT_CONTENT = {
         'Enquanto você passava fome, quem festejava?',
         'Onde você traça o limite?'
       ],
+      palace: 'O palácio de um sapo tipicamente começa como uma habitação ou prédio que originalmente pertencia ao hospedeiro antes de se tornarem um hospedeiro, escolhido como palácio devido ao seu espaço e conforto. Com o tempo, o espaço fica abarrotado quase a estourar com a riqueza que o sapo acumula, transformando-se parcialmente em cofres de tesouro ou galerias para proteger ou exibir sua largueza. Palácios de sapo são tipicamente: Opulentos, espalhafatosos, glamourosos, espaçosos, extravagantes, luxuosos, confortáveis.',
       attacksWith: 'Socos e chutes esmagadores, língua musculosa, jato de sangue pressurizado dos olhos (curto alcance): (1) 5 estresse, (2/3) 3, (4+) 2.',
       complications: 'Saltar para fora de alcance com pernas musculosas ou se espremer num espaço apertado, prender em armadilhas, revelar explosivos escondidos, disparar segurança ou alarmes, vomitar limo ou regurgitar o conteúdo do estômago, adicionar um espectador, usar um domínio.',
       threats: 'Convocar guarda-costas. Roubar algo dos exorcistas. Desabar ou arremessar algo do ambiente. Detonar uma bomba. Chutar alguém com pernas poderosas. Engolir algo ou alguém inteiro. Infligir um gancho. Usar um domínio. Fazer algo astuto, espalhafatoso ou chocante.',
@@ -1280,6 +1300,7 @@ var PT_CONTENT = {
         'Qual a principal coisa que você consertaria no mundo?',
         'De quem você se arrependeu de deixar para trás quando ascendeu ao seu Reino?'
       ],
+      palace: 'O palácio de um senhor é tipicamente um lugar movimentado cheio de servos ou subsidiários cuidando de seus afazeres - pecados menores, figmentos da imaginação do hospedeiro, ou humanos cativos que foram absorvidos na narrativa do reino. Dentro do Reino, o mundo pode parecer como o mundo atualmente é, ou uma versão histórica ou mesmo fantástica do mundo, como uma cidade futurista, um céu cintilante, ou um castelo medieval - dependendo dos desejos latentes do hospedeiro. Palácios de senhor são tipicamente: Imponentes, grandiosos, augustos, monumentais, pétreos, sagrados.',
       attacksWith: 'Lâminas cintilantes, manoplas blindadas, armamento medieval reluzente, feixes de fogo (longo alcance): (1) 5 estresse, (2/3) 3, (4+) 2.',
       complications: 'Torcer o mundo ou a paisagem, estender o Reino, lançar falsas acusações, prender um exorcista em correntes, cegar com luz escaldante, estender placas de armadura reluzente, erguer um escudo cintilante, adicionar um espectador, usar um domínio.',
       threats: 'Fulminar com fogo. Passar julgamento dos céus. Arremessar numa prisão psíquica. Forçar um exorcista a confrontar seus próprios crimes. Agarrar com um punho blindado. Empalar com espinhos sagrados. Infligir um gancho. Usar um domínio. Fazer algo justo, mordaz ou dominador.',
@@ -1304,6 +1325,104 @@ var PT_CONTENT = {
         { name: 'Rainha Pálida', story: 'Forma II. Manifestado e fundido com a hospedeira L44, que havia se recolhido a um mundo de videogames após uma lesão esportiva deixá-la sem o uso das pernas. O Reino se manifestou como um típico mundo de fantasia de videogame pseudomedieval baseado na propriedade {redacted:12}, que consumiu até 60% da cidade {redacted:6} antes da dispersão pela equipe enviada. 3 exorcistas mortos em ação, reforços enviados por helicóptero. Executado. Tempo até execução 9 horas 54 minutos.' }
       ]
     },
+    // ─── Owl sin template (PT-BR) ─────────────────────────────────────
+    owl: {
+      description: 'Um pecado paranoico que busca saber tudo, preenchendo a lacuna de conhecimento ao garantir que ele e seu hospedeiro saibam tudo o que possivelmente podem. Emoção: Paranoia.',
+      primaryEmotion: 'Paranoia',
+      traumas: [
+        'O que você precisava saber?',
+        'Como você descobriu tarde demais?',
+        'Quem ou o que é a única coisa que você preferiria não saber?'
+      ],
+      palace: 'Descobrir o palácio de uma coruja é considerado especialmente difícil comparado a outros Pecados, pois a Coruja provavelmente armará armadilhas, ofuscará conhecimento necessário e sabotará diretamente a investigação. O palácio de uma coruja provavelmente está ligado ao segredo que seu hospedeiro descobriu que manifestou o Pecado em primeiro lugar, o que significa que descobrir o segredo que criou uma coruja é uma das formas mais consistentes de localizar seu palácio. O palácio em si frequentemente se assemelha a um local vasto e expansivo envolto por uma cúpula de penas; um elemento consistente é que a coruja é, por algum meio, efetivamente onisciente dentro de seu palácio. Manifestações comuns incluem: o sol sendo substituído por um grande olho, câmeras de segurança por todo o palácio, pássaros observando dos telhados, uma grande torre panóptica no centro do palácio.',
+      examples: [
+        { name: 'Denunciante', story: 'Sujeito O338, Tipo III, manifestou-se nos subúrbios de Idaho, Vinculador era um influenciador conhecido na comunidade de "true crime". Sujeito descoberto pelo SEER durante a caçada de um Cão CAT I. Vinculador recrutado pelo SEER às 0905, nenhum Exorcista enviado, nenhuma baixa.' },
+        { name: 'Assassino Psicopata', story: "Sujeito O836, Tipo II, manifestou-se de um estagiário no McDonald's, uma empresa de fachada da CAIN, após descobrir um dossiê deixado cair por um agora ex-funcionário da CAIN. Exorcistas descobriram O836 na casa do hospedeiro às 0922, Sujeito executado às 1042. Seminário sobre segurança de documentos agendado depois. Nenhuma baixa civil, 2 exorcistas feridos." },
+        { name: 'Contrabandista', story: 'Sujeito O284, Tipo I, manifestação urbana em NYC, Pecado manifestado pelo hospedeiro após descobrir que seu parceiro havia mentido sobre ir para a reabilitação por alcoolismo crônico. Exorcistas chegaram à cena às 1300, registro para às 1430, Exorcistas chegaram à cena às 1445, registro para às 1500, Pecado executado às 2120 antes da primeira implantação de Exorcistas. Número indeterminado de baixas.' }
+      ],
+      attacksWith: 'Olhares, Garras, Cognitoperigos Psíquicos, Penas Afiadas, Você esqueceu como ele te atacou: (1) 4 estresse, (2/3) 2 estresse, (4+) 1 estresse.',
+      complications: 'Sabotar a investigação, Perseguir alguém, matar uma testemunha, Armar armadilhas, alçar voo, transmitir conhecimento ao hospedeiro, buscar informação, usar um domínio.',
+      threats: 'Perceber o futuro, pegar um Exorcista e soltá-lo no ar, soltar um guincho cognitoperigoso, apagar memórias, revelar segredos, sequestrar um Exorcista e voar embora, ativar armadilhas, causar um gancho, usar um domínio.',
+      afflictions: '1. Mas E Se?: quaisquer ações tomadas sem preparação ou preparativos adequados fazem você sofrer um estresse.\n2. Observador Incansável: Adicione permanentemente à sua agenda: Provar que você está sendo observado.\n3. Mais Fundo na Toca: No fim da missão, se você descobriu uma conspiração, você pode apagar 2d3 Pecado. Se fizer, adicione permanentemente à sua agenda: Cavar mais fundo ainda.\n4. Pensando Demais: Você é assombrado pela Coruja, incapaz de parar de pensar no que ela pode estar fazendo. Subtraia 1 de qualquer ação não diretamente relacionada a investigar ou caçar a coruja.\n5. Pessoa de Interesse: A Coruja sempre sabe exatamente onde você está.\n6. Glutão por Conhecimento: Sempre que você descobrir a resposta de uma pergunta de trauma ou um dos domínios da Coruja, role 1d3 e recupere essa quantidade de Estresse.',
+      pressureEffect: 'Conforme a pressão aumenta durante uma Caçada, a Coruja fica cada vez mais consciente de seus arredores e é capaz de transmitir esse conhecimento ao seu hospedeiro. No início da Caçada, a Coruja deve estar ciente apenas de cada evento que está acontecendo em uma área como um Quarteirão, com o Hospedeiro apenas recebendo conhecimento transmitido de tudo ao seu redor dentro de uma distância igual a CAT -1. Mas conforme a pressão aumenta, a Coruja deve começar a perceber mais dos arredores e ser capaz de prever as ações dos Exorcistas, tudo enquanto transmite mais e mais conhecimento ao Hospedeiro, com ambos se tornando quase oniscientes conforme a pressão aumenta. Todo conhecimento que a Coruja transmitiu ao seu Hospedeiro é arrancado de sua mente após o Exorcismo.',
+      outOfControl: 'Em pressão 6+, o CAT da Coruja aumenta em +1 e tanto a Coruja quanto seu Hospedeiro se tornam efetivamente oniscientes dentro da área de investigação.',
+      traces: 'Corvos (pecados): Frequentemente uma Coruja cria traços que atuam como vigilância extra sobre indivíduos de interesse. Inicialmente se disfarçam como algo mundano (um bando de pássaros, enxame de drones ou multidão de pedestres). Talismã de execução 2 (solo), 4 (grupo), 6 (grupo massivo). Características: Estão disfarçados como algo mundano mas perceptível até serem descobertos. Diretamente conectados à Coruja, dando e recebendo informação. Podem se transformar em uma forma aviária monstruosa quando descobertos. Ataca com: Bicos, Garras, Conhecimento Cognitoperigoso. (1) 3 estresse, (2/3) 2 estresse, (4+) 1 estresse. Complicações: Adulterar a investigação (alterando evidências, capturando testemunhas, etc.) antes de tentar escapar.',
+      severeAttack: 'Desencarnação: Usável num "1" na rolagem de risco, uma vez por missão. Mire um exorcista; exorcistas próximos podem voar em auxílio. Comece com uma reserva de 5d6, depois remova um dado por "sim": Você é incapaz de ver a Coruja no momento? Você aprendeu nova informação sobre a coruja dentro de um número de cenas igual a CAT? Você está numa área isolada longe de testemunhas? A Coruja está atrapalhada, distraída ou sob pressão? Role os dados: o exorcista e os ajudantes sofrem 1 estresse por dado rolado. Se ao menos um "1" aparecer, a Coruja transmite todo seu conhecimento ao Exorcista, permitindo que ele colete conhecimento da percepção da Coruja uma vez por cena - porém, ele deve rerroalar a reserva de dados no início de qualquer cena enquanto conectado. A conexão pode ser cortada descansando ou gastando 1 surto psíquico. Se mais de um "1" aparecer, o Exorcista sofre Morte do Ego e fica comatoso até a Coruja ser exorcizada. Para cada "1" acima de 2, o Exorcista ganha 1 pecado.',
+      domains: {
+        'But the Truth Brought it Back to Life': { name: 'Mas a Verdade o Trouxe de Volta à Vida', description: 'A Coruja começa uma Caçada enfraquecida e é fortalecida pelos Exorcistas tentando utilizar suas perguntas de trauma. A Coruja começa com 6 cortes em seu Talismã de Execução e limpa 2 cortes sempre que uma Pergunta de Trauma é usada. Devido a isso, a Coruja está disposta a conceder benefícios a Exorcistas que lhe deem as perguntas de trauma, dando a cada Exorcista conhecimento de como eles se tornam mais fortes no futuro, ganhando 1 XP extra por pergunta.' },
+        'The Singing of Cassilda': { name: 'O Canto de Cassilda', description: 'Um Grimório é criado pela Coruja a partir de sua própria presença psíquica, aparecendo em um local relevante para a Coruja ou seu Hospedeiro como qualquer objeto mundano capaz de conter informação (um Livro, Laptop, Computador, Post-it, etc.). Uma vez por cena após descobrir o Grimório, um Exorcista pode procurar nele por respostas. Em troca de receber uma resposta inteiramente verdadeira para uma pergunta baseada no que a Coruja sabe ou é capaz de perceber, o Exorcista perde uma peça fundamental de conhecimento, fazendo uma de suas perícias ser reduzida a zero por um número de cenas igual a CAT ou até a Coruja ser exorcizada.' },
+        'The Omen of Unmaking': { name: 'O Presságio da Destruição', description: 'Como movimento de tensão, a Coruja dá a cada exorcista visões proféticas de seu fracasso. Durante a próxima cena após O Presságio da Destruição ser usado, todos os exorcistas sofrem 1 estresse sempre que uma rolagem Arriscada for solicitada pelo Mestre.' },
+        'The Crime of Knowledge': { name: 'O Crime do Conhecimento', description: 'Sempre que informação é transmitida através de fala sobre a Coruja, a Coruja é capaz de mudar o que o indivíduo falando diz inteiramente. Este processo pode ser prevenido escrevendo informação ou falando em linguagem codificada, porém, a Coruja pode ignorar esta limitação uma vez por cena como movimento de tensão.' },
+        'The Marketplace of Ideas': { name: 'O Mercado de Ideias', description: 'Uma vez por caçada como movimento de tensão, a Coruja pode escolher alterar o conhecimento de cada humano dentro de sua área de efeito, permitindo que a Coruja dê ou retire qualquer conhecimento contido em pelo menos um humano ou Exorcista para toda a população. Capacidades incluem apagar a habilidade de todos de reter conhecimento de indivíduos específicos, tornar indivíduos cientes de segredos como a existência da CAIN, e fazer indivíduos esquecerem que a Coruja existe. Humanos são automaticamente afetados, mas Exorcistas podem sofrer 1 estresse para evitar serem afetados. Efeitos são apagados quando a Coruja é Exorcizada.' },
+        'The Burning of the Library': { name: 'A Queima da Biblioteca', description: 'Quando qualquer um entra no palácio da Coruja, todos dentro da Área de Efeito da Coruja têm sua existência apagada da memória. Ao sair, memórias retornam mas eles esquecem o tempo passado dentro. Exorcistas podem gastar um Surto Psíquico ou rolar Psiquê Difícil para anular isso. Uma vez por cena, a Coruja ou seus Corvos podem criar um Ninho - um portal de mão única para o Palácio (um livro aberto, círculo de galhos). Contato transporta vítimas para o palácio. Descobrir Ninhos requer uma Rolagem de Investigação; exorcistas desavisados fazem uma rolagem de sorte para evitar pisar. Todos os Ninhos se tornam não-funcionais quando a Coruja é exorcizada.' },
+        'The Unbecoming Tongue': { name: 'A Língua Indecente', description: 'A Coruja escolhe uma Pergunta de Trauma para tornar um cognitoperigo no início da Caçada. Ao descobrir a resposta, um Exorcista sofre 1 estresse, e sofre mais 1 estresse ao recitar a informação, com esse estresse também causado a quaisquer outros exorcistas ou humanos que a ouvirem. A Coruja respeita Exorcistas dispostos a arriscar sua vida por conhecimento: o Mestre conta a esse Exorcista uma dica vaga sobre seus planos futuros para uma narrativa maior ou a próxima caçada.' },
+        'The Devils you Know': { name: 'Os Demônios que Você Conhece', description: 'Como movimento de tensão, o Mestre pergunta a um Exorcista: "Qual Exorcista aqui você menos conhece?" Se o Exorcista Alvo responder ele mesmo, ele sofre 1 estresse. Se ele responder outro Exorcista presente, ele pode perguntar a esse Exorcista sobre seu passado uma vez por cena para perder 2 estresse, mas sofre 1 estresse por cada cena em que não perguntar sobre o passado dele.' }
+      }
+    },
+    // ─── LEBA Association sin templates (PT-BR) ───────────────────────────────
+    husk: {
+      description: 'Um pecado conceitual nascido da perda de identidade. O desejo de se desprender para preencher o vazio no coração de uma pessoa. Aterrorizante em suas habilidades de imitar seres vivos. Emoção: Dissociação.',
+      primaryEmotion: 'Dissociação',
+      traumas: [
+        'O que está escondido por trás dessa carne sua, sob seu rosto?',
+        'Como se revelar te machucou no presente, ou futuro?',
+        'Para quem ou quando você deixa sua máscara cair?'
+      ],
+      palace: 'O palácio de um husk é maior por dentro do que por fora e é composto de uma fusão entre carne, ossos e outros órgãos. Ao contrário da maioria dos pecados, o palácio de um husk não se fixa em um único lugar, mas sim em uma única pessoa, tornando-os difíceis de localizar. A maioria dos palácios reside dentro dos próprios hospedeiros, esvaziando seus interiores sem causar dano. No entanto, nem sempre é esse o caso. Palácios de husk são: Vivos, claustrofóbicos, sangrentos, horripilantes, mal interpretados.',
+      examples: [
+        { name: 'Nowhere', story: 'Tipo I, CAT 5, previsto para chegar em {redacted:5} em {redacted:6}, {redacted:8} de {redacted:4} dentro de 1km da cidade. Virtudes {redacted:5}, {redacted:7} e {redacted:7} enviadas para exercer a ameaça. Nenhuma baixa de exorcistas. Eliminação do sujeito confirmada em 6 horas da manifestação. Contagem de 2610 baixas pós-execução. Implantação de manipulação de memória pelo SEER.' },
+        { name: 'False Hydra', story: 'Tipo II, tomou conta de uma grande porção da cidade de {redacted:9} durante um grande evento. Hospedeiro se transformou pouco depois de uma tentativa de assassinato. Pessoal do CASTLE interceptou o ataque e equipe de exorcistas foi enviada. Toda informação direta do incidente não deve ser divulgada a pessoal sob ameaça de demissão. Executado. Número total de baixas indeterminado. Após leitura deste arquivo, procure um formulário de consulta do SEER em sua área mais próxima para potencial contaminação.' },
+        { name: 'This Is Not A Man', story: 'Tipo III, CAT 4, apareceu na instalação #X104 sob responsabilidade do CASTLE. A casca durou aprox. 176 horas até ser detectada pelo SEER. Lockdown iniciado e eliminação do hospedeiro resultou na morte da equipe de exorcistas 13 e vários agentes do CASTLE. Tempo da descoberta à execução: 3 horas, 11 minutos. Total de baixas: 23 agentes do CASTLE, 3 exorcistas. Virtudes enviadas dentro de 1 hora da descoberta. Executado.' }
+      ],
+      attacksWith: 'Garras afiadas, espingarda de espinhas: (1) 5 estresse, (2/3) 3, (4+) 2. Talismã de execução é 6+CAT, NÃO aumenta com pressão.',
+      complications: 'Trocar de casca (matar e substituir um NPC), fingir ser um aliado, usar subterfúgio, manipular memórias, emergir de um cadáver, dividir-se em múltiplas formas, adicionar um espectador, usar um domínio.',
+      threats: 'Substituir um NPC importante. Revelar sua forma verdadeira violentamente. Consumir testemunhas. Criar um resto. Usar um domínio. Fazer algo inumano, manipulador ou aterrorizante.',
+      afflictions: '1. Crise de Identidade: escolha outro exorcista; você acredita ser ele e deve agir como ele agiria.\n2. Oco: você não pode se beneficiar de descanso até responder "O que te torna unicamente você?"\n3. Andarilho de Pele: seu reflexo mostra outra pessoa; sofra 1 estresse ao se ver.\n4. O Hábito: escolha um maneirismo; você o repete compulsivamente em momentos inapropriados.\n5. Casca Vazia: você não consegue sentir emoções; todas as ações sociais são difíceis.\n6. Substituição: adicione permanentemente à agenda: tornar-se outra pessoa inteiramente.',
+      pressureEffect: 'Um husk tentará preencher o vazio de seu hospedeiro pela habilidade direta de violência grotesca. O Husk começará dentro de uma casca de seu hospedeiro, e lentamente matará NPCs e os substituirá completamente. Ao preparar a missão, o Mestre anotará uma pessoa específica para ser a casca atual do husk (que pode incluir o próprio Hospedeiro). Junto com um hábito simples para cada NPC que os exorcistas possam encontrar durante a investigação. O husk imita o hábito da casca que ocupa, assim como quaisquer tiques da casca anterior. Quando a pressão aumenta, o husk tentará matar e substituir um NPC aleatório, priorizando um que o grupo já conheceu e sabe da localização. Se os exorcistas estiverem presentes, podem tentar parar o husk com uma cena de conflito. Se não, o NPC é (limpamente) morto e substituído, deixando apenas uma poça de sangue na cena. Quando um husk troca de casca, a casca anterior se torna um traço. Com exceção do Hospedeiro que permanece vivo, e se for tipo II, pula junto com o husk para uma nova casca. Quando o husk substitui um NPC, eles copiam cada aspecto deles, aparência, maneirismos e seu hábito. Eles mantêm o hábito do NPC anterior. Se os exorcistas encontrarem o husk enquanto ele está usando uma casca, são incapazes de saber que é o husk à primeira vista, mas podem revelá-lo com um teste de sangue: O husk pode ser revelado através de um teste de sangue cortando o sangue da casca e queimando o sangue com fogo ou um objeto aquecido. O sangue reagindo ao fogo em uma explosão violenta. O husk pode reagir a essa revelação revelando sua forma verdadeira. Isso imediatamente cria uma cena de conflito com o husk tentando escapar para pegar uma nova casca.',
+      outOfControl: 'Quando a pressão atinge 4 ou mais, ou se o husk substituiu com sucesso 3 NPCs, ele evolui para uma forma muito mais perigosa. O husk causa +1 corte com reações até o fim da caçada. Quando a pressão atinge 6, o husk ganha +1 CAT e é capaz de modificar sua casca para imitar qualquer exorcista ou agente da CAIN sem encontrar ou matar tal pessoa.',
+      traces: 'Restos (pecados): Restos de uma casca criada e descartada pelo husk. Eles buscam preencher seu próprio vazio com a identidade de outra pessoa. Sua aparência lembra um humano, mas definitivamente não é humano. A alma lá dentro já se foi há muito tempo - não se deixe enganar pela voz. Talismã de execução 3 (solo), 5 (dupla), 7 (trio). Ataca com: tentáculos de carne, vômito ácido, balas de osso, dentes tortos: (1) 4 estresse, (2/3) 3, (4+) 2. Complicações: fazer um apelo à humanidade do exorcista, mostrar um pouco de seu antigo eu, gritar por ajuda do Exorcista, golpear com uma foice gigante feita de dentes. Vestir Uma Casca (1): Os restos tentam invadir e preencher o corpo de um exorcista próximo. Se bem-sucedido, o alvo sofre 3 estresse e os Restos recuperam 3 cortes no talismã de execução.',
+      severeAttack: 'ADEUS: Usável num "1" na rolagem de risco, uma vez por caçada. Mire um exorcista; quaisquer outros exorcistas próximos são alertados por uma deixa de áudio e devem decidir voar em auxílio ou não (os que não o fizerem não podem participar). Comece com uma reserva de 5d6, depois remova um dado para cada "sim": Você está longe do husk? Seu rosto está escondido, sua pele coberta? Você está no controle da situação? O husk está atrapalhado, distraído ou sob pressão? (Para um "não", alguém pode fazer uma rolagem de ação para corrigir.) Role os dados: o exorcista e os ajudantes sofrem 1 estresse para cada dado rolado. Se ao menos um "1" aparecer, o husk tenta substituir o ego do exorcista - ele ganha a aflição Crise de Identidade. Dois ou mais "1"s: o exorcista é totalmente substituído pelo husk até ser executado.',
+      domains: {
+        'Ever-Shifting Ego': { name: 'Ego Sempre em Mudança', description: 'O husk é um mestre de disfarces mesmo entre pecados. Ele evoluiu a habilidade de copiar um único domínio de outro pecado escolhido ao criar o husk. Domínios que interagem com traços interagem com os traços do husk. Se um domínio interage com a habilidade de pressão única de outro pecado (Miasma, Rancor, etc.), adapte seus efeitos à pressão do husk.' },
+        'I Stare At My Reflection, and It Winked Back at Me': { name: 'Eu Olho para Meu Reflexo, e Ele Piscou de Volta', description: 'O husk preenche a própria realidade ao seu redor consigo mesmo. Como movimento de tensão, o husk pode fazer cada NPC em toda a área de investigação refratado com a identidade do hospedeiro: todos os NPCs compartilham as mesmas características físicas; NPCs não compartilham a mesma história mas compartilham a personalidade do original "adicionada" à do hospedeiro; todos os hábitos são compartilhados, tornando-os difíceis de usar; pessoas sem graça não percebem que são todas cópias. Este efeito para temporariamente quando a forma verdadeira é revelada; o husk pode reativá-lo como movimento de tensão.' },
+        'Lone Forgotten Lullaby': { name: 'Canção de Ninar Solitária e Esquecida', description: 'O husk é capaz de cantar uma melodia oca para se livrar da maldição de ser percebido. Como complicação ou movimento de tensão: o husk começa a cantar uma canção oca. Enquanto canta, todos os seres vivos que podem ouvir sua voz imediatamente esquecem a existência do husk junto com qualquer informação relacionada a eles. A canção dura 1 minuto, ou uma rodada durante cenas de conflito. Se a pressão encher até a metade, a canção pode ser ouvida por toda a área de investigação. Pessoas surdas ou exorcistas são imunes.' },
+        'Where does it go? Where does it go?': { name: 'Para Onde Vai? Para Onde Vai?', description: 'As vítimas do husk desaparecem do mundo inteiramente, substituídas por cópias mais perfeitas. Quando o husk mata um NPC para pegar sua casca, todas as memórias e registros do original são apagados da existência. Apenas exorcistas se lembram deles. O husk ganha conhecimento perfeito das memórias da vítima e pode responder perfeitamente qualquer pergunta sobre eles.' },
+        'Skin Stealer': { name: 'Ladrão de Pele', description: 'Como complicação ou movimento de tensão, o husk cria Mímicos - cópias parciais de pessoas que consumiu que aparecem na área de investigação. Mímicos (pecados): Talismã de execução 4. Mímicos podem alterar a visão de um alvo específico para combinar com sua forma imitada atual. Se a Unha de Abel for usada ao menos uma vez, o efeito deste domínio é anulado pelo resto da caçada. Mímicos podem imitar qualquer pessoa ou exorcista, mesmo se ainda estiver viva.' },
+        'To You Far Away, To Me Lonely as Can Be': { name: 'Para Você Tão Longe, Para Mim Tão Solitário', description: 'O desejo do husk de preencher o vazio rouba de outros seus próprios poderes e emoções. Como movimento de tensão ou ameaça, o husk pode dar a um Exorcista a seguinte aflição: Eu Te Amo: Quando afligido, o exorcista perde acesso a um de seus poderes de blasfêmia pois esquece que jamais o teve. Ele pode recuperar a memória deixando o husk fazer uma reação gratuita contra ele durante uma cena de conflito.' },
+        "There's Nothing There": { name: 'Não Há Nada Lá', description: 'O husk vai contra sua própria natureza e reprime sua intenção violenta. O husk se torna visível para todos sem graça e não precisa matar um NPC para pegar sua casca. Em vez disso, ele toma o corpo do NPC em uma confrontação caótica. A vítima não é morta mas está ciente do que está acontecendo e incapaz de lutar. Quando o husk pega uma nova casca, as vítimas anteriores se fundem com o pecado em um amálgama. Como complicação, o husk pode parcialmente libertar uma vítima para distrair ou comprometer os exorcistas.' }
+      }
+    },
+    garden: {
+      description: 'Uma variante rara do pecado Ogro. Nascido com o desejo de permanecer protegido de influências externas. Preenchido com um desejo desesperado de permanecer completamente parado, isolado e ser ignorado. Emoção: Preguiça.',
+      primaryEmotion: 'Preguiça',
+      traumas: [
+        'Por que você continua vivendo?',
+        'Quem ou o que te impede de se tornar parte do todo?',
+        'Quem ou o que te impede de mudar?'
+      ],
+      palace: 'O palácio de um Garden pode ser dividido em dois tipos dependendo da natureza do trauma do hospedeiro; Ou está escondido dentro da flora que o hospedeiro considera segura ou sob sua proteção, como a polpa de uma flor, ou dentro de uma árvore morta. Ou, estão espalhados por uma área pública com a qual o hospedeiro é mais familiarizado, como um parque público, um jardim privado, ou até mesmo um esgoto coberto de vegetação. Se o palácio está espalhado por uma área, até mesmo humanos mundanos podem entrar no palácio sem saber. Palácios tipicamente representam um lugar de paz interior e quietude para o hospedeiro e o pecado. Palácios de Garden são: Cobertos de vegetação, vastos, vivos, belos, florescentes.',
+      examples: [
+        { name: '100 Gnomes', story: 'Sujeito G16, Tipo III, sujeito era um consultor financeiro para {redacted:4} {redacted:4} que era muito ligado em conspiração e caça a hoaxes. G16 manifestou um Garden CAT 3 dentro do parque público de {redacted:7}. Garden formou-se como um grupo de gnomos fúngicos que espalharam uma potente infestação de esporos, resultando em uma invasão da população de metamorfos na área. Exorcistas conseguiram encontrar o palácio dentro de um tronco de árvore. Pecado executado com taxa mínima de baixas de 13%.' },
+        { name: 'The Bee Keeper', story: 'Sujeito G33, Tipo I, sujeito trabalhava como apicultor para a empresa agrícola {redacted:4} nas planícies de {redacted:5}, Alemanha pela última década. Após uma má temporada de colheita de mel, a empresa demitiu G33 sem cláusula de apelação, fazendo-o cair na influência de um culto local. Um pecado Garden CAT 2 manifestou-se em seu jardim de abelhas privado algumas semanas depois. Pouco após a chegada, manifestação eliminada mas nenhuma execução registrada, sujeito desaparecido. Exorcistas foram disciplinados.' },
+        { name: 'Bean Jack', story: 'Possessão G04, Tipo II, sujeito fundiu-se com um Garden CAT 5 dentro do parque público Kowloon em Hong Kong. O palácio situado no topo de uma árvore gigante exigiu o uso restrito de um helicóptero pelos caçadores. Sujeito foi encontrado preso na madeira do palácio e já morto por sufocamento com o pecado tentando ressuscitá-lo. Sujeito morto, nenhuma baixa de exorcistas. Pós-execução, o parque exigiu o serviço da virtude Esperança e virtude Criatividade para limpeza civil e estrutural.' }
+      ],
+      attacksWith: 'Raízes desenterradas, grandes galhos, golpe de tronco, folha afiada (curto alcance): (1) 5 estresse, (2/3) 3, (4+) 2. Talismã de execução é 10+PRESSÃO+CAT.',
+      complications: 'Crescer a floresta, rasgar a terra ao meio, liberar esporos ou insetos, fazer um exorcista envelhecer ou rejuvenescer, convocar vida selvagem contra os exorcistas, cativar humanos, adicionar um espectador, usar um domínio.',
+      threats: 'Convocar um grupo de brotos. Fogo cria uma ameaça severa ao Garden. Enredar exorcistas em raízes. Colapsar construções com crescimento. Criar uma nuvem de veneno. Usar um domínio. Fazer algo superprotetor, contido ou lento.',
+      afflictions: '1. Sono Profundo: você só pode ser acordado sofrendo estresse; descansar te coloca para dormir pela cena inteira.\n2. Enraizado: você não pode sair voluntariamente da área em que está até a cena terminar.\n3. Coberto de Vegetação: plantas crescem em seu corpo; atividade física é difícil até você passar uma cena removendo-as.\n4. Pólen: você é alérgico; sofra 1 estresse ao entrar em uma nova área com plantas.\n5. Simbiose: você se sente protetor do garden; ações para feri-lo são difíceis.\n6. Quietude: adicione permanentemente à agenda: permanecer perfeitamente parado e deixar as coisas acontecerem.',
+      pressureEffect: 'Gardens geram uma floresta ao redor de seu palácio que cresce constantemente ao longo do tempo. A floresta é viva e hostil a intrusos, mas protetora daqueles que o garden considera sob seus cuidados. Vida selvagem é atraída para a área e se torna agressiva com forasteiros. Quando a pressão aumenta, a floresta se expande para cobrir uma nova área. O garden e seus traços podem se mover livremente pela floresta e ver através de qualquer planta dentro dela. Humanos dentro da floresta ficam sonolentos e podem adormecer se ficarem muito tempo.',
+      outOfControl: 'Se a pressão atingir o máximo, o garden ganha +1 CAT e a floresta cobre toda a área de investigação. Todos os humanos dentro caem em um sono infinito até o garden ser executado.',
+      traces: 'Brotos (pecados): Pequenas criaturas semelhantes a plantas que emergem do domínio do garden. São atraídas por humanos, água ou luz solar. Talismã de execução 2 (solo), 4 (fazenda), 6 (fazenda massiva). Causam +1 estresse na presença de um pecado. Colocam exorcistas para dormir ao infligir um ferimento até serem acordados; se todos os exorcistas adormecerem, são movidos para fora da floresta. Ataca com: membros alongados, raízes crescidas, insetos irritantes, arremessar frutas (longo alcance): (1) 3 estresse, (2/3) 2, (4+) 1. Complicações: espalhar raízes, coletar insetos, enxamear moscas em um alvo, enterrar-se na terra, espalhar esporos, cativar ou atrair humanos para a área.',
+      severeAttack: 'Florescer: Usável num "1" na rolagem de risco, uma vez por caçada. Mire um exorcista; quaisquer outros exorcistas próximos são alertados por uma deixa de áudio e devem decidir voar em auxílio (os que não o fizerem não podem participar). Comece com uma reserva de 5d6, depois remova um dado por "sim": Você está perto ou adjacente ao Garden? Você fez amizade com um animal ou pet? Você tem uma planta em sua pessoa? O Garden está atrapalhado, distraído ou sob pressão? (Para um "não", alguém pode fazer uma rolagem de ação para corrigir.) Role os dados enquanto o Garden libera a fúria da natureza contra os exorcistas e qualquer um ajudando-os. O exorcista e qualquer um ajudando-o sofre 1 estresse para cada dado rolado, não importa o resultado.',
+      domains: {
+        'The Eternal Forest': { name: 'A Floresta Eterna', description: 'A floresta do garden se torna impossivelmente vasta. Navegação dentro requer rolagens bem-sucedidas; falha significa ficar perdido e gastar cenas adicionais para encontrar o caminho. O garden pode remodelar caminhos à vontade como complicação.' },
+        'Symbiotic Bond': { name: 'Vínculo Simbiótico', description: 'O garden formou uma conexão profunda com a vida selvagem local. Animais na área estão sob controle do garden e atacarão intrusos. Como ameaça, o garden pode convocar um enxame de criaturas que causa 1d3 de estresse a todos os exorcistas na área.' },
+        'Spore Cloud': { name: 'Nuvem de Esporos', description: 'O garden libera esporos alucinógenos. Uma vez por cena, como complicação com +2 de comprimento de talismã, exorcistas na área devem resistir ou experimentar alucinações vívidas (todas as ações baseadas em percepção são difíceis). Os esporos permanecem pelo resto da cena.' },
+        'The Giving Tree': { name: 'A Árvore Generosa', description: 'O garden oferece presentes àqueles que se aproximam pacificamente. Qualquer exorcista pode receber uma "bênção" do garden que cura 1d3 de estresse - mas ganha a aflição Simbiose e sua primeira ação contra o garden em qualquer cena custa 2 estresse.' },
+        'Ancient Growth': { name: 'Crescimento Ancestral', description: 'As raízes do garden alcançam profundamente a terra e através do tempo. Como movimento de tensão, o garden pode fazer estruturas envelhecerem rapidamente, colapsando construções e criando terreno difícil. Exorcistas dentro sofrem 1d3 de estresse do colapso.' },
+        'The Protector': { name: 'O Protetor', description: 'O garden é ferozmente protetor de seu hospedeiro. Quando o hospedeiro sofreria qualquer dano, o garden pode redirecioná-lo para si mesmo ou seus traços. O hospedeiro está sempre escondido dentro do palácio e não pode ser ferido até o garden ser reduzido a 3 ou menos de talismã.' }
+      }
+    }
   },
   // Agenda items & bolded items
   agendaItems: {
@@ -1325,7 +1444,17 @@ var PT_CONTENT = {
     demon: { items: ['Enriquecer-se'], bolded: ['Dar algo valioso'] },
     cradle: { items: ['Proteger seu protegido das consequências de suas ações.'], bolded: ['Deixar seu protegido sofrer.'] },
     doll: { items: ['Desistir de algo'], bolded: ['Voluntariamente fazer algo doloroso'] },
-    broken: { items: ['Matar'], bolded: ['Matar'] }
+    broken: { items: ['Matar'], bolded: ['Matar'] },
+    // Marching Ever Onward
+    pathfinder: { items: ['Experimentar algo novo'], bolded: ['Recuar para o familiar'] },
+    scholar: { items: ['Educar alguém'], bolded: ['Reconhecer sua própria ignorância'] },
+    hunter: { items: [''], bolded: ['Executar seu Propósito'] },
+    gambler: { items: ['Deixar na sorte'], bolded: ['Seguir o plano'] },
+    // LEBA Association
+    legion: { items: ['Manter o grupo unido'], bolded: ['Separar o grupo à força'] },
+    yesman: { items: ['Bajular alguém'], bolded: ['Se defender'] },
+    human: { items: ['Manter sua posição'], bolded: ['Desistir da luta'] },
+    ghost: { items: ['Não chamar atenção'], bolded: ['Chamar atenção indesejada'] }
   },
   // Agenda restrictions
   agendaRestrictions: {
@@ -1334,11 +1463,15 @@ var PT_CONTENT = {
     machine: 'Se seu grupo descansar, você pode escolher se excluir do descanso.',
     torch: null,
     shadow: 'Quando escolher esta agenda, escolha outro personagem como seu rival (o sentimento não precisa ser mútuo) no início de uma missão. Enquanto tiver habilidades de rival desta agenda, você deve escolher quem é seu rival.',
-    songbird: 'Uma vez escolhida, só pode trocar esta agenda gastando dois avanços.',
+    songbird: null,
     departed: 'Um personagem só pode escolher esta agenda se estiver verdadeira e completamente morto. Você recebe sua habilidade de graça.',
     survivor: 'Uma vez escolhida, só pode trocar esta agenda gastando dois avanços. Você recebe sua habilidade de graça.',
     demon: 'Você pode gastar scrip como pontos de kit.',
-    cradle: 'Quando escolher esta agenda, escolha outro personagem como seu protegido. Pode trocar entre caçadas.'
+    cradle: 'Quando escolher esta agenda, escolha outro personagem como seu protegido. Pode trocar entre caçadas.',
+    // Marching Ever Onward
+    scholar: 'Ao entrar no palácio, limpe 1 estresse para cada Domínio que você tem certeza que o pecado possui, e sofra 1 estresse para cada Desconhecido. Esta agenda segue as mesmas regras de SOBREVIVENTE.',
+    hunter: 'Uma vez escolhida, só pode trocar esta agenda gastando dois avanços. Você recebe sua habilidade de graça.',
+    gambler: 'Seus números da sorte são 7, 8, 22, 50, 191. Quando você morrer, pode alocar livremente seu Scrip para seus colegas sobreviventes.'
   },
   // Ability descriptions
   abilities: {
@@ -1424,7 +1557,51 @@ var PT_CONTENT = {
     doll_pincushion: 'Exorcistas a curta distância podem sempre sofrer ferimentos ou aflições no seu lugar. Se o fizerem, ganham 1 XP, mas não mais que uma vez por missão.',
     doll_tagalong: 'Quando participar de trabalho em equipe, o líder sempre sofre 2 de estresse não-letal, mas sempre ganha +1D.',
     doll_daydream: 'No início de qualquer cena de conflito, pode apagar até 4 de estresse. Se o fizer, role no máximo 1d em ações pelo resto da cena.',
-    broken_ripped: 'Após a pressão aumentar durante uma missão, marque 1d3 caixas de pecado. Quando sofrer inundação de pecado, pode sempre escolher entre perder e manter o controle. <b>Aposente seu exorcista</b> após a missão atual. Enfrente execução ou exílio. <b>Não há mais nada para você aqui.</b>'
+    broken_ripped: 'Após a pressão aumentar durante uma missão, marque 1d3 caixas de pecado. Quando sofrer inundação de pecado, pode sempre escolher entre perder e manter o controle. <b>Aposente seu exorcista</b> após a missão atual. Enfrente execução ou exílio. <b>Não há mais nada para você aqui.</b>',
+    // Marching Ever Onward - Pathfinder
+    pathfinder_wanderlust: 'Duas vezes por descanso, pode ganhar +1D na sua primeira rolagem em um novo local que ainda não visitou durante a caçada. Não pode usar esta habilidade dentro do Palácio.',
+    pathfinder_cartographer: 'Você sempre sabe aproximadamente como voltar a lugares onde já esteve, como um mapa mental. +1D em rolagens envolvendo rastrear pessoas se tiver um mapa físico.',
+    pathfinder_local_customs: 'Você se mistura mais facilmente com civis locais, e eles confiam em você mais rápido. Autoridades também têm menos chance de te destacar.',
+    pathfinder_well_traveled: 'Você pode falar e ler toda língua humana normal, embora apenas com entendimento rudimentar.',
+    pathfinder_internal_compass: 'Uma vez por caçada, pode usar sua intuição natural para perguntar ao Mestre para onde ir em seguida com base nas pistas existentes. Ele deve dar um local ou direção, mas não precisa dar detalhes.',
+    // Marching Ever Onward - Scholar
+    scholar_lecture: 'Ganhe +1D em qualquer ação onde você se apresenta como conhecedor ou inteligente para humanos mundanos.',
+    scholar_scribe: 'Usar seu caderno e caneta padrão não custa PK.',
+    scholar_knowledge_is_power: 'Uma vez por descanso, pode usar sua PSIQUÊ para um teste que requer uma perícia diferente, sofrendo 1 de estresse.',
+    scholar_scathe: 'Duas vezes por descanso, quando testemunhar um aliado falhar uma rolagem de ação, pode (duramente) aconselhá-lo sobre por que falhou. Ele sofre 1 de estresse, mas suas rolagens usando essa perícia têm +1D até o fim da cena.',
+    scholar_study_hall: "Uma vez por caçada, pode gastar um dado de descanso para verificar com o Mestre se você tem as soluções corretas para Perguntas de Trauma igual ao valor do dado. O Mestre só pode responder 'sim' ou 'não'.",
+    // Marching Ever Onward - Hunter
+    hunter_fratricide: 'Quando invocar o Prego de Abel, pode destruir quem ou o que estiver usando como condutor para o pecado. Fazer isso custa um surto psíquico, mas marca cortes iguais à sua PSIQUÊ no talismã de execução do pecado. Pode invocar o Prego de Abel enquanto o Pecado está presente ao custo de estresse igual à Categoria do Pecado. Autoridade louva seu serviço.',
+    // Marching Ever Onward - Gambler
+    gambler_rigged_game: 'Uma vez por cena, recupere 1 Surto Psíquico quando falhar uma rolagem difícil.',
+    gambler_counting_cards: 'Quando o Mestre realiza uma Rolagem de Destino, ele deve rolar dados iguais à sua PSIQUÊ e pegar o maior resultado.',
+    gambler_all_in: 'Sempre que for alvo de uma Ameaça, pode recusar a assistência de aliados e rolar 1d6. Se rolar um 6, negue a Ameaça e limpe 2 de estresse.',
+    gambler_hedged_bet: 'Você ganha Pathos quando o dado de risco rola um 1.',
+    gambler_cash_out: 'Pode usar Agonia Divina para adicionar valor igual ao seu Pathos à sua rolagem final (por exemplo, se rolou um 2 e tem 2 de Pathos, Agonia Divina transformaria o resultado em 4) ao invés de conceder rolagens adicionais. Não pode resultar em um valor de dado acima de 6.',
+    // LEBA Association - Legion
+    legion_apes_together_strong: 'Se você for o líder em um trabalho em equipe, apenas você sofre as consequências de uma rolagem falha.',
+    legion_god_race: 'Você pode sofrer 1d3+1 de estresse para preparar um aliado sem gastar sua ação nesta rodada.',
+    legion_unionized_effort: 'No final de uma missão, CAIN deve pagar a todos os exorcistas um mínimo de 5 scrip independentemente de terem executado ou poupado o pecado. Se falharem em ambos, seu grupo ainda perde scrip pela limpeza.',
+    legion_no_one_left_behind: 'No final de uma sessão, você pode recontar como salvou a vida de um exorcista. Se fizer isso, conceda 1 xp a esse exorcista. Personagens só podem ganhar este xp uma vez se forem alvo desta habilidade múltiplas vezes.',
+    legion_the_helm: 'Quando você defende um exorcista aliado, pode rolar +1D e pegar o maior se seu alvo tiver 1 ou mais ferimentos.',
+    // LEBA Association - YesMan
+    yesman_pyramid_scheme: 'Quando você entra em uma sala cheia de pessoas, você imediatamente sabe quem está no controle da sala.',
+    yesman_middle_man: 'Uma vez por caçada, você pode atrasar a reação de um inimigo quando um aliado toma seu turno antes da rolagem. Se fizer isso, o Mestre faz a reação atrasada no seu turno após sua ação, além da reação no seu turno. Apenas uma reação pode ser atrasada por vez se esta habilidade for usada múltiplas vezes.',
+    yesman_pawn: 'Uma vez por cena, quando você prepara alguém, pode assumir todas as consequências que eles sofreriam.',
+    yesman_blank_seed: 'Escolha um aliado. Vocês podem se comunicar telepaticamente durante a caçada.',
+    yesman_loose_lips: 'Uma vez por caçada, você pode saber qual movimento de tensão o Mestre usou quando o talismã de tensão encheu.',
+    // LEBA Association - Human
+    human_first_rock: 'Uma vez por missão, sua primeira ação mundana em uma cena de conflito não é difícil, mas você sofre 1d3 de estresse se falhar.',
+    human_determination: 'Uma vez por descanso, quando você sofreria um ferimento, pode ganhar uma aflição aleatória ao invés (rolada pelo Mestre).',
+    human_pain_taker: 'Enquanto tiver 2 ou mais ferimentos, você reduz o estresse sofrido de forças externas em -1. Se limpar ferimentos neste estado, perde o uso desta habilidade até o final da missão.',
+    human_locked_in: 'Na primeira vez que cair à beira da morte na caçada, você ganha +1D em todas as ações nesta cena, e pode usar AGONIA DIVINA mesmo que já tenha sido usada antes na mesma cena.',
+    human_red_flash: 'Uma vez por sessão, quando o dado de risco rola um 6 naturalmente, você pode causar 1 corte em qualquer talismã de sua escolha.',
+    // LEBA Association - Ghost
+    ghost_unseen_presence: 'Quando você seria notado pela primeira vez em uma cena, você não pode ser reconhecido por uma ação.',
+    ghost_smooth_criminal: 'Se você não sofreu estresse ao final de uma cena de conflito, pode curar 1d3 de estresse de um aliado.',
+    ghost_somebody_i_used_to_know: '1/Missão, você pode dizer que conheceu um novo NPC há muito tempo. Eles lembram de você de forma negativa. Você ganha +1D em rolagens para reconectar com eles.',
+    ghost_body_dysphoria: 'Você pode sofrer 1d3 de pecado para ganhar o benefício de uma habilidade de marca de pecado de um aliado por uma cena. Seu corpo muta uma versão menor que desaparece quando a cena termina.',
+    ghost_invisible: 'Na primeira vez que você sofreria estresse em uma cena de conflito, pode reduzi-lo em -2 de estresse. Isso pode reduzir o estresse a 0.'
   },
   // Blasphemy descriptions
   blasphemyDescs: {
@@ -1444,7 +1621,18 @@ var PT_CONTENT = {
     track: 'Testando, um dois, um dois.',
     wire: 'São como veias, se você parar pra pensar. Você até consegue ouvir o batimento cardíaco.',
     mother: 'ELA NÃO SAI DA MINHA CABEÇA.',
-    gunpowder: 'Manifestar e comandar as armas de fogo de uma era passada, alimentadas por pólvora psíquica.'
+    gunpowder: 'Manifestar e comandar as armas de fogo de uma era passada, alimentadas por pólvora psíquica.',
+    urban: 'Manifeste a civilização e a transforme em arma contra seus inimigos.',
+    mythic: 'Torne os Deuses reais através de sua própria força de vontade e os adore.',
+    diplomacy: 'Reescreva os laços que a humanidade tanto preza para seu benefício.',
+    gravity: 'Todas as coisas estão inexoravelmente e inextricavelmente ligadas umas às outras.',
+    author: 'A caneta é mais poderosa que a espada. Sua escritura é lei.',
+    weaver: 'Você agarra as veias do mundo - vai dedilhá-las como uma harpa, ou arrancá-las?',
+    // LEBA Association
+    blood: 'Manipular as veias vermelhas, o doce néctar da vida eterna.',
+    rotate: 'Cavalgar rumo ao infinito em escalas inigualáveis e superar todas as expectativas.',
+    cuisine: 'Faça de qualquer coisa um delicioso banquete abrindo sua própria cozinha.',
+    egoism: 'Revele seu verdadeiro eu, desmascare seus males.'
   },
   // Blasphemy flavor texts
   flavors: {
@@ -1464,7 +1652,18 @@ var PT_CONTENT = {
     track: 'Fato: Os objetos amaldiçoados avulsos ou residuais criados por este poder são curados no arquivo 52 da Temerity. A coleção é bastante extensa e tem seguidores bastante fervorosos entre certas subseções da equipe da CAIN.',
     wire: 'Fato: FIO foi descoberto pela CAIN apenas nos últimos dois anos, mas a organização o compreende razoavelmente bem. Usuários podem desenvolver a habilidade de "ouvir" linhas telefônicas e sinais elétricos. Modificação corporal involuntária através deste poder é comum. Não se alarme. Retornará ao normal em 1-2 horas.',
     mother: "...esforços contínuos para conter Mother estão mostrando eficácia reduzida (tão alta quanto [CENSURADO] ano após ano). Portanto, o diretor do OS Alhambra faz uma recomendação firme para implementar doutrina 8 ([CENSURADO]) dadas as condições operacionais atuais.<br><br>07-04-1998<br><br>Pedido negado. A eficácia HOP dos ativos infectados de Mother supera seu risco potencial, apesar da antipatia crescente da Casa em relação a ela. Continuaremos a coletá-los e treiná-los quando possível, e despachar execução instantânea quando não for possível recuperar ativos com segurança.<br><br>Assim na terra, como no céu.<br><br>O menor primeiro, <b style=\"font-size:1.1em\">F. ESPADA</b><br><br>Diretor do Castle F. Espada",
-    gunpowder: "\"Com pontaria e pólvora suficientes, um homem já governou o mundo. Talvez você o faça mais uma vez.\"<br><br>Fato: Pólvora só pode manifestar armas de fogo concebidas pela primeira vez entre 25 de fevereiro de 1836 e 1 de julho de 1916. Nenhuma arma concebida antes ou depois dessas datas jamais foi manifestada com sucesso."
+    gunpowder: "\"Com pontaria e pólvora suficientes, um homem já governou o mundo. Talvez você o faça mais uma vez.\"<br><br>Fato: Pólvora só pode manifestar armas de fogo concebidas pela primeira vez entre 25 de fevereiro de 1836 e 1 de julho de 1916. Nenhuma arma concebida antes ou depois dessas datas jamais foi manifestada com sucesso.",
+    urban: "Usuários desta Blasfêmia são capazes de extrair do conceito psíquico coletivo da própria civilização, puxando pequenas estruturas do Mar Psíquico que desempenham propósitos específicos. Isso comumente se manifesta em infraestrutura mais moderna, mas também pode se manifestar em outras formas, como edifícios medievais de um mundo de fantasia ou um acampamento.",
+    mythic: "A humanidade em seu passado moldou por muito tempo o Mar Psíquico com sua crença em deuses e monstros. Nos tempos modernos, essas manifestações solidificadas se tornaram fracas o suficiente para serem invocadas por Exorcistas como armas. A CAIN não tolera a teoria de um Deus existindo em qualquer forma além de uma manifestação no Mar Psíquico. Por favor, relate quaisquer potenciais infiltrados Illuminati ao seu supervisor de filial imediatamente.",
+    diplomacy: "A humanidade tem uma presença dentro do Mar Psíquico de alguma forma vaga e distorcida. Usuários desta Blasfêmia são capazes de influenciar essas manifestações de humanidade para torcer suas contrapartes mundanas aos seus caprichos. O conhecimento da Blasfêmia DIPLOMACIA é confidencial para todo o corpo docente.",
+    gravity: "GRAVIDADE é um conceito que a TEMERITY tem tentado refinar por muitas décadas. Seu foco original era a manipulação literal de forças gravitacionais, que repetidamente se mostrou perigosa e destrutiva demais para aprovação - mesmo em comparação com ARDOR. No entanto, quando a filosofia mudou para usar o Exorcista como âncora psíquica, os resultados vieram rapidamente. As habilidades de GRAVIDADE dependem da atração natural entre todas as coisas - sua origem comum e destino comum - e puxar essas atrações para vários fins. Uso prático de GRAVIDADE para SEER ainda está sob investigação ativa.",
+    author: "AUTORA tecnicamente existe em células secretas e classificadas da SEER desde a fundação da organização. É usada por agentes encobertos ou infiltrados quando precisam remover figuras políticas ou públicas problemáticas enquanto atraem a menor quantidade de atenção para si mesmos. Sua recente introdução a Exorcistas padrão mostrou ótimos resultados. As habilidades de AUTORA derivam da palavra escrita, imbuindo palavras específicas com grande poder e permitindo a construção de armadilhas psíquicas elaboradas e variadas. USUÁRIOS DE AUTORA RESTRITOS DE ÁREAS DE ARMAZENAMENTO DE DOCUMENTOS SENSÍVEIS - CASTLE REF 128",
+    weaver: "TECELÃ é uma Blasfêmia antiga, fora de serviço desde meados de 1800 após uma série de catástrofes mal compreendidas relacionadas ao seu uso. No entanto, a TEMERITY está confiante de que estratégias de instrução e restrições do conjunto de habilidades recém-desenvolvidas prevenirão uma repetição do notório incidente GEHENNA. Só o tempo dirá. As habilidades de TECELÃ extraem do poder do próprio planeta, condensando as energias psíquicas latentes do ambiente, saturadas de anos de atividade humana desenfreada. Memo Interno da CASTLE - DR. Haley Marsh: Usuários de TECELÃ apresentam taxas marcadamente mais altas de morte do ego e frequentemente mudam rapidamente para falar na terceira pessoa. A teoria de que o planeta Terra está vivo merece mais pesquisa da TEMERITY, embora eles já tenham as mãos cheias.",
+    // LEBA Association
+    blood: 'Fato: Usuários de Sangue contam como todos os tipos de DOAÇÃO ao mesmo tempo, tornando-os úteis como doadores de sangue para seus colegas exorcistas.',
+    rotate: 'Fato: Usuários de Rotação ao redor do mundo sentiram um arrepio nas costas às 9:13 da manhã do dia 21 de dezembro de 2012. Nada mais aconteceu naquele dia.',
+    cuisine: 'Fato: Usuários de Culinária estão proibidos de vender qualquer produto alimentício que sua cozinha possa criar devido a violações do código de saúde.',
+    egoism: 'Dentro de cada coração estão as marcas de uma alma esperando para ser percebida. Assim na terra, como no céu.'
   },
   // Blasphemy passive descriptions
   passives: {
@@ -1517,7 +1716,18 @@ var PT_CONTENT = {
     locus: "Você se especializa em um objeto particular, mas tem aversão a outros. Escolha um objeto da lista de ressonâncias. É automaticamente ressonante com ele, mas role dois outros itens aleatoriamente. Tem antipatia com esses objetos e considera ações difíceis os estiver tocando, vestindo, ou no alcance deles.<br><br>Pode trocar este foco e re-rolar suas antipatias no início de cada caçada, ou quando descansar.<br><br><b>Ressonâncias</b> (Role 1d3, depois 1d6):<table class=\"virtue-rupture-table\"><tbody><tr><td class=\"rupture-duration\">11</td><td class=\"rupture-cost\">Telefones</td><td class=\"rupture-duration\">21</td><td class=\"rupture-cost\">Bolas</td><td class=\"rupture-duration\">31</td><td class=\"rupture-cost\">Cordas</td></tr><tr><td class=\"rupture-duration\">12</td><td class=\"rupture-cost\">Luzes</td><td class=\"rupture-duration\">22</td><td class=\"rupture-cost\">Armas de Fogo</td><td class=\"rupture-duration\">32</td><td class=\"rupture-cost\">Martelos</td></tr><tr><td class=\"rupture-duration\">13</td><td class=\"rupture-cost\">Facas</td><td class=\"rupture-duration\">23</td><td class=\"rupture-cost\">Canecas</td><td class=\"rupture-duration\">33</td><td class=\"rupture-cost\">Carros</td></tr><tr><td class=\"rupture-duration\">14</td><td class=\"rupture-cost\">Chaves</td><td class=\"rupture-duration\">24</td><td class=\"rupture-cost\">Computadores</td><td class=\"rupture-duration\">34</td><td class=\"rupture-cost\">Portas</td></tr><tr><td class=\"rupture-duration\">15</td><td class=\"rupture-cost\">Livros</td><td class=\"rupture-duration\">25</td><td class=\"rupture-cost\">Sapatos</td><td class=\"rupture-duration\">35</td><td class=\"rupture-cost\">Bolsas</td></tr><tr><td class=\"rupture-duration\">16</td><td class=\"rupture-cost\">Tacos de Beisebol</td><td class=\"rupture-duration\">26</td><td class=\"rupture-cost\">Ferramentas Elétricas</td><td class=\"rupture-duration\">36</td><td class=\"rupture-cost\">Luvas</td></tr></tbody></table>",
     mothers_love: "Sua cepa de Mother é menos detectável, e você parece mais humano. Duas vezes por caçada, pode ouvir os sussurros de Mother (pergunte ao GM o que Ela está dizendo) ao usar uma blasfêmia deste poder.<br><br>Se seguir o conselho ou direção dela, pode usar aquele poder sem gastar pulso psíquico, ganha +1D em rolagens de PSIQUE, +1 CAT, e todos os custos de pecado são reduzidos a 1 pela duração.<br><br>Porém, usar o poder se torna arriscado se não era, e o dado de risco se torna '1' automaticamente.",
     gunpowder_the_arsenal: "Você pode manifestar uma única arma de fogo mundana do período (concebida entre 25 de fev de 1836 e 1 de jul de 1916) em suas mãos, formada de pólvora psíquica. Não custa PK e se reforma mesmo se perdida, derrubada ou destruída por meios mundanos. Pode dispensá-la à vontade. Funciona como uma arma de fogo CAT 0 comum de seu tipo e nunca fica sem munição por meios mundanos, mas apenas você pode dispará-la - ela sempre emperra para qualquer outro.<br><br><b>DEADEYE</b>: Você dispara a arma manifestada usando seu foco psíquico - role PSIQUE para o tiro. Ao disparar a arma manifestada, você pode sofrer até metade do CAT [HALF_CAT:magnitude] de estresse não-letal. O tiro se torna sobrenatural, e para cada estresse sofrido desta forma, o CAT do tiro aumenta em +1 (socando pólvora e chumbo extras). Isso pode empurrar os efeitos de um tiro muito além do que a arma deveria ser capaz - os canos chamuscam e racham.",
-    fanning: "Você pode manifestar uma única arma de fogo mundana do período (concebida entre 25 de fev de 1836 e 1 de jul de 1916) em suas mãos, formada de pólvora psíquica. Não custa PK e se reforma mesmo se perdida, derrubada ou destruída por meios mundanos. Pode dispensá-la à vontade. Funciona como uma arma de fogo CAT 0 comum de seu tipo e nunca fica sem munição por meios mundanos, mas apenas você pode dispará-la - ela sempre emperra para qualquer outro.<br><br><b>FANNING</b>: Você dispara a arma manifestada usando seu foco psíquico - role PSIQUE para os tiros. Você abre mão da mira cuidadosa por um volume avassalador de fogo. Ao disparar, pode gastar 1 pulso psíquico adicional para disparar novamente no mesmo ou em outro alvo como parte da mesma ação (até CAT disparos extras, um para cada pulso gasto)."
+    fanning: "Você pode manifestar uma única arma de fogo mundana do período (concebida entre 25 de fev de 1836 e 1 de jul de 1916) em suas mãos, formada de pólvora psíquica. Não custa PK e se reforma mesmo se perdida, derrubada ou destruída por meios mundanos. Pode dispensá-la à vontade. Funciona como uma arma de fogo CAT 0 comum de seu tipo e nunca fica sem munição por meios mundanos, mas apenas você pode dispará-la - ela sempre emperra para qualquer outro.<br><br><b>FANNING</b>: Você dispara a arma manifestada usando seu foco psíquico - role PSIQUE para os tiros. Você abre mão da mira cuidadosa por um volume avassalador de fogo. Ao disparar, pode gastar 1 pulso psíquico adicional para disparar novamente no mesmo ou em outro alvo como parte da mesma ação (até CAT disparos extras, um para cada pulso gasto).",
+    urban_infrastructure_required: "Habilidades invocadas por URBANO requerem infraestrutura para se conectar. Suas habilidades por padrão não custam nenhum Pulso Psíquico, mas precisam ser vinculadas a uma USINA DE ENERGIA.<br><br><b>USINA DE ENERGIA</b><br>Até descansar, Invocar.<br>Você constrói uma aproximação psíquica de uma Usina de Energia em algum lugar dentro do alcance CAT gastando um Pulso Psíquico. Você pode encaixar um número de outras habilidades construídas adjacentes a ela igual a CAT. Você não pode construir uma USINA DE ENERGIA adjacente a outra USINA DE ENERGIA. Quando uma USINA DE ENERGIA é dissipada, todas as outras habilidades construídas adjacentes a ela também são dissipadas. Quaisquer habilidades vinculadas à USINA DE ENERGIA podem ignorar as limitações no número de habilidades Invocar.",
+    mythic_favor: "Você tem um recurso chamado FAVOR que pode utilizar e ganhar em várias circunstâncias. A quantidade máxima de FAVOR que pode ter é igual a 1/2 CAT. Se exceder seu FAVOR máximo, você é levado pelos Deuses por uma cena.",
+    diplomacy_charming: "Você passivamente emana uma sensação de charme sobre as pessoas ao seu redor. Humanos por padrão têm uma disposição positiva em relação a você.",
+    gravity_orbit: "Você sempre sabe a direção em que seus Exorcistas aliados estão. Se você for subitamente separada deles, pode escolher um único outro Exorcista para puxar junto consigo, se estiver disposto.",
+    author_calligraphy: "Quaisquer palavras que você inscreve fisicamente são impossíveis de apagar por meios mundanos, removíveis apenas destruindo o meio em que estão escritas. Certas palavras carregam peso especial e funcionam como Palavras de Poder. As regras para Palavras de Poder estão descritas abaixo.",
+    weaver_tangle: "Você pode melhorar o CAT combinado de qualquer um de seus poderes de Tapeçaria em +2 ao usá-los (até um máximo de CAT 7 para partes individuais). Porém, quando fizer isso, ganhe o Gancho Emaranhado.",
+    // LEBA Association
+    blood_hemophage: "Ao beber o sangue de outros, você é capaz de saber sua localização não importa quão longe você esteja deles, assim como ter telepatia menor. Porém, quanto mais velho o sangue, menos potente esta habilidade é.",
+    rotate_partners: "A estrada de um cowboy pode ser solitária. Você tem a habilidade de girar objetos esféricos, como bolas, pratos ou cilindros. Enquanto você foca em girar um objeto, ele ganha a habilidade sobrenatural de girar exponencialmente.<br><br>Para cada 5 segundos, ou cada rodada gasta em uma cena de conflito apenas focando em girar seu objeto, seu próximo poder de Rotação ganha +2 CAT (até máximo CAT 7) e ganha +1D (não contando para o limite de dados bônus). Porém, você ganha o Gancho Infinito após usar este impulso de poder. Você pode desligar esta rotação a qualquer momento sem enfrentar consequências.<br><br><b>Gancho Infinito:</b> Você ganha este gancho com sua passiva e ganha um tick adicional para cada dado ganho do impulso da passiva. Enquanto você tem este gancho, você acha difícil encontrar terreno estável enquanto seu corpo torce e gira infinitamente sobre si mesmo. Ganhe -1D em todas as ações que requerem precisão ou equilíbrio estável para cada tick no gancho. Quando encher, seu corpo se despedaça tentando voltar ao normal, sofrendo um ferimento e limpando de volta para 0+1 por ferimento sofrido deste gancho nesta caçada. Se você morreria deste gancho, você ao invés permanece vivo e remove o gancho mas se torna incapaz de agir além de fala até o fim da caçada ou até uma fonte externa acabar com seu sofrimento.",
+    cuisine_grand_chef: "Você tem uma afinidade sobrenatural com comida, concedendo os seguintes benefícios:<br>• Você ganha +1 PK.<br>• Quando você ou seus aliados descansam, você pode abrir sua cozinha para o mundo material. Isso permite gastar PK enquanto descansa para criar um grande prato psíquico para você e seus aliados devorarem, permitindo novos itens de descanso para escolher. Cada exorcista só pode selecionar cada item uma vez por descanso:<br><br>1 PK: A Bagunça - Recupere PK igual ao d3.<br>2 PK: Doce Desejo - Limpe pecado igual ao d3.<br>3 PK: Quebra-Corações - Limpe uma aflição em um resultado de 2 ou mais no d3.",
+    egoism_superego: "Você tem um forte controle sobre sua identidade:<br>• Você ganha +1 no limite de transbordo de pecado.<br>• Você pode reduzir pecado em 2 ao invés de dividir pela metade.<br>• Quando um aliado a curta distância de você tenta usar pecado ao invés de um pulso psíquico, você pode assumir o pecado resultante no lugar dele."
   },
   // Power descriptions
   powers: {
@@ -1609,7 +1819,67 @@ var PT_CONTENT = {
     gunpowder_powder_keg: "Você conjura pólvora negra bruta - de uma fina camada a um grande estoque - em até CAT [CAT:size] em volume, em um ponto que possa tocar ou em suas mãos. Comporta-se como pólvora real: pode ser derramada, empacotada, traçada como um rastilho, ou embalada em um recipiente. Inflama-se de qualquer faísca, chama, ou seus próprios tiros. Se explodida, a explosão cobre uma área CAT [CAT:area].<br><br>Ganhe ou conceda +1D quando você ou qualquer aliado agir para aproveitar este poder.",
     gunpowder_grapeshot: "Você arremessa ou dispara um explosivo manifestado - uma granada de cabo, uma bomba de pólvora negra, um aglomerado de chumbo grosso - explodindo em uma área de até metade do CAT [HALF_CAT:area]. Role PSIQUE para seus efeitos, gastando um pulso apenas em sucesso.<br>•  Tudo na área é afetado, incluindo aliados.<br>•  Ganhe +1D contra grupos aglomerados ou posições fortificadas.<br>•  O primeiro sucesso causa 2 cortes (ou 2 de estresse).",
     gunpowder_fog_of_war: "Você expele uma nuvem espessa e acre de fumaça de pólvora preenchendo uma área de até CAT [CAT:area]. A visão através dela é quase impossível para qualquer um exceto você - você sempre enxerga claramente através da sua própria fumaça.<br>•  Torna-se difícil mirar ou rastrear qualquer um dentro da fumaça pela visão.<br>•  Ganhe ou conceda +1D para se mover, se esconder ou reposicionar dentro dela.<br>•  Qualquer Pecado ou ser sobrenatural penetra parcialmente esta fumaça, mas enquanto agir com sentidos dependentes de visão dentro dela, suas reações causam -1 de estresse.<br>•  A fumaça sufoca os pulmões dos vivos: um humano ou exorcista que permanecer nela por uma cena inteira sofre 1 de estresse não-letal ao fim da cena.<br><br>Ela se dispersa se a cena terminar, se você a dispensar, ou se um forte vento ou efeito de vácuo a soprar. Não pode simplesmente ser atravessada a pé por um inimigo sem deixar a área.",
-    gunpowder_iron_curtain: "Você firma os pés e manifesta uma linha de fogo flutuante ao seu redor - rifles, revólveres e chumbo de canhão, carregada com cargas iguais a CAT+1 [CALC:CAT+1]. Enquanto mantiver sua posição (não sair do seu lugar), pode gastar cargas:<br>•  Gaste 1 carga: quando tomar uma ação para disparar (um tiro ou poder de tiro), a linha dispara junto com você no mesmo alvo. Se sua ação tiver pelo menos um sucesso, causa 2 cortes adicionais.<br>•  Gaste 1 carga: fogo de cobertura - quando você ou um aliado visível rolar o dado de risco, role-o duas vezes e você escolhe qual resultado manter.<br><br>A linha se dissipa quando suas cargas acabam, se você sair do seu lugar, quando a cena termina, ou ao descansar."
+    gunpowder_iron_curtain: "Você firma os pés e manifesta uma linha de fogo flutuante ao seu redor - rifles, revólveres e chumbo de canhão, carregada com cargas iguais a CAT+1 [CALC:CAT+1]. Enquanto mantiver sua posição (não sair do seu lugar), pode gastar cargas:<br>•  Gaste 1 carga: quando tomar uma ação para disparar (um tiro ou poder de tiro), a linha dispara junto com você no mesmo alvo. Se sua ação tiver pelo menos um sucesso, causa 2 cortes adicionais.<br>•  Gaste 1 carga: fogo de cobertura - quando você ou um aliado visível rolar o dado de risco, role-o duas vezes e você escolhe qual resultado manter.<br><br>A linha se dissipa quando suas cargas acabam, se você sair do seu lugar, quando a cena termina, ou ao descansar.",
+    // Urban powers
+    urban_hospital: "Uma vez por missão, você constrói uma aproximação psíquica de um hospital. Sempre que um aliado morreria ou entraria em Transbordo de Pecado dentro do alcance CAT do HOSPITAL, ele é selado no HOSPITAL sob cuidados urgentes e tem os efeitos do Transbordo de Pecado ou morte anulados, rejuntando-se aos outros Exorcistas após o próximo descanso ou quando a missão acabar.",
+    urban_news_station: "Você constrói uma aproximação psíquica de uma estação de notícias equipada com repórteres. Sempre que algo que você subconscientemente acredita ser 'importante' ocorre dentro do alcance CAT da ESTAÇÃO DE NOTÍCIAS, você pode fechar os olhos e assistir através de uma 'transmissão de notícias' com um resumo básico e 'repórteres' na cena gravando. A ESTAÇÃO DE NOTÍCIAS está sempre aberta e só é desativada se for dissipada.",
+    urban_military_base: "Você constrói uma aproximação psíquica de uma base militar armada até os dentes. Se você atacar algo dentro do Alcance CAT da BASE MILITAR, a base executa um ataque no mesmo alvo que causa 1d3 cortes no Talismã de Execução. Depois disso, a BASE MILITAR precisa se reagrupar e não pode ser ativada por ninguém até descansar ou ser dissipada. Múltiplas BASES MILITARES não podem ser anexadas a uma USINA DE ENERGIA.",
+    urban_apartment_complex: "Você constrói uma aproximação psíquica de um complexo de apartamentos. Uma vez por cena, você pode ativar o COMPLEXO DE APARTAMENTOS para mover quaisquer humanos e Exorcistas dispostos dentro do alcance CAT para dentro do COMPLEXO DE APARTAMENTOS, agindo como uma realidade de bolso dentro do Mar Psíquico que leva uma cena para sair sem ser dissipada. Humanos não lembrarão de se mudar para o COMPLEXO DE APARTAMENTOS ou qualquer coisa que aconteceu lá dentro. O COMPLEXO DE APARTAMENTOS pode ser dissipado a qualquer momento pelo usuário de URBANO.",
+    urban_commercial_district: "Você constrói uma aproximação psíquica de uma série de lojas diferentes. Uma vez por cena você pode gastar um Ponto de Kit para 'comprar' um item dentro do alcance CAT do DISTRITO COMERCIAL e tê-lo teleportado para suas mãos. Isso funciona em qualquer item contanto que você saiba que está dentro do Alcance CAT do DISTRITO COMERCIAL e possa dar uma breve descrição dele, incluindo itens que outra pessoa está segurando.",
+    // Mythic powers
+    mythic_prophecy: "Quando o Admin rolar dados de risco, você pode gastar 1 FAVOR para prever o resultado. O Admin anuncia qual número ele rolou antes de os jogadores tomarem qualquer ação.",
+    mythic_offering: "Você pode gastar 1 Pulso Psíquico para ofertar algo aos Deuses. Role PSIQUE. Em sucesso, ganhe 1 FAVOR. Você pode descrever o que está oferecendo.",
+    mythic_divine_intervention: "Gaste 2 FAVOR para pedir ajuda divina. Descreva o milagre que deseja. O Admin determina o resultado - quanto mais grandioso o pedido, mais provável haver consequências inesperadas.",
+    mythic_blessing: "Gaste 1 FAVOR para abençoar um aliado. Até descansar, esse aliado ganha +1D em um tipo específico de ação que você declara.",
+    mythic_smite: "Gaste 1 FAVOR e role PSIQUE para invocar ira divina contra um alvo. Em sucesso, cause dano aumentado baseado em quão 'pecador' o alvo é aos olhos dos deuses que você adora.",
+    // Diplomacy powers
+    diplomacy_infighting: "Você pode gastar 1 Pulso Psíquico para incitar rixa entre um grupo de humanos ou entre traços de um Pecado. Role PSIQUE. Em sucesso, eles brigam entre si por uma cena ou até serem interrompidos.",
+    diplomacy_parley: "Você pode gastar 1 Pulso Psíquico para forçar uma pausa nas hostilidades. Todos na área devem parar de lutar por um breve momento enquanto você fala. Se qualquer um atacar durante a pausa, sofre 1d3 de estresse.",
+    diplomacy_silver_tongue: "Ganhe +1D em todas as rolagens para persuadir, barganhar ou manipular enquanto este poder estiver ativo. Dura até descansar.",
+    diplomacy_treaty: "Você pode estabelecer um tratado entre duas partes. Se qualquer uma das partes quebrar o tratado, sofre consequências psíquicas severas determinadas pelo CAT.",
+    diplomacy_embassy: "Você pode declarar uma área como 'território neutro'. Enquanto estiverem nesta área, todas as partes têm suas ações hostis dificultadas.",
+    // Gravity powers
+    gravity_star: "Uma vez por cena, você pode se cobrir com uma camada brilhante de energia, forçadamente se tornando o centro das atenções. Quaisquer entidades com as quais você está atualmente em conflito agora te consideram o alvo principal, e devem Ameaçá-la com sua próxima reação possível. Rolagens de aliados para interceptar esta Ameaça ganham +1D.",
+    gravity_comet: "Você pode colocar uma marca invisível em quaisquer humanos ou objetos que tocar, até um total igual ao seu CAT. Colocar uma nova marca remove a mais antiga se você estiver no máximo. Isso não custa um Pulso Psíquico.<br><br>Você pode então atrair um objeto ou entidade marcada para você gastando um pulso psíquico; ele aparecerá em seu caminho naturalmente, como por coincidência, antes do fim da cena. Pessoas afetadas sempre terão uma razão pela qual acreditam ter vindo por aqui, mesmo que fosse de outra forma irracional.",
+    gravity_moon: "Você pode tocar um objeto e imbuí-lo com uma atração estranha. Humanos que o veem são atraídos e inordinadamente fascinados por ele, embora não saibam por quê. Entidades sobrenaturais podem ser atraídas a ele como uma espécie de farol psíquico. Este fascínio desaparece com o efeito no fim da cena.<br><br>Este poder pode facilmente afetar os parâmetros de rolagens, como dificuldade e risco.",
+    gravity_meteor: "Você alcança os céus, puxando um pequeno fragmento de rocha astral em direção ao seu alvo. Quando você usa este poder, role PSIQUE gastando um Pulso Psíquico apenas em sucesso.<br>O meteoro leva cerca de um minuto para chegar; reduza este tempo em 10 segundos por CAT. Em uma cena de conflito, o meteoro leva seis turnos de jogador para chegar (ele chega no fim do turno agendado); reduza este tempo em um turno por CAT.<br><br>O meteoro pode perfurar todos os materiais mundanos no caminho de seu alvo, mas causa dano mínimo ao ambiente no impacto. Inflija um corte adicional no talismã se o meteoro interromper o alvo enquanto ele estiver fazendo uma ameaça ou criando uma complicação.",
+    gravity_atmosphere: "Você conjura um círculo invisível, de até área CAT+1, no qual humanos perdidos não podem entrar. A menos que tenham um motivo importante para entrar nesta área - como procurar seu Exorcista - eles se verão distraidamente contornando o raio, e não prestarão atenção ao que estiver dentro. Entidades sobrenaturais e Exorcistas não são afetados. Se você descansar dentro desta área, o efeito dura até depois de descansar.",
+    // Author powers
+    author_storyteller: "Uma vez por descanso, você pode falar uma Palavra de Poder para invocar seu efeito de Leitura. Fazer isso adiciona +2 ao seu CAT, mas toda comunicação se torna difícil até o fim da cena. Além disso, ganhe a seguinte Palavra de Poder.<br><br><b>MENTIRA</b><br>• Toque: Quaisquer humanos com quem a vítima falar pela próxima hora inerentemente não acreditarão em nada que a vítima disser.<br>• Leitura: Todos os humanos em área CAT se tornam imediatamente confiantes em você e seu grupo. Não funciona em ninguém que esteja ativamente hostil a você, e expira no fim da cena.",
+    author_deus_ex_machina: "Caligrafia agora se aplica a palavras que você digita ou escreve digitalmente, e você pode adicionalmente criar Palavras de Poder por meios digitais. Apenas a Palavra de Poder original que você escreveu contém poder - capturas de tela ou e-mails não preservam o efeito. Além disso, ganhe a seguinte Palavra de Poder.<br><br><b>VERDADE</b><br>• Toque: A vítima se torna incapaz de mentir por CAT minutos.<br>• Leitura: Todos os humanos em área CAT são capazes de ver entidades e habilidades sobrenaturais por exatamente um minuto.",
+    author_immersion: "Ganhe as seguintes Palavras de Poder.<br><br><b>VISÃO</b><br>• Toque: A vítima se torna brevemente altamente visível para Exorcistas a até distância CAT, mesmo através de superfícies.<br>• Leitura: As próximas CAT entidades que lerem ou ouvirem isso perdem sua habilidade de compreender linguagem escrita até esta Palavra se dissipar no descanso.<br><br><b>SOM</b><br>• Toque: Um barulho alto e distinto emana da posição da vítima.<br>• Leitura: Você pode ouvir perfeitamente tudo em área CAT como se estivesse ao seu lado até o fim da cena ou você desativar a habilidade.",
+    author_conflict: "Ganhe as seguintes Palavras de Poder.<br><br><b>FOGO</b><br>• Toque: Queima severamente o membro que tocou a Palavra. Requer uma rolagem de PSIQUE e reembolsa o Pulso Psíquico em falha.<br>• Leitura: Objetos inflamáveis em até área CAT pegam fogo.<br><br><b>NEVASCA</b><br>• Toque: O membro da vítima que tocou a Palavra é congelado.<br>• Leitura: Toda água líquida em até área CAT congela instantaneamente (excluindo a de criaturas vivas).<br><br><b>TROVÃO</b><br>• Toque: A vítima é atingida com um choque não-letal mas severo. Isso não pode ferir fisicamente alguém, mas pode afetar sua cognição ou causar paralisia temporária.<br>• Leitura: Todos os eletrônicos em até área CAT entram em curto-circuito.",
+    author_chapter: "Ganhe as seguintes Palavras de Poder.<br><br><b>PERDER</b><br>• Toque: A vítima esquece sua tarefa ou objetivo atual até ser lembrada.<br>• Leitura: O leitor de alguma forma perde ou extrava CAT itens pessoais e não pode encontrá-los sem ajuda.<br><br><b>ENCONTRAR</b><br>• Toque: A vítima deixa para trás uma sombra psíquica de sua aparência.<br>• Leitura: Todas as entidades em área CAT deixam para trás pegadas psíquicas até você descansar.",
+    // Weaver powers
+    weaver_warp: "Você pode cavalgar a corrente das linhas ley, puxando-a junto com velocidade incrível. Você pode quase instantaneamente se mover para qualquer local no chão a alcance CAT - isso não é teleporte, e requer um caminho desobstruído até seu destino. Você também pode trazer CAT entidades adjacentes junto consigo desde que estejam dispostas.",
+    weaver_trim: "Uma vez por descanso, você pode romper uma das linhas ley conectadas ao Pecado local inteiramente, temporariamente cortando seu poder. Ao chamar um de seus Domínios, você pode negar aquele Domínio e quaisquer de seus efeitos (como aflições ou criaturas) até o fim da cena. Se realizado em uma cena de conflito, dura uma rodada. Você deve chamar um Domínio que o Pecado realmente tenha; se você alegar um Domínio incorreto, você gasta o Pulso Psíquico sem benefício.",
+    weaver_weft: "Você pode puxar e cutucar as linhas ley sob o solo, causando respostas diretas da terra. Você pode escolher de qualquer um dos seguintes efeitos:<br><br>• Criar um poço de tamanho CAT-1 que desce CAT jardas.<br>• Criar uma depressão de dois metros na terra em área CAT.<br>• Criar uma colina de dois metros de altura em área CAT.<br>• Criar um pilar de tamanho CAT-1 que sobe CAT jardas.<br><br>Estas alterações são súbitas, mas não violentas. Este poder pode afetar os parâmetros de rolagens, como dificuldade e risco.",
+    weaver_needle: "Você concentra a energia das linhas ley em um único ponto cegante. Role PSIQUE para empalar seu alvo com uma estaca de energia psíquica concentrada que aparece de qualquer superfície ao alcance; ganhe +1D se seu alvo for de tamanho CAT ou menor. Se você rolar pelo menos um 6, a agulha permanece temporariamente, segurando o alvo no lugar por um turno.<br><br>Se esta habilidade ativar a erupção de Emaranhado, ela inflige cortes adicionais iguais a PSIQUE no alvo, mas o contragolpe é muito aumentado; você e quaisquer Exorcistas aliados na área ganham um ferimento sem limpar seu estresse.",
+    weaver_dye: "Você manipula gentilmente a polaridade das linhas ley ao seu redor, induzindo a vida a diferentes tonalidades. Escolha um dos seguintes efeitos para até área CAT:<br><br>• Vida vegetal cresce em uma taxa incrivelmente aumentada, e você pode levemente alterar o curso de seu crescimento.<br>• Água começa a brotar rapidamente do solo, mesmo se a área for feita de materiais impermeáveis.<br>• O próprio terreno começa a brilhar intensamente, até a intensidade de um holofote.<br>• Animais na área se tornam amigáveis a você e vão defendê-la de atacantes enquanto você estiver na área.<br><br>Este poder pode afetar os parâmetros de rolagens, como dificuldade e risco.",
+    // LEBA Association - Blood
+    blood_cavalry: "Você aumenta sua velocidade transformando seus vasos sanguíneos em armas para resgatar seus próprios semelhantes. Mire em um exorcista aliado ao alcance e role PSIQUE, gastando um pulso psíquico apenas em sucesso. Ganhe +1D para cada resposta sim às seguintes perguntas:<br>• Você não está sob pressão?<br>• Seu alvo está além de curta distância?<br>• O destino está lotado?<br><br>Em sucesso, você avança em linha reta diretamente em direção ao seu alvo, causando destruição considerável em seu caminho. Dependendo de cada resposta, o resultado pode ser alterado, mas de forma alguma seu alvo pode ser ferido por esta habilidade.",
+    blood_bloodbag: "Mire em um humano voluntário ou cadáver, seu corpo é drenado e reanimado por sangue e colocado sob seu comando. Pela duração, eles se tornam um familiar com um talismã igual a CAT e o seguem até curta distância, são incapazes de pensar independentemente sem suas ordens, e não podem usar perícias complexas ou sociais, mas perícias físicas ainda são usáveis. Suas capacidades gerais são iguais a ½ CAT.<br><br>A qualquer momento você pode dissolvê-los de volta em uma poça de sangue, permitindo que você ou um aliado ao alcance limpe 1d3+1 de estresse. Isso destrói o cadáver no processo.",
+    blood_coagulate: "Você manipula o sangue de um alvo ao alcance, enquanto seu sangue engrossa e desacelera ou acelera suas funções motoras à sua vontade.<br><br>Conceda a eles um talismã de 3 cortes enquanto seu próprio corpo está agora sob seu controle. Enquanto eles têm este talismã, você pode cortá-lo para conceder +1D a um aliado que aproveitar este efeito, uma vez por rolagem de ação.<br><br>Quando o talismã encher, seu corpo retorna ao normal, encerrando o efeito antecipadamente. Se você usar novamente em um novo alvo, remove o talismã anterior.",
+    blood_bubble: "Ao manipular suas próprias veias você é capaz de criar uma bolha de sangue de tamanho CAT. Elas pairam no lugar até curta distância de você, e você é capaz de controlar seu movimento à vontade.<br><br>• Ao fazer contato com qualquer sólido, uma bolha estoura em um respingo de sangue, potencialmente cegando aqueles próximos a ela.<br>• Se você sofrer um ferimento, a dor faz você perder a bolha enquanto ela estoura prematuramente.<br><br>Ganhe ou conceda +1D quando você ou qualquer aliado agir para aproveitar este poder.",
+    blood_hardened: "Ao manipular sangue de formas criativas e endurecê-lo, você é capaz de criar um tamanho coletivo de CAT estruturas feitas de sangue endurecido ao alcance. Elas devem ser formadas a partir de uma superfície estável já existente.<br><br>Suas estruturas podem:<br>• Suportar dano coletivo igual ao seu CAT+2.<br>• Suportar até 10 toneladas por CAT em peso.<br>• Flutuar se apropriadamente suportadas por cabos ou outro suporte.<br><br>Porém, se suas estruturas tiverem qualquer contato com água, elas se tornam instáveis e desmoronam de volta em líquido. Este poder pode facilmente afetar parâmetros de rolagens, como dificuldade ou risco.",
+    // LEBA Association - Rotate
+    rotate_tilt: "Você pode escolher um único ser vivo ou objeto de até tamanho CAT que você pode tocar. Role PSIQUE se o alvo for relutante, gastando um pulso psíquico apenas em sucesso. Você muda o ângulo do alvo, mudando sua gravidade por alguns momentos.<br><br>Isso pode distrair ou desorientar alvos relutantes e causar dano, infligindo cortes iguais a sucessos neste poder. Você pode ganhar ou conceder +1D quando você ou qualquer aliado agir para aproveitar este poder.",
+    rotate_spin: "Ao acumular energia rotacional você faz um número CAT de objetos soltos girar incontrolavelmente em alta velocidade no ar. Cada alvo permanece pairando no ar e pode ser pisado com segurança por você ou seus exorcistas aliados, ganhando seu momento.<br><br>A qualquer momento, você ou seus aliados podem destruir um objeto girando para os seguintes efeitos:<br>• Ser lançado voando até distância CAT+2.<br>• Beneficiar da ação de defender com o objeto girando protegendo você.<br><br>Este poder pode facilmente afetar parâmetros de rolagens, como dificuldade ou risco.",
+    rotate_twist: "Ao jogar seu item Parceiro em um ser vivo, você é capaz de torcer a rotação de uma quantidade CAT de membros em direções perturbadoras. Role PSIQUE se o alvo for relutante, gastando um pulso apenas em sucesso.<br><br>A torção não é prejudicial ao alvo mas pode ser desconfortável ou perturbar suas ações enquanto ativa se eles não estiverem preparados. Você pode ganhar ou conceder +1D quando você ou um aliado agir para aproveitar este poder. Este poder pode afetar os parâmetros de rolagens, como dificuldade ou riscos.",
+    rotate_roulette: "Este poder não consome um pulso psíquico. Você deve estar empunhando uma arma de serviço que funcione com a passiva Parceiros para este poder estar ativo (formato de bola, prato ou cilindro).<br><br>Este poder ativa ao gastar um pulso psíquico para aprimorar sua arma de serviço. Você imbui energia rotacional nela para aumentar seu poder, adicione sua PSIQUE à sua rolagem ao invés de ganhar +1D. Você pode fazer isso um número de vezes igual a CAT-2 (mín. 1) por descanso, seu dado bônus de Parceiros é usado naquele momento.<br><br>Porém, para cada resultado '1' em rolagens afetadas por este poder, você sofre 1 de estresse que não pode ser negado ou reduzido.",
+    rotate_loop: "Este poder não consome um pulso psíquico. Você cria um loop de feedback preciso de saída constante. Enquanto você tem esta saída ativa, todas as criaturas sobrenaturais a distância CAT de você são capazes de sentir sua presença, semelhante a uma bola de discoteca de energia psíquica.<br><br>Enquanto este poder está ativo, você pode durante qualquer rolagem na mesa, fazer aquela rolagem 'ciclar', dando +1D. Se uma rolagem cíclica acertar triplo de qualquer número, você ganha os seguintes efeitos pelo resto da rodada, ou pelos próximos 9 minutos e 16 segundos:<br>• Você pode ganhar +1D em qualquer rolagem de graça contando como gastar um pulso psíquico.<br>• Regenere 1 pulso psíquico após usar um poder que gastou um.",
+    // LEBA Association - Cuisine
+    cuisine_seasoning: "Através do incrível conjunto de temperos da sua cozinha, você é capaz de alterar a mente de objetos ou humanos ao alcance literal ou metaforicamente. Você pode aplicar um número de efeitos até 1/2 CAT para afetar até um número CAT de alvos:<br><br>• Picante: Alvos ficam muito quentes, picantes ou irritados a um grau anormal.<br>• Salgado: Alvos ficam salgados, cansados ou muito suados e escorregadios.<br>• Doce: Alvos ficam borbulhantes, distraídos ou anormalmente doces e macios.<br>• Defumado: Alvos ficam crocantes, ásperos ou muito saborosos e pegajosos.<br><br>Ganhe ou conceda +1D quando você ou qualquer aliado aproveitar este poder.",
+    cuisine_storage: "Este poder não gasta um pulso psíquico. Sua cozinha possui uma quantidade quase infinita de comida e suprimentos de sua escolha. Você pode gastar 1 PK para puxar qualquer órgão mundano, carne, produto ou ingrediente de sua escolha.<br><br>Após gastar 3+ PK com este poder, você sofre 1 de estresse não-letal cada vez que puxar um item deste poder pois o item é muito 'fresco' e 'recente', a natureza de ambos fica a critério do Mestre. Esta penalidade dura até você descansar.",
+    cuisine_cutlery: "Você desencadeia um conjunto de cortes psíquicos em uma área curta centrada em você ao abrir sua cozinha momentaneamente na realidade. Estes cortes são indiscriminados, não podem ser bloqueados por meios mundanos como paredes, portas ou obstruções, e são parcialmente invisíveis aos alvos. Role PSIQUE para seus efeitos, gastando um pulso psíquico apenas em sucesso.<br><br>Para cada sucesso você pode controlar seus cortes mudando as seguintes configurações:<br>• Aumentar ou diminuir a área de corte.<br>• Discriminar os alvos afetados.<br>• Tornar os cortes visíveis ou totalmente invisíveis.",
+    cuisine_fridge: "Você imbui uma matéria viva com energia psíquica para congelá-la instantaneamente e parar sua condição de piorar.<br><br>Enquanto congelado, seu alvo é incapaz de sofrer ferimentos ou estresse, mas não pode se mover por suas próprias ações. Adicionalmente, qualquer gancho, aflições ou efeito ativo neles são pausados pela duração.<br><br>Esta habilidade dura até ½ CAT cenas ou se usada durante uma cena de conflito, dura CAT rodadas. Esta habilidade pode acabar prematuramente se o alvo for aquecido por uma fonte de calor. Este poder pode afetar os parâmetros de rolagens como dificuldade ou risco.",
+    cuisine_oven: "Você abre seu forno para cozinhar lentamente uma pessoa ou objeto por um período prolongado. Quando você usa este poder, selecione até CAT alvos ao alcance e role PSIQUE, gastando um pulso psíquico apenas em sucesso. Ao ter sucesso, os seguintes efeitos se aplicam ao alvo e seus arredores até o fim da cena, ou até acabar prematuramente:<br><br>• Enquanto este poder está ativo, a temperatura do alvo constantemente sobe rápida mas firmemente, fazendo-o pegar fogo e qualquer tecido vivo começar a derreter.<br>• Calor intenso emana do alvo, fazendo os arredores pegarem fogo e cozinhar tecidos vivos. Este fogo não pode se espalhar além de curta distância deles.<br>• Em cenas de conflito, o alvo sofre 1 corte em seu talismã de execução no início de cada rodada devido à exposição prolongada ao seu forno.<br><br>Isso pode afetar os parâmetros de rolagens, como dificuldade e risco. Quando o efeito expirar, o corpo do alvo permanece em chamas ou fervendo até o fim da próxima cena.",
+    // LEBA Association - Egoism
+    egoism_swallow: "Seu senso de identidade permite engolir as tristezas e dores de outros para limpá-los. Selecione um exorcista ou humano ao alcance, junto com um de seus ganchos, aflições ou ferimentos. Você pode removê-los e concedê-los ao seu exorcista para assumir o fardo do outro. Ganchos são assumidos um corte por vez. Aflição ou ferimento assumido não conta para perguntas de xp de fim de sessão.<br><br>Se você já tiver a mesma aflição, eles ao invés causam 1d3+1 de pecado em você. Este poder pode preencher um gancho completamente, ou trazer morte instantânea se você estiver à beira da morte e assumir outro ferimento.",
+    egoism_idle: "Você, junto com um grupo de tamanho CAT de outros exorcistas ou humanos, tem sua alma colocada em um estado ocioso de tranquilidade. Pelo resto da cena, qualquer afetado ganha os seguintes benefícios:<br><br>• Você é resistente a substâncias que alteram a mente como álcool, café, drogas ou itens ocultos.<br>• Suas mentes são limpas de qualquer manipulação mental, como ilusões ou outras manipulações da alma.<br>• Seus sentidos se tornam mais lentos, e torna todas as atividades físicas difíceis por padrão enquanto este poder está ativo.<br><br>Este poder pode facilmente afetar parâmetros de rolagens como dificuldade e risco.",
+    egoism_entangle: "Você se emaranha com os pesares do mundo, ancorando e manifestando sua própria alma no reino mortal a curta distância de você do nada. Ganhe ou conceda +1D quando você ou qualquer aliado aproveitar este poder.<br><br>• Sua alma compartilha suas perícias e suas capacidades gerais mas não suas roupas ou quaisquer itens em sua pessoa.<br>• Você pode controlar sua alma como se fosse uma extensão de si mesmo, como um membro. Ela pode ser intangível ou não à vontade.<br>• Você sofre qualquer estresse que sua alma sofreria de ações feitas através dela.",
+    egoism_distort: "Ao tocar sua alma, o corpo do seu alvo se distorce para se conformar com seus verdadeiros sentimentos. Você determina a forma que esta distorção assume com os seguintes efeitos:<br><br>• O corpo deles pode inchar, torcer ou contorcer em ângulos não-naturais para comprometer seu movimento.<br>• Suas capacidades físicas se tornam difíceis ou até impossíveis de fazer.<br><br>Uma vez que o efeito termina, o corpo deles volta ao normal. O alvo lembra de tudo que aconteceu enquanto estava distorcido. Este poder pode facilmente afetar o risco e dificuldade de rolagens.",
+    egoism_peace: "Através de seu forte carisma, você emana uma aura de paz interior para quaisquer humanos em uma área CAT, parando toda intenção violenta de brotar. Faça as seguintes perguntas ao seu Mestre, ganhando +1D para cada resposta sim:<br>• Os alvos te odeiam pessoalmente?<br>• Eles estão armados, ou segurando uma ferramenta perigosa?<br>• Você está tentando se comunicar com eles pacificamente?<br><br>Então, role PSIQUE. Em sucesso, os alvos afetados se tornam neutros à sua presença e do seu grupo ao invés de hostis, e se neutros se tornam amigáveis. Ganhe ou conceda +1D quando você ou qualquer aliado aproveitar este poder."
   },
   // Virtue translations (GFF-1)
   virtues: {
@@ -1620,7 +1890,8 @@ var PT_CONTENT = {
       fortitude: 'Fortitude',
       hope: 'Esperança',
       prudence: 'Prudência',
-      order: 'Ordem'
+      order: 'Ordem',
+      cleanliness: 'Limpeza'
     },
     titles: {
       justice: 'O Carrasco',
@@ -1629,7 +1900,8 @@ var PT_CONTENT = {
       fortitude: 'O Desastre',
       hope: 'O Sonhador',
       prudence: 'O Negociador',
-      order: 'O Comandante'
+      order: 'O Comandante',
+      cleanliness: 'A Arquivista'
     },
     compendiumDescs: {
       justice: "Justiça é geralmente considerado o exorcista mais poderoso no arsenal atual de CAIN, um solitário de poucas palavras com extrema liberdade de ação e permissão incomum para vagar. Isso deve-se ao fato de que a alta blasfêmia de Justiça, Lei, não permite que ele desobedeça ordens de um superior de forma alguma, tornando-o o cão de ataque perfeito. Ele tem o maior número de execuções registradas na história de CAIN e um histórico de combate quase impecável, sendo objeto de temor entre os soldados comuns.<br><br>Em sua maioria, ele parece considerar sua posição como uma realidade aceita e passaram a incorporar seu papel como carrasco de CAIN. Ele é extremamente eficiente e a natureza avassaladora de suas habilidades lhes permite trivializar até mesmo os oponentes mais tenebrosos.<br><br><em class=\"virtue-desc-note\">É comumente teorizado que Temerity possui uma subdivisão especial inteiramente dedicada à contingência de que Justiça consiga contornar sua própria blasfêmia.</em>",
@@ -1638,7 +1910,8 @@ var PT_CONTENT = {
       fortitude: "Considerada uma 'arma de eliminação de nível de calamidade reserva' e uma das poucas exorcistas na história consideradas próximas de ultrapassar a categoria 7 em suas habilidades, Fortitude é mantida em um rigoroso ciclo de congelamento. Uma lutadora extremamente volátil e potente, sua capacidade de executar pecados só é comparável à sua sede por destruição completa e desenfreada. Liberar Fortitude em uma situação é muitas vezes o equivalente a tentar quebrar uma noz com uma prensa hidráulica industrial.<br><br>A alta blasfêmia da Fortitude, Força, permite-lhe habilidades físicas incomparáveis, mas sem o treinamento adequado, seus usuários podem literalmente se despedaçar. Seu notável desprezo pela vida humana e misantropia desenfreada a tornou relativamente impopular nos altos escalões da organização e eles têm relativamente poucos admiradores, mesmo entre os exorcistas juniores mais pessimistas.<br><br><em style=\"color:var(--vc)\">Existe uma divisão especial na divisão de armas da CASTLE, chamada de \"Divisão de Quebra\", dedicada a \"temperar\" armas para uso da Fortitude, pois sem materiais adequados elas não resistem às forças físicas envolvidas. A equipe de pesquisa especializada sente grande prazer em seu trabalho e suas descobertas avançaram muito o armamento da CAIN.</em>",
       hope: "Esperança está entre os ativos mais valiosos que CAIN possui. Normalmente abençoados com fortes habilidades precognitivas e telepáticas, sua capacidade de suportar a alta blasfêmia do Véu tem sido um pilar da atividade da organização por centenas de anos e permitiu que CAIN operasse em segredo mesmo nas circunstâncias mais extremas.<br><br>Ao contrário da maioria das outras blasfêmias, o poder total do Véu pode ser imbuído e transmitido a outros portadores, escolhidos de um grupo de exorcistas de extrema força mental e cognitiva. Há uma longa linhagem de Esperanças (o atual é o quadragésimo primeiro) desde a criação da organização, e eles geralmente são aposentados* quando o estresse do Véu se torna insuportável.<br><br>Devido ao seu importante papel na organização, Esperança nunca tem permissão para deixar a estação orbital SERAPH, exceto em circunstâncias extremas ou uma vez por ano, no Natal.<br><br><span class=\"virtue-food-note\">*Consulte a nota doutrinária C0447 do CASTLE</span><br><br><em style=\"color:var(--vc)\">Quando usado em sua capacidade máxima, o Véu pode apagar e reescrever a memória de milhares, senão centenas de milhares de pessoas, por vários dias seguidos. Esse uso normalmente mata Esperança.</em>",
       prudence: "Portador da poderosa blasfêmia Aperto, Prudência é uma Virtude amigável e carismática com uma agenda muito ocupada. Além de ser um combatente poderoso, Prudência desempenha um papel vital tanto na estrutura interna da CAIN quanto em seu relacionamento com governos mundanos, devido à sua habilidade única de fazer cumprir acordos. Ele possui múltiplas identidades de cobertura, fala vários idiomas e geralmente tem uma agenda de congelamento muito leve, já que a CAIN o envia para missões de longo alcance e longa duração. Quando aparece em público, ela está sempre excepcionalmente bem vestido(a) e eloquente.<br><br>Como emissário(a) da CAIN junto aos governos humanos, sua identidade tem sido objeto de especulação entre teóricos da conspiração online, algo que a organização tentou veementemente suprimir.<br><br><em style=\"color:var(--vc)\">Não está claro por que o \"APERTO\" funciona com base em brincadeiras infantis, mas há rumores de que esteja relacionado a um desejo inerente aos seres humanos de brincar, a teoria do \"homo ludens\".</em>",
-      order: "Existem aqueles que inspiram lealdade, e aqueles que a exigem. Ordem é o segundo tipo. Sua blasfêmia não persuade — ela compele. Aqueles que ouvem a voz de Ordem encontram seus corpos se movendo antes que suas mentes possam objetar.<br><br>A ética de Direcionar tem sido debatida nos altos escalões da CAIN por décadas. Alguns argumentam que ela retira completamente o livre arbítrio; outros rebatem que na guerra contra o pecado, hesitação é morte. Ordem já foi profundamente perturbado pelas implicações filosóficas. Não mais.<br><br>O soldado gentil e atencioso que se desculpava após cada comando e buscava consentimento antes das missões morreu em 63. Ele prefere ser um tirano do que comparecer a mais um funeral.<br><br><em class=\"virtue-desc-note\">\"1963, conhecido como o ano de <span class=\"redacted-6\"></span>, causou uma estimativa de <span class=\"redacted-4\"></span> mortes de exorcistas pelo globo. Essa traição jamais será esquecida, especialmente por Ordem e por mim.\" — Limpeza</em>"
+      order: "Existem aqueles que inspiram lealdade, e aqueles que a exigem. Ordem é o segundo tipo. Sua blasfêmia não persuade — ela compele. Aqueles que ouvem a voz de Ordem encontram seus corpos se movendo antes que suas mentes possam objetar.<br><br>A ética de Direcionar tem sido debatida nos altos escalões da CAIN por décadas. Alguns argumentam que ela retira completamente o livre arbítrio; outros rebatem que na guerra contra o pecado, hesitação é morte. Ordem já foi profundamente perturbado pelas implicações filosóficas. Não mais.<br><br>O soldado gentil e atencioso que se desculpava após cada comando e buscava consentimento antes das missões morreu em 63. Ele prefere ser um tirano do que comparecer a mais um funeral.<br><br><em class=\"virtue-desc-note\">\"1963, conhecido como o ano de <span class=\"redacted-6\"></span>, causou uma estimativa de <span class=\"redacted-4\"></span> mortes de exorcistas pelo globo. Essa traição jamais será esquecida, especialmente por Ordem e por mim.\" — Limpeza</em>",
+      cleanliness: "Limpeza foi descoberta pela CAIN dentro de uma instalação abandonada ao lado de um diário com todas as páginas completamente apagadas. Ao inspecionar a instalação, parecia ter sido anteriormente propriedade da CAIN, apesar de todos os registros da CAIN afirmarem que ela não existe. Ao despertar, Limpeza explicou que era uma Virtude e precisava de acesso aos arquivos.<br><br>Após intenso interrogatório, Limpeza explicou que um evento apocalíptico estava no horizonte, e a CAIN seria responsável por ele se não lhe fosse dado acesso aos arquivos.<br><br>Limpeza recebeu oficialmente o título de Arquivista Chefe e acesso a todos os arquivos não-TEMERITY. Embora Limpeza não veja isso como ideal, ela continuou a trabalhar com o pessoal da CAIN, usando sua Alta Blasfêmia, REESCREVER, para alterar retroativamente a realidade através da revisão de documentos de um evento."
     },
     favoriteFoods: {
       justice: 'Comida Saudável, Tâmaras',
@@ -1647,7 +1920,8 @@ var PT_CONTENT = {
       fortitude: 'Cachorros quentes*<br><span class="virtue-food-note">*Pelo adendo CASTLE 3004, sujeito é apenas permitido consumir pasta de nutrientes</span>',
       hope: 'Refeição pré-embalada 402A',
       prudence: 'Nozes',
-      order: 'Carne'
+      order: 'Carne',
+      cleanliness: 'Bebidas Cafeinadas, Enlatados, Carne Salgada Curada'
     },
     likes: {
       justice: ['Debate Religioso', 'Música Clássica', 'Limpeza'],
@@ -1656,7 +1930,8 @@ var PT_CONTENT = {
       fortitude: ['Lutar', 'Oponentes fortes'],
       hope: ['Video Games', 'Banhos luxuosos', 'Feriados'],
       prudence: ['Uísque puro', 'Romances', 'Trens', 'Caminhadas longas'],
-      order: ['AFRS', 'Jogos de Guerra', 'Justiça', 'Fortitude']
+      order: ['AFRS', 'Jogos de Guerra', 'Justiça', 'Fortitude'],
+      cleanliness: ['Vacas', 'Justiça', 'Fé', 'Mitologia', 'RPGs de Mesa']
     },
     dislikes: {
       justice: ['Caridade', 'Atrasos', 'Cachorros'],
@@ -1665,7 +1940,8 @@ var PT_CONTENT = {
       fortitude: ['Humanos', 'Exorcistas', 'Todas as outras virtudes', 'Pecados', 'Liderança da CAIN'],
       hope: ['Barulhos altos', 'Pessoas barulhentas', 'Justiça', 'Fortitude'],
       prudence: ['Caridade', 'Justiça', 'Explicar coisas para pessoas lentas'],
-      order: ['Prudência', 'Políticos']
+      order: ['Prudência', 'Políticos'],
+      cleanliness: ['Fortitude', 'TEMERITY', 'Trabalho Burocrático', 'Insetos']
     },
     strictures: {
       justice: 'Você não pode ignorar ordens de um superior. Role 0d em qualquer ação que você ache que viole a lei.',
@@ -1674,7 +1950,8 @@ var PT_CONTENT = {
       fortitude: 'Você não pode perder a oportunidade de entrar em uma luta. Role 0d em ações que você escolheu conversar em vez de agir.',
       hope: 'Você não pode tomar ações que seriam barulhentas ou chamam atenção. Você rola 0d para ações de ajuda.',
       prudence: 'Você deve honrar todos os acordos e promessas. Role 0d ao escolher a violência em vez da negociação.',
-      order: 'Você não pode seguir ordens de ninguém de igual ou menor posto. Role 0d em qualquer ação onde não esteja liderando ou não ajudou a planejar.'
+      order: 'Você não pode seguir ordens de ninguém de igual ou menor posto. Role 0d em qualquer ação onde não esteja liderando ou não ajudou a planejar.',
+      cleanliness: 'Você não pode destruir informação. Sempre role 0d em uma ação onde você suja as mãos.'
     },
     bondAbilities: {
       justice: [
@@ -1718,6 +1995,12 @@ var PT_CONTENT = {
         'Adquira a blasfêmia Direcionar. Você pode usá-la uma vez por caçada.',
         'Você pode usar Direcionar uma vez adicional por caçada, mas com apenas um alvo.',
         'Você pode usar Direcionar uma vez adicional por caçada, mas deve incluir a si mesmo além de pelo menos um outro alvo.'
+      ],
+      cleanliness: [
+        'Uma vez por missão, re-role qualquer ação que causou um plano falhar.',
+        'Adquira a alta blasfêmia Reescrever.',
+        'Ganhe um gatilho de XP extra: você manteve um registro claro?',
+        'Ganhe a habilidade de Expurgar.'
       ]
     },
     highBlasphemyNames: {
@@ -1727,7 +2010,8 @@ var PT_CONTENT = {
       fortitude: 'Força',
       hope: 'Véu',
       prudence: 'Aperto',
-      order: 'Direcionar'
+      order: 'Direcionar',
+      cleanliness: 'Reescrever'
     },
     highBlasphemy2Names: {
       faith: 'Desafio Imaculado do Céu'
@@ -1740,7 +2024,8 @@ var PT_CONTENT = {
       fortitude: 'Uma mutação rara da blasfêmia Amplificar, essa habilidade permite que a carne e sangue do portador seja infundida com graça, transcendendo os limites do impossível. Sem o treinamento adequado, usar essa blasfêmia resulta nos órgãos internos violentamente explodirem para fora do corpo.<br><br>Gaste todos os seus pulsos restantes (mín. 1). Pelo restante da cena, suas habilidades físicas mundanas são iguais a CAT e lutar contra pecados com forças mundanas não é mais difícil por padrão.<br><br>\u2022 Você pode elevar qualquer ação física para CAT+2 ganhando 2d3 de estresse. Isso pode causar um Ferimento.<br>\u2022 Todas as armas quebram após uso, a menos que temperadas. Você pode temperar qualquer arma entre missões gastando 1 scrip por arma.<br>\u2022 Ao final da cena, você sofre um <b>ferimento</b> e entra em coma até que seu grupo descanse. Você se recupera no começo do período de descanso e pode descansar normalmente.',
       hope: 'Gaste todos os seus pulsos psíquicos restantes (mín. 1) para apagar instantaneamente a memória de todos humanos ou exorcistas, exceto você, em uma área de até tamanho CAT [CAT:area] centrada em um ponto a longa distância que possa ver. Você pode controlar o tamanho da área, mas não pode excluir ninguém do efeito depois de colocar a área.<br><br>Todos ficam insensíveis por exatamente 11 segundos. Se um aliado agir nesta abertura, ele ganha +1D na ação.<br><br>Então, os afetados esquecem tudo que viram e escutaram pelos últimos <b>77 segundos</b> (incluindo o período insensível). Seus cérebros irão processar como se o tempo nunca tivesse passado (eles estarão efetivamente \'resetados\' para 77 segundos atrás). Eles podem estar confusos pelas circunstâncias: por exemplo eles podem não estar onde se lembram, ou segurando itens diferentes, etc.',
       prudence: 'Você pode gastar todos os seus pulsos psíquicos restantes (mín. 1) para instantaneamente impor um jogo da lista abaixo a si mesmo e todos os outros humanos, pecados, ou exorcistas no alcance determinado por CAT [CAT:distance]. Quebrar as regras do jogo causa dor excruciante, hemorragia e eventualmente morte.<br><br>Enquanto as regras se aplicarem:<br>\u2022 Para você e aliados, ações tornam mais difíceis quando você precisa evitar quebrar a regra com suas ações.<br>\u2022 Se através de suas ações, você ou um aliado intencionalmente quebrar a regra, você sofre 2d3 estresse, que não pode ser reduzido de nenhuma forma e pode infligir ferimentos normalmente.<br>\u2022 Se o alvo, através das ações dele, quebrar uma regra intencionalmente, ele sofre 1d3 cortes no seu talismã de execução. Humanos são mortos instantaneamente. Eles têm noção desse efeito.<br>\u2022 Você pode ajudar um aliado de graça, três vezes, enquanto a regra estiver ativa, e sem precisar rolar. Descreva como você está tomando vantagem da regra. Qualquer efeito normal da ajuda se aplica a essas ações de ajuda especiais, e você pode tomá-las sem contar como uma ação durante cenas de conflito.<br><br>Você não pode encerrar esse efeito cedo, e ele dura por toda a cena.',
-      order: 'Gaste todos os seus pulsos psíquicos restantes (mín. 1). Emita uma ordem única e clara de no máximo 6 palavras para qualquer número de alvos que você possa ver em curto alcance. A ordem ecoa com autoridade absoluta dentro de suas cabeças.<br><br><strong>OBEDIÊNCIA:</strong> Alvos que obedecem a ordem (da melhor forma possível) imediatamente ganham +2D em sua próxima ação que siga o comando. Se tiverem sucesso, podem limpar 1 estresse/corte.<br><br><strong>DESAFIO:</strong> Alvos que se recusam a obedecer sofrem consequências:<br>• Humanos: Sofrem morte instantânea (suas mentes quebram sob o peso).<br>• Exorcistas: Sofrem 1d3+1 de estresse irredutível e não podem se beneficiar de trabalho em equipe ou ajuda até o fim da cena.<br>• Pecados: Sofrem 2 cortes e a próxima ação contra eles não pode ser difícil ou arriscada.<br><br>Você não pode ordenar alguém a se machucar diretamente, mas pode ordenar ações que claramente os coloquem em perigo mortal.'
+      order: 'Gaste todos os seus pulsos psíquicos restantes (mín. 1). Emita uma ordem única e clara de no máximo 6 palavras para qualquer número de alvos que você possa ver em curto alcance. A ordem ecoa com autoridade absoluta dentro de suas cabeças.<br><br><strong>OBEDIÊNCIA:</strong> Alvos que obedecem a ordem (da melhor forma possível) imediatamente ganham +2D em sua próxima ação que siga o comando. Se tiverem sucesso, podem limpar 1 estresse/corte.<br><br><strong>DESAFIO:</strong> Alvos que se recusam a obedecer sofrem consequências:<br>• Humanos: Sofrem morte instantânea (suas mentes quebram sob o peso).<br>• Exorcistas: Sofrem 1d3+1 de estresse irredutível e não podem se beneficiar de trabalho em equipe ou ajuda até o fim da cena.<br>• Pecados: Sofrem 2 cortes e a próxima ação contra eles não pode ser difícil ou arriscada.<br><br>Você não pode ordenar alguém a se machucar diretamente, mas pode ordenar ações que claramente os coloquem em perigo mortal.',
+      cleanliness: 'Você canaliza Energia Psíquica através de um documento de alguma forma e reescreve a realidade alterando seu conteúdo. Para usar Reescrever, você precisa ter um documento de alguma forma com estes detalhes escritos:<br><br>• <b>Para Reescrever um Exorcista:</b> Sua Blasfêmia e número de habilidades dessa Blasfêmia. Você só precisa saber a Blasfêmia de um Exorcista NPC para Reescrevê-lo.<br>• <b>Para Reescrever um Pecado:</b> Seu Tipo de Pecado e seus três Domínios.<br><br>Gaste todos os seus Surtos Psíquicos restantes (mín 1) e declare o que pretende alterar. Se você atender aos requisitos para alterá-lo, você consegue fazê-lo e muda seu alvo por um número de cenas igual a CAT.<br><br>• <b>Reescrever um Exorcista:</b> Você pode mudar a Blasfêmia de um Exorcista e selecionar um número de habilidades dela igual ao número de habilidades de sua Blasfêmia original à sua escolha.<br>• <b>Reescrever um Pecado:</b> Você pode trocar um dos Domínios de um Pecado por um diferente de seu Tipo de Pecado.<br><br><b>[EXPURGAR]</b><br>Como mestra de reescrever, você pode trair suas próprias crenças como último recurso e apagar completamente informação de um documento usando reescrever. Você expurga uma informação de seus documentos e a apaga da realidade por um curto tempo. Ao usar Reescrever, ao invés de mudar o sujeito para algo diferente, você pode escolher deletá-lo completamente por um número de cenas igual a CAT. Isso é considerado destruir informação em relação às Restrições de Limpeza.<br><br><em>AVISO IMPORTANTE: Embora Reescrever e Expurgar não exijam nenhuma forma de consentimento para ativar no universo, Jogadores Fora-de-jogo devem consentir em ser alvo de Reescrever ou Expurgar antes de ser usado.</em>'
     },
     massMemoryRupture: {
       title: 'Ruptura de Memória em Massa',
@@ -1968,6 +2253,71 @@ const QUIRKS = {
     options: [
       { id: 'fanning', name: 'Fanning', namePt: 'Leque', image: 'img/quirks/fanning.png', type: 'replace', keepPassiveName: true, swapNote: 'quirk_swap_fanning', description: "You can manifest a single mundane period firearm (conceived Feb 25, 1836 - Jul 1, 1916) into your hands, formed from psychic powder. It costs no KP and reforms even if lost, dropped, or destroyed by mundane means. You can dismiss it at will. It functions as an ordinary CAT 0 firearm of its type and never runs out of ammunition through mundane means, but only you can fire it - it always jams for anyone else.<br><br><b>FANNING</b>: You fire the manifested weapon using your psychic focus - roll PSYCHE for the shots. You forgo careful aim for overwhelming volume of fire. When you take a shot, you may spend 1 additional psyche burst to fire again at the same or another target as part of the same action (up to CAT extra shots, one for each burst spent)." }
     ]
+  },
+  // ─── The Odysseus Protocol expansion (PT-BR) ───────────────────────
+  urban: {
+    flavor: 'Manifeste a civilização e a transforme em arma contra seus inimigos.',
+    passive: 'INFRAESTRUTURA NECESSÁRIA: Habilidades invocadas por URBAN requerem infraestrutura para se conectar. Suas habilidades por padrão não custam nenhum Surto Psíquico, mas precisam ser vinculadas a uma USINA DE ENERGIA.',
+    abilities: {
+      urban_power_plant: { name: 'Usina de Energia', description: 'Até descansar, Invocar. Você constrói uma aproximação psíquica de uma Usina de Energia em algum lugar dentro do alcance CAT gastando um Surto Psíquico. Você pode encaixar um número de outras habilidades construídas adjacentes a ela igual a CAT. Você não pode construir uma USINA DE ENERGIA adjacente a outra USINA DE ENERGIA. Quando uma USINA DE ENERGIA é dissipada, todas as outras habilidades construídas adjacentes a ela também são dissipadas. Quaisquer habilidades vinculadas à USINA DE ENERGIA são capazes de ignorar as limitações no número de habilidades Invocar.' },
+      urban_hospital: { name: 'Hospital', description: 'Uma cena, Invocar. Uma vez por missão, você constrói uma aproximação psíquica de um hospital. Sempre que um aliado morreria ou entraria em Transbordo de Pecado dentro do alcance CAT do HOSPITAL, ele é selado no HOSPITAL sob cuidados urgentes e tem os efeitos do Transbordo de Pecado ou morte anulados, rejuntando-se aos outros Exorcistas após o próximo descanso ou quando a missão acabar.' },
+      urban_news_station: { name: 'Estação de Notícias', description: 'Uma cena, Fascinar, Invocar. Você constrói uma aproximação psíquica de uma estação de notícias equipada com repórteres. Sempre que algo que você subconscientemente acredita ser "importante" ocorre dentro do alcance CAT da ESTAÇÃO DE NOTÍCIAS, você pode fechar os olhos e assistir através de uma "transmissão de notícias" com um resumo básico e "repórteres" na cena gravando. A ESTAÇÃO DE NOTÍCIAS está sempre aberta e só é desativada se for dissipada.' },
+      urban_military_base: { name: 'Base Militar', description: 'Uma cena, Invocar. Você constrói uma aproximação psíquica de uma base militar armada até os dentes. Se você atacar algo dentro do Alcance CAT da BASE MILITAR, a base executa um ataque no mesmo alvo que causa 1d3 cortes no Talismã de Execução. Depois disso, a BASE MILITAR precisa se reagrupar e não pode ser ativada por ninguém até descansar ou ser dissipada. Múltiplas BASES MILITARES não podem ser anexadas a uma USINA DE ENERGIA.' },
+      urban_apartment_complex: { name: 'Complexo de Apartamentos', description: 'Uma Cena, Invocar. Você constrói uma aproximação psíquica de um complexo de apartamentos. Uma vez por cena, você pode ativar o COMPLEXO DE APARTAMENTOS para mover quaisquer humanos e Exorcistas dispostos dentro do alcance CAT para dentro do COMPLEXO DE APARTAMENTOS, agindo como uma realidade de bolso dentro do Mar Psíquico que leva uma cena para sair sem ser dissipada. Humanos não lembrarão de se mudar para o COMPLEXO DE APARTAMENTOS ou qualquer coisa que aconteceu lá dentro. O COMPLEXO DE APARTAMENTOS pode ser dissipado a qualquer momento pelo usuário de URBAN.' },
+      urban_commercial_district: { name: 'Distrito Comercial', description: 'Uma cena, Invocar. Você cria uma aproximação psíquica de um distrito comercial. Uma vez por cena, você pode ativar o DISTRITO COMERCIAL para mover quaisquer Pecados dentro do alcance CAT para dentro do DISTRITO COMERCIAL, agindo como uma realidade de bolso dentro do Mar Psíquico que leva uma cena para sair sem ser dissipada. O DISTRITO COMERCIAL pode ser dissipado a qualquer momento pelo usuário de URBAN.'  },
+      urban_police_station: { name: 'Delegacia de Polícia', description: 'Uma cena, Invocar. Você cria uma aproximação psíquica de uma delegacia de polícia. Ao usar blasfêmias de combate dentro do alcance CAT de uma DELEGACIA DE POLÍCIA, você pode adicionar ½ CAT à sua rolagem de dados. Se a DELEGACIA DE POLÍCIA for destruída ou dissipada, você recebe 1 estresse não-letal.' },
+      urban_town_hall: { name: 'Prefeitura', description: 'Uma cena, Invocar. Você cria uma aproximação psíquica de uma prefeitura. Um aliado dentro do alcance CAT de uma PREFEITURA pode fazer uma rolagem de Conexão ao invés de uma rolagem de Psiquê ao usar suas blasfêmias.' }
+    },
+    highBlasphemy: { name: 'Urbanização', description: 'Você pode construir uma USINA DE ENERGIA adjacente a outra USINA DE ENERGIA.' }
+  },
+  mythic: {
+    flavor: 'Invoque os mitos da humanidade e os volte contra seus inimigos.',
+    passive: 'LEGADO: Quando você usa uma blasfêmia de MYTHIC, o CAT máximo é igual à metade do CAT Máximo do Pecado que você está caçando naquela missão (mínimo 1). Cada habilidade só pode ser usada uma vez por missão.',
+    abilities: {
+      mythic_the_sun: { name: 'O Sol', description: '1 Surto Psíquico, Luz do Dia. Você invoca uma aproximação psíquica do sol acima de sua cabeça. Enquanto O Sol estiver ativo, qualquer oponente que olhar em sua direção sofrerá 1 estresse no início de seu turno.' },
+      mythic_the_moon: { name: 'A Lua', description: '1 Surto Psíquico, Noturno. Você invoca uma aproximação psíquica da lua acima de sua cabeça. Enquanto A Lua estiver ativa, você pode gastar 1 Surto Psíquico adicional por corte que causaria no talismã de execução de um inimigo para ao invés curá-los desse dano.' },
+      mythic_the_stars: { name: 'As Estrelas', description: '1 Surto Psíquico. Você invoca uma aproximação psíquica das estrelas acima de sua cabeça. Enquanto As Estrelas estiverem ativas, você pode ver todas as criaturas conscientes no alcance CAT como se estivesse no mesmo cômodo que elas.' },
+      mythic_the_world: { name: 'O Mundo', description: '1 Surto Psíquico. Você invoca uma aproximação psíquica de uma esfera representando a Terra. Escolha um cômodo no alcance CAT. Esse cômodo se torna inacessível para você e quaisquer criaturas atualmente dentro dele ficam presas pelo resto da cena ou até você dissipar O Mundo.' },
+      mythic_the_underworld: { name: 'O Submundo', description: '1 Surto Psíquico. Você invoca uma aproximação psíquica de um portal para o submundo. Enquanto O Submundo estiver ativo, humanos e pecados dentro do alcance CAT de O Submundo podem ver quaisquer fantasmas ou anomalias que estejam dentro de alcance CAT de O Submundo.' },
+      mythic_the_heavens: { name: 'Os Céus', description: '1 Surto Psíquico. Você invoca uma aproximação psíquica de um portal para os céus. Enquanto Os Céus estiverem ativos, você e até CAT aliados podem voar.' },
+      mythic_the_serpent: { name: 'A Serpente', description: '1 Surto Psíquico. Você invoca uma aproximação psíquica de uma serpente. Enquanto A Serpente estiver ativa, você pode mudar sua aparência para a de qualquer humanóide que você tenha visto antes.' },
+      mythic_the_hero: { name: 'O Herói', description: '1 Surto Psíquico. Você invoca uma aproximação psíquica de um herói. Enquanto O Herói estiver ativo, você pode gastar 1 Surto Psíquico adicional para adicionar CAT à sua próxima rolagem de dano.' }
+    },
+    highBlasphemy: { name: 'O Contador de Histórias', description: 'Você pode usar qualquer habilidade de MYTHIC duas vezes por missão.' }
+  },
+  diplomacy: {
+    flavor: 'Negocie e manipule as forças psíquicas que governam a humanidade.',
+    passive: 'CONTRATOS: Habilidades de DIPLOMACY formam contratos entre você e uma entidade, com você fazendo algo em troca de algo do alvo. Todas as habilidades de DIPLOMACY requerem a entidade com quem você está fazendo um contrato concordar com os termos. DIPLOMACY não funciona contra entidades não sencientes ou incapazes de se comunicar.',
+    abilities: {
+      diplomacy_ceasefire: { name: 'Cessar-Fogo', description: '1 Surto Psíquico. Você e o alvo do cessar-fogo concordam em parar de lutar um contra o outro pelo resto da cena. Se qualquer um de vocês quebrar o cessar-fogo, aquele que quebrou sofre estresse igual a 2 + (CAT × 2).' },
+      diplomacy_neutral_ground: { name: 'Território Neutro', description: '1 Surto Psíquico. Você e o alvo concordam que uma área específica (não maior que alcance CAT) é território neutro. Enquanto estiverem no território neutro, ambas as partes não podem se atacar. Se qualquer uma das partes quebrar o acordo, aquela que quebrou sofre estresse igual a 2 + (CAT × 2).' },
+      diplomacy_information_exchange: { name: 'Troca de Informações', description: '1 Surto Psíquico. Você e o alvo concordam em trocar informações um com o outro. Você pode fazer ao alvo uma pergunta que ele deve responder com verdade, e o alvo pode fazer a você uma pergunta que você deve responder com verdade.' },
+      diplomacy_trade_agreement: { name: 'Acordo Comercial', description: '1 Surto Psíquico. Você e o alvo concordam em trocar bens ou serviços um com o outro. Se qualquer uma das partes não cumprir o acordo, aquela que não cumpriu sofre estresse igual a 2 + (CAT × 2).' },
+      diplomacy_non_aggression_pact: { name: 'Pacto de Não-Agressão', description: '1 Surto Psíquico. Você e o alvo concordam em não se atacar pelo resto da missão. Se qualquer uma das partes quebrar o pacto, aquela que quebrou sofre estresse igual a 2 + (CAT × 2) e perde 1d3 Surtos Psíquicos.' },
+      diplomacy_alliance: { name: 'Aliança', description: '2 Surtos Psíquicos. Você e o alvo concordam em trabalhar juntos pelo resto da missão. Enquanto a aliança estiver ativa, vocês podem usar as blasfêmias um do outro como se fossem suas. Se qualquer uma das partes quebrar a aliança, aquela que quebrou sofre estresse igual a 2 + (CAT × 2) e ganha 1d3 Pecado.' },
+      diplomacy_surrender: { name: 'Rendição', description: '1 Surto Psíquico. Você se rende ao alvo. Enquanto estiver rendido, você não pode atacar o alvo ou tomar qualquer ação hostil contra ele. O alvo deve tratá-lo como prisioneiro e não pode matá-lo ou causar dano permanente a você enquanto você estiver rendido.' },
+      diplomacy_ultimatum: { name: 'Ultimato', description: '2 Surtos Psíquicos. Você emite um ultimato ao alvo, exigindo que ele faça algo específico. Se o alvo não cumprir o ultimato antes do fim da cena, ele sofre estresse igual a 2 + (CAT × 2). Se o alvo cumprir o ultimato, você sofre 1d3 estresse.' }
+    },
+    highBlasphemy: { name: 'Tratado', description: 'Você pode ter até CAT contratos ativos ao mesmo tempo, ao invés de apenas 1.' }
+  },
+  // ─── Cleanliness virtue (PT-BR) ───────────────────────────────────
+  virtues: {
+    cleanliness: {
+      name: 'Limpeza',
+      restriction: 'Você deve ter pelo menos 1 Marca de Pecado para se vincular a LIMPEZA.',
+      agenda: ['Purgar o impuro', 'Demonstrar sua pureza'],
+      stricture: 'Você não pode tolerar sujeira, doença ou impureza em si mesmo ou nos outros. Você deve se limpar após qualquer encontro com o impuro.',
+      strictureIgnoreCost: '1d3 estresse não-letal',
+      bondAbilities: [
+        'Ganhe um gatilho de XP extra: Você purificou algo ou alguém impuro?',
+        'Quando você usa uma blasfêmia para limpar ou purificar algo, ganhe +1D.',
+        'Uma vez por missão, você pode remover uma aflição de si mesmo ou de um aliado ao tocá-lo.',
+        'Você é imune a doenças e venenos mundanos.',
+        'Quando você descansa, você pode escolher remover 1 Pecado ao invés de recuperar estresse.'
+      ],
+      highBlasphemy: { name: 'Reescrever', description: 'Uma vez por caçada, você pode escolher uma Marca de Pecado que você tem. Rerrole a habilidade dessa Marca de Pecado. Você pode escolher manter a habilidade antiga ou a nova.' },
+      ability: { name: 'Expurgar', description: '1 Surto Psíquico. Escolha um alvo dentro do alcance CAT. Esse alvo perde 1d3 Pecado. Se o alvo for um Pecado, ele sofre 1d3 cortes em seu Talismã de Execução.' }
+    }
   }
 };
 
@@ -2136,7 +2486,7 @@ const AGENDAS = [
     id: 'songbird', name: 'Songbird',
     image: 'img/agendas/songbird.png',
     agendaItems: ['Get someone to do your bidding'], boldedItems: ['Do something selfless'],
-    restriction: 'Once taken, a character can only swap out of this agenda by spending two advances.',
+    restriction: null,
     abilities: [
       { id: 'songbird_codependency', name: 'Codependency', description: 'When someone sets you up, you can trade 1 stress around (from you to them, or vice versa).' },
       { id: 'songbird_spiral', name: 'Spiral', description: 'You can always tell if someone is lying to you, though not the nature of the lie.' },
@@ -2225,6 +2575,108 @@ const AGENDAS = [
     restriction: null,
     abilities: [
       { id: 'broken_ripped', name: 'Ripped at the Seams', description: "After pressure increases during a mission, mark off 1d3 sin boxes. When you sin overflow, you can always choose between losing and keeping control. <b>Retire your exorcist</b> after the current mission is over. Face execution or exile. <b>There's nothing left for you here.</b>" }
+    ]
+  },
+  // ─── Marching Ever Onward expansion ────────────────────────────────
+  {
+    id: 'pathfinder', name: 'Pathfinder',
+    expansion: 'marchingeveronward',
+    agendaItems: ['Experience something new'], boldedItems: ['Retreat to familiarity'],
+    restriction: null,
+    abilities: [
+      { id: 'pathfinder_wanderlust', name: 'Wanderlust', description: "Twice per rest, may gain +1D to your first roll in a new location you haven't been to yet during the hunt. You cannot use this ability within the Palace." },
+      { id: 'pathfinder_cartographer', name: 'Cartographer', description: 'You always know roughly how to get back to places you have already been, like a mental map. +1D to rolls involving tracking people if you have a physical map.' },
+      { id: 'pathfinder_local_customs', name: 'Local Customs', description: 'You more easily blend in with local civilians, and they are quicker to trust you. Authorities are also less likely to single you out.' },
+      { id: 'pathfinder_well_traveled', name: 'Well-Traveled', description: 'You can speak and read every normal human language, though only with rudimentary understanding.' },
+      { id: 'pathfinder_internal_compass', name: 'Internal Compass', description: 'Once a hunt, you may use your natural intuition to ask the Admin where to go next based on existing clues. They must give a location or direction, but do not need to give specifics.' }
+    ]
+  },
+  {
+    id: 'scholar', name: 'Scholar',
+    expansion: 'marchingeveronward',
+    agendaItems: ['Educate someone'], boldedItems: ['Acknowledge your own ignorance'],
+    restriction: 'Upon entering the palace, clear 1 stress for each Domain you are certain the sin has, and take 1 stress for each Unknown. This agenda follows the same rules as SURVIVOR.',
+    abilities: [
+      { id: 'scholar_lecture', name: 'Lecture', description: 'Gain +1D to any action where you present yourself as knowledgeable or intelligent to mundane humans.' },
+      { id: 'scholar_scribe', name: 'Scribe', description: 'Using your standard notebook and pen costs no KP.' },
+      { id: 'scholar_knowledge_is_power', name: 'Knowledge is Power', description: 'Once per rest, you may instead use your PSYCHE for a check which requires a different skill, taking 1 stress.' },
+      { id: 'scholar_scathe', name: 'Scathe', description: 'Twice per rest, when you witness an ally fail an action roll, you may (harshly) advise them on why they failed. They take 1 stress, but their rolls using that skill are at +1D until the end of the scene.' },
+      { id: 'scholar_study_hall', name: 'Study Hall', description: "Once per hunt, you may spend a resting die to check with the Admin whether or not you have the correct solutions to Trauma Questions equal to the die value. The Admin may only answer 'yes' or 'no'." }
+    ]
+  },
+  {
+    id: 'hunter', name: 'Hunter',
+    expansion: 'marchingeveronward',
+    agendaItems: [''], boldedItems: ['Execute your Purpose'],
+    restriction: 'Once taken, a character can only swap out of this agenda by spending two advances. Get its ability for free.',
+    abilities: [
+      { id: 'hunter_fratricide', name: 'Fratricide', description: "When you invoke the Nail of Abel, you may destroy whoever or whatever you are using as a conduit to the sin. Doing so costs a psyche burst, but marks slashes equal to your PSYCHE on the sin's execution talisman. You may invoke the Nail of Abel while the Sin is present at the cost of stress equal to the Sin's Category. Authority commends your service." }
+    ]
+  },
+  {
+    id: 'gambler', name: 'Gambler',
+    expansion: 'marchingeveronward',
+    agendaItems: ['Leave it up to luck'], boldedItems: ['Stick to the plan'],
+    restriction: 'Your lucky numbers are 7, 8, 22, 50, 191. When you die, you can freely allocate your Scrip to your surviving peers.',
+    abilities: [
+      { id: 'gambler_rigged_game', name: 'Rigged Game', description: 'Once per scene, regain 1 Psyche Burst when you fail a hard roll.' },
+      { id: 'gambler_counting_cards', name: 'Counting Cards', description: 'When Admin performs a Fate Roll, they must roll dice equal to your PSYCHE and take the highest result.' },
+      { id: 'gambler_all_in', name: 'All In', description: 'Whenever you are the target of a Threat, you can refuse the assistance of allies and roll 1d6. If you roll a 6, negate the Threat and clear 2 stress.' },
+      { id: 'gambler_hedged_bet', name: 'Hedged Bet', description: 'You gain Pathos when the risk die rolls a 1.' },
+      { id: 'gambler_cash_out', name: 'Cash Out', description: 'You can use Divine Agony to add value equal to your Pathos to your final roll (for example, if you rolled a 2 and have 2 Pathos, Divine Agony would turn the result into a 4) rather than granting additional rolls. Cannot result in a dice value over 6.' }
+    ]
+  },
+  // ─── LEBA Association Homebrew ─────────────────────────────────────
+  {
+    id: 'legion', name: 'Legion',
+    expansion: 'leba',
+    agendaItems: ['Hold the group together'], boldedItems: ['Separate the group forcefully'],
+    restriction: null,
+    abilities: [
+      { id: 'legion_apes_together_strong', name: 'Apes Together Strong', description: "If you're the leader in a teamwork, only you takes consequences for a failed roll." },
+      { id: 'legion_god_race', name: 'God Race', description: 'You can take 1d3+1 stress to setup an ally without spending your action this round to do so.' },
+      { id: 'legion_unionized_effort', name: 'Unionized Effort', description: 'At the end of a mission, CAIN must pay all exorcist a minimum of 5 scrip regardless of if they executed or have spared the sin. If you fail either, your group is still docked scrip for cleanup.' },
+      { id: 'legion_no_one_left_behind', name: 'No One Left Behind', description: "At the end of a session, you may recount how you saved a fellow exorcist's life. If you do, grant 1 xp to said exorcist. Characters can only gain this xp once if targeted by this ability multiple times." },
+      { id: 'legion_the_helm', name: 'The Helm', description: 'When you defend an allied exorcist, you may roll +1D and take the highest if your target has 1 or more injuries.' }
+    ]
+  },
+  {
+    id: 'yesman', name: 'YesMan',
+    expansion: 'leba',
+    agendaItems: ['Suck up to someone else'], boldedItems: ['Stand up for yourself'],
+    restriction: null,
+    abilities: [
+      { id: 'yesman_pyramid_scheme', name: 'Pyramid Scheme', description: 'When you enter a room filled with people, you immediately know who is in control of the room.' },
+      { id: 'yesman_middle_man', name: 'Middle Man', description: "Once per hunt, you may delay an enemy's reaction when an ally takes their turn before it is rolled. If you do, the Admin makes the delayed reaction on your turn after your action in addition to the reaction on your turn. Only one reaction can be delayed at a time if this ability is used multiple times." },
+      { id: 'yesman_pawn', name: 'Pawn', description: 'Once per scene, when you setup someone, you may take any and all consequences they would take.' },
+      { id: 'yesman_blank_seed', name: 'Blank Seed', description: 'Pick an ally. You may telepathically communicate between each other for the duration of the hunt.' },
+      { id: 'yesman_loose_lips', name: 'Loose Lips', description: 'Once per hunt, you may know what tension move the Admin used when the tension talisman filled up.' }
+    ]
+  },
+  {
+    id: 'human', name: 'Human',
+    expansion: 'leba',
+    agendaItems: ['Hold your ground'], boldedItems: ['Give up the fight'],
+    restriction: null,
+    abilities: [
+      { id: 'human_first_rock', name: 'First Rock', description: 'Once per mission, your first mundane action in a conflict scene is not hard, but you take 1d3 stress if it fails.' },
+      { id: 'human_determination', name: 'Determination', description: 'Once per rest, when you would take an injury, you may gain a random affliction instead (rolled by the Admin).' },
+      { id: 'human_pain_taker', name: 'Pain Taker', description: 'While you have 2 or more injuries, you reduce stress taken by outside forces by -1. If you clear injuries while in this state, you lose the use of this ability until the end of the mission.' },
+      { id: 'human_locked_in', name: 'Locked-In', description: 'The first time you drop to the brink of death in the hunt, you gain +1D on all actions this scene, and you may use DIVINE AGONY even if it was used before in the same scene.' },
+      { id: 'human_red_flash', name: 'Red Flash', description: 'Once a session, when the risk dice rolls a 6 naturally, you may deal 1 slash to any one talisman of your choice.' }
+    ]
+  },
+  {
+    id: 'ghost', name: 'Ghost',
+    expansion: 'leba',
+    agendaItems: ["Don't attract attention"], boldedItems: ['Attract unwanted attention'],
+    restriction: 'Unregistered Agenda',
+    abilities: [
+      { id: 'ghost_unseen_presence', name: 'Unseen Presence', description: 'When you would be first noticed in a scene, you cannot be recognised for one action.' },
+      { id: 'ghost_smooth_criminal', name: 'Smooth Criminal', description: 'If you have taken no stress at the end of a conflict scene you may heal 1d3 stress of an ally.' },
+      { id: 'ghost_somebody_i_used_to_know', name: 'Somebody I Used To Know', description: "1/Mission, you may say you've met a new NPC way back when. They remember you in a negative light. You gain +1D on rolls to reconnect with them." },
+      { id: 'ghost_body_dysphoria', name: 'Body Dysphoria', description: 'You may take 1d3 sin to gain the benefit of a sin mark ability of an ally for one scene. Your body mutates a lesser version that vanishes when the scene is over.' },
+      { id: 'ghost_invisible', name: 'Invisible', description: 'The first time you would take stress in a conflict scene, you may reduce it by -2 stress. This may reduce stress to 0.' }
     ]
   }
 ];
@@ -2990,8 +3442,632 @@ const BLASPHEMIES = [
         description: "You plant your feet and manifest a hovering firing line around you - rifles, revolvers, and cannon-shot, loaded with charges equal to CAT+1 [CALC:CAT+1]. While you hold your position (do not move from your spot), you may spend charges:<br>•  Spend 1 charge: when you take an action to fire (a shot or shooting power), the line fires alongside you at the same target. If your action has at least one success, it inflicts 2 additional slashes.<br>•  Spend 1 charge: lay down covering fire - when you or a visible ally rolls the risk die, roll it twice and you choose which result to keep.<br><br>The line dissipates when its charges run out, if you move from your spot, when the scene ends, or on rest."
       }
     ]
+  },
+  // ─── The Odysseus Protocol expansion ───────────────────────────────
+  {
+    id: 'urban',
+    name: 'Urban', namePt: 'Urbano',
+    expansion: 'odysseus',
+    flavor: 'Users of this Blasphemy are capable of drawing from the collective psychic concept of civilization itself, pulling small structures from the Psychic Sea that perform specific purposes.',
+    description: 'Manifest civilization and weaponize it against your enemies.',
+    passive: {
+      id: 'urban_infrastructure_required',
+      name: 'Infrastructure Required', namePt: 'Infraestrutura Necessária',
+      image: 'img/passives/odysseus_urban.png',
+      description: 'Abilities summoned by URBAN require infrastructure to connect to. Your abilities by default do not cost any Psyche Bursts, but need you to link them to a POWER PLANT.<br><br><b>POWER PLANT</b><br>Until rest, Summon.<br>You construct a psychic approximation of a Power Plant somewhere within CAT range by spending one Psyche Burst. You can fit a number of other constructed abilities adjacent to it equal to CAT. You cannot build a POWER PLANT adjacent to a POWER PLANT. Once a POWER PLANT is dispelled, all other constructed abilities adjacent to it are also dispelled. Any abilities linked to POWER PLANT are capable of ignoring the limitations on the number of Summon abilities.'
+    },
+    powers: [
+      {
+        id: 'urban_hospital',
+        name: 'Hospital', namePt: 'Hospital',
+        tags: ['1 Scene', 'Summon'],
+        burst: 'none',
+        uses: 'mission',
+        description: 'You construct a psychic approximation of a hospital. Whenever an ally would die or enter Sin Overflow within CAT range of HOSPITAL, they are instead sealed away in HOSPITAL under urgent care and have the effects of either Sin Overflow or death nullified, rejoining the other Exorcists after the next rest or once the mission is over.'
+      },
+      {
+        id: 'urban_news_station',
+        name: 'News Station', namePt: 'Estação de Notícias',
+        tags: ['1 Scene', 'Charm', 'Summon'],
+        burst: 'none',
+        description: 'You construct a psychic approximation of a news station equipped with reporters. Whenever something that you subconsciously believe is "important" occurs within CAT range of the NEWS STATION, you can close your eyes and watch it through a "news broadcast" with a baseline summary and "reporters" on the scene recording it. The NEWS STATION is always open and only deactivated if it is dispelled.'
+      },
+      {
+        id: 'urban_military_base',
+        name: 'Military Base', namePt: 'Base Militar',
+        tags: ['1 Scene', 'Summon'],
+        burst: 'none',
+        description: 'You build a psychic approximation of a military base that is armed to the teeth. If you attack something within CAT Range of the MILITARY BASE, the base performs an attack on the same target which deals 1d3 slashes to its Execution Talisman. After this, the MILITARY BASE needs to regroup and is unable to be activated for anyone either until rest or until it is dispelled. Multiple MILITARY BASEs cannot be attached to one POWER PLANT.'
+      },
+      {
+        id: 'urban_apartment_complex',
+        name: 'Apartment Complex', namePt: 'Complexo de Apartamentos',
+        tags: ['1 Scene', 'Summon'],
+        burst: 'none',
+        description: 'You build a psychic approximation of an apartment complex. Once per scene, you can activate the APARTMENT COMPLEX to move any humans and willing Exorcists within CAT range into the APARTMENT COMPLEX, acting as a pocket reality inside the Psychic Sea that takes a scene to exit without being dispelled. Humans will not remember moving into the APARTMENT COMPLEX or anything that happened inside it. The APARTMENT COMPLEX can be dispelled at any point by the URBAN user.'
+      },
+      {
+        id: 'urban_commercial_district',
+        name: 'Commercial District', namePt: 'Distrito Comercial',
+        tags: ['1 Scene', 'Summon'],
+        burst: 'none',
+        description: 'You build a psychic approximation of a series of different stores. Once per scene you can choose to spend one Kit Point to "purchase" an item within CAT range of the COMMERCIAL DISTRICT and have it teleport into your hands. This works on any item as long as you know it is within CAT Range of the COMMERCIAL DISTRICT and can give a brief description of it, including items someone else is holding.'
+      }
+    ]
+  },
+  {
+    id: 'mythic',
+    name: 'Mythic', namePt: 'Mítico',
+    expansion: 'odysseus',
+    flavor: "Humanity in its past has long-shaped the Psychic Sea with their belief in gods and monsters. In modern times, these congealed manifestations have become weak enough that they can be drawn upon by Exorcists as weapons.",
+    description: 'Make the Gods real through your own force of will and worship them.',
+    passive: {
+      id: 'mythic_favor',
+      name: 'Favor', namePt: 'Favor',
+      image: 'img/passives/odysseus_mythic.png',
+      description: 'You have a resource called FAVOR you can utilize and gain in various circumstances. The maximum amount of FAVOR you can have is equal to 1/2 CAT. If you exceed your maximum FAVOR, you are taken away by the Gods for one scene.'
+    },
+    powers: [
+      {
+        id: 'mythic_prophecy',
+        name: 'Prophecy', namePt: 'Profecia',
+        tags: ['Curse', '1 Scene'],
+        burst: 'optional',
+        description: 'Once per scene, you target one person you can speak to and foresee their fate on a small scale. Roll Psyche, on success you can describe what they will do for a number of scenes in the future equal to 1/2 CAT. These descriptions cannot directly inflict Stress or kill someone, but can put their target in a dangerous situation. If the target fulfills their prophecy and takes advantage of it, they gain +1D on their rolls related to the prophecy for the scene. If the target attempts to fight their fate once a scene, they take 1d3 Stress and you re-roll Psyche to prevent them from escaping their fate. FAVOR can be used to bypass Psyche Rolls to give a PROPHECY or maintain it.'
+      },
+      {
+        id: 'mythic_offering',
+        name: 'Offering', namePt: 'Oferenda',
+        tags: ['Transmute', '1 Scene'],
+        burst: 'optional',
+        description: 'Once per Scene, you choose to make an offering to the concept of a God within the Psychic Sea for their aid. Choose an offering and perform a Hard Psyche Roll:<br>•  1d3 stress<br>•  1d3 sin<br>•  1d3 Kit Points<br>•  A living being (bypasses Psyche Roll)<br><br>If your Psyche roll succeeds, your sacrifice is accepted and you choose one God from any mythology to draw upon their power to influence a scene in one way related to their domain. If your Psyche Roll fails, you do not lose your offering, but your request is not fulfilled. Regardless, you gain one FAVOR. Your request cannot result in the death of someone directly.'
+      },
+      {
+        id: 'mythic_trials',
+        name: 'Trials', namePt: 'Provações',
+        tags: ['Charm', 'All Mission'],
+        burst: 'none',
+        uses: 'mission',
+        description: 'Once per Mission, you can give another Exorcist Trials from the Gods, at which point the Admin will give that exorcist a series of agenda items equal to 7 - FAVOR. If all trials are accomplished, the exorcist is able to use one of their Blasphemy Powers at CAT 6 one time afterwards. Using TRIALS clears out your FAVOR immediately.'
+      },
+      {
+        id: 'mythic_prayer',
+        name: 'Prayer', namePt: 'Prece',
+        tags: ['Charm', 'Self', 'Instant'],
+        burst: 'none',
+        description: 'Once per scene, you pray to a God to gain FAVOR. In your Prayers, you will receive one goal for the scene that must be completed to earn your FAVOR. Roll Psyche to determine how difficult the goal will be.'
+      },
+      {
+        id: 'mythic_dragon',
+        name: 'Dragon', namePt: 'Dragão',
+        tags: ['Summon', '1 Scene'],
+        burst: 'none',
+        uses: 'mission',
+        description: 'Once per mission, you call upon a monster using your FAVOR. You can only use this power if you are at your maximum FAVOR, summoning a monster of legend to fight for you. The execution talisman of the monster is CAT + FAVOR, the monster is capable of dealing a number of d3 stress equal to PSYCHE. The monster will disappear at the end of a scene.'
+      }
+    ]
+  },
+  {
+    id: 'diplomacy',
+    name: 'Diplomacy', namePt: 'Diplomacia',
+    expansion: 'odysseus',
+    flavor: "Humanity has a presence within the Psychic Sea in some vague, twisted form. Users of this Blasphemy are able to sway those manifestations of humanity to twist their mundane counterparts to their whims.",
+    description: 'Rewrite the bonds that humanity holds oh so dearly for your benefit.',
+    passive: {
+      id: 'diplomacy_charming',
+      name: 'Charming', namePt: 'Encantador',
+      image: 'img/passives/odysseus_diplomacy.png',
+      description: 'You passively hold a feeling of charm over the people around you. Humans by default have a positive disposition towards you.'
+    },
+    powers: [
+      {
+        id: 'diplomacy_infighting',
+        name: 'Infighting', namePt: 'Rixa Interna',
+        tags: ['Curse', '1 Scene'],
+        burst: 'none',
+        description: 'You toy with the bonds between individuals to bring about strife. Once per scene, you can choose two individuals who have a positive opinion of each other in CAT range and make them extremely irritable and hostile towards each other for a number of scenes equal to CAT.'
+      },
+      {
+        id: 'diplomacy_crowded',
+        name: 'Crowded', namePt: 'Lotado',
+        tags: ['Summon', '1 Scene'],
+        burst: 'none',
+        description: 'You pull a representation of a crowd of humans from the Psychic Sea either around yourself or one ally. Allowing for +1D to any form of action involving blending in with the crowd. This crowd disperses after one scene.'
+      },
+      {
+        id: 'diplomacy_recognition',
+        name: 'Recognition', namePt: 'Reconhecimento',
+        tags: ['Charm', 'Until Rest'],
+        burst: 'optional',
+        description: 'Once per scene, you overwrite one relationship someone has had with your own presence, even going far enough to make them recognize you. Roll Psyche:<br>•  1: You accidentally overwrite the memory of someone your target hates.<br>•  2-3: You overwrite a memory of someone the target has a neutral opinion on, like a coworker or a distant aunt.<br>•  4-6: You overwrite a close friend, idol, or lover in somebody\'s mind, they will obey you.<br><br>This effect will end if the original person you used RECOGNITION to overwrite is seen by the target or until you rest.'
+      },
+      {
+        id: 'diplomacy_values',
+        name: 'Values', namePt: 'Valores',
+        tags: ['Transmute', '1 Scene'],
+        burst: 'optional',
+        description: 'Once per scene, you can target an individual with this ability and learn their personal values. This does not cost a Psyche Burst. You can choose to spend a Psyche Burst to alter an ideal for a number of scenes equal to CAT or add a new ideal for a number of scenes equal to CAT.'
+      },
+      {
+        id: 'diplomacy_bonded',
+        name: 'Bonded', namePt: 'Vinculado',
+        tags: ['Charm', 'Instant'],
+        burst: 'required',
+        uses: 'mission',
+        description: 'Once per mission, you can choose to expend an extra Psyche Burst using Bond to make one change you\'ve made to someone\'s relationships permanent. This cannot be taken if you do not have VALUES, RECOGNITION, or INFIGHTING.'
+      }
+    ]
+  },
+  {
+    id: 'gravity',
+    name: 'Gravity', namePt: 'Gravidade',
+    expansion: 'marchingeveronward',
+    flavor: 'GRAVITY is a concept which TEMERITY has been attempting to refine for many decades. Their original focus was on literal manipulation of gravitational forces, which repeatedly proved too dangerous and destructive for approval – even juxtaposed to ARDENCE. However, when the philosophy shifted to using the Exorcist as a psychic anchor, results came quickly. GRAVITY\'s abilities hinge on the natural attraction between all things – their common origin and common fate – and pulling on those attractions for various ends. Practical usage of GRAVITY for SEER still under active investigation.',
+    description: 'All things are inexorably and inextricably bound to one another. In the beginning, all creation was as one, and it shall be so again.',
+    passive: {
+      id: 'gravity_orbit',
+      name: 'Orbit', namePt: 'Órbita',
+      image: 'img/passives/marchingeveronward_gravity.png',
+      description: 'You always know the direction your allied Exorcists are in. If you become suddenly separated from them, you may choose a single other Exorcist to pull along with you if they are willing.'
+    },
+    powers: [
+      {
+        id: 'gravity_star',
+        name: 'Star', namePt: 'Estrela',
+        tags: ['Charm', '1 Scene', 'Short'],
+        burst: 'none',
+        uses: 'scene',
+        description: 'Once per scene, you can cover yourself in a glowing coat of energy, forcibly becoming the center of attention. Any entities you are currently in conflict with now regard you as their primary target, and must Threaten you with their next possible reaction. Allied rolls to intercept this Threat roll at +1D.'
+      },
+      {
+        id: 'gravity_comet',
+        name: 'Comet', namePt: 'Cometa',
+        tags: ['Instant', 'Self'],
+        burst: 'optional',
+        description: 'You may place an invisible mark on any humans or objects you touch, up to a total equal to your CAT. Placing a new mark removes the oldest one if you are at maximum. This does not take a Psyche Burst.<br><br>You can then draw a marked object or entity to you by spending a psyche burst; it will appear in your path naturally, as if by coincidence, before the end of the scene. Affected people will always have a reason they believe for coming this way, even if it would be otherwise unreasonable.'
+      },
+      {
+        id: 'gravity_moon',
+        name: 'Moon', namePt: 'Lua',
+        tags: ['Transmute', 'Adjacent', '1 Scene'],
+        burst: 'required',
+        description: 'You may touch an object and imbue it with a strange attraction. Humans which see it are drawn to it and inordinately fascinated by it, though they don\'t know why. Supernatural entities may be drawn to it as a sort of psychic beacon. This allure fades with the effect at the end of the scene.<br><br>This power may easily affect the parameters of rolls, such as difficulty and risk.'
+      },
+      {
+        id: 'gravity_meteor',
+        name: 'Meteor', namePt: 'Meteoro',
+        tags: ['Transmute', 'Instant', 'Long'],
+        burst: 'required',
+        description: 'You reach for the heavens, pulling a tiny fragment of astral rock towards your target. When you use this power, roll PSYCHE only spending a Psyche Burst on success.<br>The meteor takes about one minute to arrive; reduce this time by 10 seconds per CAT. In a conflict scene, the meteor takes six player turns to arrive (it arrives at the end of the scheduled turn); reduce this time by one turn per CAT.<br><br>The meteor can pierce all mundane materials in the path of its target, but causes minimal damage to the environment on impact. Inflict one additional slash on the talisman if the meteor interrupts the target while it is making a threat or creating a complication.'
+      },
+      {
+        id: 'gravity_atmosphere',
+        name: 'Atmosphere', namePt: 'Atmosfera',
+        tags: ['Summon', 'Adjacent', '1 Scene'],
+        burst: 'required',
+        description: 'You conjure an invisible circle, up to CAT+1 area, into which wayward humans cannot enter. Unless they have an important reason to enter this area - such as searching for your Exorcist - they will find themselves absentmindedly circumventing the radius, and will pay no attention to whatever is inside. Supernatural entities and Exorcists are unaffected. If you rest inside this area, the effect lasts until after resting.'
+      }
+    ]
+  },
+  {
+    id: 'author',
+    name: 'Author', namePt: 'Autor',
+    expansion: 'marchingeveronward',
+    flavor: 'AUTHOR has technically existed in secretive, classified cells of SEER since the organization\'s inception. It is used by covert operatives or plants when needing to remove problematic political or public figures while drawing the least amount of attention to themselves. Its recent introduction to standard Exorcists has seen great results. AUTHOR\'s abilities stem from the written word, imbuing specific words with great power and allowing the construction of elaborate and varied psychic traps. AUTHOR USERS RESTRICTED FROM SENSITIVE DOCUMENT STORAGE AREAS – CASTLE REF 128',
+    description: 'The pen is mightier than the sword. Your scripture is as law.',
+    passive: {
+      id: 'author_calligraphy',
+      name: 'Calligraphy', namePt: 'Caligrafia',
+      image: 'img/passives/marchingeveronward_author.png',
+      description: 'Any words which you physically inscribe are impossible to erase by mundane means, only removable by destroying the medium which they are written upon. Certain words carry special weight, and function as Power Words. The rules for Power Words are described below.<br><br>Whenever you write one of your Power Words, you may expend a Psych Burst to enchant it with psychic essence - this counts as a Summon. When you do so, choose whether it triggers from being Touched (which does not require skin contact) or Read (which does not require the word to be read aloud). These effects originate directly from the word itself. You cannot trigger your own Power Words, but are susceptible to their effects. Power Words can easily affect the difficulty and risk of rolls unless otherwise stated. The psychic charge dissipates upon resting if not triggered, and can only trigger once unless stated. All Authors begin with the word PUSH:<br>• Touch: Launches the victim CAT distance away.<br>• Read: Pushes everything in CAT area away with light force.'
+    },
+    powers: [
+      {
+        id: 'author_storyteller',
+        name: 'Storyteller', namePt: 'Contadora de Histórias',
+        tags: ['Instant', 'Self'],
+        burst: 'none',
+        uses: 'rest',
+        description: 'Once per rest, you may speak a Power Word to enact its Read effect. Doing so adds a +2 to its CAT, but all communication becomes hard until the end of the scene. Additionally, gain the following Power Word.<br><br><b>LIE</b><br>• Touch: Any humans the victim speaks to for the next hour will inherently disbelieve anything the victim says.<br>• Read: All humans in CAT area become immediately trusting of you and your group. Does not work on anyone who is actively hostile towards you, and expires at the end of the scene.'
+      },
+      {
+        id: 'author_deus_ex_machina',
+        name: 'Deus Ex Machina', namePt: 'Deus Ex Machina',
+        tags: ['Passive'],
+        burst: 'none',
+        description: 'Calligraphy now applies to words you type or write digitally, and you may additionally create Power Words through digital means. Only the original Power Word which you wrote contains power - screenshots or emails do not preserve the effect. Additionally, gain the following Power Word.<br><br><b>TRUTH</b><br>• Touch: The victim becomes unable to lie for CAT minutes.<br>• Read: All humans in CAT area are able to see supernatural entities and abilities for exactly one minute.'
+      },
+      {
+        id: 'author_immersion',
+        name: 'Immersion', namePt: 'Imersão',
+        tags: ['Passive'],
+        burst: 'none',
+        description: 'Gain the following Power Words.<br><br><b>SIGHT</b><br>• Touch: The victim briefly becomes highly visible to Exorcists up to CAT distance, even through surfaces.<br>• Read: The next CAT entities who read or hear this lose their ability to comprehend written language until this Word dissipates at rest.<br><br><b>SOUND</b><br>• Touch: A loud, distinctive noise emits from the victim\'s position.<br>• Read: You can perfectly hear everything in CAT area as if it was next to you until the end of the scene or you deactivate the ability.'
+      },
+      {
+        id: 'author_conflict',
+        name: 'Conflict', namePt: 'Conflito',
+        tags: ['Passive'],
+        burst: 'none',
+        description: 'Gain the following Power Words.<br><br><b>FIRE</b><br>• Touch: Severely burns the limb which touched the Word. Requires a PSYCHE roll and refunds Psych Burst on failure.<br>• Read: Flammable objects in up to CAT area ignite.<br><br><b>BLIZZARD</b><br>• Touch: Victim\'s limb which touched the Word is frozen over.<br>• Read: All liquid water in up to CAT area freezes instantly (excluding that of living creatures).<br><br><b>THUNDER</b><br>• Touch: Victim is struck with a nonlethal but severe shock. This cannot physically harm someone, but may affect their cognition or cause temporary paralysis.<br>• Read: All electronics in up to CAT area short circuit.'
+      },
+      {
+        id: 'author_chapter',
+        name: 'Chapter', namePt: 'Capítulo',
+        tags: ['Passive'],
+        burst: 'none',
+        description: 'Gain the following Power Words.<br><br><b>LOSE</b><br>• Touch: The victim forgets its current task or objective until reminded.<br>• Read: The reader somehow loses or misplaces CAT personal items and cannot find them without aid.<br><br><b>FIND</b><br>• Touch: The victim leaves behind a psychic shadow of their appearance.<br>• Read: All entities in CAT area leave behind psychic footprints until you rest.'
+      }
+    ]
+  },
+  {
+    id: 'weaver',
+    name: 'Weaver', namePt: 'Tecelão',
+    expansion: 'marchingeveronward',
+    flavor: 'WEAVER is an old Blasphemy, having been out of service since the mid-1800s following a series of poorly understood catastrophies relating to its use. However, TEMERITY is confident that newly developed instruction strategies and restrictions of the ability set will prevent a repeat of the notorious GEHENNA incident. Only time will tell. WEAVER\'s abilities draw on the power of the planet itself, coalescing the latent psychic energies of the environment, saturated from years of rampant human activity. CASTLE Internal Memo – DR. Haley Marsh: WEAVER users display markedly higher rates of ego death and often quickly shift to speaking in the third person. Theory that planet Earth is alive merits further research from TEMERITY, though they already have their hands full.',
+    description: 'You grasp the world\'s veins - will you strum them like a harp, or tear them out?',
+    passive: {
+      id: 'weaver_tangle',
+      name: 'Tangle', namePt: 'Emaranhado',
+      image: 'img/passives/marchingeveronward_weaver.png',
+      description: 'You can improve the combined CAT of any of your Tapestry powers by +2 when you use them (to a max CAT of 7 for individual parts). However, when you do, gain the Tangle Hook.<br><br><b>Tangle Hook:</b> You gain this hook with your passive. If this hook fills up, your manipulation of the leylines causes them to knot together. The next time you use a Tapestry ability, the leyline nearest to you erupts in CAT area from the ground as the knot unwinds. You take 3 stress, and any of your allies who are with you take 1 stress as well. This can easily kill humans, and can damage supernatural entities. This explosion causes considerable physical damage to the surroundings and can easily draw attention from mundane and psychic entities alike. If you rest before this eruption occurs, you may spend one resting die to untangle the knot safely, clearing the danger.'
+    },
+    powers: [
+      {
+        id: 'weaver_warp',
+        name: 'Warp', namePt: 'Distorção',
+        tags: ['Instant', 'CAT Range'],
+        burst: 'required',
+        description: 'You can ride the current of the leylines, pulling you along with incredible speed. You may nearly instantly move to any grounded location in CAT Range - this is not teleportation, and requires an unobstructed path to your destination. You may also bring CAT adjacent entities along with you so long as they are willing.'
+      },
+      {
+        id: 'weaver_trim',
+        name: 'Trim', namePt: 'Corte',
+        tags: ['Curse', '1 Scene'],
+        burst: 'required',
+        uses: 'rest',
+        description: 'Once per rest, you may snap one of the leylines connected to the local Sin entirely, temporarily severing its power. By calling out one of its Domains, you may negate that Domain and any of its effects (such as afflictions or creatures) until the end of the scene. If performed in a conflict scene, it lasts for one round. You must call out a Domain the Sin actually has; if you claim an incorrect Domain, you expend the Psych Burst for no benefit.'
+      },
+      {
+        id: 'weaver_weft',
+        name: 'Weft', namePt: 'Trama',
+        tags: ['Transmute', 'All Mission', 'Short'],
+        burst: 'required',
+        description: 'You can yank and tug on the leylines beneath the ground, causing direct responses from the earth. You may choose from any of the following effects:<br><br>• Create a CAT-1 size pit that goes CAT yards down.<br>• Create a two-yard dip in the earth in CAT area.<br>• Create a two-yard high hill in CAT area.<br>• Create a CAT-1 size pillar that goes CAT yards up.<br><br>These alterations are sudden, but not violent. This power may affect the parameters of rolls, such as difficulty and risk.'
+      },
+      {
+        id: 'weaver_needle',
+        name: 'Needle', namePt: 'Agulha',
+        tags: ['Instant', 'Short'],
+        burst: 'required',
+        description: 'You concentrate the energy of the leylines into a single blinding point. Roll PSYCHE to impale your target with a spike of concentrated psychic energy which appears from any surface in range; gain +1D if your target is CAT size or lower. If you roll at least one 6, the needle temporarily remains, holding the target in place for one turn.<br><br>If this ability would trigger the eruption of Tangle, it inflicts additional slashes equal to PSYCHE to the target, but the backlash is greatly increased; you and any allied Exorcists in the area gain an injury without clearing your stress.'
+      },
+      {
+        id: 'weaver_dye',
+        name: 'Dye', namePt: 'Tintura',
+        tags: ['Transmute', 'Until Rest', 'Adjacent'],
+        burst: 'required',
+        description: 'You gently manipulate the polarity of the leylines around you, coaxing life into different hues. Choose one of the following effects for up to CAT area:<br><br>• Plant life grows at an incredibly increased rate, and you may slightly alter the course of its growth.<br>• Water begins quickly welling up from the ground, even if the area is made of impermeable materials.<br>• The land itself begins to glow brightly, up to the intensity of a spotlight.<br>• Animals in the area become friendly to you and will defend you from attackers while you are in the area.<br><br>This power may affect the parameters of rolls, such as difficulty and risk.'
+      }
+    ]
+  },
+  // ════════════════════════════════════════════════════════════════════
+  // LEBA Association Homebrew Blasphemies
+  // ════════════════════════════════════════════════════════════════════
+  {
+    id: 'blood',
+    name: 'Blood', namePt: 'Sangue',
+    expansion: 'leba',
+    flavor: 'Fact: Blood users count as all DONATION types at once, making them useful as blood donors to their fellow exorcists.',
+    description: 'Manipulate the red veins, the sweet nectar of life eternal.',
+    passive: {
+      id: 'blood_hemophage',
+      name: 'Hemophage', namePt: 'Hemófago',
+      description: 'By drinking the blood of others, you are able to tell their location no matter how far you are from them as well as minor telepathy. However, the older the blood the less potent this ability is.'
+    },
+    powers: [
+      {
+        id: 'blood_cavalry',
+        name: 'Cavalry', namePt: 'Cavalaria',
+        tags: ['Instant', 'CAT+2 distance'],
+        burst: 'on_success',
+        description: 'You enhance your speed by weaponizing your blood vessels to rescue your own kin. Target an allied exorcist in range then roll PSYCHE, only spending a psyche burst on success. Gain +1D for every yes answer to the following:<br>• Are you not under duress?<br>• Is your target beyond Short distance?<br>• Is the destination crowded?<br><br>On success, you rampage in a straight line directly towards your target, dealing considerable destruction in your wake. Depending on each answer, the outcome may be altered, but in no way can your target be harmed by this ability.'
+      },
+      {
+        id: 'blood_bloodbag',
+        name: 'Bloodbag', namePt: 'Bolsa de Sangue',
+        tags: ['Summon', 'Adjacent', 'Until rest'],
+        burst: 'required',
+        description: 'Target a willing human or corpse, their body is drained then reanimated by blood and put under your command. For the duration, they become a familiar with a talisman equal to CAT and follow you up to short distance, are unable to think independently without your orders, and can\'t use complex or social skills, but physical skills are still usable. Their general capabilities are equal to ½ CAT.<br><br>At any moment you may dissolve them back into a pile of blood, allowing you or an ally in range to clear 1d3+1 stress. This destroys the corpse in the process.'
+      },
+      {
+        id: 'blood_coagulate',
+        name: 'Coagulate', namePt: 'Coagular',
+        tags: ['Curse', 'Short', '1 Scene'],
+        burst: 'required',
+        description: 'You manipulate the blood of a target within range, as their blood thickens and either slows down or speeds up their motor functions at your will.<br><br>Grant them a 3-slash talisman as their own body is now under your control. While they have this talisman, you may slash it to grant +1D to an ally next taking advantage of this effect, once per action roll.<br><br>When the talisman fills up, their body returns to normal, ending the effect early. If you use it again on a new target, it removes the previous talisman.'
+      },
+      {
+        id: 'blood_bubble',
+        name: 'Bubble', namePt: 'Bolha',
+        tags: ['Instant', 'Self'],
+        burst: 'required',
+        description: 'By manipulating your own veins you are able to create a CAT sized bubble of blood. They hover in place up to short distance from you, and you are able to control their movement at will.<br><br>• Upon making contact with any solid, a bubble pops into a splash of blood, potentially blinding those near them.<br>• If you take an injury, the pain makes you lose the bubble as they burst early.<br><br>Gain or grant +1D when you or any ally next takes advantage of this power.'
+      },
+      {
+        id: 'blood_hardened',
+        name: 'Hardened', namePt: 'Enrijecido',
+        tags: ['Transmute', 'Short', '1 Scene'],
+        burst: 'required',
+        description: 'By manipulating blood in creative ways and hardening it, you are able to create a collective size of CAT structures made from hardened blood within range. They must be formed out of an already existing stable surface.<br><br>Your structures can:<br>• Take a collective damage equal to your CAT+2.<br>• Support up to 10 tons per CAT in weight.<br>• Float if appropriately supported by cables or other support.<br><br>However, if your structures have any contact with water, they become unstable and crumble back into liquid. This power may easily affect parameters of rolls, such as difficulty or risk.'
+      }
+    ]
+  },
+  {
+    id: 'rotate',
+    name: 'Rotate', namePt: 'Rotação',
+    expansion: 'leba',
+    flavor: 'Fact: Rotate users across the world have felt a shiver behind their back at 9:13am on the 21st of December 2012. Nothing else happened that day.',
+    description: 'Ride towards infinity at scales unmatched and exceed all expectations.',
+    passive: {
+      id: 'rotate_partners',
+      name: 'Partners', namePt: 'Parceiros',
+      description: 'The road of a cowboy can be lonely. You have the ability to rotate spherical objects, such as balls, plates, or cylinders. While you focus on spinning an object, it gains supernatural ability to rotate exponentially.<br><br>For every 5 seconds, or each round spent in a conflict scene only focusing on spinning your object, your next Rotate power gains +2 CAT (to max CAT 7) and gains +1D (not counting to the limit of bonus dice). However, you gain the Infinity Hook after using this boost of power. You can turn off this rotation at any moment without facing consequences.<br><br><b>Infinity Hook:</b> You gain this hook with your passive and gain an additional tick for each die gained from the passive\'s boost. While you have this hook, you find it difficult to find stable ground as your body twists and rotates infinitely on itself. Gain -1D to all actions that require precision or stable footing for every tick on the hook. When filled, your body shreds itself, taking an injury and clearing back to 0+1 per injury taken from this hook this hunt. If you would die from this hook, you instead remain alive and remove the hook but become unable to act apart from speech until the end of the hunt or until an external source ends your suffering.'
+    },
+    powers: [
+      {
+        id: 'rotate_tilt',
+        name: 'Tilt', namePt: 'Inclinação',
+        tags: ['Transmute', 'Instant', 'Adjacent'],
+        burst: 'on_success',
+        description: 'You can choose a single living being or object of up to CAT size that you can touch. Roll PSYCHE if the target is unwilling, only spending a psyche burst on success. You change the angle of the target, changing their gravity for a few moments.<br><br>This may distract or disorient unwilling targets and cause harm, inflicting slashes equal to successes on this power. You may gain or grant +1D when you or any ally next acts to take advantage of this power.'
+      },
+      {
+        id: 'rotate_spin',
+        name: 'Spin', namePt: 'Giro',
+        tags: ['Curse', 'Short', '1 Scene'],
+        burst: 'required',
+        uses: 'rest',
+        description: 'By building rotational energy you cause a CAT number of loose objects to spin uncontrollably at high speed in the air. Each target remains hovering in the air and may be stepped upon safely by you or your allied exorcists, gaining its momentum.<br><br>At any moment, you or your allies may destroy a spinning object for the following effects:<br>• Be sent flying up to CAT+2 distance.<br>• Benefit from the defend action with the spinning object protecting you.<br><br>This power may easily affect parameters of rolls, like difficulty or risk.'
+      },
+      {
+        id: 'rotate_twist',
+        name: 'Twist', namePt: 'Torção',
+        tags: ['Instant', 'Short'],
+        burst: 'on_success',
+        description: 'By throwing your Partner item at a living being, you are able to twist the rotation of CAT amount of limbs in disturbing directions. Roll PSYCHE if the target is unwilling, only spending a burst on success.<br><br>The twist is not harmful to the target but may be uncomfortable or disturb their actions while active if they aren\'t prepared. You may gain or grant +1D when you or an ally next acts to take advantage of this power. This power may affect the parameters of rolls, such as difficulty or risks.'
+      },
+      {
+        id: 'rotate_roulette',
+        name: 'Roulette', namePt: 'Roleta',
+        tags: ['Instant', 'Self'],
+        burst: 'required',
+        description: 'This power does not consume a psyche burst. You must be wielding a service weapon that works with the Partners passive for this power to be active (ball, plate, or cylinder shaped).<br><br>This power activates upon spending a psyche burst to enhance your service weapon. You imbue rotational energy into it to enhance its power, add your PSYCHE to its roll instead of gaining +1D. You may do this a number of times equal to CAT-2 (min. 1) per rest, your Partners bonus die is used at that moment.<br><br>However, for every result of \'1\' on rolls affected by this power, you take 1 stress which cannot be negated or reduced.'
+      },
+      {
+        id: 'rotate_loop',
+        name: 'Loop', namePt: 'Ciclo',
+        tags: ['Self', '1 Scene'],
+        burst: 'none',
+        uses: 'rest',
+        description: 'This power does not consume a psyche burst. You create a precise feedback loop of constant output. While you have this output active, all supernatural creatures in CAT distance of you are able to sense your presence, akin to a disco-ball of psychic energy.<br><br>While this power is active, you can during any roll on the table, make that roll \'loop\', giving it +1D. If a looping roll hits triple of any number, you gain the following effects for the rest of the round, or for the next 9 minutes and 16 seconds:<br>• You may gain +1D on any roll for free counting as spending a psyche burst.<br>• Regenerate 1 psyche burst after using a power that spent one.'
+      }
+    ]
+  },
+  {
+    id: 'cuisine',
+    name: 'Cuisine', namePt: 'Culinária',
+    expansion: 'leba',
+    flavor: 'Fact: Cuisine users are disallowed to sell any food product their kitchen may create due to health code violations.',
+    description: 'Make anything a delicious buffet by opening your very own kitchen.',
+    passive: {
+      id: 'cuisine_grand_chef',
+      name: 'Grand Chef', namePt: 'Grande Chef',
+      description: 'You have a supernatural affinity with food, granting you the following benefits:<br>• You gain +1 KP.<br>• When you or your allies rest, you may open your kitchen to the material world. This allows you to spend KP while resting to create a big psychic dish for you and your allies to devour, allowing new resting items to pick from. Each exorcist can only select each item once per rest:<br><br>1 KP: The Mess - Regain KP equal to the d3.<br>2 KP: Sweet Tooth - Clear sin equal to the d3.<br>3 KP: Heart-Breaker - Clear an affliction on a result of 2 or higher on the d3.'
+    },
+    powers: [
+      {
+        id: 'cuisine_seasoning',
+        name: 'Seasoning', namePt: 'Tempero',
+        tags: ['Curse', 'Adjacent'],
+        burst: 'required',
+        description: 'Through your kitchen\'s incredible array of spices, you are able to alter objects or human\'s minds in range literally or metaphorically. You may take a number of effects up to 1/2 CAT to affect up to CAT number of targets:<br><br>• Spicy: Targets become very hot, spicy, or irritated to an abnormal degree.<br>• Salty: Targets become salty, tired, or very sweaty and slippery.<br>• Sweet: Targets become bubbly, aloof, or abnormally sweet and soft.<br>• Smoked: Targets become crispy, rough, or very tasteful and sticky.<br><br>Gain or grant +1D when you or any ally next takes advantage of this power.'
+      },
+      {
+        id: 'cuisine_storage',
+        name: 'Storage', namePt: 'Estoque',
+        tags: ['Instant', 'Self'],
+        burst: 'none',
+        description: 'This power does not take a psyche burst. Your kitchen possesses an almost infinite amount of food and supplies of your choosing. You may spend 1 KP to pull out any mundane organ, meat, produce, or ingredient of your choice.<br><br>After spending 3+ KP with this power, you take 1 nonlethal stress each time you pull out an item from this power as the item is very \'fresh\' and \'recent\', the nature of both is up to the Admin. This penalty lasts until you rest.'
+      },
+      {
+        id: 'cuisine_cutlery',
+        name: 'Cutlery', namePt: 'Talheres',
+        tags: ['Instant', 'Short'],
+        burst: 'on_success',
+        description: 'You unleash an array of psychic cuts in a short area centered around you by opening your kitchen momentarily into reality. These cuts are indiscriminate, cannot be blocked by mundane means such as walls, doors, or obstructions, and are partially invisible to the targets. Roll PSYCHE for its effects, only spend a psyche burst on success.<br><br>For each success you may control your cuts by changing the following settings:<br>• Increase or decrease the cut area.<br>• Discriminate the affected targets.<br>• Turn the cuts visible or fully invisible.'
+      },
+      {
+        id: 'cuisine_fridge',
+        name: 'Fridge', namePt: 'Geladeira',
+        tags: ['Charm', 'Adjacent', 'Instant'],
+        burst: 'required',
+        description: 'You imbue a living matter with psychic energy in order to flash-freeze them and stop their condition from worsening.<br><br>While frozen, your target is unable to take injuries or stress, but cannot move by their own actions. Additionally, any hook, afflictions, or effect active on them are paused for the duration.<br><br>This ability lasts for up to ½ CAT scenes or if used during a conflict scene, lasts for CAT rounds. This ability can end early if the target is heated up by a source of heat. This power may affect the parameters of rolls such as difficulty or risk.'
+      },
+      {
+        id: 'cuisine_oven',
+        name: 'Oven', namePt: 'Forno',
+        tags: ['Curse', 'Short', '1 Scene'],
+        burst: 'on_success',
+        description: 'You open up your oven to slowly cook a person or object up over a prolonged period. When you use this power, select up to CAT targets in range and roll PSYCHE, only spending a psyche burst on success. Upon succeeding, the following effects apply to the target and their surroundings until the end of the scene, or until ended early:<br><br>• While this power is active, the target\'s temperature constantly rises quickly but steadily, causing it to catch on fire and any living tissues to start melting.<br>• Intense heat pours out from the target, causing the surrounding to catch on fire and cook living tissues. This fire cannot spread further than short range from them.<br>• In conflict scenes, the target takes 1 slash on their execution talisman at the start of each round due to the prolonged exposure to your oven.<br><br>This can affect the parameters of rolls, such as difficulty and risk. When the effect expires, the target\'s body remains on fire or boiling hot until the end of the next scene.'
+      }
+    ]
+  },
+  {
+    id: 'egoism',
+    name: 'Egoism', namePt: 'Egoísmo',
+    expansion: 'leba',
+    flavor: 'Inside every heart is the marks of a soul awaiting to be perceived. As above, so below.',
+    description: 'Reveal the true self, unmask your evils.',
+    passive: {
+      id: 'egoism_superego',
+      name: 'Superego', namePt: 'Superego',
+      description: 'You hold a strong control over your identity:<br>• You gain +1 sin overflow cap.<br>• You can reduce sin by 2 instead of halving it.<br>• When an ally in short range of you attempts to use sin instead of a psyche burst, you may take the resulting sin instead of them.'
+    },
+    powers: [
+      {
+        id: 'egoism_swallow',
+        name: 'Swallow', namePt: 'Engolir',
+        tags: ['Instant', 'Adjacent'],
+        burst: 'required',
+        description: 'Your sense of self allows you to swallow the sorrows and pains of others to cleanse them. Select an exorcist or human in range, along with one of their hook, affliction, or injuries. You may remove them and grant them to your exorcist to take on the other\'s burden. Hooks are taken one slash at a time. Affliction or injury taken don\'t count towards end of session xp questions.<br><br>If you already have the same affliction, they instead deal you 1d3+1 sin. This power may fill up a hook fully, or bring you instant death if you are on the brink of death and take on another injury.'
+      },
+      {
+        id: 'egoism_idle',
+        name: 'Idle', namePt: 'Ocioso',
+        tags: ['Charm', 'Self', '1 Scene'],
+        burst: 'required',
+        description: 'You, along with a group of CAT size of other exorcists or humans, have your soul be put in an idle state of tranquility. For the rest of the scene, any affected gain the following benefits:<br><br>• You are resistant to mind-altering substances such as alcohol, coffee, drugs, or occult items.<br>• Your minds are cleared of any mind manipulation, such as illusions or other manipulations of the soul.<br>• Your senses become more dull, and makes all physical activities hard by default while this power is active.<br><br>This power may easily affect parameters of rolls such as difficulty and risk.'
+      },
+      {
+        id: 'egoism_entangle',
+        name: 'Entangle', namePt: 'Emaranhar',
+        tags: ['Summon', 'Short', '1 Scene'],
+        burst: 'required',
+        description: 'You entangle yourself with the woes of the world, grounding and manifesting your very soul into the mortal realm in short range of you from thin air. Gain or grant +1D when you or any ally next takes advantage of this power.<br><br>• Your soul shares your skills and your general capabilities but not your clothes or any items on your person.<br>• You can control your soul like it is an extension of yourself, such as a limb. It can be intangible or not at will.<br>• You take any stress your soul would take from actions made through it.'
+      },
+      {
+        id: 'egoism_distort',
+        name: 'Distort', namePt: 'Distorcer',
+        tags: ['Curse', 'Adjacent', '1 Scene'],
+        burst: 'required',
+        description: 'By touching their soul, your target\'s body distorts to conform to their true feelings. You determine the shape and form this distortion takes with the following effects:<br><br>• Their body can bloat, twist, or contort to unnatural angles to compromise their movement.<br>• Their physical capabilities are made difficult or even impossible to do.<br><br>Once the effect ends, their body goes back to normal. The target remembers everything that happened while they were distorted. This power may easily affect the risk and difficulty of rolls.'
+      },
+      {
+        id: 'egoism_peace',
+        name: 'Peace', namePt: 'Paz',
+        tags: ['Instant', 'Short'],
+        burst: 'on_success',
+        description: 'Through your strong charisma, you emanate an aura of inner peace to any humans in a CAT area, stopping all violent intent from spurring. Ask the following questions to your Admin, gaining +1D for every yes answer:<br>• Do the targets hate you personally?<br>• Are they armed, or holding a dangerous tool?<br>• Are you attempting to communicate with them peacefully?<br><br>Then, roll PSYCHE. On success, the affected targets become neutral to you and your group\'s presence instead of hostile, and if neutral they become friendly. Gain or grant +1D when you or any ally next takes advantage of this power.'
+      }
+    ]
   }
 ];
+
+// ════════════════════════════════════════════════════════════════════
+// DATA: Author Power Words (Marching Ever Onward)
+// ════════════════════════════════════════════════════════════════════
+
+const AUTHOR_POWER_WORDS = {
+  // Base power word from Calligraphy passive
+  base: [
+    {
+      id: 'push',
+      name: 'PUSH', namePt: 'EMPURRAR',
+      touch: 'Launches the victim CAT [CAT:distance] distance away.',
+      touchPt: 'Lança a vítima a distância CAT [CAT:distance].',
+      read: 'Pushes everything in CAT [CAT:area] area away with light force.',
+      readPt: 'Empurra tudo em área CAT [CAT:area] com força leve.'
+    }
+  ],
+  // Power words granted by each power
+  author_storyteller: [
+    {
+      id: 'lie',
+      name: 'LIE', namePt: 'MENTIRA',
+      touch: 'Any humans the victim speaks to for the next hour will inherently disbelieve anything the victim says.',
+      touchPt: 'Quaisquer humanos com quem a vítima falar pela próxima hora inerentemente não acreditarão em nada que a vítima disser.',
+      read: 'All humans in CAT [CAT:area] area become immediately trusting of you and your group. Does not work on anyone who is actively hostile towards you, and expires at the end of the scene.',
+      readPt: 'Todos os humanos em área CAT [CAT:area] se tornam imediatamente confiantes em você e seu grupo. Não funciona em ninguém que esteja ativamente hostil a você, e expira no fim da cena.'
+    }
+  ],
+  author_deus_ex_machina: [
+    {
+      id: 'truth',
+      name: 'TRUTH', namePt: 'VERDADE',
+      touch: 'The victim becomes unable to lie for CAT [CALC:CAT] minutes.',
+      touchPt: 'A vítima se torna incapaz de mentir por CAT [CALC:CAT] minutos.',
+      read: 'All humans in CAT [CAT:area] area are able to see supernatural entities and abilities for exactly one minute.',
+      readPt: 'Todos os humanos em área CAT [CAT:area] são capazes de ver entidades e habilidades sobrenaturais por exatamente um minuto.'
+    }
+  ],
+  author_immersion: [
+    {
+      id: 'sight',
+      name: 'SIGHT', namePt: 'VISÃO',
+      touch: 'The victim briefly becomes highly visible to Exorcists up to CAT [CAT:distance] distance, even through surfaces.',
+      touchPt: 'A vítima se torna brevemente altamente visível para Exorcistas a até distância CAT [CAT:distance], mesmo através de superfícies.',
+      read: 'The next CAT [CALC:CAT] entities who read or hear this lose their ability to comprehend written language until this Word dissipates at rest.',
+      readPt: 'As próximas CAT [CALC:CAT] entidades que lerem ou ouvirem isso perdem sua habilidade de compreender linguagem escrita até esta Palavra se dissipar no descanso.'
+    },
+    {
+      id: 'sound',
+      name: 'SOUND', namePt: 'SOM',
+      touch: 'A loud, distinctive noise emits from the victim\'s position.',
+      touchPt: 'Um barulho alto e distinto emana da posição da vítima.',
+      read: 'You can perfectly hear everything in CAT [CAT:area] area as if it was next to you until the end of the scene or you deactivate the ability.',
+      readPt: 'Você pode ouvir perfeitamente tudo em área CAT [CAT:area] como se estivesse ao seu lado até o fim da cena ou você desativar a habilidade.'
+    }
+  ],
+  author_conflict: [
+    {
+      id: 'fire',
+      name: 'FIRE', namePt: 'FOGO',
+      touch: 'Severely burns the limb which touched the Word. Requires a PSYCHE roll and refunds Psych Burst on failure.',
+      touchPt: 'Queima severamente o membro que tocou a Palavra. Requer uma rolagem de PSIQUE e reembolsa o Pulso Psíquico em falha.',
+      read: 'Flammable objects in up to CAT [CAT:area] area ignite.',
+      readPt: 'Objetos inflamáveis em até área CAT [CAT:area] pegam fogo.'
+    },
+    {
+      id: 'blizzard',
+      name: 'BLIZZARD', namePt: 'NEVASCA',
+      touch: 'Victim\'s limb which touched the Word is frozen over.',
+      touchPt: 'O membro da vítima que tocou a Palavra é congelado.',
+      read: 'All liquid water in up to CAT [CAT:area] area freezes instantly (excluding that of living creatures).',
+      readPt: 'Toda água líquida em até área CAT [CAT:area] congela instantaneamente (excluindo a de criaturas vivas).'
+    },
+    {
+      id: 'thunder',
+      name: 'THUNDER', namePt: 'TROVÃO',
+      touch: 'Victim is struck with a nonlethal but severe shock. This cannot physically harm someone, but may affect their cognition or cause temporary paralysis.',
+      touchPt: 'A vítima é atingida com um choque não-letal mas severo. Isso não pode ferir fisicamente alguém, mas pode afetar sua cognição ou causar paralisia temporária.',
+      read: 'All electronics in up to CAT [CAT:area] area short circuit.',
+      readPt: 'Todos os eletrônicos em até área CAT [CAT:area] entram em curto-circuito.'
+    }
+  ],
+  author_chapter: [
+    {
+      id: 'lose',
+      name: 'LOSE', namePt: 'PERDER',
+      touch: 'The victim forgets its current task or objective until reminded.',
+      touchPt: 'A vítima esquece sua tarefa ou objetivo atual até ser lembrada.',
+      read: 'The reader somehow loses or misplaces CAT [CALC:CAT] personal items and cannot find them without aid.',
+      readPt: 'O leitor de alguma forma perde ou extrava CAT [CALC:CAT] itens pessoais e não pode encontrá-los sem ajuda.'
+    },
+    {
+      id: 'find',
+      name: 'FIND', namePt: 'ENCONTRAR',
+      touch: 'The victim leaves behind a psychic shadow of their appearance.',
+      touchPt: 'A vítima deixa para trás uma sombra psíquica de sua aparência.',
+      read: 'All entities in CAT [CAT:area] area leave behind psychic footprints until you rest.',
+      readPt: 'Todas as entidades em área CAT [CAT:area] deixam para trás pegadas psíquicas até você descansar.'
+    }
+  ]
+};
+
+// Helper to get all power words available to a character with Author blasphemy
+function getAuthorPowerWords(char) {
+  var authorBlas = (char.blasphemies || []).find(function(b) { return b.id === 'author'; });
+  if (!authorBlas) return [];
+  var words = AUTHOR_POWER_WORDS.base.slice(); // Always have base words
+  var powers = authorBlas.powers || [];
+  powers.forEach(function(powId) {
+    if (AUTHOR_POWER_WORDS[powId]) {
+      words = words.concat(AUTHOR_POWER_WORDS[powId]);
+    }
+  });
+  return words;
+}
 
 // ════════════════════════════════════════════════════════════════════
 // DATA: Sin Marks
@@ -3275,6 +4351,32 @@ var VIRTUES = [
       tags: ['Instant', 'Charm', 'Short Range'],
       description: 'Spend all your remaining psyche bursts (min 1). Issue a single, clear order of no more than 6 words to any number of targets you can see within short range. The order echoes with absolute authority inside their head.<br><br><strong>OBEDIENCE:</strong> Targets who obey the order (as best as they can) immediately gain +2D on their next action that follows the command. If they succeed, they may clear 1 stress/slash.<br><br><strong>DEFIANCE:</strong> Targets who refuse to obey suffer consequences:<br>• Humans: Suffer instant death (their mind breaks under the weight).<br>• Exorcists: Take 1d3+1 irreducible stress and cannot benefit from teamwork or setup until the end of the scene.<br>• Sins: Suffer 2 slashes and the next action against it cannot be hard or risky.<br><br>You cannot order someone to directly harm themselves, but you can order actions that clearly put them in mortal danger.'
     }
+  },
+  // ─── The Odysseus Protocol expansion ───────────────────────────────
+  {
+    id: 'cleanliness',
+    name: 'Cleanliness', namePt: 'Limpeza',
+    title: 'The Archivist', titlePt: 'A Arquivista',
+    image: 'img/virtues/cleanliness.png',
+    color: '#25e625',
+    compendiumDesc: "Cleanliness was discovered by CAIN within a derelict facility next to a journal with every page completely blacked out. On inspection of the facility, it appeared to be previously owned by CAIN, despite all records CAIN holds saying that it does not exist. Upon waking up, Cleanliness explained that they were a Virtue and needed access to the archives.<br><br>After fierce interrogation, Cleanliness explained that an apocalyptic event was on the horizon, and CAIN would be responsible for it if they were not given archive access.<br><br>Cleanliness was officially given the title of Head Archivist and given access to all non-TEMERITY files. Although Cleanliness does not see this as ideal, they have continued to work with CAIN personnel, using their High Blasphemy, REWRITE, to retroactively alter reality through revising documents of an event.",
+    favoriteFood: 'Caffeinated Drinks, Canned Goods, Salt-Cured Meat',
+    expansion: 'odysseus',
+    strictures: 'You cannot destroy information. Always roll 0d on an action where you get your hands dirty.',
+    strictureIgnoreCost: '1d3 nonlethal stress',
+    likes: ['Cows', 'Justice', 'Faith', 'Mythology', 'Role-playing Games'],
+    dislikes: ['Fortitude', 'TEMERITY', 'Busywork', 'Insects'],
+    bondAbilities: [
+      { level: 0, description: 'Once per mission, re-roll any action that caused a plan to fail.' },
+      { level: 1, description: 'Gain the Rewrite High Blasphemy.' },
+      { level: 2, description: 'Gain an extra XP trigger: did you maintain a clear record?' },
+      { level: 3, description: 'Gain the ability to Expunge.' }
+    ],
+    highBlasphemy: {
+      name: 'Rewrite',
+      tags: ['Instant', 'Transmute'],
+      description: 'You channel Psychic Energy through a document of some sort and rewrite reality by altering its contents. To use Rewrite, you need to have a document of some form with these details written down:<br><br>• <b>To Rewrite an Exorcist:</b> Their Blasphemy and their number of abilities from that Blasphemy. You only need to know the Blasphemy of an NPC Exorcist to Rewrite them.<br>• <b>To Rewrite a Sin:</b> Its Sin Type and its three Domains.<br><br>Spend all your remaining Psyche Bursts (min 1) and declare what you intend to alter. If you meet the requirements to alter it, you succeed in doing so and change your target for a number of scenes equal to CAT.<br><br>• <b>Rewrite an Exorcist:</b> You can change the Blasphemy of an Exorcist and select a number of abilities from it equal to their number of abilities from their original Blasphemy of your choice.<br>• <b>Rewrite a Sin:</b> You can change out one of a Sin\'s Domains for a different one from their Sin Type.<br><br><b>[EXPUNGE]</b><br>As a master of rewrite, you can betray your own beliefs as a last resort and completely erase information from a document using rewrite. You expunge a piece of information from your documents and erase it from reality for a short time. When using Rewrite, instead of changing the subject to something else, you can choose to completely delete it for a number of scenes equal to CAT. This is considered as destroying information in regards to Cleanliness\' Strictures.<br><br><em>IMPORTANT WARNING: Although Rewrite and Expunge do not require any form of consent to activate in-universe, Players Out-of-game must consent to being the target of either Rewrite or Expunge before it is used.</em>'
+    }
   }
 ];
 
@@ -3396,7 +4498,23 @@ var KIT_EXPANSION = [
         descriptionPt: "Modificado pelo dono, variante do 'Well' básico. Usado pelo comitê de disciplina avançada. Apenas CAT 4+." },
       { id: 'aes_banneret_longcoat', name: '"Banneret" Longcoat', namePt: 'Sobretudo "Banneret"', scrip: 4, reqCat: 4, expansion: 'gff4',
         description: 'Tailored to fit. Typical uniform for those allowed to audit Board meetings or employed as security for higher clearance AUTHORITY facilities. CAT 4+ only.',
-        descriptionPt: 'Ajustado sob medida. Uniforme típico de quem pode assistir a reuniões do Conselho ou trabalha como segurança em instalações da AUTORIDADE de alta credencial. Apenas CAT 4+.' }
+        descriptionPt: 'Ajustado sob medida. Uniforme típico de quem pode assistir a reuniões do Conselho ou trabalha como segurança em instalações da AUTORIDADE de alta credencial. Apenas CAT 4+.' },
+      // ── LEBA Association Aesthetics ──
+      { id: 'aes_leba_fashionista', name: 'Fashionista Uniform', namePt: 'Uniforme Fashionista', scrip: 5, tags: ['Conspicuous'], reqCat: 4, expansion: 'leba',
+        description: 'Highly luxurious fashion. Usage required for special events. Not approved for field use. Production limited to a select few. Only available for CAT 4+ exorcists.',
+        descriptionPt: 'Moda altamente luxuosa. Uso obrigatório em eventos especiais. Não aprovado para uso em campo. Produção limitada a poucos. Disponível apenas para exorcistas CAT 4+.' },
+      { id: 'aes_leba_work_outfit', name: 'Work Outfit', namePt: 'Roupa de Trabalho', scrip: 1, expansion: 'leba',
+        description: 'Special clothing used by construction workers, plumbers, trash men and others. Ideal for maintenance disguises within rural areas.',
+        descriptionPt: 'Roupa especial usada por trabalhadores de construção, encanadores, lixeiros e outros. Ideal para disfarces de manutenção em áreas rurais.' },
+      { id: 'aes_leba_delinquent', name: 'Delinquent Wear', namePt: 'Roupa de Delinquente', scrip: 2, tags: ['Conspicuous'], expansion: 'leba',
+        description: 'Punk and worn down fashion. Perfect for street gang disguises. Includes chains, accessories, high boots, metal spikes, and gloves. Optional mask for anonymity.',
+        descriptionPt: 'Moda punk e desgastada. Perfeita para disfarces de gangues de rua. Inclui correntes, acessórios, botas altas, espinhos de metal e luvas. Máscara opcional para anonimato.' },
+      { id: 'aes_leba_golden_ticket', name: 'Golden Ticket', namePt: 'Ingresso Dourado', scrip: 11, reqCat: 5, expansion: 'leba',
+        description: 'Allows an exorcist to wear any aesthetics option on the field without need for prior approval. Only available for CAT 5+ exorcists.',
+        descriptionPt: 'Permite que um exorcista use qualquer opção estética em campo sem necessidade de aprovação prévia. Disponível apenas para exorcistas CAT 5+.' },
+      { id: 'aes_leba_wardrobe_discount', name: 'Wardrobe Discount', namePt: 'Desconto de Guarda-Roupa', scrip: 1, reqCat: 4, expansion: 'leba',
+        description: 'Reduces the cost of all aesthetics options by 1. Only available for CAT 4+ exorcists.',
+        descriptionPt: 'Reduz o custo de todas as opções estéticas em 1. Disponível apenas para exorcistas CAT 4+.' }
     ]
   },
   {
@@ -3428,7 +4546,35 @@ var KIT_EXPANSION = [
         descriptionPt: 'Você tem direito a uma semana de folga por ano com algumas concessões de viagem. Você ganha +1 estresse máximo, +1 KP e +1 no limite de transbordo de pecado.' },
       { id: 'cc_pieces_of_silver', name: 'Pieces of Silver', namePt: 'Moedas de Prata', scrip: 44,
         description: 'You are permitted to retire from exorcism. The work continues. You may work at CAIN in one of its many branches in an administrative capacity for the rest of your life, with potential opportunity for advancement.',
-        descriptionPt: 'Você tem permissão para se aposentar do exorcismo. O trabalho continua. Você pode trabalhar na CAIN em um de seus muitos ramos em função administrativa pelo resto da vida, com potencial oportunidade de progressão.' }
+        descriptionPt: 'Você tem permissão para se aposentar do exorcismo. O trabalho continua. Você pode trabalhar na CAIN em um de seus muitos ramos em função administrativa pelo resto da vida, com potencial oportunidade de progressão.' },
+      // ── LEBA Association Comfort/Career ──
+      { id: 'cc_leba_private_bathroom', name: 'Private Bathroom', namePt: 'Banheiro Privativo', scrip: 4, expansion: 'leba', type: 'passive', mods: { maxKP: 1 },
+        description: 'Access to private showers and toilets. Free for CAT 4+ exorcists. +1 max KP.',
+        descriptionPt: 'Acesso a chuveiros e banheiros privativos. Gratuito para exorcistas CAT 4+. +1 KP máximo.' },
+      { id: 'cc_leba_personal_therapist', name: 'Personal Therapist', namePt: 'Terapeuta Pessoal', scrip: 8, expansion: 'leba', type: 'use',
+        description: 'Authorized monthly visits to a personal therapist for psychological evaluations. During exfiltration, you may clear 2d6 sin instead of halving all sin.',
+        descriptionPt: 'Visitas mensais autorizadas a um terapeuta pessoal para avaliações psicológicas. Durante a exfiltração, você pode limpar 2d6 de pecado ao invés de reduzir todo pecado pela metade.' },
+      { id: 'cc_leba_dating_rights', name: 'CL-9 Dating Rights', namePt: 'Direitos de Encontro CL-9', scrip: 4, expansion: 'leba', type: 'passive', mods: { sinCap: 1 },
+        description: 'Date nights for emotional stability and affection with specialized CASTLE partners. +1 sin overflow cap.',
+        descriptionPt: 'Noites de encontro para estabilidade emocional e afeto com parceiros especializados da CASTLE. +1 no limite de inundação de pecado.' },
+      { id: 'cc_leba_movie_ticket', name: 'Movie Ticket', namePt: 'Ingresso de Cinema', scrip: 5, expansion: 'leba', tags: ['Consumable'], type: 'consumable',
+        description: 'Reserved ticket for a 10-movie run private session of the exorcist\'s choice. Use to clear a hook through a flashback to the movie session.',
+        descriptionPt: 'Ingresso reservado para uma sessão privada de 10 filmes à escolha do exorcista. Use para limpar um gancho através de um flashback para a sessão de cinema.' },
+      { id: 'cc_leba_personal_transport', name: 'Personal Transport', namePt: 'Transporte Pessoal', scrip: 12, expansion: 'leba', type: 'use',
+        description: 'Personal transport for exorcist\'s team allowing fast deployment and exfiltration. 2/Mission, when changing locations at the end of a scene, tension does not increase. Does not stack if multiple exorcists have this allowance.',
+        descriptionPt: 'Transporte pessoal para a equipe do exorcista permitindo rápido deslocamento e exfiltração. 2/Missão, ao mudar de local no fim de uma cena, a tensão não aumenta. Não acumula se múltiplos exorcistas tiverem esta permissão.' },
+      { id: 'cc_leba_sauna_sunday', name: 'Sauna Sunday', namePt: 'Domingo de Sauna', scrip: 6, expansion: 'leba', reqCat: 4, type: 'passive', mods: { maxStress: 1 },
+        description: 'Luxurious sauna session with CASTLE-approved massage. Only available to CAT 4+ exorcists. +1 max stress.',
+        descriptionPt: 'Sessão luxuosa de sauna com massagem aprovada pela CASTLE. Disponível apenas para exorcistas CAT 4+. +1 estresse máximo.' },
+      { id: 'cc_leba_union_card', name: 'Union Membership Card', namePt: 'Cartão de Membro do Sindicato', scrip: 1, expansion: 'leba', type: 'use',
+        description: 'As Above, So Below. Once per hunt, may reprimand or protect yourself against a CAIN superior. This card is imbued with grace, do not abuse its protection.',
+        descriptionPt: 'Assim na Terra, Como no Céu. Uma vez por caçada, pode repreender ou se proteger contra um superior da CAIN. Este cartão é imbuído com graça, não abuse de sua proteção.' },
+      { id: 'cc_leba_suppression_surgery', name: 'TEMERITY Suppression Surgery', namePt: 'Cirurgia de Supressão TEMERITY', scrip: 12, expansion: 'leba', reqCat: 4, type: 'use',
+        description: 'Surgery available only to CAT 4+ exorcists and only once per exorcist. Pick a sin mark you have. It no longer modifies resistance rolls.',
+        descriptionPt: 'Cirurgia disponível apenas para exorcistas CAT 4+ e apenas uma vez por exorcista. Escolha uma marca de pecado que você tem. Ela não modifica mais rolagens de resistência.' },
+      { id: 'cc_leba_home', name: '[Home]', namePt: '[Lar]', scrip: 20, expansion: 'leba', reqCat: 5, type: 'passive', mods: { maxStress: 1, maxInjury: 1, maxKP: 1, sinCap: 1 },
+        description: '[DATA EXPUNGED], [Welcome Home Sister]. Available only to CAT 5+ exorcists. +1 max stress, +1 max injury, +1 KP, +1 sin overflow cap. You can never leave CAIN of your own will.',
+        descriptionPt: '[DADOS APAGADOS], [Bem-Vinda Irmã]. Disponível apenas para exorcistas CAT 5+. +1 estresse máximo, +1 ferimento máximo, +1 KP, +1 limite de pecado. Você nunca pode deixar a CAIN por vontade própria.' }
     ]
   },
   {
@@ -3563,7 +4709,33 @@ var KIT_EXPANSION = [
           { name: 'Suicide pill', namePt: 'Pílula suicida' },
           { name: 'Scented oil', namePt: 'Óleo perfumado' },
           { name: 'Antique censer', namePt: 'Turíbulo antigo' }
-        ] }
+        ] },
+      // ── LEBA Association Possessions ──
+      { id: 'pos_leba_adorable_plushie', name: 'Adorable Plushie', namePt: 'Pelúcia Adorável', scrip: 2, kp: 1, tags: ['Consumable'], expansion: 'leba',
+        description: "Absolutely 'useless' plushie for spending habits and ADHD exorcists. You may use this plushie to take a hit for you, allowing you to ignore a single instance of taking damage equal or below 3 stress. Afterwards, this plushie is destroyed.",
+        descriptionPt: "Pelúcia absolutamente 'inútil' para hábitos de consumo e exorcistas com TDAH. Você pode usar esta pelúcia para receber um golpe por você, permitindo ignorar uma única instância de dano igual ou inferior a 3 de estresse. Após isso, a pelúcia é destruída." },
+      { id: 'pos_leba_biker_kit', name: 'Biker Kit', namePt: 'Kit de Motoqueiro', scrip: 4, type: 'kit', tags: ['Conspicuous'], expansion: 'leba',
+        note: 'Allocated with approval. You have a sturdy helmet (1 KP) and access to a motorbike on missions. The bike has a 6 talisman for harm and can fit two people comfortably. If it is totaled, you are docked 2 scrip for a replacement.',
+        notePt: 'Concedido com aprovação. Você tem um capacete resistente (1 KP) e acesso a uma moto nas missões. A moto tem um talismã de dano 6 e comporta duas pessoas confortavelmente. Se for destruída, você é descontado em 2 scrip para reposição.',
+        contents: [
+          { name: 'Sturdy helmet', namePt: 'Capacete resistente', kp: 1 },
+          { name: 'Access to a motorbike', namePt: 'Acesso a uma moto', kp: 0, special: 'bike', talisman: 6 }
+        ] },
+      { id: 'pos_leba_repair_kit', name: 'Repair Kit', namePt: 'Kit de Reparos', scrip: 4, type: 'kit', tags: ['Conspicuous', 'Focus'], expansion: 'leba',
+        note: 'Standardized kit equipped with all the tools necessary for on-field repair jobs.',
+        notePt: 'Kit padronizado equipado com todas as ferramentas necessárias para reparos em campo.',
+        contents: [
+          { name: 'Adjustable wrench', namePt: 'Chave ajustável', kp: 1 },
+          { name: 'Pliers', namePt: 'Alicates', kp: 1 },
+          { name: 'Screwdriver set', namePt: 'Kit de chaves de fenda', kp: 1 },
+          { name: '20 fasteners (bolts, nuts, screws, or nails)', namePt: '20 fixadores (parafusos, porcas, pregos)', kp: 1 },
+          { name: 'Hammer', namePt: 'Martelo', kp: 1 },
+          { name: 'Ratchet', namePt: 'Catraca', kp: 1 },
+          { name: 'Wheel brace', namePt: 'Chave de roda', kp: 2 }
+        ] },
+      { id: 'pos_leba_leon_mixer', name: "TEMERITY 'Leon' Mixer", namePt: "Misturador 'Leon' TEMERITY", scrip: 8, kp: 1, tags: ['Conspicuous'], expansion: 'leba',
+        description: "Cursed item created by TEMERITY's research branch for the cultivation of cursed items. May spend KP to fuse two occult/medical items together, stacking their effects. The cost of the fusion equals the value of the two fused items, then halved rounded up. The result of the fusion can be used immediately at no cost, kept for later, or fused again.",
+        descriptionPt: "Item amaldiçoado criado pelo ramo de pesquisa da TEMERITY para o cultivo de itens amaldiçoados. Pode gastar KP para fundir dois itens ocultos/médicos, acumulando seus efeitos. O custo da fusão é igual ao valor dos dois itens fundidos, dividido por dois (arredondado para cima). O resultado da fusão pode ser usado imediatamente sem custo, guardado para depois, ou fundido novamente." }
     ]
   },
   {
@@ -3601,10 +4773,330 @@ var KIT_EXPANSION = [
         descriptionPt: 'Quando espalhado sobre uma área do tamanho de um cômodo, impede que humanos entrem até que a pressão aumente.' },
       { id: 'om_ambrosia', name: 'Ambrosia', namePt: 'Ambrosia', scrip: 5, kp: 1, tags: ['Consumable'], type: 'consumable',
         description: 'Consume to gain 1 max and current psyche burst. Effect does not stack and lasts until the mission is over.',
-        descriptionPt: 'Consuma para ganhar 1 pulso psíquico máximo e atual. O efeito não acumula e dura até o fim da missão.' }
+        descriptionPt: 'Consuma para ganhar 1 pulso psíquico máximo e atual. O efeito não acumula e dura até o fim da missão.' },
+      // ── LEBA Association Occult/Medical ──
+      { id: 'om_leba_blue_herb', name: 'Blue Herb', namePt: 'Erva Azul', scrip: 2, kp: 1, tags: ['Consumable', 'Focus'], type: 'consumable', expansion: 'leba',
+        description: 'Consume to remove any poison or toxin (except Centipede venom).',
+        descriptionPt: 'Consuma para remover qualquer veneno ou toxina (exceto veneno de Centopeia).' },
+      { id: 'om_leba_somnium_mortis', name: 'Somnium Mortis', namePt: 'Somnium Mortis', scrip: 3, kp: 2, tags: ['Consumable', 'Focus'], type: 'consumable', expansion: 'leba',
+        description: "Can only be used on exorcists or binders. Can be thrown to neutralize a specific power of the target for the scene.",
+        descriptionPt: 'Só pode ser usado em exorcistas ou vinculadores. Pode ser arremessado para neutralizar um poder específico do alvo pela cena.' },
+      { id: 'om_leba_st_carmilia_tear', name: "St. Carmilia's Tear", namePt: 'Lágrima de Santa Carmília', scrip: 4, kp: 2, tags: ['Consumable', 'Focus'], type: 'consumable', expansion: 'leba',
+        description: 'Drink to gain +2 sin overflow cap. Effect does not stack and lasts until the mission is over.',
+        descriptionPt: 'Beba para ganhar +2 no limite de inundação de pecado. O efeito não acumula e dura até o fim da missão.' },
+      { id: 'om_leba_lesser_black_body', name: 'Lesser Black Body', namePt: 'Corpo Negro Menor', scrip: 2, kp: 1, tags: ['Consumable'], type: 'consumable', expansion: 'leba',
+        description: 'Condensed sinseed of a small sin. Can be broken to lower sin by 1d3, but all actions are risky until a rest.',
+        descriptionPt: 'Semente de pecado condensada de um pecado pequeno. Pode ser quebrado para reduzir pecado em 1d3, mas todas as ações são arriscadas até um descanso.' },
+      { id: 'om_leba_religious_idol', name: 'Religious Idol', namePt: 'Ídolo Religioso', scrip: 3, kp: 2, tags: ['Conspicuous'], expansion: 'leba',
+        description: 'An idol of strong faith. When faced against, can make a sin or trace flee from a conflict scene. Unusable after until next rest.',
+        descriptionPt: 'Um ídolo de fé forte. Quando confrontado, pode fazer um pecado ou traço fugir de uma cena de conflito. Inutilizável depois até o próximo descanso.' },
+      { id: 'om_leba_death_stick', name: 'Death Stick', namePt: 'Bastão da Morte', scrip: 4, kp: 2, tags: ['Conspicuous', 'Consumable'], type: 'consumable', expansion: 'leba',
+        description: 'Causes instant death to humans, exorcists, or binders that eat it if they have 3 stress or less. If eaten by a sin, they take 1d3 slashes instead.',
+        descriptionPt: 'Causa morte instantânea a humanos, exorcistas ou vinculadores que o comerem se tiverem 3 de estresse ou menos. Se comido por um pecado, ele recebe 1d3 cortes.' },
+      { id: 'om_leba_lily_trap_seed', name: "Lily's Trap Seed", namePt: 'Semente Armadilha de Lily', scrip: 3, kp: 2, tags: ['Focus'], expansion: 'leba',
+        description: 'Place down a psychic-plant seed, it blooms into a natural trap of choice that may entrap or entangle beings of CAT equal or lower than you. May be replanted or taken back as an action.',
+        descriptionPt: 'Coloque uma semente de planta psíquica, ela floresce em uma armadilha natural à escolha que pode prender ou enredar seres de CAT igual ou inferior ao seu. Pode ser replantada ou recuperada como uma ação.' },
+      { id: 'om_leba_tigerheart', name: 'Tigerheart Medicine', namePt: 'Remédio Coração de Tigre', scrip: 4, kp: 2, tags: ['Consumable'], type: 'consumable', expansion: 'leba',
+        description: 'Consume to heal an injury, removing it, but permanently lowers max stress by 1. Can be used while under duress.',
+        descriptionPt: 'Consuma para curar um ferimento, removendo-o, mas reduz permanentemente o estresse máximo em 1. Pode ser usado sob pressão.' },
+      { id: 'om_leba_forgiving_saint', name: 'Seed of the Forgiving Saint', namePt: 'Semente do Santo Perdoador', scrip: 8, kp: 0, tags: ['Consumable'], type: 'consumable', expansion: 'leba',
+        description: 'Clears any permanent effects produced by consumables. May be used outside of missions.',
+        descriptionPt: 'Limpa quaisquer efeitos permanentes produzidos por consumíveis. Pode ser usado fora de missões.' },
+      { id: 'om_leba_gogagog_worm', name: 'Gogagog Worm', namePt: 'Verme Gogagog', scrip: 2, kp: 1, tags: ['Consumable'], type: 'consumable', expansion: 'leba',
+        description: 'Ingest to see the past of a corpse in the same room, but permanently lowers sin overflow cap by 1.',
+        descriptionPt: 'Ingira para ver o passado de um cadáver na mesma sala, mas reduz permanentemente o limite de inundação de pecado em 1.' }
+    ]
+  },
+  // ── LEBA Association Red Market (new category) ──
+  {
+    id: 'red_market',
+    name: 'Red Market', namePt: 'Mercado Vermelho',
+    note: 'Unsanctioned, untraceable goods brought mostly via black market. You can spend KP to pull out anything on a kit list once you have access to it.',
+    notePt: 'Bens não autorizados e não rastreáveis, obtidos principalmente no mercado negro. Você pode gastar KP para sacar qualquer coisa da lista de um kit depois de ter acesso a ele.',
+    expansion: 'leba',
+    items: [
+      { id: 'rm_muses_kit', name: "Muses' Kit", namePt: 'Kit das Musas', scrip: 3, type: 'kit', tags: ['Conspicuous'], expansion: 'leba',
+        note: 'Equipped with an echo chamber bubble to remain unheard from CAIN officials.',
+        notePt: 'Equipado com uma bolha de câmara de eco para permanecer inaudível para oficiais da CAIN.',
+        contents: [
+          { name: 'Electric music instrument', namePt: 'Instrumento musical elétrico', kp: 1 },
+          { name: 'Acoustic music instrument', namePt: 'Instrumento musical acústico', kp: 1 },
+          { name: 'Tuner', namePt: 'Afinador', kp: 1 },
+          { name: 'Speaker', namePt: 'Caixa de som', kp: 1 },
+          { name: 'Audio connecting cables', namePt: 'Cabos de conexão de áudio', kp: 1 },
+          { name: 'DJ booth', namePt: 'Cabine de DJ', kp: 2 },
+          { name: 'Echo bubble', namePt: 'Bolha de eco', kp: 2 }
+        ] },
+      { id: 'rm_terrorist_kit', name: 'Terrorist Kit', namePt: 'Kit Terrorista', scrip: 5, type: 'kit', tags: ['Conspicuous', 'Focus'], expansion: 'leba',
+        note: 'High ordnance, explosives, extremely dangerous to all humans. Be careful with this.',
+        notePt: 'Armamento pesado, explosivos, extremamente perigoso para todos os humanos. Tenha cuidado com isso.',
+        contents: [
+          { name: 'Explosive grenade', namePt: 'Granada explosiva', kp: 1 },
+          { name: 'Molotov', namePt: 'Molotov', kp: 1 },
+          { name: 'C4', namePt: 'C4', kp: 1 },
+          { name: 'M60 machine gun', namePt: 'Metralhadora M60', kp: 2 },
+          { name: 'Mini-gun', namePt: 'Mini-gun', kp: 2 },
+          { name: 'Full metal jacket ammunition box', namePt: 'Caixa de munição encamisada', kp: 2 },
+          { name: 'High explosive weaponry (RPG, Grenade Launcher, etc.)', namePt: 'Armamento explosivo pesado (RPG, Lança-granadas, etc.)', kp: 2 }
+        ] },
+      { id: 'rm_reporter_kit', name: 'Reporter Kit', namePt: 'Kit de Repórter', scrip: 3, type: 'kit', expansion: 'leba',
+        note: 'To let your voice shout outwards upon the world. You have a message. Let it be known.',
+        notePt: 'Para deixar sua voz ecoar pelo mundo. Você tem uma mensagem. Deixe-a ser conhecida.',
+        contents: [
+          { name: 'Propaganda poster', namePt: 'Pôster de propaganda', kp: 1 },
+          { name: 'Megaphone', namePt: 'Megafone', kp: 1 },
+          { name: 'Speaker', namePt: 'Caixa de som', kp: 1 },
+          { name: 'Voice changer', namePt: 'Modificador de voz', kp: 1 },
+          { name: 'Facemask', namePt: 'Máscara facial', kp: 1 },
+          { name: 'Professional camera', namePt: 'Câmera profissional', kp: 2 },
+          { name: 'Ink printer', namePt: 'Impressora a tinta', kp: 1 },
+          { name: 'Ink', namePt: 'Tinta', kp: 1 },
+          { name: 'Typewriter', namePt: 'Máquina de escrever', kp: 1 }
+        ] },
+      { id: 'rm_offshore_cash', name: 'Off-Shore Cash', namePt: 'Dinheiro Offshore', scrip: 5, kp: 1, expansion: 'leba',
+        description: 'Washed money, or freshly printed bills, up to 50¤ of the local currency. RISKY ON CAMPUS. Spend 1 KP to pull out 10¤ money of local currency, up to a maximum of 50¤ per mission.',
+        descriptionPt: 'Dinheiro lavado, ou notas recém-impressas, até 50¤ da moeda local. ARRISCADO NO CAMPUS. Gaste 1 KP para sacar 10¤ em moeda local, até o máximo de 50¤ por missão.' },
+      { id: 'rm_offsite_housing', name: 'Off-Site Housing', namePt: 'Moradia Externa', scrip: 20, kp: 1, reqCat: 4, expansion: 'leba',
+        description: 'Secretive, third location away from the Eyes of CAIN. Restricted to CAT 4+ Exorcists. May spend KP to gain an additional rest die to self or an allied exorcist, once per person.',
+        descriptionPt: 'Local secreto, terceira localização longe dos Olhos da CAIN. Restrito a Exorcistas CAT 4+. Pode gastar KP para ganhar um dado de descanso adicional para si ou um exorcista aliado, uma vez por pessoa.' },
+      { id: 'rm_toxin_kit', name: 'Toxin Kit', namePt: 'Kit de Toxinas', scrip: 5, type: 'kit', expansion: 'leba',
+        note: 'Favors and connections allow one to gather these produce without provoking CASTLE.',
+        notePt: 'Favores e conexões permitem adquirir esses produtos sem provocar a CASTLE.',
+        contents: [
+          { name: 'Alcohol at less than 10%', namePt: 'Álcool abaixo de 10%', kp: 1 },
+          { name: 'Alcohol at or higher than 10%', namePt: 'Álcool a 10% ou mais', kp: 2 },
+          { name: '1g of hard drug (Meth, LSD, etc.)', namePt: '1g de droga pesada (Meta, LSD, etc.)', kp: 2 },
+          { name: 'A pack of cigarettes', namePt: 'Um maço de cigarros', kp: 1 },
+          { name: 'Weed', namePt: 'Maconha', kp: 1 }
+        ] },
+      { id: 'rm_garden_kit', name: 'Garden Kit', namePt: 'Kit de Jardinagem', scrip: 5, type: 'kit', expansion: 'leba',
+        note: 'Tools and supplies to plant your very own garden, seeds provided for 0 KP each.',
+        notePt: 'Ferramentas e suprimentos para plantar seu próprio jardim, sementes fornecidas por 0 KP cada.',
+        contents: [
+          { name: 'A fresh produce (fruit, vegetable, etc.)', namePt: 'Um produto fresco (fruta, vegetal, etc.)', kp: 1 },
+          { name: 'Shovel', namePt: 'Pá', kp: 1 },
+          { name: 'Hoe', namePt: 'Enxada', kp: 1 },
+          { name: 'Watering can', namePt: 'Regador', kp: 1 },
+          { name: 'Bucket', namePt: 'Balde', kp: 1 },
+          { name: 'Shears', namePt: 'Tesoura de poda', kp: 1 },
+          { name: 'Pruners', namePt: 'Podadores', kp: 1 },
+          { name: 'Garden boots', namePt: 'Botas de jardinagem', kp: 1 },
+          { name: 'Handheld scythe', namePt: 'Foice de mão', kp: 1 }
+        ] },
+      { id: 'rm_chef_kit', name: 'Chef Kit', namePt: 'Kit de Chef', scrip: 3, type: 'kit', expansion: 'leba',
+        note: 'Array of instruments to allow one to cook anywhere they so desire, fueled by love.',
+        notePt: 'Conjunto de instrumentos para permitir cozinhar em qualquer lugar, movido por amor.',
+        contents: [
+          { name: 'Pans', namePt: 'Frigideiras', kp: 1 },
+          { name: 'Pots', namePt: 'Panelas', kp: 1 },
+          { name: 'Bowls', namePt: 'Tigelas', kp: 1 },
+          { name: 'Chopping board', namePt: 'Tábua de corte', kp: 1 },
+          { name: 'Wooden utensils', namePt: 'Utensílios de madeira', kp: 1 },
+          { name: 'Steel utensils', namePt: 'Utensílios de aço', kp: 1 },
+          { name: 'Rolling pin', namePt: 'Rolo de massa', kp: 1 },
+          { name: 'Cookers', namePt: 'Fogões', kp: 1 },
+          { name: 'Firecamp wood', namePt: 'Lenha para fogueira', kp: 1 },
+          { name: 'Peelers', namePt: 'Descascadores', kp: 1 }
+        ] }
     ]
   }
 ];
+
+// ── LEBA Association Cursed Items ──────────────────────────────────────────
+// Specialized weapons crafted from executed sin remains. Counts as a service weapon.
+var CURSED_ITEMS = {
+  expansion: 'leba',
+  rules: {
+    en: {
+      intro: 'Due to the increase in sin activities, TEMERITY has allowed the opening of the Cursed Item arsenal to all CAT 2+ exorcists. They may be purchased as specialized weapons with specific bonuses and count as your service weapon.',
+      cost: 'Cost: 5 scrip (first purchase)',
+      requirement: 'Requirement: CAT 2+ exorcist',
+      kp: 'KP to deploy: 3 KP',
+      scaling: 'Scales with: Service weapon CAT level (upgrades automatically)',
+      maxEffects: 'Maximum effects: Service weapon CAT + 1',
+      curse: 'Curse Activation: During the hunt, the Admin may call upon the curse of your weapon to make a Threat (1-3) or Complication (1-3). The threat deals 2 stress base, +1 stress per curse. Complications create a talisman with +1 slash per curse (min 2 slashes). You must deal with the curse before continuing to use the item normally.',
+      upgrade: 'Upgrades: Automatically upgrades when you upgrade your service weapon. Each upgrade grants +1 curse AND +1 effect. Can replace effects during upgrade (free) or between missions (2 scrip).',
+      loss: 'Loss: If you lose a cursed item, you are docked (Service Weapon CAT + 2) scrip at end of hunt. This is considered a huge dishonor.'
+    },
+    pt: {
+      intro: 'Devido ao aumento das atividades de pecado, a TEMERITY permitiu a abertura do arsenal de Itens Amaldiçoados para todos os exorcistas CAT 2+. Podem ser comprados como armas especializadas com bônus específicos e contam como sua arma de serviço.',
+      cost: 'Custo: 5 scrip (primeira compra)',
+      requirement: 'Requisito: Exorcista CAT 2+',
+      kp: 'KP para sacar: 3 KP',
+      scaling: 'Escala com: CAT das armas de serviço (melhora automaticamente)',
+      maxEffects: 'Efeitos máximos: CAT da arma de serviço + 1',
+      curse: 'Ativação da Maldição: Durante a caçada, o Admin pode invocar a maldição da sua arma para fazer uma Ameaça (1-3) ou Complicação (1-3). A ameaça causa 2 de estresse base, +1 estresse por maldição. Complicações criam um talismã com +1 corte por maldição (mín 2 cortes). Você deve lidar com a maldição antes de continuar usando o item normalmente.',
+      upgrade: 'Melhorias: Melhora automaticamente quando você melhora sua arma de serviço. Cada melhoria concede +1 maldição E +1 efeito. Pode substituir efeitos durante a melhoria (grátis) ou entre missões (2 scrip).',
+      loss: 'Perda: Se você perder um item amaldiçoado, é descontado (CAT da Arma de Serviço + 2) scrip no fim da caçada. Isso é considerado uma grande desonra.'
+    }
+  },
+  sinTypes: [
+    {
+      id: 'ogre',
+      name: 'Ogre', namePt: 'Ogro',
+      appearance: { en: 'Giant, overwhelming, cold, filthy...', pt: 'Gigante, avassalador, frio, imundo...' },
+      curseExamples: { en: 'Shrouds the area in darkness; Vomits miasma; Makes you suffocating to others; Does something dark, crushing, or vile.', pt: 'Envolve a área em escuridão; Vomita miasma; Torna você sufocante para outros; Faz algo sombrio, esmagador ou vil.' },
+      effects: [
+        { id: 'the_cold', name: 'The Cold', namePt: 'O Frio', description: 'On round 3+ during a conflict scene, deal +1 slash on your first action made with this item each round.', descriptionPt: 'Na rodada 3+ durante uma cena de conflito, cause +1 corte na sua primeira ação feita com este item a cada rodada.' },
+        { id: 'dirty_fumes', name: 'Dirty Fumes', namePt: 'Fumaça Suja', description: 'Exhume a puff of dense fog from this item, gain or grant +1D on the next roll taking advantage of this effect.', descriptionPt: 'Exale uma nuvem de neblina densa deste item, ganhe ou conceda +1D na próxima rolagem aproveitando este efeito.' },
+        { id: 'bulging_mass', name: 'Bulging Mass', namePt: 'Massa Inchada', description: 'Actions to break down a CAT sized door, wall, or physical barrier with this item have reduced difficulty.', descriptionPt: 'Ações para derrubar uma porta, parede ou barreira física do tamanho de CAT com este item têm dificuldade reduzida.' }
+      ]
+    },
+    {
+      id: 'idol',
+      name: 'Idol', namePt: 'Ídolo',
+      appearance: { en: 'Glamorous, beautiful, cultic, fleshy...', pt: 'Glamoroso, belo, cultista, carnudo...' },
+      curseExamples: { en: 'Entangle the hearts of others; Whispers disturbing secrets; Makes you obsessive; Does something emotionally crushing, manipulative, or shocking.', pt: 'Enreda os corações de outros; Sussurra segredos perturbadores; Torna você obsessivo; Faz algo emocionalmente devastador, manipulador ou chocante.' },
+      effects: [
+        { id: 'plastic_heart', name: 'Plastic Heart', namePt: 'Coração de Plástico', description: 'Modify up to CAT people\'s face and physique for the next CAT hours by warping flesh.', descriptionPt: 'Modifique o rosto e físico de até CAT pessoas pelas próximas CAT horas deformando carne.' },
+        { id: 'stockholm_love', name: 'Stockholm Love', namePt: 'Amor de Estocolmo', description: 'Captivate a captor or hostage, gain or grant +1D on the next roll taking advantage of this effect.', descriptionPt: 'Cative um captor ou refém, ganhe ou conceda +1D na próxima rolagem aproveitando este efeito.' },
+        { id: 'sweet_nothing', name: 'Sweet Nothing', namePt: 'Doces Nadas', description: 'Talk to others up to CAT distance. They can talk back and you can speak in voices you\'ve heard before.', descriptionPt: 'Fale com outros até distância CAT. Eles podem responder e você pode falar com vozes que já ouviu.' }
+      ]
+    },
+    {
+      id: 'hound',
+      name: 'Hound', namePt: 'Cão',
+      appearance: { en: 'Bloody, ragged, torn and mangled, brutal...', pt: 'Sangrento, esfarrapado, rasgado e mutilado, brutal...' },
+      curseExamples: { en: 'Kill the innocents; Fire into the surrounding crowd; Makes you aggressive; Does something violent, obliterating, or maniac.', pt: 'Mata os inocentes; Atira na multidão ao redor; Torna você agressivo; Faz algo violento, obliterador ou maníaco.' },
+      effects: [
+        { id: 'bloody_spikes', name: 'Bloody Spikes', namePt: 'Espinhos Sangrentos', description: 'Expand an array of large spikes from your blood up to CAT area. If impaling a creature, slash their talisman once.', descriptionPt: 'Expanda um conjunto de grandes espinhos do seu sangue até área CAT. Se empalar uma criatura, corte o talismã dela uma vez.' },
+        { id: 'revengeance', name: 'Revengeance', namePt: 'Revingança', description: 'Actions to pursue, move to, or jump up to a target in CAT distance have reduced difficulty.', descriptionPt: 'Ações para perseguir, mover-se até, ou pular até um alvo em distância CAT têm dificuldade reduzida.' },
+        { id: 'sharpen_eye', name: 'Sharpen Eye', namePt: 'Olho Afiado', description: 'Your service weapon can fire up to extreme range without being hard, including with this item or other ranged weapons.', descriptionPt: 'Sua arma de serviço pode atirar até alcance extremo sem ser difícil, incluindo com este item ou outras armas de alcance.' }
+      ]
+    },
+    {
+      id: 'centipede',
+      name: 'Centipede', namePt: 'Centopeia',
+      appearance: { en: 'Biological, venomous, bone-chilling, sadistic...', pt: 'Biológico, venenoso, arrepiante, sádico...' },
+      curseExamples: { en: 'Thrashes around uncontrollably; Injects venom in your veins; Makes you seethe; Does something messy, spiteful, or dripping with venom.', pt: 'Debate-se incontrolavelmente; Injeta veneno nas suas veias; Faz você ferver; Faz algo bagunçado, rancoroso ou pingando veneno.' },
+      effects: [
+        { id: 'hundred_bites', name: 'Hundred Bites', namePt: 'Cem Mordidas', description: 'Actions to restrain a target, or hold on to a structure, up to CAT size have reduced difficulty.', descriptionPt: 'Ações para restringir um alvo, ou se segurar em uma estrutura, até tamanho CAT têm dificuldade reduzida.' },
+        { id: 'venom_sack', name: 'Venom Sack', namePt: 'Bolsa de Veneno', description: 'When you would fail a roll with this item, gain one additional pathos, however take 1d3 stress after consequences.', descriptionPt: 'Quando você falhar uma rolagem com este item, ganhe um pathos adicional, porém sofra 1d3 de estresse após as consequências.' },
+        { id: 'raging_spite', name: 'Raging Spite', namePt: 'Rancor Furioso', description: 'When using BLAST, fire a venom projectile to target at long range instead of melee or short.', descriptionPt: 'Ao usar EXPLOSÃO, dispare um projétil de veneno no alvo em alcance longo ao invés de corpo a corpo ou curto.' }
+      ]
+    },
+    {
+      id: 'toad',
+      name: 'Toad', namePt: 'Sapo',
+      appearance: { en: 'Priceless, rich, bloated, sneaky, tricked...', pt: 'Inestimável, rico, inchado, sorrateiro, enganado...' },
+      curseExamples: { en: 'Swallows and steals thoughtlessly; Flood the room with mud; Makes you selfish; Does something crafty, flashy, or shocking.', pt: 'Engole e rouba sem pensar; Inunda a sala com lama; Torna você egoísta; Faz algo astuto, chamativo ou chocante.' },
+      effects: [
+        { id: 'sticky_finger', name: 'Sticky Finger', namePt: 'Dedo Pegajoso', description: 'Hide any thing worth up to 3 KP into this item. However, only one thing at a time for the duration.', descriptionPt: 'Esconda qualquer coisa que valha até 3 KP neste item. Porém, apenas uma coisa por vez pela duração.' },
+        { id: 'bag_of_holding', name: 'Bag of Holding', namePt: 'Bolsa de Acúmulo', description: 'Once per scene, pull out a random item worth up to 3 KP at any moment. The item is always useful in some way.', descriptionPt: 'Uma vez por cena, puxe um item aleatório que valha até 3 KP a qualquer momento. O item é sempre útil de alguma forma.' },
+        { id: 'lucky_quarter', name: 'Lucky Quarter', namePt: 'Moeda da Sorte', description: 'Use divine agony with this item once even if divine agony has already been used during this scene.', descriptionPt: 'Use agonia divina com este item uma vez mesmo se agonia divina já foi usada durante esta cena.' }
+      ]
+    },
+    {
+      id: 'lord',
+      name: 'Lord', namePt: 'Senhor',
+      appearance: { en: 'Silver-made, shining, righteous, stony...', pt: 'Feito de prata, brilhante, justo, pétreo...' },
+      curseExamples: { en: 'Judges, jury, and execute all; Fires godly lasers indiscriminately; Makes you zealous; Does something righteous, scathing, or dominating.', pt: 'Julga, condena e executa todos; Dispara lasers divinos indiscriminadamente; Torna você zeloso; Faz algo justo, mordaz ou dominador.' },
+      effects: [
+        { id: 'plated_heart', name: 'Plated Heart', namePt: 'Coração Blindado', description: 'Take -1 stress from slashing attacks while wielding this item, however any actions to aid another living being has -1D.', descriptionPt: 'Receba -1 estresse de ataques cortantes enquanto empunha este item, porém qualquer ação para ajudar outro ser vivo tem -1D.' },
+        { id: 'divine_light', name: 'Divine Light', namePt: 'Luz Divina', description: 'Create a blinding flash of light, gain or grant +1D on the next roll taking advantage of this effect.', descriptionPt: 'Crie um flash de luz cegante, ganhe ou conceda +1D na próxima rolagem aproveitando este efeito.' },
+        { id: 'rightful_scale', name: 'Rightful Scale', namePt: 'Balança Justa', description: 'Actions to call upon, command, or give orders to a CAT sized area of people have reduced difficulty.', descriptionPt: 'Ações para convocar, comandar ou dar ordens a uma área de pessoas do tamanho de CAT têm dificuldade reduzida.' }
+      ]
+    },
+    {
+      id: 'mass_produced',
+      name: 'Mass Produced Sin', namePt: 'Pecado Produzido em Massa',
+      note: { en: 'Available to all XO regardless of sample collection (no kill required)', pt: 'Disponível para todos os Exorcistas independente de coleta de amostra (sem morte necessária)' },
+      appearance: { en: 'Controlled, monitored, restrained, modern...', pt: 'Controlado, monitorado, contido, moderno...' },
+      curseExamples: { en: 'Break out of their restrain; Enrages others to violence; Makes you go berserk; Does something violent, uncontrolled, or straight-forward.', pt: 'Quebra suas amarras; Enfurece outros à violência; Faz você ficar berserk; Faz algo violento, descontrolado ou direto.' },
+      effects: [
+        { id: 'type_a_serum', name: 'Type-A Serum', namePt: 'Soro Tipo-A', description: '1/hunt, increase your physical strength by this item\'s CAT for the rest of the current scene.', descriptionPt: '1/caçada, aumente sua força física pelo CAT deste item pelo resto da cena atual.' },
+        { id: 'type_b_serum', name: 'Type-B Serum', namePt: 'Soro Tipo-B', description: '1/hunt, go fully invisible to gain +1D to hide, assassinate, or any covert rolls for the rest of the current scene.', descriptionPt: '1/caçada, fique completamente invisível para ganhar +1D em esconder, assassinar ou qualquer rolagem de discrição pelo resto da cena atual.' },
+        { id: 'type_c_serum', name: 'Type-C Serum', namePt: 'Soro Tipo-C', description: '1/hunt, take control of a CAT sized group of humans in the area. Lasts until end of current scene.', descriptionPt: '1/caçada, assuma o controle de um grupo de humanos do tamanho de CAT na área. Dura até o fim da cena atual.' }
+      ]
+    },
+    {
+      id: 'drifter',
+      name: 'Drifter', namePt: 'Andarilho',
+      note: { en: 'Available to all XO regardless of sample collection (no kill required)', pt: 'Disponível para todos os Exorcistas independente de coleta de amostra (sem morte necessária)' },
+      appearance: { en: 'Elusive, flickering, invisible, supernatural...', pt: 'Elusivo, tremeluzente, invisível, sobrenatural...' },
+      curseExamples: { en: 'Summon a corresponding drifter; Birth an anomaly; Makes you paranoid; Does something strange, abnormal, or disturbing.', pt: 'Invoca um andarilho correspondente; Dá à luz uma anomalia; Torna você paranoico; Faz algo estranho, anormal ou perturbador.' },
+      effects: [
+        { id: 'deja_vu_glass', name: 'Deja Vu Glass', namePt: 'Vidro de Déjà Vu', description: '1/hunt, experience a \'deja vu\' to gain +1D to your action roll, but take 1d3+1 stress if you never did this action before.', descriptionPt: '1/caçada, experimente um \'déjà vu\' para ganhar +1D na sua rolagem de ação, mas sofra 1d3+1 de estresse se nunca fez esta ação antes.' },
+        { id: 'strain_of_hair', name: 'Strain of Hair', namePt: 'Fio de Cabelo', description: '1/hunt, restrain a target before their risk dice is rolled. The admin rolls two risk dice and picks the highest.', descriptionPt: '1/caçada, restrinja um alvo antes do dado de risco ser rolado. O admin rola dois dados de risco e escolhe o maior.' },
+        { id: 'worms_worms', name: 'Worms Worms', namePt: 'Vermes Vermes', description: '1/hunt, remove a hook from you or an ally in close range. Target takes stress equal to unfilled ticks on it (min 1).', descriptionPt: '1/caçada, remova um gancho de você ou um aliado em alcance curto. O alvo sofre estresse igual aos ticks não preenchidos (mín 1).' }
+      ]
+    },
+    {
+      id: 'imago',
+      name: 'Imago', namePt: 'Imago',
+      note: { en: 'Available to XO who successfully killed an Imago before it became a full sin', pt: 'Disponível para Exorcistas que mataram com sucesso um Imago antes de se tornar um pecado completo' },
+      appearance: { en: 'Cocooned, stillbirthed, insectoid, modulable...', pt: 'Casulo, natimorto, insetoide, modulável...' },
+      curseExamples: { en: 'Infects others with sin; Open a rift to the psychic sea; Makes your desire outward; Does something sinful, psychic, or too familiar.', pt: 'Infecta outros com pecado; Abre uma fenda para o mar psíquico; Torna seu desejo externo; Faz algo pecaminoso, psíquico ou familiar demais.' },
+      effects: [
+        { id: 'adaptive_shell', name: 'Adaptive Shell', namePt: 'Casca Adaptativa', description: 'While wielding this item, gain 1 sin to take -1 stress from attacks from sins, traces, drifters, or anomalies.', descriptionPt: 'Enquanto empunha este item, ganhe 1 pecado para receber -1 estresse de ataques de pecados, traços, andarilhos ou anomalias.' },
+        { id: 'fetus_seed', name: 'Fetus Seed', namePt: 'Semente Fetal', description: 'Actions to talk with, relate, or connect to mundane humans have reduced difficulty.', descriptionPt: 'Ações para conversar, se relacionar ou conectar com humanos mundanos têm dificuldade reduzida.' },
+        { id: 'masked_bloom', name: 'Masked Bloom', namePt: 'Florescer Mascarado', description: '1/hunt, when you sin overflow you may take an injury to temporarily negate a sin mark you have in affecting your resist roll.', descriptionPt: '1/caçada, quando você sofrer inundação de pecado pode sofrer um ferimento para temporariamente negar uma marca de pecado que você tem em afetar sua rolagem de resistência.' }
+      ]
+    },
+    {
+      id: 'mother',
+      name: "Mother's Favorite", namePt: 'Favorito da Mãe',
+      note: { en: "Mother users may birth a Mother Cursed Item for 3 scrip rather than 5.", pt: "Usuários de Mother podem criar um Item Amaldiçoado de Mother por 3 scrip ao invés de 5." },
+      appearance: { en: 'Armored, spiraling pattern, coral, double jointed...', pt: 'Blindado, padrão espiral, coral, articulação dupla...' },
+      curseExamples: { en: 'Inject someone with Mother; Mother knows best, sweetie; Makes you LOVED; Does something heavy, growing, or sharp.', pt: 'Injeta alguém com Mother; Mamãe sabe o que é melhor, querido; Faz você ser AMADO; Faz algo pesado, crescente ou afiado.' },
+      effects: [
+        { id: 'stay_at_home', name: 'Stay at Home', namePt: 'Fique em Casa', description: 'Take -1 stress from any mundane weapon of CAT equal or lower than this item while wielding it.', descriptionPt: 'Receba -1 estresse de qualquer arma mundana de CAT igual ou inferior a este item enquanto o empunha.' },
+        { id: 'eat_your_meal', name: 'Eat Your Meal', namePt: 'Coma sua Refeição', description: "This item can 'eat' any corpse to create a field of coral to CAT radius, grant +1D to the next roll taking advantage of this effect.", descriptionPt: "Este item pode 'comer' qualquer cadáver para criar um campo de coral com raio CAT, conceda +1D na próxima rolagem aproveitando este efeito." },
+        { id: 'get_to_bed', name: 'Get to Bed', namePt: 'Vá para a Cama', description: "During rest, spend bonding time with a fellow XO (with consent). Then, create a Mother's Sugar under your control.", descriptionPt: 'Durante o descanso, passe tempo de vínculo com um Exorcista aliado (com consentimento). Então, crie um Açúcar da Mãe sob seu controle.' }
+      ],
+      motherSugar: {
+        en: "Sin/Human?: Execution talisman 2 (solo), CAT is equal to both XO.\n\nAn unholy abomination, not birthed but manifested. Do not get attached. Your father/mother instincts are not yours, resist. Remember exorcist: The Hunter loves nothing.\n\nFollows your orders, relatively weak but perfectly synchronized with your actions. Uses the highest of yours or your Get To Bed's XO skills when making rolls, but always rolls with -1D. Once slain, cannot be manifested again until end of the hunt.",
+        pt: "Sin/Humano?: Talismã de execução 2 (solo), CAT é igual a ambos Exorcistas.\n\nUma abominação profana, não nascida mas manifestada. Não se apegue. Seus instintos de pai/mãe não são seus, resista. Lembre-se exorcista: O Caçador não ama nada.\n\nSegue suas ordens, relativamente fraco mas perfeitamente sincronizado com suas ações. Usa a maior perícia entre você e o Exorcista do Vá para a Cama ao fazer rolagens, mas sempre rola com -1D. Uma vez morto, não pode ser manifestado novamente até o fim da caçada."
+      }
+    },
+    {
+      id: 'husk',
+      name: 'Husk', namePt: 'Husk',
+      appearance: { en: 'Fleshy, bone-woven, eyeful, uncomfortable...', pt: 'Carnudo, entrelaçado com ossos, cheio de olhos, desconfortável...' },
+      curseExamples: { en: 'Devours flesh carelessly; Mimics voices you heard before; Makes you hollow; Does something unhuman, manipulative, or terrifying.', pt: 'Devora carne descuidadamente; Imita vozes que você ouviu antes; Torna você oco; Faz algo inumano, manipulador ou aterrorizante.' },
+      effects: [
+        { id: 'camouflage', name: 'Camouflage', namePt: 'Camuflagem', description: 'While wielding this item, you may take 1d3 stress to turn invisible for the duration of an action that involves this item.', descriptionPt: 'Enquanto empunha este item, você pode sofrer 1d3 de estresse para ficar invisível pela duração de uma ação que envolva este item.' },
+        { id: 'osteomancy', name: 'Osteomancy', namePt: 'Osteomancia', description: 'You may take 1d3 stress to learn CAT number of facts about a human you know the name of with this item.', descriptionPt: 'Você pode sofrer 1d3 de estresse para aprender um número de fatos igual a CAT sobre um humano cujo nome você conhece com este item.' },
+        { id: 'mimicry', name: 'Mimicry', namePt: 'Mimetismo', description: 'Actions done to flee, hide, or stay hidden in plain sight or in crowds with this item have a reduced difficulty.', descriptionPt: 'Ações para fugir, se esconder ou permanecer escondido à vista de todos ou em multidões com este item têm dificuldade reduzida.' }
+      ]
+    },
+    {
+      id: 'garden',
+      name: 'Garden', namePt: 'Garden',
+      appearance: { en: 'Enormous, plant-fiber, wooden, gentle...', pt: 'Enorme, fibra vegetal, madeira, gentil...' },
+      curseExamples: { en: 'Restrains your surroundings with plants; Command the wildlife; Makes you aloof; Does something overprotective, restrained, or slow.', pt: 'Restringe seus arredores com plantas; Comanda a vida selvagem; Torna você distante; Faz algo superprotetor, contido ou lento.' },
+      effects: [
+        { id: 'floating_leaf', name: 'Floating Leaf', namePt: 'Folha Flutuante', description: 'You may float in the air while wielding this item, however you take +1 stress from consequences while you are floating.', descriptionPt: 'Você pode flutuar no ar enquanto empunha este item, porém sofre +1 estresse de consequências enquanto está flutuando.' },
+        { id: 'gentle_breeze', name: 'Gentle Breeze', namePt: 'Brisa Suave', description: 'While wielding this item during rest, you may increase the value of one of your or one of your ally\'s dice result by +1.', descriptionPt: 'Enquanto empunha este item durante o descanso, você pode aumentar o valor de um dos seus dados ou de um aliado em +1.' },
+        { id: 'rooted_leg', name: 'Rooted Leg', namePt: 'Perna Enraizada', description: 'Actions done to stay balanced, hold, or protect against a CAT sized force with this item have a reduced difficulty.', descriptionPt: 'Ações para manter equilíbrio, segurar ou proteger contra uma força do tamanho de CAT com este item têm dificuldade reduzida.' }
+      ]
+    },
+    {
+      id: 'heron',
+      name: 'Heron', namePt: 'Heron',
+      note: { en: 'For the Heron sin type made by Phroge', pt: 'Para o tipo de pecado Heron criado por Phroge' },
+      appearance: { en: 'Multiplied or dual, starved, crooked, feathery...', pt: 'Multiplicado ou dual, faminto, torto, emplumado...' },
+      curseExamples: { en: 'Separate others from the scene; Breed paranoia around; Makes you bastardly; Does something vicious, manipulative, or cowardly.', pt: 'Separa outros da cena; Gera paranoia ao redor; Torna você vil; Faz algo vicioso, manipulador ou covarde.' },
+      effects: [
+        { id: 'cowardly_wing', name: 'Cowardly Wing', namePt: 'Asa Covarde', description: 'You may take 1 non-lethal stress to fly with this item for the duration of your action. Gain +1D to all rolls done to flee from a scene.', descriptionPt: 'Você pode sofrer 1 estresse não-letal para voar com este item pela duração da sua ação. Ganhe +1D em todas as rolagens para fugir de uma cena.' },
+        { id: 'multiplicity', name: 'Multiplicity', namePt: 'Multiplicidade', description: 'You gain +1D to convince a person to hurt, distract, or switch sides with this item. This doesn\'t work during conflict scenes.', descriptionPt: 'Você ganha +1D para convencer uma pessoa a machucar, distrair ou mudar de lado com este item. Isso não funciona durante cenas de conflito.' },
+        { id: 'envious_grin', name: 'Envious Grin', namePt: 'Sorriso Invejoso', description: 'You may make a second or more copy of this weapon at the cost of 1 KP per copy instead of 3 (Original still costs 3).', descriptionPt: 'Você pode fazer uma segunda cópia ou mais desta arma ao custo de 1 KP por cópia ao invés de 3 (O original ainda custa 3).' }
+      ]
+    },
+    {
+      id: 'pyre',
+      name: 'Pyre', namePt: 'Pyre',
+      note: { en: 'For the Pyre sin type made by Lifthrasir', pt: 'Para o tipo de pecado Pyre criado por Lifthrasir' },
+      appearance: { en: 'Burning, explosive, bloated, damaged or wrecked...', pt: 'Ardente, explosivo, inchado, danificado ou destruído...' },
+      curseExamples: { en: 'Blow up its surrounding; Cause a Flashpoint within the area; Makes you burn inside; Does something frustrating, boiling, or explosive.', pt: 'Explode seus arredores; Causa um Ponto de Ignição na área; Faz você queimar por dentro; Faz algo frustrante, fervente ou explosivo.' },
+      effects: [
+        { id: 'annihilation', name: 'Annihilation', namePt: 'Aniquilação', description: '1/hunt, you can explode yourself by taking an injury to inflict slashes to all living beings in a CAT radius equal to your injuries.', descriptionPt: '1/caçada, você pode explodir a si mesmo sofrendo um ferimento para infligir cortes a todos os seres vivos em um raio CAT igual aos seus ferimentos.' },
+        { id: 'burned_heart', name: 'Burned Heart', namePt: 'Coração Queimado', description: 'While wielding this item, 1/scene when you take stress, you may inflict 1 slash to any talisman in the same room.', descriptionPt: 'Enquanto empunha este item, 1/cena quando você sofre estresse, pode infligir 1 corte a qualquer talismã na mesma sala.' },
+        { id: 'seething_wire', name: 'Seething Wire', namePt: 'Fio Fervente', description: 'Actions done with this item inflict one more slash on any talisman at pressure 3 or higher, or if you are on Brink of Death.', descriptionPt: 'Ações feitas com este item infligem um corte a mais em qualquer talismã em pressão 3 ou mais, ou se você estiver à Beira da Morte.' }
+      ]
+    }
+  ]
+};
 
 // Perfect Sins (GFF-3) — special-grade hardened sins (GM). Global rules +
 // shared complications. Per-type statblocks live in PERFECT_SINS.sins (added later).
@@ -4217,6 +5709,7 @@ var SIN_TEMPLATES = {
       'Who or what is keeping you from going over the edge?',
       'What are you most ashamed of?'
     ],
+    palace: "An ogre's palace typically resembles a mirror of a space significant to the ogre's host, but long decayed and significantly expanded in size into a warren or maze-like space. Interspersed in the area is garbage, junk, and things the ogre has collected. The ogre typically barely fits inside and may have to painfully squeeze or crouch to move around, although this doesn't seem to slow it down at all. Typical palaces resemble: Abandoned or derelict buildings, filthy high rise apartments, closed or shuttered schools, empty dead workplaces or offices. Ogre palaces are typically: Dark, Wet, Cold, Musty, Reeking, Filthy, Labyrinthine.",
     pressureName: 'Miasma',
     pressureEffect: "The very presence of an ogre begins to infect an area with a dark Miasma. The weather sours; buildings, objects, roads and constructions degrade as if poorly maintained for years; clouds shroud the sun and thick, sour-smelling fog rolls in; white mold grows over surfaces; technology, phone lines, electricity and internet stop working; architecture becomes maze-like and nonsensical; humans inside the miasma share the ogre's outlook and grow hostile. When the exorcists arrive the miasma covers only part of the area; each time pressure increases it spreads to a new area.",
     outOfControl: "When pressure fills up completely, the situation gets out of control. The Ogre increases in CAT by +1, and the miasma covers the entire investigation area - no matter where the exorcists go, the miasma follows them for the rest of the mission, even if they leave the area.",
@@ -4245,6 +5738,7 @@ var SIN_TEMPLATES = {
       'Why did you give up on your dream?',
       'Why do you think you are incapable of being loved?'
     ],
+    palace: "An idol's palace is usually a monument to self-obsession and resembles: Palatial estates, nightclubs or concert halls, beautiful high rise penthouse apartments, religious halls or places of worship. Idol palaces are typically: Luxurious, gilded, airy, captivating, impressive, gaudy, holy.",
     pressureName: 'Cult',
     pressureEffect: "Idols gather cults around them, adding steadily over time - from mundane admirers to people totally under their spell. A lower category idol pulls in a few dozen people; a higher one hundreds or thousands. While the idol lives, cultists are unflinchingly loyal and follow their higher-ups without question. Every time pressure increases, the Admin secretly chooses an NPC the players have met and adds them to the cult (need not reveal it); that NPC now follows the idol's psychic commands and abandons their former loyalties.",
     outOfControl: "When pressure fills up, the situation goes out of control. The Idol gains +1 Category and adds every single NPC in the mission area to its cult, including any NPCs the exorcists encounter in the future.",
@@ -4273,6 +5767,7 @@ var SIN_TEMPLATES = {
       'How were you wronged?',
       'What are you unwilling to sacrifice?'
     ],
+    palace: "A hound's palace is a bloody, hellish, barren place that resembles the scene of a great slaughter or atrocity. Unlike other palaces, it can often change locations as the hound moves around on its hunt. The entrance is usually located somewhere derelict or wild like in abandoned buildings, drainage canals, junk yards, burnt out cars, or in tree hollows. Hound palaces are typically: Hellish, gory, barren, inhospitable, ferocious, chaotic.",
     pressureName: 'Grudge',
     pressureEffect: "A hound harbors a grudge against a specific person or group. When setting up the mission, the Admin designates three specific people as the hound's grudge targets (which can expand to innocent family, friends, or co-workers). When pressure increases, the hound tracks down and attempts to kill one of its targets - if the exorcists are present they can prevent it with a conflict scene, otherwise the target is brutally slain. If all targets are killed, the hound picks an NPC the exorcists have met and adds them as a new target.",
     outOfControl: "If pressure goes to maximum, the hound gains +1 CAT and adds all NPCs and the exorcists to its grudge.",
@@ -4301,6 +5796,7 @@ var SIN_TEMPLATES = {
       'What do you hate the most about humanity?',
       'What do you regret the most?'
     ],
+    palace: "A centipede's palace often resembles a prison where something terrible (human or otherwise) is unleashed. This prison can be sterile, cold, or laboratory-like, or medieval and full of barbed hooks and rusted chains. It often manifests horrors or traps to drive out, capture, or kill invaders. Centipede palaces are typically: Hostile, resentful, grotesque, gory, prison-like, chthonic.",
     pressureName: 'Infestation',
     pressureEffect: "A centipede's venom, injected into the human bloodstream, causes a psycho-biotic reaction that within about an hour mutates a human into a strong, aggressive, violent monster - a mindless drone under the centipede's control, which can itself produce venom, creating an exponential horde. A human infected chrysalizes and transforms within exactly 44 minutes (an exorcist gains the Centipede Bite affliction instead). There is no cure, but it can be delayed; the only reliable way to end an infestation is to kill the centipede (which makes the venom evaporate, saving infected exorcists and untransformed victims). Each time pressure increases, 10% of the local population is infected and transformed (30% at 3 slashes).",
     outOfControl: "If pressure reaches maximum, the centipede increases in CAT by +1 and population loss goes up to 90%.",
@@ -4329,6 +5825,7 @@ var SIN_TEMPLATES = {
       'While you were starving, who was feasting?',
       'Where do you draw the line?'
     ],
+    palace: "A toad's palace typically starts as a dwelling or building that originally belonged to the host before they became a host, chosen as a palace due to its space and comfort. Over time the space becomes crammed almost to bursting with the wealth that the toad accumulates, transforming partly into treasure vaults or galleries to either protect or display their largesse. Toad palaces are typically: Opulent, gaudy, glitzy, spacious, extravagant, luxurious, comfortable.",
     pressureName: 'Hoard',
     pressureEffect: "A toad's main desire is to acquire as much material wealth as possible for its host, stealing by various means and storing prizes in its expansive gullet to regurgitate later in its palace. Its larceny starts small but grows out of control (from stealing a fast car, to the fastest car in town, to an entire restaurant staff and all). The toad gains power from its hoard; every time pressure increases, its greed grows: 0-2: high-worth but mundane items (money, cars, guns, medicine, food, fashion, high art); 3-4: unreal amounts of the above; 5+: entire stores, shops, restaurants, yachts, buses, celebrities.",
     outOfControl: "At 6+, the toad's CAT increases by 1 and it gains the ability to steal conceptual or intangible items like abstract wealth, stocks in a company, light, artistic skill, or happiness.",
@@ -4357,6 +5854,7 @@ var SIN_TEMPLATES = {
       'What is the main thing you would fix about the world?',
       'Who did you regret leaving behind when you ascended to your Kingdom?'
     ],
+    palace: "The palace of a lord is typically a bustling place full of servants or subsidiaries going about their business - minor sins, figments of the host's imagination, or captive humans that have been absorbed into the narrative of the kingdom. Inside the Kingdom, the world may appear as the world currently does, or a historical or even fantastical version of the world, such as a futuristic city, a glittering heaven, or a medieval castle - dependent on the latent desires of the host. Lord's palaces are typically: Imposing, grandiose, august, monumental, stony, hallow.",
     pressureName: 'Kingdom',
     pressureEffect: "The Lord creates a Kingdom, an alternate parasite reality growing outward from its palace that overlaps our own, accessible freely by the lord and its host and squirreled away in impossible spaces (closet doors, hallways, back alleys). It bleeds over and pulls parts of the real world into it, consuming space and the humans inside (who, from the outside, cannot see it). Inside, reality conforms to the host's desires: all they have lost is returned, events/history/humans may be drastically altered, and the host is the absolute ruler who can change the laws of reality (strictures that consume mundane humans and even affect exorcists). Each time pressure increases, the kingdom expands to a new area of the real world, increasingly rapidly.",
     outOfControl: "If pressure is 6+, the kingdom consumes the whole investigation area and the Lord's CAT increases by +1. A kingdom collapses when the host or the Lord is defeated, ejecting everything brought into it (humans typically have no memory of their time inside).",
@@ -4376,6 +5874,126 @@ var SIN_TEMPLATES = {
       { name: 'Stricture of Narrative', description: "The lord and its host gain control over reality to the point of reversing causality. Three times a hunt, when an exorcist rolls an action and sees the final result, the lord or its host can declare events did not play out that way (as if narrating a story), completely undoing the outcome. The targeted exorcist gains 1 psyche burst, then either re-rolls the action (second result final) or loses the outcome and gains an additional 1d3 psyche burst." },
       { name: 'Stricture of Alignment', description: "Whenever pressure increases, the Lord gives a randomly rolled Role affliction to an exorcist inside its kingdom. A Role gives a new temporary agenda item until mission end plus forbidden activities (hard for the afflicted inside the kingdom), and changes their outfit on entering/exiting (one role at a time): 1. Peasant (Agenda: act in extreme deference; Forbidden: acting in defiance of an order); 2. Priest (Agenda: obey the Lord; Forbidden: lying, cheating, taking the Lord's name in vain); 3. Bandit (Agenda: steal something; Forbidden: setup or teamwork); 4. Sage (Agenda: demonstrate erudition; Forbidden: physically demanding activity); 5. Knight (Agenda: protect the residents; Forbidden: striking a woman, lying, cheating, dirty fighting); 6. Noble (Agenda: humiliate your inferiors; Forbidden: deferring to an inferior, dirtying your hands)." },
       { name: 'Stricture of The Flaming Sword', description: "The Lord has a Guardian, a sin-construct patrolling the Kingdom (an officer of the law, a winged humanoid, or a metallic geometric construct); if destroyed it reforms in the Lord's palace when pressure increases. Guardian (sin): execution talisman 4+CAT; heavily armored and immune to mundane weaponry; moves at CAT+2 speed inside the kingdom (can't exist outside); axiomatic - incapable of deceit and always knows when someone is lying in its presence. Attacks with a long-ranged weapon (extreme range) and brutal melee: (1) 5 stress, (2/3) 3, (4+) 2. Complications: imprison someone in a cage of light, blind with glaring beams, swoop high into the air, summon searing blades, impale with a shining spear." }
+    ]
+  },
+  // ─── The Odysseus Protocol expansion ───────────────────────────────
+  owl: {
+    primaryEmotion: 'Paranoia',
+    expansion: 'odysseus',
+    traumas: [
+      'What did you need to know?',
+      'How did you find out far too late?',
+      'Who or What is the one thing you\'d rather not know about?'
+    ],
+    palace: "Discovering the palace of an owl is considered especially difficult compared to other Sins, as the Owl is likely to set traps, obfuscate necessary knowledge, and directly sabotage the investigation. The palace of an owl is likely to be tied to the secret its host uncovered that manifested the Sin in the first place, meaning that discovering the secret that created an owl is one of the most consistent ways to locate its palace. The palace itself often resembles a vast and expansive location encased by a dome of feathers, one consistent element is that the owl is, through some means, effectively omniscient within its palace. Common manifestations include: the sun being replaced with a large eye, security cameras all across the palace, birds watching from the rooftops, a large panopticon tower in the center of the palace.",
+    pressureName: 'Enlightenment',
+    pressureEffect: "As the pressure increases during a Hunt, the Owl becomes more and more aware of its surroundings and is capable of relaying that knowledge to its host. At the start of the Hunt, the Owl should only be aware of every event that is currently happening in an area such as a City Block, with the Host only being Wired knowledge of everything happening around them within a distance equalling CAT -1. But as pressure increases, the Owl should begin perceiving more of the surroundings and be capable of predicting the actions of the Exorcists, all while wiring more and more knowledge to the Host, with both becoming nearly omniscient as the pressure increases. All knowledge the Owl wired to its Host is torn away from their mind upon its Exorcism.",
+    outOfControl: "At pressure 6+, the Owl's CAT increases by +1 and both the Owl and its Host become effectively omniscient within the investigation area.",
+    traces: "Ravens (sins): Often an Owl will create traces that act as extra surveillance on individuals of interest. They initially disguise themselves as something mundane (a flock of birds, swarm of drones, or crowd of pedestrians). Execution talisman 2 (solo), 4 (group), 6 (massive group). Features: Are disguised as something mundane but noticeable until discovered. Directly linked to the Owl, giving and receiving information. Can transform into a monstrous avian form when discovered. Attacks with: Beaks, Talons, Cognitohazardous Knowledge. (1) 3 stress, (2/3) 2 stress, (4+) 1 stress. Complications: Tamper with investigation (altering evidence, capturing witnesses, etc.) before attempting to escape.",
+    attacksWith: "Glances, Talons, Psychic Cognitohazards, Sharpened Feathers, You forgot how it attacked you: (1) 4 stress, (2/3) 2 stress, (4+) 1 stress.",
+    complications: "Sabotage the investigation, Stalk someone, kill a witness, Set traps, take flight, relay knowledge to the host, seek information, use a domain.",
+    threats: "Perceive the future, pick up an Exorcist and drop them mid-air, let out a cognitohazardous screech, erase memories, reveal secrets, kidnap an Exorcist and fly away, activate traps, inflict a hook, use a domain.",
+    afflictions: "1. But What If?: any actions taken without setup or proper preparations cause you to take one stress.\n2. Ceaseless Watcher: Permanently add to your agenda: Prove you're being watched.\n3. Down the Rabbit Hole: At the end of the mission, if you discovered a conspiracy, you may erase 2d3 Sin. If you do, permanently add to your agenda: Dig deeper still.\n4. Overthinking: You are haunted by the Owl, unable to stop thinking of what it might be doing. Subtract 1 from any action not directly related to investigating or hunting the owl.\n5. Person of Interest: The Owl always knows exactly where you are.\n6. Glutton for Knowledge: Whenever you find out either the answer to a trauma question or one of the Owl's domains, you roll 1d3 and recover that much Stress.",
+    tensionMoves: "",
+    severeAttack: "Disincarnation: Usable on a '1' on the risk roll, once per mission. Target an exorcist; nearby exorcists may fly to their aid. Start with a pool of 5d6, then remove one die per 'yes': Are you unable to see the Owl at the moment? Have you learned new information about the owl within a number of scenes equal to CAT? Are you in a secluded area away from witnesses? Is the Owl hindered, distracted, or under duress? Roll the dice: the exorcist and any aiding them take 1 stress for every die rolled. If at least one '1' is rolled, the Owl wires all its knowledge to the Exorcist, allowing them to gather knowledge from the Owl's perception once per scene - however, they must reroll the dice pool at the start of any scene while linked. The link can be severed by resting or spending 1 psyche burst. If more than one '1' is rolled, the Exorcist suffers Ego Death and is comatose until the Owl is exorcised. For every '1' over 2, the Exorcist gains 1 sin.",
+    domainOptions: [
+      { name: 'But the Truth Brought it Back to Life', description: "The Owl begins a Hunt in a weakened state and is strengthened by the Exorcists attempting to utilize its trauma questions. The Owl starts with 6 slashes on its Execution Talisman and clears 2 slashes whenever a Trauma Question is used. Due to this, the Owl is willing to bestow benefits to Exorcists that give it the trauma questions, giving each Exorcist knowledge of how they become stronger in the future, earning 1 extra XP per question." },
+      { name: 'The Singing of Cassilda', description: "A Grimoire is created by the Owl out of its own psychic presence, appearing in a location relevant to the Owl or its Host as any mundane object capable of holding information (a Book, Laptop, Computer, Sticky Note, etc.). Once a scene after discovering the Grimoire, an Exorcist can search through it for answers. In exchange for receiving an entirely truthful answer to one question based on what the Owl knows or is able to perceive, the Exorcist loses a pivotal piece of knowledge, causing one of their skills to be reduced to zero for a number of scenes equal to CAT or until the Owl is exorcised." },
+      { name: 'The Omen of Unmaking', description: "As a tension move, the Owl gives every exorcist prophetic visions of their failure. During the next scene after The Omen of Unmaking is used, all exorcists take 1 stress whenever a Risky roll is called for by the Admin." },
+      { name: 'The Crime of Knowledge', description: "Whenever information is conveyed through speech about the Owl, the Owl is able to change what the individual speaking says entirely. This process can be prevented through writing information down or speaking in coded language, however, the Owl can ignore this limitation once per scene as a tension move." },
+      { name: 'The Marketplace of Ideas', description: "Once per hunt as a tension move, the Owl can choose to alter the knowledge of every human within its area of effect, allowing the Owl to either give or take away any knowledge contained within at least one human or Exorcist to the entire population. Capabilities include erasing everyone's ability to retain knowledge of specific individuals, making individuals aware of secrets such as the existence of CAIN, and making individuals forget the Owl exists. Humans are automatically affected, but Exorcists can take 1 stress to prevent being affected. Effects are erased when the Owl is Exorcised." },
+      { name: 'The Burning of the Library', description: "When anyone enters the Owl's palace, everyone within the Owl's Area of Effect has their existence wiped from memory. Upon exiting, memories return but they forget time spent inside. Exorcists can spend a Psyche Burst or roll Hard Psyche to nullify this. Once per scene, the Owl or its Ravens can create a Nest - a one-way portal into the Palace (an open book, circle of twigs). Contact transports victims to the palace. Discovering Nests requires an Investigation Roll; unaware exorcists make a luck roll to avoid stepping in. All Nests become non-functional when the Owl is exorcised." },
+      { name: 'The Unbecoming Tongue', description: "The Owl chooses one Trauma Question to make into a cognitohazard at the start of the Hunt. Upon discovering the answer, an Exorcist takes 1 stress, and takes 1 more stress upon reciting the information, with that stress also dealt to any other exorcists or humans who hear it. The Owl respects Exorcists willing to risk their life over knowledge: the Admin tells that Exorcist a vague hint towards their future plans for a larger narrative or the next hunt." },
+      { name: 'The Devils you Know', description: "As a tension move, the Admin asks an Exorcist: 'Which Exorcist here do you know the least?' If the Targeted Exorcist answers themself, they take 1 stress. If they answer another Exorcist present, they can ask that Exorcist about their past once per scene to lose 2 stress, but take 1 stress for every scene they don't ask about their past." }
+    ]
+  },
+  // ─── Marching Ever Onward expansion ───────────────────────────────
+  auditor: {
+    primaryEmotion: 'Regret',
+    expansion: 'marchingeveronward',
+    traumas: [
+      'What memory brings you the greatest pain?',
+      'What keeps you from forgetting it?',
+      'What future hopes are you sacrificing by changing your past?'
+    ],
+    palace: "An Auditor's palace has no actual entrance - they are able to remove their domain from linear time, isolated in a frozen moment from when their host summoned them. While there is no physical entrance to the palace, Exorcists can find the area of frozen time and psychically disrupt it, collapsing the bubble and folding them into the Auditor's realm. The area will be noticeably off, objects and creatures inside preserved unnaturally and suspended in a single moment. Auditor's palaces are austere, perfectly clean spaces which resemble offices or security rooms. There are often windows, monitors, or mirrors lining the walls, showcasing scenes which the Auditor plans to erase, or has already erased. Any physical exits from the palace must be ignored at all costs. TEMERITY cannot guarantee your body will be recovered from alternate timelines.",
+    pressureName: 'Erasure',
+    pressureEffect: "The duty of an Auditor is to erase anything related to the regrets of its host, doing so by traveling backwards through time and meticulously removing people, objects, and places. The changes will start small and benign, but can eventually progress to the point of massive changes to global history if left unchecked. Thankfully, CAIN has methods to reverse these changes – classified, of course. Humans will have their memories rewritten along with these alterations as if the world had always been this way. Exorcists, however, are unaffected; they retain their memories of the world as it was. Each time pressure increases, the Auditor erases another event significant to the host's traumas, making that information inaccessible by normal means.",
+    outOfControl: "If pressure reaches 6, the Auditor begins to erase itself, creating a paradox. Failing to execute it before pressure increases again will require direct orbital intervention from CAIN, resulting in failure.",
+    traces: "Surveyors (sins): Dronelike entities that hover ominously around areas which the Auditor has edited, ensuring that nothing can undo its work. They often look like smaller, more mechanical versions of the Auditor which spawned them, most of their mass taken up by their unblinking eye (or eyes, in many cases). Execution talisman 2 (solo), 4 (several), 6 (flock). Especially aggressive during use of Eye of the Spindle; persist across timelines. Will also prioritize Exorcists who display knowledge of original timeline; gain +1D to rolls taking advantage of this fact. Attacks with: electric shocks, sharp edges, unsettling gazes: (1) 3 stress, (2/3) 2 stress, (4+) 1 stress. Complications: Surround someone, begin overheating, freeze someone in time, escape to another timeline, combine and fuse, alert the Auditor.",
+    attacksWith: "Cruel stares, angular bludgeons, Delphic calculus, futuristic ordnance (long range): (1) 3 stress, (2/3) 2 stress, (4+) 1 stress.",
+    complications: "Distort the flow of time, change someone's fate, reach out to other timelines, harden chassis, open a wormhole, overcharge weaponry, add a bystander, use a domain.",
+    threats: "Freeze someone in time, emit harsh energies, raze the battlefield with lasers, launch a dirty bomb, threaten history itself, ram with mechanical shell, employ inhuman logic. Inflict a hook. Use a domain. Do something cold, calculating, or optimal.",
+    afflictions: "1. Guilty Conscience: Gain 1d3 Sin when using a Blasphemy ability, even if you already rolled Sin to use it.\n2. Feedback Loop: At the end of any scene where you took stress, you take additional stress equal to half of that stress, rounded up.\n3. Dissonance: Roll -1D for any roll involving your service weapon; it has been replaced with one utterly unfamiliar to you.\n4. Optimized: All Skills are set to 1.\n5. Rewind: When Pressure rises, you return to the location you began the investigation at.\n6. The Task: Permanently add to your agenda: adhere to cold logic.",
+    tensionMoves: "",
+    severeAttack: "Revise: Usable on a '1' on the risk roll, once a mission. Target an exorcist; any other exorcists nearby must decide to fly to their aid (those who don't cannot participate). Start with a pool of 5d6, then remove one die per 'no': Do you fear your future? Are you repentant for any casualties you have caused? Do you still believe yourself to be human? Is the Auditor hindered, distracted, or under duress? (For a 'no', you or someone aiding you can immediately make a single action roll to attempt rectify the answer, with only a few moments to act, suffering consequences as normal if they fail.) Roll the dice: the exorcist and any aiding take 1 stress for every die rolled. The Auditor attempts to remove their target from history. If at least one '1' comes up, the targeted Exorcist is replaced by another version of themself: they take an injury and their Agenda and Blasphemy are switched out to those of the Admin's choosing (the Exorcist may select the powers and abilities). These effects fade when the Auditor is executed, or may be kept if desired. If two or more '1's come up, the target Exorcist either: disappears instantly, erased from time, remembered only by their peers; or suffers sin overflow to make their own fate.",
+    domainOptions: [
+      { name: 'Targeted Redaction', description: "The Auditor has noticed your interference and must stall your advance. As a tension move, the Auditor performs an erasure powerful enough to bypass an Exorcist's natural psychic resistance. All Exorcists immediately lose and forget any information related to Domains or Trauma Questions; however, they are acutely aware that their memories have been altered. This information may be regained by destroying a unique Surveyor which appears after this ability has been used; it may appear anywhere in the investigation area and will attempt to flee from the Exorcists, but using the Eye of the Spindle will allow them to track its signal." },
+      { name: 'Exponential Entropy', description: "Time's eternal march increases in pace as the Auditor draws closer to its ultimate goal. At 0 Pressure, the tension talisman has 4 slashes. At 1-2 Pressure, it has 3 slashes. At 3-4 Pressure, it has 2 slashes. At 5 Pressure, it has 1 slash." },
+      { name: 'Machine Learning', description: "The Auditor is self-assured, but not arrogant; it knows there are always further ways to optimize. As a complication, the Auditor and any of its minions can copy the Blasphemy ability of one Exorcist and immediately use it, copying its effects exactly and gaining any relevant benefits. If used as a tension move, the Auditor permanently copies the ability and may use it as a reaction." },
+      { name: 'Antivirus', description: "The duty must be completed. Any and all obstacles to finishing the job are to be excised. The first time the Eye of the Spindle is used, the Auditor dispatches a Tracer to handle the disruption - a humanoid construct with enhanced capabilities. It will actively hunt the Exorcists down while they are using the Eye, and can only enter the altered timeline if the Auditor enables it to with a tension move." },
+      { name: 'Pretty Little Hate Machine', description: "The Auditor understands humans enough to know how to manipulate them. Once a hunt, when pressure increases, the Auditor causes a tragedy in the past and pins it on an Exorcist; they gain the Notorious Affliction. NOTORIOUS: While afflicted, you are a target for law enforcement, who will stop at nothing to apprehend you once they have been alerted. People will try to call the police or run from you when you meet them, unless you can pass a hard roll to reassure them you are not, in fact, a wanted criminal." },
+      { name: 'CTRL+C CTRL+V', description: "Reaching across alternate timelines, the Auditor sets a terrible trap. As a tension move, a parallel-world copy of an Exorcist is drawn into this timeline, nearly identical to the one they are based off of - save for the fact that they are Graceless, and not an Exorcist. They will wander around the investigation area, and will usually attempt to chase down the original to get answers as to how they got here and why they look so alike. Should the two come into physical contact with one another, the copy will immediately explode into a gory mess, while the original will take an injury. If the copy is killed by the original, the original gains a hook with the Guilty Conscience affliction." },
+      { name: 'Endtimes', description: "The Auditor peers into a future yet to pass, stealing schematics and designs for a weapon far beyond modern technological capabilities. Once per hunt, as a tension move, the Auditor may prime the doomsday weapon in an effort to delay the Exorcists. The weapon appears in the investigation area in a place which is difficult to access; it can be seen by normal humans and incites panic. The Exorcists must disable or destroy the weapon before the tension talisman fills again, otherwise it will cause one of the following: Target the Exorcists with powerful lasers or explosives, regardless of their location; each Exorcist takes 3 stress unless they can find a way to mitigate or avoid it. The munitions penetrate all normal surfaces and require psychic defenses. OR Releases deadly energy or gas in CAT area; Exorcists in the area take 1 stress for every scene spent inside the radius and humans are killed en masse. The weapon may be disabled or destroyed once it is active to stop this effect. Exorcists receive 2 bonus scrip if they disable the weapon, rather than destroy it. TEMERITY will find a use for it." },
+      { name: 'Random Access Memory', description: "Difficult reminders of the past begin to resurface due to the Auditor's influence. As a tension move, the Auditor offers its services to the Exorcists; a chance to erase something from their past which causes them pain. Those who accept clear an injury, affliction, or hook, but two of their stats (Admin chooses) decrease by 1. These skills return to normal levels at the end of the hunt. Those who refuse take 3 stress, but they may roll an additional resting die the next time they rest." }
+    ]
+  },
+  // ─── LEBA Association expansion ───────────────────────────────
+  husk: {
+    primaryEmotion: 'Dissociation',
+    expansion: 'leba',
+    traumas: [
+      'What is hidden behind that flesh of yours, under your face?',
+      'How did revealing yourself hurt you in the present, or future?',
+      'To who or when do you let go of your mask?'
+    ],
+    palace: "A husk's palace is bigger on the inside than the outside and is composed of a fusion between flesh, bones and other organs. Unlike most sins, a husk's palace doesn't stick to a single place but rather sticks to a single person, making them tricky to pin down. Most palaces reside within the host themselves, hollowing their insides without causing harm. However, this is not always the case. Husk palaces are: Alive, claustrophobic, gory, horrifying, misconstrued.",
+    pressureName: 'Mimicry',
+    pressureEffect: "A husk will attempt to fill the void of their host by the straightforward ability of gruesome violence. The Husk will start within a shell of its host, and slowly kill off NPCs and fully replace them. When setting up the mission, the Admin will note down a specific person to be the husk's current shell (which may include the Host themselves). Along with a simple habit for each NPCs the exorcists may encounter during the investigation. The husk mimics the habit of the shell they occupy, as well as any ticks of the previous shell. When pressure increases, the husk will attempt to kill and replace an NPC at random, prioritising one the party already met and knows of the location. If the exorcists are present, they can attempt to stop the husk with a conflict scene. If not, the NPC is (cleanly) killed and replaced, leaving only a pool of blood at the scene. When a husk changes shell, the previous shell becomes a trace. With exception to the Host who remains alive, and if a type II, is jumping along the husk to a new shell. When the husk replaces an NPC, they copy every aspect of them, appearance, mannerism, and their habit. They keep the habit of the previous NPC. If the exorcists meet the husk while it is wearing a shell, they are unable to know it is the husk at a glance but may reveal them with a blood test: The husk can be revealed through a blood test by cutting the shell's blood and burning the blood with fire or a heated object. The blood reacting to the fire in a violent outburst. The husk may react to this reveal by revealing their true form. This immediately creates a conflict scene with the husk attempting to escape to take a new shell.",
+    outOfControl: "When pressure reaches 4 or higher, or if the husk has successfully replaced 3 NPCs, it evolves into a much more dangerous form. The husk deals +1 slash with reactions until the end of the hunt. When pressure reaches 6, the husk gains +1 CAT and is able to modify its shell to mimic any exorcist or CAIN agent without meeting or killing said person.",
+    traces: "Leftovers (sins): Leftover remains of a shell created and cast away by the husk. They seek to refill their own void with another person's identity. Its appearance resembles a human, but it is definitely not human. The soul inside is already long gone, don't be fooled by their voice. Execution talisman 3 (solo), 5 (duo), 7 (trio). Attacks with: flesh tendrils, acidic vomit, bone bullets, crooked teeth: (1) 4 stress, (2/3) 3, (4+) 2. Complications: make an appeal to the exorcist's humanity, show a bit of their former self, cry out for help of the XO, slash with a giant scythe made of teeth. Wear A Shell (1): Threat. The leftovers attempts to invade and fill a nearby exorcist's body with themselves. If successful, the target takes 3 stress and the Leftovers regain 3 slash on their execution talisman.",
+    attacksWith: "Sharp claws, spine gun: (1) 5 stress, (2/3) 3, (4+) 2. Execution talisman is 6+CAT, does NOT increase with pressure.",
+    complications: "Change shell (kill and replace an NPC), fake being an ally, use subterfuge, manipulate memories, emerge from a corpse, split into multiple forms, add a bystander, use a domain.",
+    threats: "Replace an important NPC. Reveal its true form violently. Consume witnesses. Create a leftover. Use a domain. Do something unhuman, manipulative, or terrifying.",
+    afflictions: "1. Identity Crisis: pick another exorcist; you believe you are them and must act as they would.\n2. Hollow: you cannot benefit from rest until you answer 'What makes you uniquely you?'\n3. Skinwalker: your reflection shows someone else; take 1 stress when seeing yourself.\n4. The Habit: pick a mannerism; you compulsively repeat it at inappropriate times.\n5. Empty Shell: you cannot feel emotions; all social actions are hard.\n6. Replacement: permanently add to agenda: become someone else entirely.",
+    tensionMoves: "",
+    severeAttack: "GOODBYE: Usable on a '1' on the risk roll, once a hunt. Target an exorcist; any other exorcists nearby are alerted by an audio cue and must decide to fly to their aid or not (those who don't cannot participate). Start with a pool of 5d6, then remove one die for each 'yes': Are you far from the husk? Is your face hidden, your skin covered? Are you in control of the situation? Is the husk hindered, distracted, or under duress? (For a 'no', someone can make an action roll to rectify it.) Roll the dice: the exorcist and any aiding take 1 stress for every die rolled. If at least one '1' comes up, the husk attempts to substitute the exorcist's ego - they gain the Identity Crisis affliction. Two or more '1's: the exorcist is fully replaced by the husk until executed.",
+    domainOptions: [
+      { name: 'Ever-Shifting Ego', description: "The husk is a master of disguises even among sins. It evolved the ability to copy a single domain of another sin chosen when creating the husk. Domains that interact with traces interact with the husk's traces instead. If a domain interacts with another sin's unique pressure ability (Miasma, Grudge, etc.), instead adapt their effects to the husk's pressure." },
+      { name: 'I Stare At My Reflection, and It Winked Back at Me', description: "The husk fills the very reality around it with itself. As a tension move, the husk may make every NPC in the entire investigation area refracted with the identity of the host: all NPCs share the same physical features; NPCs do not share the same backstory but do share the original's personality 'added' to the host's; all habits are shared, rendering them difficult to use; graceless people do not realize they are all copies. This effect stops temporarily when the true form is revealed; the husk may reactivate it as a tension move." },
+      { name: 'Lone Forgotten Lullaby', description: "The husk is able to sing a hollow tune to be free from the curse of being perceived. As a complication or tension move: the husk starts singing a hollow song. While singing, all living beings who can hear its voice immediately forget the existence of the husk along with any information related to them. The song lasts for 1 minute, or a round during conflict scenes. If pressure fills up halfway, the song can be heard throughout the investigation area. Deaf people or exorcists are immune." },
+      { name: 'Where does it go? Where does it go?', description: "The husk's victims disappear from the world entirely, replaced by more perfect copies. When the husk kills an NPC to take their shell, all memories and records of the original are erased from existence. Only exorcists remember them. The husk gains perfect knowledge of the victim's memories and can perfectly answer any question about them." },
+      { name: 'Skin Stealer', description: "As a complication or tension move, the husk creates Mimics - partial copies of people it has consumed that appear in the investigation area. Mimics (sins): Execution talisman 4. Mimics can alter a specific target's vision to match their current mimicked form. If the Nail of Abel is used at least once, this domain's effect is nullified for the rest of the hunt. Mimics may mimic any person or exorcist, even if still alive." },
+      { name: 'To You Far Away, To Me Lonely as Can Be', description: "The husk's desire to fill emptiness robs others of their own powers and emotions. As a tension move or threat, the husk can give an Exorcist the following affliction: I Love You: When afflicted, the exorcist loses access to one of their blasphemy powers as they forget they ever had it. They can regain the memory by letting the husk make a free reaction against them during a conflict scene." },
+      { name: 'There\'s Nothing There', description: "The husk goes against its own nature and represses its violent intent. The husk becomes visible to all graceless and does not need to kill an NPC to take their shell. Instead, they take over the NPC's body in a chaotic confrontation. The victim is not killed but is aware of what's happening and unable to fight. When the husk takes a new shell, previous victims merge with the sin into an amalgam. As a complication, the husk may partially free one victim to distract or compromise the exorcists." }
+    ]
+  },
+  garden: {
+    primaryEmotion: 'Sloth',
+    expansion: 'leba',
+    traumas: [
+      'Why do you keep living on?',
+      'Who or what holds you from becoming part of the whole?',
+      'Who or what holds you back from changing?'
+    ],
+    palace: "A Garden's palace can be divided in two types depending on the nature of the host's trauma; Either, it is hidden within the flora that the host considers safe or under their protection, such as the pulp of a flower, or inside a dead tree. Or, they are spread over a public area that the host is most familiar with, such as a public park, a private garden, or even an overgrown sewer. If the palace is spread over an area, even mundane humans may enter the palace unknowingly. Palaces typically represent a place of inner peace and stillness for the host and the sin. Garden palaces are: Overgrown, vast, living, beautiful, flourishing.",
+    pressureName: 'Forest',
+    pressureEffect: "Gardens spawn a forest around their palace that grows steadily over time. The forest is alive and hostile to intruders, but protective of those the garden considers under its care. Wildlife is drawn to the area and becomes aggressive toward outsiders. When pressure increases, the forest expands to cover a new area. The garden and its traces can move freely through the forest and see through any plant within it. Humans inside the forest become drowsy and may fall asleep if they stay too long.",
+    outOfControl: "If pressure reaches maximum, the garden gains +1 CAT and the forest covers the entire investigation area. All humans inside fall into an endless sleep until the garden is executed.",
+    traces: "Sprouts (sins): Small plant-like creatures that emerge from the garden's domain. They are drawn towards humans, water, or sunlight. Execution talisman 2 (solo), 4 (farm), 6 (massive farm). Deal +1 stress when in the presence of a sin. Put exorcists to sleep when inflicting an injury until they are awoken; if all exorcists are put to sleep, they are moved outside the forest. Attacks with: elongated limbs, overgrown roots, irritating insects, throw produce (long range): (1) 3 stress, (2/3) 2, (4+) 1. Complications: spread roots, harvest insects, swarm flies on a target, burrow in the earth, spread spores, captivate or draw humans to the area.",
+    attacksWith: "Unearthed roots, large branches, trunk body slam, razor-sharp leaf (short range): (1) 5 stress, (2/3) 3, (4+) 2. Execution talisman is 10+PRESSURE+CAT.",
+    complications: "Grow the forest, rip the earth in half, release spores or insects, make an exorcist grow older or younger, summon wildlife against the exorcists, captivate humans, add a bystander, use a domain.",
+    threats: "Summon a group of sprouts. Fire creates a severe threat to the Garden. Ensnare exorcists in roots. Collapse buildings with growth. Create a poison cloud. Use a domain. Do something overprotective, restrained, or slow.",
+    afflictions: "1. Deep Sleep: you can only be woken by taking stress; resting puts you to sleep for the whole scene.\n2. Rooted: you cannot willingly leave the area you are in until the scene ends.\n3. Overgrown: plants grow on your body; physical activity is hard until you spend a scene removing them.\n4. Pollen: you are allergic; take 1 stress when entering a new area with plants.\n5. Symbiosis: you feel protective of the garden; actions to harm it are hard.\n6. Stillness: permanently add to agenda: remain perfectly still and let things happen.",
+    tensionMoves: "",
+    severeAttack: "Flourish: Usable on a '1' on the risk roll, once a hunt. Target an exorcist; any other exorcists nearby are alerted by an audio cue and must decide to fly to their aid (those who don't cannot participate). Start with a pool of 5d6, then remove one die per 'yes': Are you close or adjacent to the Garden? Have you befriended an animal or pet? Do you have a plant on your person? Is the Garden hindered, distracted, or under duress? (For a 'no', someone can make an action roll to rectify it.) Roll the dice as the Garden unleashes the fury of nature against the exorcists and anyone aiding them. The exorcist and any aiding them take 1 stress for every die rolled, no matter the result.",
+    domainOptions: [
+      { name: 'The Eternal Forest', description: "The garden's forest becomes impossibly vast. Navigation within requires successful rolls; failure means becoming lost and spending additional scenes to find your way. The garden can reshape paths at will as a complication." },
+      { name: 'Symbiotic Bond', description: "The garden has formed a deep connection with local wildlife. Animals in the area are under the garden's control and will attack intruders. As a threat, the garden can summon a swarm of creatures that deals 1d3 stress to all exorcists in the area." },
+      { name: 'Spore Cloud', description: "The garden releases hallucinogenic spores. Once a scene, as a complication with +2 talisman length, exorcists in the area must resist or experience vivid hallucinations (all perception-based actions are hard). The spores linger for the rest of the scene." },
+      { name: 'The Giving Tree', description: "The garden offers gifts to those who approach peacefully. Any exorcist can receive a 'blessing' from the garden that heals 1d3 stress - but they gain the Symbiosis affliction and their first action against the garden in any scene costs 2 stress." },
+      { name: 'Ancient Growth', description: "The garden's roots reach deep into the earth and through time. As a tension move, the garden can cause structures to age rapidly, collapsing buildings and creating difficult terrain. Exorcists inside take 1d3 stress from the collapse." },
+      { name: 'The Protector', description: "The garden is fiercely protective of its host. When the host would take any harm, the garden can redirect it to itself or its traces. The host is always hidden within the palace and cannot be harmed until the garden is reduced to 3 or fewer talisman." }
     ]
   }
 };
@@ -4462,6 +6080,65 @@ var SIN_TRACES = {
     complications: 'Trap an exorcist and pile on, pull an exorcist away in chains, disable with a painful strike, threaten bystanders as collaborators, call in a prison vehicle, produce a heavy weapon.\nSound the Alarm (threat, 1-2): alert the Lord or nearby guards; if more guards show up, +1d3 to the execution talisman.',
     complicationsPt: 'Prender um exorcista e amontoar-se sobre ele, arrastar um exorcista em correntes, incapacitar com um golpe doloroso, ameaçar espectadores como colaboradores, chamar um veículo de prisão, produzir uma arma pesada.\nSoar o Alarme (ameaça, 1-2): alertar o Senhor ou guardas próximos; se mais guardas aparecem, +1d3 ao talismã de execução.',
     stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  // ─── The Odysseus Protocol expansion ───────────────────────────────
+  owl: {
+    name: 'Ravens', namePt: 'Corvos', type: 'sin',
+    expansion: 'odysseus',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 2 }, { label: 'group', labelPt: 'grupo', segments: 4 }, { label: 'massive group', labelPt: 'grupo massivo', segments: 6 } ],
+    description: "Often an Owl will create traces that act as extra surveillance on individuals of interest, such as the host or exorcists. They initially disguise themselves as something mundane that circles the person of interest, such as a flock of birds, swarm of drones, or crowd of pedestrians. These traces will be mostly passive observers unless noticed, at which point they transform into a large and hulking avian monstrosity.",
+    descriptionPt: 'Frequentemente uma Coruja cria traços que atuam como vigilância extra sobre indivíduos de interesse, como o hospedeiro ou exorcistas. Inicialmente se disfarçam como algo mundano que circula a pessoa de interesse, como um bando de pássaros, enxame de drones ou multidão de pedestres. Esses traços serão observadores passivos a menos que notados, momento em que se transformam em uma monstruosidade aviária grande e imponente.',
+    facts: 'Are disguised as something mundane but noticeable until discovered.\nDirectly linked to the Owl, giving and receiving information and subtly influencing situations.\nCapable of taking a monstrous bird form when discovered.',
+    factsPt: 'Estão disfarçados como algo mundano mas perceptível até serem descobertos.\nDiretamente conectados à Coruja, dando e recebendo informações e influenciando sutilmente situações.\nCapazes de assumir uma forma de pássaro monstruoso quando descobertos.',
+    attacksWith: 'Beaks, Talons, Cognitohazardous Knowledge: (1) 3 stress, (2/3) 2 stress, (4+) 1 stress.',
+    attacksWithPt: 'Bicos, Garras, Conhecimento Cognitoperigoso: (1) 3 estresse, (2/3) 2 estresse, (4+) 1 estresse.',
+    complications: 'Tamper with investigation (altering evidence, capturing witnesses, etc.) before attempting to escape.',
+    complicationsPt: 'Adulterar a investigação (alterando evidências, capturando testemunhas, etc.) antes de tentar escapar.',
+    stress: 3, stressRisk23: 2, stressRisk1: 1
+  },
+  // ─── Marching Ever Onward expansion ───────────────────────────────
+  auditor: {
+    name: 'Surveyors', namePt: 'Supervisores', type: 'sin',
+    expansion: 'marchingeveronward',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 2 }, { label: 'several', labelPt: 'vários', segments: 4 }, { label: 'flock', labelPt: 'bando', segments: 6 } ],
+    description: "Dronelike entities that hover ominously around areas which the Auditor has edited, ensuring that nothing can undo its work. They often look like smaller, more mechanical versions of the Auditor which spawned them, most of their mass taken up by their unblinking eye (or eyes, in many cases).",
+    descriptionPt: 'Entidades semelhantes a drones que pairam ominosos ao redor de áreas que o Auditor editou, garantindo que nada possa desfazer seu trabalho. Frequentemente parecem versões menores e mais mecânicas do Auditor que as gerou, com a maior parte de sua massa ocupada por seu olho (ou olhos, em muitos casos) que não pisca.',
+    facts: 'Especially aggressive during use of Eye of the Spindle; persist across timelines.\nWill also prioritize Exorcists who display knowledge of original timeline; gain +1D to rolls taking advantage of this fact.',
+    factsPt: 'Especialmente agressivos durante o uso do Olho do Fuso; persistem através das linhas do tempo.\nTambém priorizam Exorcistas que demonstram conhecimento da linha temporal original; ganham +1D em rolagens que se aproveitam desse fato.',
+    attacksWith: 'Electric shocks, sharp edges, unsettling gazes: (1) 3 stress, (2/3) 2 stress, (4+) 1 stress.',
+    attacksWithPt: 'Choques elétricos, bordas afiadas, olhares perturbadores: (1) 3 estresse, (2/3) 2 estresse, (4+) 1 estresse.',
+    complications: 'Surround someone, begin overheating, freeze someone in time, escape to another timeline, combine and fuse, alert the Auditor.',
+    complicationsPt: 'Cercar alguém, começar a superaquecer, congelar alguém no tempo, escapar para outra linha do tempo, combinar e fundir, alertar o Auditor.',
+    stress: 3, stressRisk23: 2, stressRisk1: 1
+  },
+  // ─── LEBA Association expansion ───────────────────────────────
+  husk: {
+    name: 'Leftovers', namePt: 'Restos', type: 'sin',
+    expansion: 'leba',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 3 }, { label: 'duo', labelPt: 'dupla', segments: 5 }, { label: 'trio', labelPt: 'trio', segments: 7 } ],
+    description: "Leftover remains of a shell created and cast away by the husk. They seek to refill their own void with another person's identity. Its appearance resembles a human, but it is definitely not human. The soul inside is already long gone - don't be fooled by their voice.",
+    descriptionPt: 'Restos de uma casca criada e descartada pelo husk. Eles buscam preencher seu próprio vazio com a identidade de outra pessoa. Sua aparência lembra um humano, mas definitivamente não é humano. A alma lá dentro já se foi há muito tempo - não se deixe enganar pela voz.',
+    facts: '',
+    factsPt: '',
+    attacksWith: 'Flesh tendrils, acidic vomit, bone bullets, crooked teeth: (1) 4 stress, (2/3) 3, (4+) 2.',
+    attacksWithPt: 'Tentáculos de carne, vômito ácido, balas de osso, dentes tortos: (1) 4 estresse, (2/3) 3, (4+) 2.',
+    complications: "Make an appeal to the exorcist's humanity, show a bit of their former self, cry out for help of the XO, slash with a giant scythe made of teeth.\nWear A Shell (1): Threat. The leftovers attempts to invade and fill a nearby exorcist's body with themselves. If successful, the target takes 3 stress and the Leftovers regain 3 slash on their execution talisman.",
+    complicationsPt: 'Fazer um apelo à humanidade do exorcista, mostrar um pouco de seu antigo eu, gritar por ajuda do Exorcista, golpear com uma foice gigante feita de dentes.\nVestir Uma Casca (1): Ameaça. Os restos tentam invadir e preencher o corpo de um exorcista próximo com eles mesmos. Se bem-sucedido, o alvo sofre 3 estresse e os Restos recuperam 3 cortes no talismã de execução.',
+    stress: 4, stressRisk23: 3, stressRisk1: 2
+  },
+  garden: {
+    name: 'Sprouts', namePt: 'Brotos', type: 'sin',
+    expansion: 'leba',
+    talismanVariants: [ { label: 'solo', labelPt: 'solo', segments: 2 }, { label: 'farm', labelPt: 'fazenda', segments: 4 }, { label: 'massive farm', labelPt: 'fazenda massiva', segments: 6 } ],
+    description: 'Small plant-like creatures that emerge from the garden\'s domain. They are drawn towards humans, water, or sunlight.',
+    descriptionPt: 'Pequenas criaturas semelhantes a plantas que emergem do domínio do garden. São atraídas por humanos, água ou luz solar.',
+    facts: 'Deal +1 stress when in the presence of a sin.\nPut exorcists to sleep when inflicting an injury until they are awoken; if all exorcists are put to sleep, they are moved outside the forest.',
+    factsPt: 'Causam +1 estresse na presença de um pecado.\nColocam exorcistas para dormir ao infligir um ferimento até serem acordados; se todos os exorcistas adormecerem, são movidos para fora da floresta.',
+    attacksWith: 'Elongated limbs, overgrown roots, irritating insects, throw produce (long range): (1) 3 stress, (2/3) 2, (4+) 1.',
+    attacksWithPt: 'Membros alongados, raízes crescidas, insetos irritantes, arremessar frutas (longo alcance): (1) 3 estresse, (2/3) 2, (4+) 1.',
+    complications: 'Spread roots, harvest insects, swarm flies on a target, burrow in the earth, spread spores, captivate or draw humans to the area.',
+    complicationsPt: 'Espalhar raízes, coletar insetos, enxamear moscas em um alvo, enterrar-se na terra, espalhar esporos, cativar ou atrair humanos para a área.',
+    stress: 3, stressRisk23: 2, stressRisk1: 1
   }
 };
 
@@ -4577,6 +6254,21 @@ var DOMAIN_TRACES = {
     complications: 'Imprison someone in a cage of light, blind with glaring beams, swoop high into the air, summon searing blades, impale with a shining spear.',
     complicationsPt: 'Aprisionar alguém numa jaula de luz, cegar com feixes ofuscantes, mergulhar alto no ar, invocar lâminas escaldantes, empalar com uma lança reluzente.',
     stress: 5, stressRisk23: 3, stressRisk1: 2
+  },
+  // ─── Marching Ever Onward expansion ───────────────────────────────
+  'auditor::Antivirus': {
+    name: 'Tracer', namePt: 'Rastreador', type: 'sin',
+    expansion: 'marchingeveronward',
+    talismanFormula: '3+CAT', talismanLabel: '3 + CAT', talismanLabelPt: '3 + CAT',
+    description: 'A humanoid construct with enhanced capabilities, dispatched by the Auditor when the Eye of the Spindle is first used. It will actively hunt the Exorcists down while they are using the Eye, and can only enter the altered timeline if the Auditor enables it with a tension move.',
+    descriptionPt: 'Um construto humanoide com capacidades aprimoradas, enviado pelo Auditor quando o Olho do Fuso é usado pela primeira vez. Caçará ativamente os Exorcistas enquanto estiverem usando o Olho, e só pode entrar na linha temporal alterada se o Auditor permitir com um movimento de tensão.',
+    facts: 'Immune to mundane weaponry and can move at CAT speed in short bursts.\nMakes use of ambush tactics and the element of surprise; favors hit-and-run combat and separating the group.\nThe first time the Tracer has its execution talisman filled out, it freezes itself in time rather than being destroyed. The next time Pressure increases, it unfreezes, returning with an execution talisman of 3 but dealing 1 additional stress on all reactions until it is destroyed permanently.',
+    factsPt: 'Imune a armamento mundano e pode se mover na velocidade CAT em rajadas curtas.\nUsa táticas de emboscada e o elemento surpresa; favorece combate de bater e correr e separar o grupo.\nA primeira vez que o Rastreador tem seu talismã de execução preenchido, congela a si mesmo no tempo em vez de ser destruído. A próxima vez que a Pressão aumenta, descongela, retornando com um talismã de execução de 3 mas causando 1 de estresse adicional em todas as reações até ser destruído permanentemente.',
+    attacksWith: 'Bladelike limbs, machine strength, built-in armaments (long range): (1) 3 stress, (2/3) 2 stress, (4+) 1 stress.',
+    attacksWithPt: 'Membros como lâminas, força de máquina, armamento embutido (longo alcance): (1) 3 estresse, (2/3) 2 estresse, (4+) 1 estresse.',
+    complications: 'Ensnare someone, emit nerve gas, initialize jet thrusters, lay mines, divert all energy to main cannon.',
+    complicationsPt: 'Prender alguém, emitir gás nervoso, inicializar propulsores a jato, colocar minas, desviar toda energia para o canhão principal.',
+    stress: 3, stressRisk23: 2, stressRisk1: 1
   }
 };
 
@@ -4813,6 +6505,42 @@ var OFFICIAL_ENEMIES = [
       { name: 'Baldur', story: 'Form III. Manifested from host L545, who was then able to bind it. Took the form of a basset hound. The Kingdom manifested as a typical 1930s city noir narrative where the host was a hardboiled detective in search of his missing wife. In reality, the host\'s wife had been deceased for 6 months due to advanced bone cancer. Executed. Time to execution 2 days 2 hrs 34 mins. L545 taken under observation.' },
       { name: 'Pale Queen', story: 'Form II. Manifested and fused with host L44, who had retreated into a world of video game playing after a sports injury left her without the use of her legs. The Kingdom manifested as a typical pseudo-medieval video game fantasy world based on property {redacted:12}, which consumed up to 60% of city {redacted:6} before dispersal by the dispatched team. 3 exorcists KIA, reinforcements sent by helicopter. Executed. Time to execution 9 hours 54 minutes.' }
     ] },
+  // ─── The Odysseus Protocol expansion ───────────────────────────────
+  { officialId: 'owl', bestiaryGroup: 'sin', name: 'Owl', sinTemplate: 'owl', expansion: 'odysseus',
+    image: 'img/enemies/owl.png', examplesImage: 'img/enemies/owl_examples.png',
+    description: 'A paranoid sin that seeks to know everything, filling the gap in knowledge by ensuring itself and its host know everything they possibly can. Emotion: Paranoia.',
+    examples: [
+      { name: 'Whistleblower', story: 'Subject O338, Type III, manifested in suburbs of Idaho, Binder was a known influencer in the "true crime" community. Subject was discovered by SEER during the hunt of a CAT I Hound. Binder recruited by SEER at 0905, no Exorcists deployed, no casualties.' },
+      { name: 'Psycho Killer', story: 'Subject O836, Type II, manifested from an intern at McDonald\'s, a shell company owned by CAIN, after discovering a dossier dropped by a now ex-employee of CAIN. Exorcists discovered O836 in the host\'s home at 0922, Subject executed at 1042. Seminar on document security scheduled afterwards. No civilian casualties, 2 exorcists injured.' },
+      { name: 'Rum-Runner', story: 'Subject O284, Type I, urban manifestation in NYC, Sin manifested by host after discovering their partner had lied about going into rehab for chronic alcoholism. Exorcists arrived on the scene at 1300, record halts at 1430, Exorcists arrived on the scene at 1445, record halts at 1500, Sin executed at 2120 before the first deployment of Exorcists. Indeterminate number of casualties.' }
+    ] },
+  // ─── Marching Ever Onward expansion ───────────────────────────────
+  { officialId: 'auditor', bestiaryGroup: 'sin', name: 'Auditor', sinTemplate: 'auditor', expansion: 'marchingeveronward',
+    image: 'img/enemies/auditor.png', examplesImage: 'img/enemies/auditor_examples.png',
+    description: 'Cold, dispassionate sins that pose incredible metaphysical threats to the world. Created from powerful concentrations of regret - when a host\'s past actions become too heavy to bear. They actually alter time, capable of traveling across time and altering past (or future) events directly. Emotion: Regret.',
+    examples: [
+      { name: 'Deadlock', story: 'Type II, fused to John Marist after involuntary manslaughter in an automotive accident. Erasures targeted huge swathes of Brooklyn who witnessed or heard of the event after the fact. Temporal distortions severe enough to revert area surrounding the Palace to 982 BCE. Executed after 4 hours, 37 minutes, 12 seconds real time; Exorcist Joseph Cald lost in aggressive wormhole event, mummified corpse recovered by TEMERITY via The Spindle.' },
+      { name: 'The Spindle', story: 'CLASSIFIED. {redacted} KIA. {redacted} damage. AUTHORITY CAT 8 risk. Valuable asset.' },
+      { name: 'Unit 4828', story: 'Type I, manifested while subject 4828 was awaiting questioning by CASTLE administration. Subject had been acquired hours prior for assimilation into CAIN after manifestation of Grace. Executed after 5 minutes, 18 seconds real time; multiple CAT 5 Exorcists on-site at time of manifestation. Sin was not given enough time to begin process of erasure. Subject committed suicide before she could be restrained; corpse cremated.' }
+    ] },
+  // ─── LEBA Association expansion ───────────────────────────────
+  { officialId: 'husk', bestiaryGroup: 'sin', name: 'Husk', sinTemplate: 'husk', expansion: 'leba',
+    talismanDisplay: '6 + CAT',
+    image: 'img/enemies/husk.png', examplesImage: 'img/enemies/husk_examples.png',
+    description: 'A conceptual sin born from the loss of identity. The desire to detach oneself to fill the void in a person\'s heart. Terrifying in their abilities to mimic living beings. Emotion: Dissociation.',
+    examples: [
+      { name: 'Nowhere', story: 'Type I, CAT 5, foreshadowed to arrive on {redacted:5} at {redacted:6}, {redacted:8} of {redacted:4} within 1km of the town. Virtues {redacted:5}, {redacted:7} and {redacted:7} sent to exercise threat. No exorcist casualties. Elimination of subject confirmed within 6 hours of manifestation. 2610 casualties count post-execution. Deployment of memory manipulation by SEER.' },
+      { name: 'False Hydra', story: 'Type II, took over a large portion of the city of {redacted:9} during a large event. Host transformed shortly after an assassination attempt. CASTLE personnel intercepted the attack and exorcist team were sent. All direct information of the incident must not be disclosed to personnel under threat of termination. Executed. Total number of casualties undetermined. Post-lecture of this file, please seek a SEER consultation form in your nearest area for potential contamination.' },
+      { name: 'This Is Not A Man', story: 'Type III, CAT 4, appeared within facility #X104 under CASTLE responsibility. Shell lasted for approx. 176 hours until detected by SEER. Lock-down initiated and elimination of host resulted in the death of exorcist team 13 and various CASTLE agents. Time from discovery to execution: 3 hours, 11 minutes. Total casualties: 23 CASTLE agents, 3 exorcists. Virtues sent within 1 hour of discovery. Executed.' }
+    ] },
+  { officialId: 'garden', bestiaryGroup: 'sin', name: 'Garden', sinTemplate: 'garden', expansion: 'leba',
+    image: 'img/enemies/garden.png', examplesImage: 'img/enemies/garden_examples.png',
+    description: 'A rare variant of the Ogre sin. Spawned with the desire to remain protected from outside influences. Filled with a hopeless desire to remain completely still, isolated and be ignored. Emotion: Sloth.',
+    examples: [
+      { name: '100 Gnomes', story: 'Subject G16, Type III, subject was a financial advisor for {redacted:4} {redacted:4} who was deep into conspiracy and hoax hunting. G16 manifested a CAT 3 Garden within {redacted:7}\'s public park. Garden formed as a group of fungal gnomes who spread a potent spore infestation, resulting in an invasion of the shifter population in the area. Exorcists were able to find the palace within a tree trunk. Sin executed with a minimum casualty rate of 13%.' },
+      { name: 'The Bee Keeper', story: 'Subject G33, Type I, subject worked as a bee keeper for the agricultural company {redacted:4} within the plains of {redacted:5}, Germany for the past decade. Following a bad harvest season of honey, the company fired G33 without clause for appeal causing them to fall into a local cult\'s influence. A CAT 2 Garden sin manifested within their private bee garden a few weeks later. Shortly after arrival, manifestation eliminated but no execution recorded, subject MIA. Exorcists were disciplined.' },
+      { name: 'Bean Jack', story: 'Possessing G04, Type II, subject fused with a CAT 5 Garden within the public park Kowloon in Hong Kong. The palace situated at the top of a giant tree required the restricted usage of a helicopter by the hunters. Subject was found entrapped in the wood of the palace and already dead from suffocation with the sin trying to resuscitate them. Subject KIA, no exorcist casualties. Post-execution, the park required the service of virtue Hope and virtue Creativity for civilian and structural cleanup.' }
+    ] },
   // Drifters (Anomalies) — base game (pg. 149-151)
   {
     officialId: 'pest', kind: 'opponent', bestiaryGroup: 'anomaly', name: 'Pest', type: 'anomaly', category: 1,
@@ -5000,6 +6728,7 @@ function createBlankSin() {
     primaryEmotion: '',      // e.g. Despair
     appearance: '',          // appearance & psychophysiology
     behavior: '',            // how it acts / fights / speaks
+    palace: '',              // location/appearance of the palace
     talismanSegments: 8,     // execution talisman (Sins are typically 8)
     domains: [               // three domains (core powers)
       { name: '', description: '' },
@@ -5037,6 +6766,7 @@ function createSinFromType(typeId) {
   // Templates store trauma questions as strings; map into question/answer pairs
   var tq = tpl.traumas && tpl.traumas.length ? tpl.traumas.slice(0, 3) : [];
   s.traumas = [0, 1, 2].map(function(i) { return { question: tq[i] || '', answer: '' }; });
+  s.palace = tpl.palace || '';
   s.pressureName = tpl.pressureName || '';
   s.pressureEffect = tpl.pressureEffect || '';
   s.outOfControl = tpl.outOfControl || '';
@@ -5844,6 +7574,14 @@ function renderView(characterId) {
                 return pw ? '<div class="power-display"><strong>' + tName(pw) + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + '<p>' + tPowerDesc(pw.id, pw.description) + '</p></div>' : '';
               }).join('') + '</div>';
           }).join('') +
+          // Mimic Power from Sorcerer's Mimic Technique
+          (char.mimicPower ? (function() {
+            var mBl = BLASPHEMIES.find(function(b) { return b.id === char.mimicPower.blasphemyId; });
+            var mPw = mBl ? mBl.powers.find(function(p) { return p.id === char.mimicPower.powerId; }) : null;
+            if (!mBl || !mPw) return '';
+            return '<div class="blasphemy-display mimic-power-display"><h4>' + (currentLang === 'pt' ? 'Mimic Technique' : 'Mimic Technique') + ' <span class="muted">(' + tBlas(mBl.id) + ')</span></h4>' +
+              '<div class="power-display"><strong>' + tName(mPw) + '</strong>' + (mPw.tags && mPw.tags.length ? '<span class="tags">[' + mPw.tags.join(', ') + ']</span>' : '') + renderBurstCost(mPw.burst) + '<p>' + tPowerDesc(mPw.id, mPw.description) + '</p></div></div>';
+          })() : '') +
         '</section>' +
         // Sin Marks
         ((char.sinMarks || []).length > 0 ? '<section class="sheet-section"><h3>' + t('nav_sinmarks') + '</h3>' +
@@ -5908,6 +7646,7 @@ function renderView(characterId) {
             '<div class="sheet-actions-left">' +
               '<button class="btn btn-secondary btn-sm" id="btn-add-weaponset">' + (currentLang === 'pt' ? '+ Novo par de armas' : '+ New weapon pair') + '</button>' +
               '<button class="btn btn-secondary btn-sm" id="btn-kitshop">' + t('kit_expansion_shop') + '</button>' +
+              (isExpansionActive('leba') ? '<button class="btn btn-secondary btn-sm" id="btn-cursedshop">' + t('cursed_items') + '</button>' : '') +
             '</div>' +
             (isExpansionActive('gff4') ? '<div class="sheet-actions-right"><button class="btn btn-secondary btn-sm" id="btn-recreation">' + (currentLang === 'pt' ? 'Recreação' : 'Recreation') + '</button></div>' : '') +
           '</div>' +
@@ -5930,6 +7669,9 @@ function renderView(characterId) {
   document.getElementById('btn-export').addEventListener('click', function() { exportCharacter(char); });
   if (document.getElementById('btn-kitshop')) {
     document.getElementById('btn-kitshop').addEventListener('click', function() { navigate('kitshop/' + characterId); });
+  }
+  if (document.getElementById('btn-cursedshop')) {
+    document.getElementById('btn-cursedshop').addEventListener('click', function() { navigate('cursedshop/' + characterId); });
   }
   if (document.getElementById('btn-recreation')) {
     document.getElementById('btn-recreation').addEventListener('click', function() { navigate('recreation/' + characterId); });
@@ -6174,6 +7916,195 @@ function renderKitShop(characterId) {
       char.scrip = (char.scrip || 0) + v.scrip; // refund
       saveCharacter(char);
       renderKitShop(characterId);
+    });
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PAGE: CURSED ITEMS SHOP (LEBA)
+// ════════════════════════════════════════════════════════════════════
+
+function renderCursedShop(characterId) {
+  var app = document.getElementById('app');
+  var char = getCharacter(characterId);
+  if (!char) { navigate('home'); return; }
+  var pt = currentLang === 'pt';
+  if (!Array.isArray(char.cursedItems)) char.cursedItems = [];
+
+  // Character's service weapon CAT determines max effects
+  var swCat = char.serviceWeaponCat || 0;
+  var maxEffects = swCat + 1;
+  var cursedCost = 5; // Base cost for first cursed item
+
+  app.innerHTML =
+    '<div class="page cursedshop-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">' + t('nav_back') + '</button>' +
+        '<h1 class="title">' + t('cursed_items') + '</h1>' +
+      '</header>' +
+      '<div class="sheet-section cursedshop-balance">' +
+        '<strong>' + t('scrip') + ':</strong> <span class="cursedshop-scrip">' + (char.scrip || 0) + '</span>' +
+        '<p class="muted">' + (pt ? 'Itens Amaldiçoados são armas especializadas criadas de pecados executados. Contam como arma de serviço extra e escalam com o CAT da sua arma de serviço.' : 'Cursed Items are specialized weapons created from executed sins. They count as an extra service weapon and scale with your service weapon CAT.') + '</p>' +
+        '<div class="cursed-info-row">' +
+          '<span><strong>' + (pt ? 'CAT Arma de Serviço:' : 'Service Weapon CAT:') + '</strong> ' + swCat + '</span>' +
+          '<span><strong>' + (pt ? 'Efeitos Máximos:' : 'Max Effects:') + '</strong> ' + maxEffects + '</span>' +
+          '<span><strong>' + (pt ? 'KP para sacar:' : 'KP to deploy:') + '</strong> 3</span>' +
+        '</div>' +
+      '</div>' +
+      // Owned cursed items
+      (char.cursedItems.length > 0 ? '<div class="sheet-section cursed-owned">' +
+        '<h3>' + (pt ? 'Seus Itens Amaldiçoados' : 'Your Cursed Items') + '</h3>' +
+        char.cursedItems.map(function(ci, idx) {
+          var sinType = CURSED_ITEMS.sinTypes.find(function(s) { return s.id === ci.sinType; });
+          return '<div class="cursed-owned-item">' +
+            '<div class="cursed-owned-head">' +
+              '<strong>' + escHtml(ci.name || (pt ? 'Item Amaldiçoado' : 'Cursed Item')) + '</strong>' +
+              '<span class="cursed-sin-type">' + (sinType ? sinType.name : ci.sinType) + '</span>' +
+            '</div>' +
+            (ci.appearance ? '<p class="muted">' + escHtml(ci.appearance) + '</p>' : '') +
+            '<div class="cursed-effects">' +
+              '<strong>' + (pt ? 'Efeitos:' : 'Effects:') + '</strong> ' +
+              (ci.effects && ci.effects.length > 0 ? ci.effects.map(function(eff) {
+                var effData = sinType && sinType.effects.find(function(e) { return e.id === eff; });
+                return effData ? (pt ? effData.namePt : effData.name) : eff;
+              }).join(', ') : (pt ? 'Nenhum' : 'None')) +
+            '</div>' +
+            '<div class="cursed-curses">' +
+              '<strong>' + (pt ? 'Maldições:' : 'Curses:') + '</strong> ' + (ci.curses || 1) +
+            '</div>' +
+            '<button class="btn btn-tiny btn-danger cursed-remove" data-idx="' + idx + '">' + (pt ? 'Remover' : 'Remove') + '</button>' +
+          '</div>';
+        }).join('') +
+      '</div>' : '') +
+      // Create new cursed item
+      '<div class="sheet-section cursed-create">' +
+        '<h3>' + (pt ? 'Criar Novo Item Amaldiçoado' : 'Create New Cursed Item') + '</h3>' +
+        '<p class="muted">' + (pt ? 'Custo: 5 scrip. Requisito: CAT 2+. Escolha o tipo de pecado de origem e personalize.' : 'Cost: 5 scrip. Requirement: CAT 2+. Choose the origin sin type and customize.') + '</p>' +
+        ((char.category || 1) < 2 ? '<p class="error-text">' + (pt ? 'Você precisa ser CAT 2+ para comprar um Item Amaldiçoado.' : 'You need to be CAT 2+ to purchase a Cursed Item.') + '</p>' : '') +
+        '<div class="cursed-form">' +
+          '<label>' + (pt ? 'Nome do Item:' : 'Item Name:') + '</label>' +
+          '<input type="text" id="cursed-name" placeholder="' + (pt ? 'Ex: Lâmina do Vazio' : 'E.g. Void Blade') + '">' +
+          '<label>' + (pt ? 'Tipo de Pecado:' : 'Sin Type:') + '</label>' +
+          '<select id="cursed-sintype">' +
+            '<option value="">' + (pt ? '-- Selecione --' : '-- Select --') + '</option>' +
+            CURSED_ITEMS.sinTypes.map(function(s) {
+              return '<option value="' + s.id + '">' + s.name + '</option>';
+            }).join('') +
+          '</select>' +
+          '<div id="cursed-sintype-info"></div>' +
+          '<label>' + (pt ? 'Aparência (opcional):' : 'Appearance (optional):') + '</label>' +
+          '<input type="text" id="cursed-appearance" placeholder="' + (pt ? 'Descreva a aparência do item' : 'Describe the item appearance') + '">' +
+          '<label>' + (pt ? 'Primeiro Efeito:' : 'First Effect:') + '</label>' +
+          '<select id="cursed-effect" disabled><option value="">' + (pt ? '-- Selecione tipo primeiro --' : '-- Select type first --') + '</option></select>' +
+          '<div id="cursed-effect-info"></div>' +
+          '<button class="btn btn-primary" id="btn-create-cursed"' + (((char.category || 1) < 2 || (char.scrip || 0) < cursedCost) ? ' disabled' : '') + '>' + (pt ? 'Criar Item (5 Scrip)' : 'Create Item (5 Scrip)') + '</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('view/' + characterId); });
+
+  // Sin type selection - show info and populate effects
+  var sinTypeSelect = document.getElementById('cursed-sintype');
+  var effectSelect = document.getElementById('cursed-effect');
+  var sinTypeInfo = document.getElementById('cursed-sintype-info');
+
+  sinTypeSelect.addEventListener('change', function() {
+    var sinType = CURSED_ITEMS.sinTypes.find(function(s) { return s.id === sinTypeSelect.value; });
+    if (sinType) {
+      // Determine restriction text
+      var restrictionText;
+      if (sinType.note) {
+        // Special types with explicit notes (Mass Produced, Drifter, Imago, Mother)
+        restrictionText = pt ? sinType.note.pt : sinType.note.en;
+      } else {
+        // Standard sin types - Admin may require kill
+        restrictionText = pt 
+          ? 'O Admin pode requerer que você tenha executado um Sin do tipo ' + sinType.name + ' para construir esse Item Amaldiçoado.'
+          : 'The Admin may require that you have executed a ' + sinType.name + ' type Sin to craft this Cursed Item.';
+      }
+      sinTypeInfo.innerHTML = '<div class="cursed-type-preview">' +
+        '<p><strong>' + (pt ? 'Restrição:' : 'Restriction:') + '</strong> ' + restrictionText + '</p>' +
+        '<p><strong>' + (pt ? 'Aparência sugerida:' : 'Suggested appearance:') + '</strong> ' + (pt ? sinType.appearance.pt : sinType.appearance.en) + '</p>' +
+        '<p><strong>' + (pt ? 'Exemplos de maldição:' : 'Curse examples:') + '</strong> ' + (pt ? sinType.curseExamples.pt : sinType.curseExamples.en) + '</p>' +
+      '</div>';
+      effectSelect.disabled = false;
+      effectSelect.innerHTML = '<option value="">' + (pt ? '-- Selecione --' : '-- Select --') + '</option>' +
+        sinType.effects.map(function(e) {
+          return '<option value="' + e.id + '">' + (pt ? e.namePt : e.name) + '</option>';
+        }).join('');
+    } else {
+      sinTypeInfo.innerHTML = '';
+      effectSelect.disabled = true;
+      effectSelect.innerHTML = '<option value="">' + (pt ? '-- Selecione tipo primeiro --' : '-- Select type first --') + '</option>';
+    }
+    // Clear effect info when sin type changes
+    document.getElementById('cursed-effect-info').innerHTML = '';
+  });
+
+  // Effect selection - show description
+  var effectInfo = document.getElementById('cursed-effect-info');
+  effectSelect.addEventListener('change', function() {
+    var sinType = CURSED_ITEMS.sinTypes.find(function(s) { return s.id === sinTypeSelect.value; });
+    if (sinType && effectSelect.value) {
+      var effect = sinType.effects.find(function(e) { return e.id === effectSelect.value; });
+      if (effect) {
+        var html = '<div class="cursed-effect-preview">' +
+          '<strong>' + (pt ? effect.namePt : effect.name) + ':</strong> ' +
+          (pt ? effect.descriptionPt : effect.description) +
+        '</div>';
+        // Show Mother's Sugar description when Get to Bed is selected
+        if (effect.id === 'get_to_bed' && sinType.motherSugar) {
+          var sugarText = (pt ? sinType.motherSugar.pt : sinType.motherSugar.en).replace(/\n\n/g, '</p><p>');
+          html += '<div class="cursed-mother-sugar">' +
+            '<strong>' + (pt ? "Açúcar da Mãe:" : "Mother's Sugar:") + '</strong>' +
+            '<p>' + sugarText + '</p>' +
+          '</div>';
+        }
+        effectInfo.innerHTML = html;
+      } else {
+        effectInfo.innerHTML = '';
+      }
+    } else {
+      effectInfo.innerHTML = '';
+    }
+  });
+
+  // Create cursed item
+  document.getElementById('btn-create-cursed').addEventListener('click', function() {
+    var name = document.getElementById('cursed-name').value.trim();
+    var sinTypeId = sinTypeSelect.value;
+    var appearance = document.getElementById('cursed-appearance').value.trim();
+    var effectId = effectSelect.value;
+
+    if (!sinTypeId) { alert(pt ? 'Selecione um tipo de pecado.' : 'Select a sin type.'); return; }
+    if (!effectId) { alert(pt ? 'Selecione um efeito.' : 'Select an effect.'); return; }
+    if ((char.scrip || 0) < cursedCost) { alert(pt ? 'Scrip insuficiente.' : 'Not enough scrip.'); return; }
+
+    char.scrip = (char.scrip || 0) - cursedCost;
+    if (!Array.isArray(char.cursedItems)) char.cursedItems = [];
+    char.cursedItems.push({
+      name: name || (pt ? 'Item Amaldiçoado' : 'Cursed Item'),
+      sinType: sinTypeId,
+      appearance: appearance,
+      effects: [effectId],
+      curses: 1
+    });
+    tagCharacterExpansion(char, 'leba');
+    saveCharacter(char);
+    renderCursedShop(characterId);
+  });
+
+  // Remove cursed item
+  app.querySelectorAll('.cursed-remove').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = parseInt(btn.dataset.idx, 10);
+      if (!confirm(pt ? 'Remover este item amaldiçoado? Você será descontado em ' + (swCat + 2) + ' scrip.' : 'Remove this cursed item? You will be docked ' + (swCat + 2) + ' scrip.')) return;
+      char.cursedItems.splice(idx, 1);
+      char.scrip = Math.max(0, (char.scrip || 0) - (swCat + 2));
+      saveCharacter(char);
+      renderCursedShop(characterId);
     });
   });
 }
@@ -6709,6 +8640,13 @@ function renderSession(characterId) {
           '<div class="kit-car-label muted">' + (currentLang === 'pt' ? 'Talismã de Dano' : 'Harm Talisman') + '</div>' +
           renderClickableTalisman(s.carSlashes || 0, s.carTalisman || 10, 'car') +
         '</div>' : '') +
+        // Deployed bike (Biker Kit) — interactive harm talisman block
+        (s.bikeActive ? '<div class="kit-car-block"><div class="kit-car-head"><strong>' + (currentLang === 'pt' ? 'Moto' : 'Bike') + '</strong>' +
+          ' <span class="combat-count">' + (s.bikeSlashes || 0) + '/' + (s.bikeTalisman || 6) + '</span>' +
+          '<button class="btn btn-tiny btn-danger" id="bike-dismiss" style="margin-left:auto">\u2715</button></div>' +
+          '<div class="kit-car-label muted">' + (currentLang === 'pt' ? 'Talismã de Dano' : 'Harm Talisman') + '</div>' +
+          renderClickableTalisman(s.bikeSlashes || 0, s.bikeTalisman || 6, 'bike') +
+        '</div>' : '') +
         // Owned Kit Expansion — passives / mission-use / consumables (interactive)
         renderKitPassivesHtml(char, true) +
         '<div id="session-items">' +
@@ -6745,8 +8683,33 @@ function renderSession(characterId) {
         (char.blasphemies || []).map(function(blRef) {
           var bl = BLASPHEMIES.find(function(b) { return b.id === blRef.id; });
           if (!bl) return '';
+          var powerWordsHtml = '';
+          // Special section for Author Power Words
+          if (bl.id === 'author') {
+            var words = getAuthorPowerWords(char);
+            if (words.length > 0) {
+              var pt = currentLang === 'pt';
+              var charCat = char.category || 0;
+              powerWordsHtml = '<div class="power-words-section">' +
+                '<h5 class="power-words-title">' + (pt ? 'Palavras de Poder' : 'Power Words') + '</h5>' +
+                '<p class="power-words-rules muted">' + (pt ? 'Gaste 1 Pulso Psíquico para encantar uma palavra escrita. Escolha Toque ou Leitura ao criar.' : 'Spend 1 Psyche Burst to enchant a written word. Choose Touch or Read when creating.') + '</p>' +
+                '<div class="power-words-grid">' +
+                words.map(function(w) {
+                  var wordName = pt ? w.namePt : w.name;
+                  var touchText = resolveCatTags(pt ? w.touchPt : w.touch, charCat);
+                  var readText = resolveCatTags(pt ? w.readPt : w.read, charCat);
+                  return '<div class="power-word-card">' +
+                    '<div class="power-word-name">' + wordName + '</div>' +
+                    '<div class="power-word-effect"><span class="power-word-trigger">' + (pt ? 'Toque:' : 'Touch:') + '</span> ' + touchText + '</div>' +
+                    '<div class="power-word-effect"><span class="power-word-trigger">' + (pt ? 'Leitura:' : 'Read:') + '</span> ' + readText + '</div>' +
+                  '</div>';
+                }).join('') +
+                '</div></div>';
+            }
+          }
           return '<div class="blasphemy-display"><h4>' + tBlas(bl.id) + '</h4>' +
             renderPassivesHtmlSession(bl, char.category, char) +
+            powerWordsHtml +
             getEffectivePowerIds(blRef, char).map(function(powId) {
               var pw = getEffectivePower(bl, powId, char);
               if (!pw) return '';
@@ -6756,6 +8719,17 @@ function renderSession(characterId) {
               return '<div class="power-display' + (isUsed ? ' power-used' : '') + '"><strong>' + tName(pw) + '</strong>' + (pw.tags && pw.tags.length ? '<span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + renderBurstCost(pw.burst) + usesToggle + '<p>' + tPowerDescSession(pw.id, pw.description, char.category) + '</p></div>';
             }).join('') + '</div>';
         }).join('') +
+        // Mimic Power from Sorcerer's Mimic Technique (session mode)
+        (char.mimicPower ? (function() {
+          var mBl = BLASPHEMIES.find(function(b) { return b.id === char.mimicPower.blasphemyId; });
+          var mPw = mBl ? mBl.powers.find(function(p) { return p.id === char.mimicPower.powerId; }) : null;
+          if (!mBl || !mPw) return '';
+          var usedPowers = char.usedPowers || [];
+          var isUsed = usedPowers.indexOf(mPw.id) !== -1;
+          var usesToggle = mPw.uses ? '<button class="power-uses-toggle' + (isUsed ? ' used' : '') + '" data-char="' + char.id + '" data-power="' + mPw.id + '">' + (isUsed ? (currentLang === 'pt' ? 'Usado' : 'Used') : (currentLang === 'pt' ? 'Disponível' : 'Available')) + '</button>' : '';
+          return '<div class="blasphemy-display mimic-power-display"><h4>' + (currentLang === 'pt' ? 'Mimic Technique' : 'Mimic Technique') + ' <span class="muted">(' + tBlas(mBl.id) + ')</span></h4>' +
+            '<div class="power-display' + (isUsed ? ' power-used' : '') + '"><strong>' + tName(mPw) + '</strong>' + (mPw.tags && mPw.tags.length ? '<span class="tags">[' + mPw.tags.join(', ') + ']</span>' : '') + renderBurstCost(mPw.burst) + usesToggle + '<p>' + tPowerDescSession(mPw.id, mPw.description, char.category) + '</p></div></div>';
+        })() : '') +
       '</section>' +
 
       // ─── Agenda Reference ───────────────────────────────────────
@@ -6871,7 +8845,7 @@ function renderSession(characterId) {
         html += '<label>' + t('virtue_select') + '</label>';
         html += '<div class="session-add-row">';
         html += '<select id="virtue-select"><option value="">' + t('virtue_select_none') + '</option>';
-        VIRTUES.forEach(function(v) { html += '<option value="' + v.id + '">' + tVirtueName(v) + ' - ' + tVirtueTitle(v) + '</option>'; });
+        VIRTUES.filter(function(v) { return isExpansionActive(v.expansion || 'gff1'); }).forEach(function(v) { html += '<option value="' + v.id + '">' + tVirtueName(v) + ' - ' + tVirtueTitle(v) + '</option>'; });
         html += '</select>';
         html += '<button class="btn btn-small btn-primary" id="btn-confirm-virtue">' + t('virtue_confirm') + '</button>';
         html += '</div>';
@@ -7142,6 +9116,15 @@ function renderSession(characterId) {
         saveAndRerender();
         return;
       }
+      if (c.special === 'bike') {
+        if (s.bikeActive) { alert(currentLang === 'pt' ? 'A moto já está em campo.' : 'The bike is already deployed.'); return; }
+        s.bikeActive = true;
+        s.bikeSlashes = 0;
+        s.bikeTalisman = c.talisman || 6;
+        if (kp > 0) s.kitPointsUsed += kp;
+        saveAndRerender();
+        return;
+      }
       var kitName = currentLang === 'pt' ? found.item.namePt : found.item.name;
       s.itemsDeployed.push({
         name: (currentLang === 'pt' ? c.namePt : c.name) + ' \u2014 ' + kitName,
@@ -7166,6 +9149,24 @@ function renderSession(characterId) {
     carDismiss.addEventListener('click', function() {
       s.carActive = false;
       s.carSlashes = 0;
+      saveAndRerender();
+    });
+  }
+
+  // Bike harm talisman (Biker Kit): click a slash to set the count (toggle down on last)
+  app.querySelectorAll('.combat-slash[data-kind="bike"]').forEach(function(slash) {
+    slash.addEventListener('click', function() {
+      var i = parseInt(slash.dataset.i, 10);
+      var cur = s.bikeSlashes || 0;
+      s.bikeSlashes = (i + 1 === cur) ? i : (i + 1);
+      saveAndRerender();
+    });
+  });
+  var bikeDismiss = document.getElementById('bike-dismiss');
+  if (bikeDismiss) {
+    bikeDismiss.addEventListener('click', function() {
+      s.bikeActive = false;
+      s.bikeSlashes = 0;
       saveAndRerender();
     });
   }
@@ -7687,7 +9688,7 @@ function renderSwapAgenda(characterId) {
   }
 
   var s = char.session || {};
-  var isSurvivor = char.agenda && char.agenda.id === 'survivor';
+  var isLockedAgenda = char.agenda && (char.agenda.id === 'survivor' || char.agenda.id === 'hunter');
   var currentAgenda = AGENDAS.find(function(a) { return a.id === (char.agenda || {}).id; });
   var extraBolded = char.agenda.extraBoldedItems || [];
   var currentAbilities = char.agenda.abilities || [];
@@ -7696,7 +9697,7 @@ function renderSwapAgenda(characterId) {
   var canSwap = true;
   var swapCost = 0;
   var blockReason = '';
-  if (isSurvivor) {
+  if (isLockedAgenda) {
     swapCost = 2;
     if ((s.advances || 0) < 2) {
       canSwap = false;
@@ -7720,7 +9721,7 @@ function renderSwapAgenda(characterId) {
         })() : '') +
         (extraBolded.length > 0 ? '<div class="extra-bolded"><h4>' + t('swap_extra_bolded') + '</h4>' + extraBolded.map(function(item) { return '<p class="item-bolded">\u25BA <strong>' + escHtml(tBoldedItem(item)) + '</strong></p>'; }).join('') + '</div>' : '') +
         '<p class="muted">' + t('swap_abilities_count') + ': ' + currentAbilities.length + '/5</p>' +
-        (isSurvivor ? '<p class="muted">' + t('swap_survivor_cost') + '</p>' : '') +
+        (isLockedAgenda ? '<p class="muted">' + t('swap_locked_cost') + '</p>' : '') +
         (!canSwap ? '<p class="validation-msg error">' + blockReason + '</p>' : '') +
       '</section>' +
 
@@ -7773,7 +9774,7 @@ function showSwapStep2(char, characterId, newAgendaId, extraBolded, currentAbili
 
   var newAgenda = AGENDAS.find(function(a) { return a.id === newAgendaId; });
   var currentAgenda = AGENDAS.find(function(a) { return a.id === (char.agenda || {}).id; });
-  var isSurvivor = char.agenda && char.agenda.id === 'survivor';
+  var isLockedAgenda = char.agenda && (char.agenda.id === 'survivor' || char.agenda.id === 'hunter');
 
   // Combine default bolded + extra bolded for carry-over options
   var allBolded = [];
@@ -7839,8 +9840,8 @@ function showSwapStep2(char, characterId, newAgendaId, extraBolded, currentAbili
     char.agenda.abilities = carriedAbilities;
     char.agenda.extraBoldedItems = carriedBolded;
 
-    // Deduct advances if Survivor
-    if (isSurvivor && char.session) {
+    // Deduct advances if locked agenda (Survivor/Hunter)
+    if (isLockedAgenda && char.session) {
       char.session.advances -= 2;
     }
 
@@ -7871,7 +9872,7 @@ function renderAdvance(characterId) {
   var extraBlasphemies = Math.max(0, (char.blasphemies || []).length - 1);
   var xpCap = 4 + extraBlasphemies;
   var hasSinMarks = (char.sinMarks || []).length > 0;
-  var isSurvivor = char.agenda && char.agenda.id === 'survivor';
+  var isLockedAgenda = char.agenda && (char.agenda.id === 'survivor' || char.agenda.id === 'hunter');
   var totalPowers = (char.blasphemies || []).reduce(function(sum, bl) { return sum + (bl.powers || []).length; }, 0);
   var agenda = AGENDAS.find(function(a) { return a.id === (char.agenda || {}).id; });
   var skillImprovements = char.skillImprovements || 0;
@@ -8060,8 +10061,45 @@ function handleAdvanceOption(opt, char, characterId) {
       actionContent.innerHTML = html3;
       actionContent.querySelectorAll('.advance-choice').forEach(function(card) {
         card.addEventListener('click', function() {
+          var abilId = card.dataset.abil;
+          // Special handling for Mimic Technique - need to pick a power from any blasphemy
+          if (abilId === 'sorcerer_mimic_technique') {
+            handleAdvanceOption('pick-mimic-power', char, characterId);
+            return;
+          }
           if (!confirm(t('adv_confirm_ability'))) return;
-          char.agenda.abilities.push(card.dataset.abil);
+          char.agenda.abilities.push(abilId);
+          s.advances--;
+          char.session = s;
+          saveCharacter(char);
+          renderAdvance(characterId);
+        });
+      });
+      break;
+
+    case 'pick-mimic-power':
+      actionTitle.textContent = currentLang === 'pt' ? 'Escolher Poder para Mimic Technique' : 'Choose Power for Mimic Technique';
+      var mimicHtml = '<p class="muted">' + (currentLang === 'pt' ? 'Escolha um poder de qualquer Blasfêmia. Você ganha apenas o poder, sem a passiva, e não afeta seu cap de XP ou sin overflow.' : 'Choose a power from any Blasphemy. You gain only the power, without the passive, and it does not affect your XP cap or sin overflow.') + '</p>';
+      // Show all blasphemies and their powers (excluding the ones character already has)
+      var charBlasIds = (char.blasphemies || []).map(function(b) { return b.id; });
+      BLASPHEMIES.filter(function(bl) { return isExpansionActive(bl.expansion); }).forEach(function(bl) {
+        var blPowers = bl.powers.filter(function(pw) { return !pw.quirkOnly; });
+        if (blPowers.length === 0) return;
+        mimicHtml += '<div class="mimic-blas-group"><h4>' + tBlas(bl.id) + '</h4>';
+        blPowers.forEach(function(pw) {
+          mimicHtml += '<div class="advance-choice mimic-power-choice" data-blas="' + bl.id + '" data-power="' + pw.id + '"><strong>' + tName(pw) + '</strong>' + (pw.tags && pw.tags.length ? ' <span class="tags">[' + pw.tags.join(', ') + ']</span>' : '') + '<p class="muted">' + tPowerDesc(pw.id, pw.description).substring(0, 150) + '...</p></div>';
+        });
+        mimicHtml += '</div>';
+      });
+      actionContent.innerHTML = mimicHtml;
+      actionContent.querySelectorAll('.mimic-power-choice').forEach(function(card) {
+        card.addEventListener('click', function() {
+          var blasId = card.dataset.blas;
+          var powerId = card.dataset.power;
+          if (!confirm(currentLang === 'pt' ? 'Gastar 1 avanço para ganhar Mimic Technique com este poder?' : 'Spend 1 advance to gain Mimic Technique with this power?')) return;
+          // Add the ability and store the mimic power
+          char.agenda.abilities.push('sorcerer_mimic_technique');
+          char.mimicPower = { blasphemyId: blasId, powerId: powerId };
           s.advances--;
           char.session = s;
           saveCharacter(char);
@@ -8305,7 +10343,7 @@ function renderCompendiumTab(tabId) {
   if (tabId === 'virtues') {
     content.innerHTML =
       '<div class="virtue-grid">' +
-        VIRTUES.map(function(v) {
+        VIRTUES.filter(function(v) { return isExpansionActive(v.expansion || 'gff1'); }).map(function(v) {
           var pt = currentLang === 'pt' ? (PT_CONTENT.virtues || {}) : null;
           var desc = (pt && pt.compendiumDescs && pt.compendiumDescs[v.id]) ? pt.compendiumDescs[v.id] : v.compendiumDesc;
           var likes = (pt && pt.likes && pt.likes[v.id]) ? pt.likes[v.id] : v.likes;
@@ -8428,6 +10466,29 @@ function renderCompendiumTab(tabId) {
           }).join('') +
         '</div>';
       }).join('') +
+
+      // Cursed Items (LEBA) — only show when LEBA expansion is active
+      (isExpansionActive('leba') ? (function() {
+        var r = CURSED_ITEMS.rules[pt ? 'pt' : 'en'];
+        return '<div class="compendium-card reference-card cursed-items-card">' +
+          '<h3 class="compendium-card-name">' + (pt ? 'Itens Amaldiçoados' : 'Cursed Items') + '</h3>' +
+          '<p>' + r.intro + '</p>' +
+          '<h4 class="reference-subhead">' + (pt ? 'Regras Básicas' : 'Basic Rules') + '</h4>' +
+          '<ul class="reference-list">' +
+            '<li>' + r.cost + '</li>' +
+            '<li>' + r.requirement + '</li>' +
+            '<li>' + r.kp + '</li>' +
+            '<li>' + r.scaling + '</li>' +
+            '<li>' + r.maxEffects + '</li>' +
+          '</ul>' +
+          '<h4 class="reference-subhead">' + (pt ? 'Maldições' : 'Curses') + '</h4>' +
+          '<p>' + r.curse + '</p>' +
+          '<h4 class="reference-subhead">' + (pt ? 'Melhorias' : 'Upgrades') + '</h4>' +
+          '<p>' + r.upgrade + '</p>' +
+          '<h4 class="reference-subhead">' + (pt ? 'Perda' : 'Loss') + '</h4>' +
+          '<p>' + r.loss + '</p>' +
+        '</div>';
+      })() : '') +
 
       '</div>';
   }
@@ -8886,10 +10947,12 @@ function renderOfficialView(officialId) {
     var domTr = (pt && PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].domains) || null;
 
     // Section builders (ordered per the sheet layout).
+    var defaultTalisman = '8 + CAT + ' + (pt ? 'Pressão' : 'Pressure');
+    var talismanText = src.talismanDisplay || defaultTalisman;
     var metaHtml =
       '<p class="combat-meta"><span class="label">' + (pt ? 'Tipo' : 'Type') + ':</span> ' + (pt ? 'Pecado' : 'Sin') + ' ' + tSinType(o.sinType) + '</p>' +
       '<p class="combat-meta"><span class="label">CAT:</span> 1-5</p>' +
-      '<p class="combat-meta"><span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> 8 + CAT + ' + (pt ? 'Pressão' : 'Pressure') + '</p>' +
+      '<p class="combat-meta"><span class="label">' + (pt ? 'Talismã' : 'Talisman') + ':</span> ' + talismanText + '</p>' +
       (o.primaryEmotion ? '<p class="combat-meta"><span class="label">' + (pt ? 'Emoção' : 'Emotion') + ':</span> ' + escHtml(tEnemyField(sid, 'primaryEmotion', o.primaryEmotion)) + '</p>' : '');
 
     var traumasHtml = ((o.traumas || []).some(function(x) { return x && (x.question || x.answer); }) ? '<div class="combat-section"><h3>' + (pt ? 'Traumas' : 'Traumas') + '</h3>' + o.traumas.filter(function(x) { return x && x.question; }).map(function(x, ti) { var trs = (PT_CONTENT.enemies[sid] && PT_CONTENT.enemies[sid].traumas); var q = (currentLang === 'pt' && trs && trs[ti]) ? trs[ti] : x.question; return '<div class="combat-ref-block"><strong>' + escHtml(q) + '</strong></div>'; }).join('') + '</div>' : '');
@@ -8936,9 +10999,12 @@ function renderOfficialView(officialId) {
       return '<div class="combat-ref-block"><strong>' + escHtml(dn) + '</strong>' + (dd ? '<p>' + escHtml(dd) + '</p>' : '') + traceBtn + '</div>';
     }).join('') + '</div>' : '');
 
+    var sPalace = tEnemyField(sid, 'palace', o.palace);
+    var palaceHtml = (sPalace ? '<div class="combat-section"><h3>' + (pt ? 'Palácio' : 'Palace') + '</h3><div class="combat-ref-block"><p>' + escHtml(sPalace) + '</p></div></div>' : '');
+
     // Ordered statblock: meta, Traumas, Examples, Attacks, Complications,
-    // Threats, Pressure, Severe Attack, Afflictions, Traces, Domains.
-    body = metaHtml + traumasHtml + examplesHtml + attacksHtml + compsHtml + threatsHtml + pressureHtml + severeHtml + afflHtml + tracesHtml + domainsHtml;
+    // Threats, Pressure, Severe Attack, Afflictions, Traces, Palace, Domains.
+    body = metaHtml + traumasHtml + examplesHtml + attacksHtml + compsHtml + threatsHtml + pressureHtml + severeHtml + afflHtml + tracesHtml + palaceHtml + domainsHtml;
   } else {
     // Localized field values (fall back to EN when no PT translation).
     var oid = o.officialId;
@@ -10168,11 +12234,11 @@ function renderEnemyForm(enemyId) {
   });
 }
 
-var SIN_TYPES = ['ogre', 'idol', 'hound', 'centipede', 'toad', 'lord', 'other'];
+var SIN_TYPES = ['ogre', 'idol', 'hound', 'centipede', 'toad', 'lord', 'owl', 'auditor', 'other'];
 
 function tSinType(typeId) {
-  var pt = { ogre: 'Ogro', idol: 'Ídolo', hound: 'Cão', centipede: 'Centopeia', toad: 'Sapo', lord: 'Senhor', other: 'Outro' };
-  var en = { ogre: 'Ogre', idol: 'Idol', hound: 'Hound', centipede: 'Centipede', toad: 'Toad', lord: 'Lord', other: 'Other' };
+  var pt = { ogre: 'Ogro', idol: 'Ídolo', hound: 'Cão', centipede: 'Centopeia', toad: 'Sapo', lord: 'Senhor', owl: 'Coruja', auditor: 'Auditor', husk: 'Husk', garden: 'Garden', other: 'Outro' };
+  var en = { ogre: 'Ogre', idol: 'Idol', hound: 'Hound', centipede: 'Centipede', toad: 'Toad', lord: 'Lord', owl: 'Owl', auditor: 'Auditor', husk: 'Husk', garden: 'Garden', other: 'Other' };
   return (currentLang === 'pt' ? pt[typeId] : en[typeId]) || typeId;
 }
 
@@ -10651,6 +12717,7 @@ route('swapagenda', renderSwapAgenda);
 route('quirks', renderQuirks);
 route('sinmarks', renderSinMarks);
 route('kitshop', renderKitShop);
+route('cursedshop', renderCursedShop);
 route('recreation', renderRecreation);
 initRouter();
 
