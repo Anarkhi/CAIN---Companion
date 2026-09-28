@@ -708,5 +708,51 @@ export const BLASPHEMIES = [
       { id: 'mother_colony', name: 'Colony', tags: ['Self', 'Ally', 'Short'], burst: 'none', description: "Gain 1d3 stress, then you or an ally in range gains a fleshy shield that absorbs 2 stress from external harm. If already has shield, increase by +2 but also take 1d3 stress." },
       { id: 'mother_coil', name: 'Coil', tags: ['Instant', 'Short'], burst: 'required', description: "Your limb peels apart and lashes at target in short range like a whip. Roll PSYCHE for effects. +1D if 3 or fewer stress boxes remaining. +2 CAT if sin overflowed this mission." }
     ]
+  },
+  // === LEBA ASSOCIATION HOMEBREW ===
+  {
+    id: 'locust',
+    name: 'The Locust',
+    expansion: 'leba',
+    sin: 'Gluttony',
+    flavor: "You don't eat to fill a stomach that empties anyway. You eat to empty the world.",
+    description: 'Consume everything. Food, love, loyalty, life. Never produce. Leave barren fields in your wake.',
+    passive: {
+      id: 'locust_devour',
+      name: 'Devour',
+      image: 'img/passives/locust.png',
+      description: "You consume not just food, but everything around you - emotions, resources, life itself. Nothing you take ever satisfies."
+    },
+    powers: []
+  },
+  {
+    id: 'coward',
+    name: 'The Coward',
+    expansion: 'leba',
+    sin: 'Sloth',
+    flavor: "You don't run because you're scared. You run because everything else is even more terrified.",
+    description: 'Force others to face the horrors you refuse. Betray, abandon. Hide behind others, like the bullet shield they are.',
+    passive: {
+      id: 'coward_flee',
+      name: 'Flee',
+      image: 'img/passives/coward.png',
+      description: "Your cowardice is a weapon. Others suffer so you don't have to."
+    },
+    powers: []
+  },
+  {
+    id: 'usurer',
+    name: 'The Usurer',
+    expansion: 'leba',
+    sin: 'Greed',
+    flavor: "Anything can be bought. Love, Freedom, Faith, Life.",
+    description: 'For the right price, the world is your property. Offer loans. Collect debts. Charge interest. In flesh if necessary.',
+    passive: {
+      id: 'usurer_debt',
+      name: 'Debt',
+      image: 'img/passives/usurer.png',
+      description: "Everything has a price. You make sure everyone pays what they owe - with interest."
+    },
+    powers: []
   }
 ];

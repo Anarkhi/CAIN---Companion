@@ -235,5 +235,70 @@ export const AGENDAS = [
       { id: 'demon_heartless', name: 'Heartless', description: 'You gain +1 scrip for executing sins.' },
       { id: 'demon_spotless', name: 'Spotless', description: 'Once a mission, you can destroy an aesthetic kit expansion you own worth 3 or more scrip instead of suffering an injury.' }
     ]
+  },
+  // === LEBA ASSOCIATION HOMEBREW ===
+  {
+    id: 'legion',
+    name: 'Legion',
+    source: 'leba',
+    image: 'img/agendas/legion.png',
+    agendaItems: ['Hold the group together'],
+    boldedItems: ['Separate the group forcefully'],
+    restriction: null,
+    abilities: [
+      { id: 'legion_apes_together_strong', name: 'Apes Together Strong', description: "If you're the leader in a teamwork, only you takes consequences for a failed roll." },
+      { id: 'legion_god_race', name: 'God Race', description: 'You can take 1d3+1 stress to setup an ally without spending your action this round to do so.' },
+      { id: 'legion_unionized_effort', name: 'Unionized Effort', description: 'At the end of a mission, CAIN must pay all exorcist a minimum of 5 scrip regardless of if they executed or have spared the sin. If you fail either, your group is still docked scrip for cleanup.' },
+      { id: 'legion_no_one_left_behind', name: 'No One Left Behind', description: "At the end of a session, you may recount how you saved a fellow exorcist's life. If you do, grant 1 xp to said exorcist. Characters can only gain this xp once if targeted by this ability multiple times." },
+      { id: 'legion_the_helm', name: 'The Helm', description: 'When you defend an allied exorcist, you may roll +1D and take the highest if your target has 1 or more injuries.' }
+    ]
+  },
+  {
+    id: 'yesman',
+    name: 'YesMan',
+    source: 'leba',
+    image: 'img/agendas/yesman.png',
+    agendaItems: ['Suck up to someone else'],
+    boldedItems: ['Stand up for yourself'],
+    restriction: null,
+    abilities: [
+      { id: 'yesman_pyramid_scheme', name: 'Pyramid Scheme', description: 'When you enter a room filled with people, you immediately know who is in control of the room.' },
+      { id: 'yesman_middle_man', name: 'Middle Man', description: "Once per hunt, you may delay an enemy's reaction when an ally takes their turn before it is rolled. If you do, the Admin makes the delayed reaction on your turn after your action in addition to the reaction on your turn. Only one reaction can be delayed at a time if this ability is used multiple times." },
+      { id: 'yesman_pawn', name: 'Pawn', description: 'Once per scene, when you setup someone, you may take any and all consequences they would take.' },
+      { id: 'yesman_blank_seed', name: 'Blank Seed', description: 'Pick an ally. You may telepathically communicate between each other for the duration of the hunt.' },
+      { id: 'yesman_loose_lips', name: 'Loose Lips', description: 'Once per hunt, you may know what tension move the Admin used when the tension talisman filled up.' }
+    ]
+  },
+  {
+    id: 'human',
+    name: 'Human',
+    source: 'leba',
+    image: 'img/agendas/human.png',
+    agendaItems: ['Hold your ground'],
+    boldedItems: ['Give up the fight'],
+    restriction: null,
+    abilities: [
+      { id: 'human_first_rock', name: 'First Rock', description: 'Once per mission, your first mundane action in a conflict scene is not hard, but you take 1d3 stress if it fails.' },
+      { id: 'human_determination', name: 'Determination', description: 'Once per rest, when you would take an injury, you may gain a random affliction instead (rolled by the Admin).' },
+      { id: 'human_pain_taker', name: 'Pain Taker', description: 'While you have 2 or more injuries, you reduce stress taken by outside forces by -1. If you clear injuries while in this state, you lose the use of this ability until the end of the mission.' },
+      { id: 'human_locked_in', name: 'Locked-In', description: 'The first time you drop to the brink of death in the hunt, you gain +1D on all actions this scene, and you may use DIVINE AGONY even if it was used before in the same scene.' },
+      { id: 'human_red_flash', name: 'Red Flash', description: 'Once a session, when the risk dice rolls a 6 naturally, you may deal 1 slash to any one talisman of your choice.' }
+    ]
+  },
+  {
+    id: 'ghost',
+    name: 'Ghost',
+    source: 'leba',
+    image: 'img/agendas/ghost.png',
+    agendaItems: ["Don't attract attention"],
+    boldedItems: ['Attract unwanted attention'],
+    restriction: 'Unregistered Agenda',
+    abilities: [
+      { id: 'ghost_unseen_presence', name: 'Unseen Presence', description: 'When you would be first noticed in a scene, you cannot be recognised for one action.' },
+      { id: 'ghost_smooth_criminal', name: 'Smooth Criminal', description: 'If you have taken no stress at the end of a conflict scene you may heal 1d3 stress of an ally.' },
+      { id: 'ghost_somebody_i_used_to_know', name: 'Somebody I Used To Know', description: "1/Mission, you may say you've met a new NPC way back when. They remember you in a negative light. You gain +1D on rolls to reconnect with them." },
+      { id: 'ghost_body_dysphoria', name: 'Body Dysphoria', description: 'You may take 1d3 sin to gain the benefit of a sin mark ability of an ally for one scene. Your body mutates a lesser version that vanishes when the scene is over.' },
+      { id: 'ghost_invisible', name: 'Invisible', description: 'The first time you would take stress in a conflict scene, you may reduce it by -2 stress. This may reduce stress to 0.' }
+    ]
   }
 ];
