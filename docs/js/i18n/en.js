@@ -185,7 +185,36 @@ export const EN = {
     torch: 'Torch',
     shadow: 'Shadow',
     sorcerer: 'Sorcerer',
-    songbird: 'Songbird'
+    songbird: 'Songbird',
+    // LEBA Association Homebrew
+    legion: 'Legion',
+    yesman: 'YesMan',
+    human: 'Human',
+    ghost: 'Ghost'
+  },
+
+  // ─── Cursed Items (LEBA) ─────────────────────────────────────────
+  cursedItems: {
+    title: 'Cursed Items',
+    appearance: 'Appearance',
+    curse: 'Curse',
+    effects: 'Effects',
+    restriction: 'Restriction',
+    // Types
+    ogre: 'Ogre',
+    idol: 'Idol',
+    hound: 'Hound',
+    centipede: 'Centipede',
+    toad: 'Toad',
+    lord: 'Lord',
+    mass_produced: 'Mass Produced Sin',
+    drifter: 'Drifter',
+    imago: 'Imago',
+    mothers_favorite: "Mother's Favorite",
+    husk_item: 'Husk',
+    garden_item: 'Garden',
+    heron: 'Heron',
+    pyre: 'Pyre'
   },
 
   blasphemyNames: {

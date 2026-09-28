@@ -186,7 +186,36 @@ export const PTBR = {
     torch: 'Tocha',
     shadow: 'Sombra',
     sorcerer: 'Feiticeiro',
-    songbird: 'Canário'
+    songbird: 'Canário',
+    // LEBA Association Homebrew
+    legion: 'Legião',
+    yesman: 'Capacho',
+    human: 'Humano',
+    ghost: 'Fantasma'
+  },
+
+  // ─── Cursed Items (LEBA) ─────────────────────────────────────────
+  cursedItems: {
+    title: 'Itens Amaldiçoados',
+    appearance: 'Aparência',
+    curse: 'Maldição',
+    effects: 'Efeitos',
+    restriction: 'Restrição',
+    // Types
+    ogre: 'Ogro',
+    idol: 'Ídolo',
+    hound: 'Cão de Caça',
+    centipede: 'Centopeia',
+    toad: 'Sapo',
+    lord: 'Senhor',
+    mass_produced: 'Pecado Produzido em Massa',
+    drifter: 'Andarilho',
+    imago: 'Imago',
+    mothers_favorite: 'Favorito da Mãe',
+    husk_item: 'Casca',
+    garden_item: 'Jardim',
+    heron: 'Garça',
+    pyre: 'Pira'
   },
 
   blasphemyNames: {
