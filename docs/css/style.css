@@ -3284,6 +3284,97 @@ input[type="number"] {
   color: #e55;
 }
 
+/* ─── Cursed Items Shop ─────────────────────────────────────────── */
+
+.cursedshop-balance {
+  background: var(--surface);
+  padding: var(--space-md);
+  border-radius: var(--radius);
+}
+
+.cursed-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  font-size: 0.9rem;
+}
+
+.cursed-owned-item {
+  padding: var(--space-md);
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-sm);
+  border-left: 3px solid var(--accent);
+}
+
+.cursed-owned-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
+
+.cursed-sin-type {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.cursed-effects, .cursed-curses {
+  font-size: 0.85rem;
+  margin: var(--space-xs) 0;
+}
+
+.cursed-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.cursed-form label {
+  font-weight: 600;
+  margin-top: var(--space-xs);
+}
+
+.cursed-form input, .cursed-form select {
+  padding: var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.cursed-type-preview {
+  background: var(--surface);
+  padding: var(--space-sm);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  margin: var(--space-sm) 0;
+}
+
+.cursed-type-preview p {
+  margin: var(--space-xs) 0;
+}
+
+.cursed-effect-preview {
+  background: var(--surface);
+  padding: var(--space-sm);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  margin: var(--space-sm) 0;
+  border-left: 3px solid var(--accent);
+}
+
+.cursed-mother-sugar {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm);
+  background: rgba(200, 100, 150, 0.1);
+  border-radius: var(--radius);
+  border-left: 3px solid #c86496;
+  font-size: 0.85rem;
+}
+
 /* ─── Kit Passives (owned passive/use/consumable items) ─────────── */
 
 .kit-passives {
@@ -3828,4 +3919,71 @@ input[type="number"] {
   margin: 0;
   padding: var(--space-xs) var(--space-sm);
   font-style: italic;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   AUTHOR POWER WORDS (Marching Ever Onward)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.power-words-section {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.power-words-title {
+  color: var(--text-accent);
+  font-size: 1rem;
+  margin: 0 0 var(--space-xs) 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.power-words-rules {
+  font-size: 0.8rem;
+  margin-bottom: var(--space-sm);
+}
+
+.power-words-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-sm);
+}
+
+.power-word-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: var(--space-sm);
+  font-size: 0.85rem;
+}
+
+.power-word-name {
+  color: var(--accent);
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: var(--space-xs);
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+}
+
+.power-word-effect {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xs);
+  line-height: 1.4;
+}
+
+.power-word-trigger {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .power-words-grid {
+    grid-template-columns: 1fr;
+  }
 }
