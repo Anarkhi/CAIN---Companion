@@ -5546,21 +5546,127 @@ function readImageAsDataURL(file, callback, maxDim, quality) {
 }
 
 // ════════════════════════════════════════════════════════════════════
-// STORAGE
+// STORAGE (with Firebase cloud sync support)
 // ════════════════════════════════════════════════════════════════════
 
 var STORAGE_KEY = 'cain_companion_characters';
 
+// Cloud sync state
+var cloudCharactersCache = null;
+var isCloudMode = false;
+var cloudSyncPending = false;
+
+/**
+ * Check if Firebase cloud sync is available and ready
+ */
+function isCloudReady() {
+  return window.CainFirebase && window.CainFirebase.isReady();
+}
+
+/**
+ * Initialize cloud sync - called on app start
+ */
+async function initCloudSync() {
+  if (!window.CainFirebase) {
+    console.log('[Storage] Firebase module not loaded, using localStorage only');
+    return false;
+  }
+  
+  try {
+    var success = await window.CainFirebase.init();
+    if (success) {
+      isCloudMode = true;
+      console.log('[Storage] Cloud sync enabled');
+      
+      // Check for local data to migrate
+      var localData = localStorage.getItem(STORAGE_KEY);
+      if (localData) {
+        var localChars = JSON.parse(localData);
+        if (localChars && localChars.length > 0) {
+          var result = await window.CainFirebase.migrateLocalCharacters();
+          if (result.migrated > 0) {
+            console.log('[Storage] Migrated ' + result.migrated + ' characters to cloud');
+            showMigrationNotice(result.migrated);
+          }
+        }
+      }
+      
+      // Also migrate enemies
+      var localEnemies = localStorage.getItem('cain_companion_enemies');
+      if (localEnemies) {
+        var enemyResult = await window.CainFirebase.migrateLocalEnemies();
+        if (enemyResult.migrated > 0) {
+          console.log('[Storage] Migrated ' + enemyResult.migrated + ' enemies to cloud');
+        }
+      }
+      
+      // Listen for sync events to refresh UI
+      window.CainFirebase.addSyncListener(function(event, data) {
+        if (event === 'profile-changed' || event === 'character-saved' || event === 'character-deleted') {
+          cloudCharactersCache = null; // Invalidate cache
+          if (window.location.hash === '' || window.location.hash === '#home') {
+            handleRoute(); // Refresh home page
+          }
+        }
+      });
+      
+      return true;
+    }
+  } catch (e) {
+    console.error('[Storage] Cloud sync init failed:', e);
+  }
+  
+  return false;
+}
+
+/**
+ * Show migration notice to user
+ */
+function showMigrationNotice(count) {
+  var notice = document.createElement('div');
+  notice.className = 'migration-notice';
+  notice.innerHTML = '<p>' + (currentLang === 'pt' 
+    ? '\u2601\uFE0F ' + count + ' personagem(ns) migrado(s) para a nuvem!' 
+    : '\u2601\uFE0F ' + count + ' character(s) migrated to cloud!') + '</p>';
+  document.body.appendChild(notice);
+  setTimeout(function() { notice.remove(); }, 4000);
+}
+
+/**
+ * Get all characters - from cloud if available, otherwise localStorage
+ */
 function getAllCharacters() {
+  // Return cached cloud data if available (for sync rendering)
+  if (cloudCharactersCache !== null) {
+    return cloudCharactersCache;
+  }
+  
+  // Fallback to localStorage
   try {
     var data = localStorage.getItem(STORAGE_KEY);
     var chars = data ? JSON.parse(data) : [];
     if (migrateSinCapModel(chars)) {
-      // Persist the one-time normalization so it doesn't run again.
       localStorage.setItem(STORAGE_KEY, JSON.stringify(chars));
     }
     return chars;
   } catch (e) { return []; }
+}
+
+/**
+ * Get all characters async - prefers cloud
+ */
+async function getAllCharactersAsync() {
+  if (isCloudReady()) {
+    try {
+      var chars = await window.CainFirebase.getCharacters();
+      migrateSinCapModel(chars);
+      cloudCharactersCache = chars;
+      return chars;
+    } catch (e) {
+      console.error('[Storage] Cloud fetch failed, using local:', e);
+    }
+  }
+  return getAllCharacters();
 }
 
 /**
@@ -5589,17 +5695,72 @@ function getCharacter(id) {
   return getAllCharacters().find(function(c) { return c.id === id; }) || null;
 }
 
+/**
+ * Get character async - prefers cloud
+ */
+async function getCharacterAsync(id) {
+  if (isCloudReady()) {
+    try {
+      return await window.CainFirebase.getCharacter(id);
+    } catch (e) {
+      console.error('[Storage] Cloud get failed:', e);
+    }
+  }
+  return getCharacter(id);
+}
+
 function saveCharacter(character) {
   var characters = getAllCharacters();
   var index = characters.findIndex(function(c) { return c.id === character.id; });
   character.updatedAt = new Date().toISOString();
   if (index >= 0) { characters[index] = character; } else { characters.push(character); }
+  
+  // Save to localStorage as backup/fallback
   localStorage.setItem(STORAGE_KEY, JSON.stringify(characters));
+  
+  // Also save to cloud if available
+  if (isCloudReady()) {
+    window.CainFirebase.saveCharacter(character).then(function() {
+      cloudCharactersCache = null; // Invalidate cache
+    }).catch(function(e) {
+      console.error('[Storage] Cloud save failed:', e);
+    });
+  }
+}
+
+/**
+ * Save character async - waits for cloud save
+ */
+async function saveCharacterAsync(character) {
+  character.updatedAt = new Date().toISOString();
+  
+  if (isCloudReady()) {
+    try {
+      await window.CainFirebase.saveCharacter(character);
+      cloudCharactersCache = null;
+      return true;
+    } catch (e) {
+      console.error('[Storage] Cloud save failed:', e);
+    }
+  }
+  
+  // Fallback to localStorage
+  saveCharacter(character);
+  return true;
 }
 
 function deleteCharacter(id) {
   var characters = getAllCharacters().filter(function(c) { return c.id !== id; });
   localStorage.setItem(STORAGE_KEY, JSON.stringify(characters));
+  
+  // Also delete from cloud if available
+  if (isCloudReady()) {
+    window.CainFirebase.deleteCharacter(id).then(function() {
+      cloudCharactersCache = null;
+    }).catch(function(e) {
+      console.error('[Storage] Cloud delete failed:', e);
+    });
+  }
 }
 
 function exportCharacter(character) {
@@ -5645,6 +5806,184 @@ function importCharacter() {
     });
     input.click();
   });
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PROFILE SELECTOR UI
+// ════════════════════════════════════════════════════════════════════
+
+/**
+ * Render profile selector dropdown for home page
+ */
+function renderProfileSelector() {
+  if (!isCloudReady()) return '';
+  
+  var profiles = window.CainFirebase.getProfiles();
+  var currentId = window.CainFirebase.getCurrentProfileId();
+  var currentProfile = profiles.find(function(p) { return p.id === currentId; });
+  var currentName = currentProfile ? currentProfile.name : 'Fundação CAIN';
+  var isGlobalSelected = currentId === window.CainFirebase.GLOBAL_PROFILE_ID;
+  
+  var optionsHtml = profiles.map(function(p) {
+    var selected = p.id === currentId ? ' selected' : '';
+    var icon = p.isGlobal ? '\uD83C\uDF10 ' : '\uD83D\uDCC1 ';
+    return '<option value="' + p.id + '"' + selected + '>' + icon + escHtml(p.name) + '</option>';
+  }).join('');
+  
+  // Show delete button only for non-global profiles
+  var deleteBtn = !isGlobalSelected ? 
+    '<button id="profile-delete-btn" class="btn btn-tiny btn-danger profile-delete" title="' + (currentLang === 'pt' ? 'Excluir Perfil' : 'Delete Profile') + '">\u00D7</button>' : '';
+  
+  return '<div class="profile-selector">' +
+    '<label class="profile-label">' + (currentLang === 'pt' ? 'Perfil:' : 'Profile:') + '</label>' +
+    '<select id="profile-select" class="profile-dropdown">' + optionsHtml + '</select>' +
+    '<button id="profile-add-btn" class="btn btn-tiny profile-add" title="' + (currentLang === 'pt' ? 'Novo Perfil' : 'New Profile') + '">+</button>' +
+    deleteBtn +
+    '</div>';
+}
+
+/**
+ * Setup profile selector event handlers
+ */
+function setupProfileSelector() {
+  var select = document.getElementById('profile-select');
+  var addBtn = document.getElementById('profile-add-btn');
+  var deleteBtn = document.getElementById('profile-delete-btn');
+  
+  if (select) {
+    select.addEventListener('change', function() {
+      window.CainFirebase.setCurrentProfile(this.value);
+      cloudCharactersCache = null;
+      renderHomePage();
+    });
+  }
+  
+  if (addBtn) {
+    addBtn.addEventListener('click', function() {
+      var name = prompt(currentLang === 'pt' ? 'Nome do novo perfil:' : 'New profile name:');
+      if (name && name.trim()) {
+        window.CainFirebase.createProfile(name.trim()).then(function(profile) {
+          if (profile) {
+            window.CainFirebase.setCurrentProfile(profile.id);
+            cloudCharactersCache = null;
+            renderHomePage();
+          }
+        });
+      }
+    });
+  }
+  
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', function() {
+      showDeleteProfileModal();
+    });
+  }
+}
+
+/**
+ * Show modal to delete profile with options for characters
+ */
+async function showDeleteProfileModal() {
+  var currentId = window.CainFirebase.getCurrentProfileId();
+  var profiles = window.CainFirebase.getProfiles();
+  var currentProfile = profiles.find(function(p) { return p.id === currentId; });
+  
+  if (!currentProfile || currentProfile.isGlobal) return;
+  
+  // Get characters in this profile
+  var allChars = await getAllCharactersAsync();
+  var charsInProfile = allChars.filter(function(c) { return c.profileId === currentId; });
+  
+  var hasCharacters = charsInProfile.length > 0;
+  var charListHtml = hasCharacters ? 
+    '<ul class="delete-profile-chars">' + charsInProfile.map(function(c) { return '<li>' + escHtml(c.name || 'Sem nome') + '</li>'; }).join('') + '</ul>' : '';
+  
+  var modalHtml = '<div class="modal-overlay" id="delete-profile-modal">' +
+    '<div class="modal-content">' +
+      '<h3>' + (currentLang === 'pt' ? 'Excluir Perfil' : 'Delete Profile') + '</h3>' +
+      '<p>' + (currentLang === 'pt' ? 'Tem certeza que deseja excluir o perfil' : 'Are you sure you want to delete the profile') + ' <strong>' + escHtml(currentProfile.name) + '</strong>?</p>' +
+      (hasCharacters ? 
+        '<p class="warning">' + (currentLang === 'pt' ? 'Este perfil contém ' + charsInProfile.length + ' personagem(ns):' : 'This profile contains ' + charsInProfile.length + ' character(s):') + '</p>' +
+        charListHtml +
+        '<div class="delete-profile-options">' +
+          '<button class="btn btn-secondary" id="btn-move-to-global">' + (currentLang === 'pt' ? '\uD83C\uDF10 Mover para Fundação CAIN' : '\uD83C\uDF10 Move to CAIN Foundation') + '</button>' +
+          '<button class="btn btn-danger" id="btn-delete-chars">' + (currentLang === 'pt' ? '\uD83D\uDDD1\uFE0F Excluir Personagens' : '\uD83D\uDDD1\uFE0F Delete Characters') + '</button>' +
+        '</div>'
+      : '<p class="muted">' + (currentLang === 'pt' ? 'Este perfil não contém personagens.' : 'This profile has no characters.') + '</p>' +
+        '<button class="btn btn-danger" id="btn-confirm-delete">' + (currentLang === 'pt' ? 'Confirmar Exclusão' : 'Confirm Delete') + '</button>'
+      ) +
+      '<button class="btn btn-secondary" id="btn-cancel-delete">' + (currentLang === 'pt' ? 'Cancelar' : 'Cancel') + '</button>' +
+    '</div>' +
+  '</div>';
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  var modal = document.getElementById('delete-profile-modal');
+  
+  // Cancel button
+  document.getElementById('btn-cancel-delete').addEventListener('click', function() {
+    modal.remove();
+  });
+  
+  // Click outside to close
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) modal.remove();
+  });
+  
+  if (hasCharacters) {
+    // Move to global button
+    document.getElementById('btn-move-to-global').addEventListener('click', async function() {
+      for (var char of charsInProfile) {
+        await window.CainFirebase.moveCharacterToProfile(char.id, window.CainFirebase.GLOBAL_PROFILE_ID);
+      }
+      await window.CainFirebase.deleteProfile(currentId, false);
+      modal.remove();
+      cloudCharactersCache = null;
+      renderHomePage();
+    });
+    
+    // Delete characters button
+    document.getElementById('btn-delete-chars').addEventListener('click', async function() {
+      if (confirm(currentLang === 'pt' ? 'Isso excluirá permanentemente ' + charsInProfile.length + ' personagem(ns). Continuar?' : 'This will permanently delete ' + charsInProfile.length + ' character(s). Continue?')) {
+        await window.CainFirebase.deleteProfile(currentId, true);
+        modal.remove();
+        cloudCharactersCache = null;
+        renderHomePage();
+      }
+    });
+  } else {
+    // Just delete profile
+    document.getElementById('btn-confirm-delete').addEventListener('click', async function() {
+      await window.CainFirebase.deleteProfile(currentId, false);
+      modal.remove();
+      cloudCharactersCache = null;
+      renderHomePage();
+    });
+  }
+}
+
+/**
+ * Render move to profile dropdown for character card
+ */
+function renderMoveToProfileDropdown(charId, currentProfileId) {
+  if (!isCloudReady()) return '';
+  
+  var profiles = window.CainFirebase.getProfiles();
+  var otherProfiles = profiles.filter(function(p) { 
+    return p.id !== currentProfileId; 
+  });
+  
+  if (otherProfiles.length === 0) return '';
+  
+  var optionsHtml = otherProfiles.map(function(p) {
+    var icon = p.isGlobal ? '\uD83C\uDF10 ' : '\uD83D\uDCC1 ';
+    return '<option value="' + p.id + '">' + icon + escHtml(p.name) + '</option>';
+  }).join('');
+  
+  return '<select class="move-profile-select" data-char-id="' + charId + '" title="' + (currentLang === 'pt' ? 'Mover para outro perfil' : 'Move to another profile') + '">' +
+    '<option value="">' + (currentLang === 'pt' ? '\u21C4 Mover...' : '\u21C4 Move...') + '</option>' +
+    optionsHtml +
+  '</select>';
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -6825,11 +7164,36 @@ function createPerfectSinFromType(typeId, opts) {
 }
 
 function getAllEnemies() {
+  // Return cached cloud data if available
+  if (cloudEnemiesCache !== null) {
+    return cloudEnemiesCache;
+  }
+  
+  // Fallback to localStorage
   try {
     var data = localStorage.getItem(ENEMY_STORAGE_KEY);
     return data ? JSON.parse(data) : [];
   } catch (e) { return []; }
 }
+
+/**
+ * Get all enemies async - prefers cloud
+ */
+async function getAllEnemiesAsync() {
+  if (isCloudReady() && window.CainFirebase.getCurrentGmProfileId()) {
+    try {
+      var enemies = await window.CainFirebase.getEnemies();
+      cloudEnemiesCache = enemies;
+      return enemies;
+    } catch (e) {
+      console.error('[Storage] Cloud enemies fetch failed:', e);
+    }
+  }
+  return getAllEnemies();
+}
+
+// Cloud enemies cache
+var cloudEnemiesCache = null;
 
 function getEnemy(id) {
   return getAllEnemies().find(function(en) { return en.id === id; }) || null;
@@ -6841,11 +7205,29 @@ function saveEnemy(enemy) {
   enemy.updatedAt = new Date().toISOString();
   if (index >= 0) { enemies[index] = enemy; } else { enemies.push(enemy); }
   localStorage.setItem(ENEMY_STORAGE_KEY, JSON.stringify(enemies));
+  
+  // Also save to cloud if available and GM profile is selected
+  if (isCloudReady() && window.CainFirebase.getCurrentGmProfileId()) {
+    window.CainFirebase.saveEnemy(enemy).then(function() {
+      cloudEnemiesCache = null;
+    }).catch(function(e) {
+      console.error('[Storage] Cloud enemy save failed:', e);
+    });
+  }
 }
 
 function deleteEnemy(id) {
   var enemies = getAllEnemies().filter(function(en) { return en.id !== id; });
   localStorage.setItem(ENEMY_STORAGE_KEY, JSON.stringify(enemies));
+  
+  // Also delete from cloud if available
+  if (isCloudReady()) {
+    window.CainFirebase.deleteEnemy(id).then(function() {
+      cloudEnemiesCache = null;
+    }).catch(function(e) {
+      console.error('[Storage] Cloud enemy delete failed:', e);
+    });
+  }
 }
 
 function exportEnemy(enemy) {
@@ -6950,15 +7332,43 @@ function handleRoute() {
 // ════════════════════════════════════════════════════════════════════
 
 function renderHome() {
+  // Show loading state while fetching from cloud
   var app = document.getElementById('app');
-  var characters = getAllCharacters();
-
   app.innerHTML =
     '<div class="page home-page">' +
       '<header class="page-header">' +
         '<h1 class="title">' + t('app_title') + ' <span class="subtitle">' + t('app_subtitle') + '</span></h1>' +
         '<p class="tagline">' + t('app_tagline') + '</p>' +
       '</header>' +
+      '<div class="loading-state"><p>' + (currentLang === 'pt' ? 'Carregando...' : 'Loading...') + '</p></div>' +
+    '</div>';
+  renderLangToggle();
+  
+  // Fetch characters async and render
+  renderHomePage();
+}
+
+async function renderHomePage() {
+  var app = document.getElementById('app');
+  var characters = await getAllCharactersAsync();
+
+  var cloudStatusHtml = '';
+  if (isCloudReady()) {
+    cloudStatusHtml = '<div class="cloud-status connected">\u2601\uFE0F ' + (currentLang === 'pt' ? 'Conectado' : 'Connected') + '</div>';
+  } else if (window.CainFirebase) {
+    cloudStatusHtml = '<div class="cloud-status connecting">\u23F3 ' + (currentLang === 'pt' ? 'Conectando...' : 'Connecting...') + '</div>';
+  }
+
+  var profileSelectorHtml = renderProfileSelector();
+
+  app.innerHTML =
+    '<div class="page home-page">' +
+      '<header class="page-header">' +
+        '<h1 class="title">' + t('app_title') + ' <span class="subtitle">' + t('app_subtitle') + '</span></h1>' +
+        '<p class="tagline">' + t('app_tagline') + '</p>' +
+        cloudStatusHtml +
+      '</header>' +
+      profileSelectorHtml +
       '<div class="actions-bar">' +
         '<button class="btn btn-primary" id="btn-create">' + t('nav_newExorcist') + '</button>' +
         '<button class="btn btn-secondary" id="btn-import">' + t('nav_import') + '</button>' +
@@ -6968,45 +7378,86 @@ function renderHome() {
       '</div>' +
       (characters.length === 0 ?
         '<div class="empty-state"><p>' + t('home_empty') + '</p><p class="muted">' + t('home_emptySub') + '</p></div>' :
-        '<div class="character-list">' + characters.map(renderCharacterCard).join('') + '</div>'
+        '<div class="character-list">' + characters.map(function(char) { return renderCharacterCard(char, characters); }).join('') + '</div>'
       ) +
     '</div>';
 
   renderLangToggle();
+  setupProfileSelector();
+  
   document.getElementById('btn-create').addEventListener('click', function() { navigate('create'); });
   document.getElementById('btn-compendium').addEventListener('click', function() { navigate('compendium'); });
   document.getElementById('btn-admin').addEventListener('click', function() { navigate('admin'); });
   var btnImport = document.getElementById('btn-import');
   if (btnImport) btnImport.addEventListener('click', function() {
-    importCharacter().then(function() { renderHome(); }).catch(function(e) { alert(e.message); });
+    importCharacter().then(function() { renderHomePage(); }).catch(function(e) { alert(e.message); });
   });
   var btnExport = document.getElementById('btn-export-all');
   if (btnExport) btnExport.addEventListener('click', exportAllCharacters);
 
   app.querySelectorAll('.char-card').forEach(function(card) {
     var id = card.dataset.id;
-    card.querySelector('.btn-view').addEventListener('click', function(e) { e.stopPropagation(); navigate('view/' + id); });
-    card.querySelector('.btn-edit').addEventListener('click', function(e) { e.stopPropagation(); navigate('edit/' + id); });
-    card.querySelector('.btn-export').addEventListener('click', function(e) {
+    var viewBtn = card.querySelector('.btn-view');
+    var editBtn = card.querySelector('.btn-edit');
+    var exportBtn = card.querySelector('.btn-export');
+    var deleteBtn = card.querySelector('.btn-delete');
+    var moveSelect = card.querySelector('.move-profile-select');
+    
+    if (viewBtn) viewBtn.addEventListener('click', function(e) { e.stopPropagation(); navigate('view/' + id); });
+    if (editBtn) editBtn.addEventListener('click', function(e) { e.stopPropagation(); navigate('edit/' + id); });
+    if (exportBtn) exportBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       var c = getCharacter(id); if (c) exportCharacter(c);
     });
-    card.querySelector('.btn-delete').addEventListener('click', function(e) {
+    if (deleteBtn) deleteBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       var c = getCharacter(id);
-      if (confirm(t('home_deleteConfirm').replace('{name}', c ? c.name : ''))) { deleteCharacter(id); renderHome(); }
+      if (confirm(t('home_deleteConfirm').replace('{name}', c ? c.name : ''))) { deleteCharacter(id); renderHomePage(); }
     });
+    if (moveSelect) {
+      moveSelect.addEventListener('click', function(e) { e.stopPropagation(); });
+      moveSelect.addEventListener('change', function(e) {
+        e.stopPropagation();
+        var newProfileId = this.value;
+        if (newProfileId) {
+          window.CainFirebase.moveCharacterToProfile(id, newProfileId).then(function(success) {
+            if (success) {
+              cloudCharactersCache = null;
+              renderHomePage();
+            }
+          });
+        }
+      });
+    }
     card.addEventListener('click', function() { navigate('view/' + id); });
   });
 }
 
-function renderCharacterCard(char) {
+function renderCharacterCard(char, allChars) {
   var agendaName = char.agenda && char.agenda.id ? tAgenda(char.agenda.id) : '—';
   var blasphemyNames = char.blasphemies && char.blasphemies.length > 0 ? char.blasphemies.map(function(b) { return tBlas(b.id); }).join(', ') : 'None';
   var access = canAccessCharacter(char);
   var blockedHtml = !access.ok ? '<p class="char-card-blocked">\u26A0 ' + t('exp_blocked_title') + ': ' + access.missing.map(getExpansionName).join(', ') + '</p>' : '';
+  
+  // Show owner indicator and move option based on ownership
+  var ownerHtml = '';
+  var moveDropdown = '';
+  var isOwn = true;
+  
+  if (isCloudReady()) {
+    isOwn = char.ownerId === window.CainFirebase.getUserId();
+    var currentProfileId = window.CainFirebase.getCurrentProfileId();
+    
+    if (!isOwn) {
+      ownerHtml = '<span class="char-owner-badge" title="' + (currentLang === 'pt' ? 'Personagem de outro jogador' : 'Another player\'s character') + '">\uD83D\uDC64</span>';
+    } else {
+      // Only show move option for own characters
+      moveDropdown = renderMoveToProfileDropdown(char.id, char.profileId || window.CainFirebase.GLOBAL_PROFILE_ID);
+    }
+  }
+  
   return '<div class="char-card ' + (!access.ok ? 'blocked' : '') + '" data-id="' + char.id + '">' +
-    '<div class="char-card-header">' + '<img class="char-card-portrait" src="' + getPortrait(char) + '" alt="' + escAttr(char.name) + '">' + '<h3 class="char-name">' + (char.name || 'Unnamed Exorcist') + '</h3><span class="char-cat">CAT ' + (char.category || 1) + '</span></div>' +
+    '<div class="char-card-header">' + '<img class="char-card-portrait" src="' + getPortrait(char) + '" alt="' + escAttr(char.name) + '">' + '<h3 class="char-name">' + (char.name || 'Unnamed Exorcist') + ownerHtml + '</h3><span class="char-cat">CAT ' + (char.category || 1) + '</span></div>' +
     '<div class="char-card-body">' +
       '<p><span class="label">' + t('home_agenda') + ':</span> ' + agendaName + '</p>' +
       '<p><span class="label">' + t('home_blasphemy') + ':</span> ' + blasphemyNames + '</p>' +
@@ -7015,9 +7466,10 @@ function renderCharacterCard(char) {
     '</div>' +
     '<div class="char-card-actions">' +
       '<button class="btn btn-small btn-view">' + t('nav_view') + '</button>' +
-      '<button class="btn btn-small btn-edit">' + t('nav_edit') + '</button>' +
+      (isOwn ? '<button class="btn btn-small btn-edit">' + t('nav_edit') + '</button>' : '') +
       '<button class="btn btn-small btn-export">' + t('nav_export') + '</button>' +
-      '<button class="btn btn-small btn-danger btn-delete">' + t('nav_delete') + '</button>' +
+      (isOwn ? '<button class="btn btn-small btn-danger btn-delete">' + t('nav_delete') + '</button>' : '') +
+      moveDropdown +
     '</div>' +
   '</div>';
 }
@@ -11077,8 +11529,33 @@ function renderOfficialView(officialId) {
 
 function renderAdmin() {
   var app = document.getElementById('app');
-  var enemies = getAllEnemies();
   var pt = currentLang === 'pt';
+  
+  // Show loading while fetching
+  app.innerHTML =
+    '<div class="page admin-page">' +
+      '<header class="page-header">' +
+        '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
+        '<h1 class="title">' + (pt ? 'Admin' : 'Admin') + ' <span class="subtitle">' + (pt ? 'Ferramentas do Mestre' : 'GM Tools') + '</span></h1>' +
+      '</header>' +
+      '<div class="loading-state"><p>' + (pt ? 'Carregando...' : 'Loading...') + '</p></div>' +
+    '</div>';
+  renderLangToggle();
+  document.getElementById('btn-back').addEventListener('click', function() { navigate('home'); });
+  
+  // Load async and render
+  renderAdminPage();
+}
+
+async function renderAdminPage() {
+  var app = document.getElementById('app');
+  var pt = currentLang === 'pt';
+  var enemies = await getAllEnemiesAsync();
+  
+  var gmProfileSelectorHtml = renderGmProfileSelector();
+  var hasGmProfile = isCloudReady() && window.CainFirebase.getCurrentGmProfileId();
+  var noProfileWarning = isCloudReady() && !hasGmProfile ? 
+    '<div class="no-profile-warning"><p>' + (pt ? '\u26A0 Crie um perfil de GM para salvar inimigos na nuvem.' : '\u26A0 Create a GM profile to save enemies to cloud.') + '</p></div>' : '';
 
   app.innerHTML =
     '<div class="page admin-page">' +
@@ -11086,6 +11563,8 @@ function renderAdmin() {
         '<button class="btn btn-back" id="btn-back">\u2190 ' + (pt ? 'Voltar' : 'Back') + '</button>' +
         '<h1 class="title">' + (pt ? 'Admin' : 'Admin') + ' <span class="subtitle">' + (pt ? 'Ferramentas do Mestre' : 'GM Tools') + '</span></h1>' +
       '</header>' +
+      gmProfileSelectorHtml +
+      noProfileWarning +
       '<div class="actions-bar">' +
         '<button class="btn btn-primary" id="btn-new-enemy">' + (pt ? '+ Novo Inimigo' : '+ New Enemy') + '</button>' +
         '<button class="btn btn-secondary" id="btn-import-enemy">' + (pt ? 'Importar' : 'Import') + '</button>' +
@@ -11101,10 +11580,12 @@ function renderAdmin() {
     '</div>';
 
   renderLangToggle();
+  setupGmProfileSelector();
+  
   document.getElementById('btn-back').addEventListener('click', function() { navigate('home'); });
   document.getElementById('btn-new-enemy').addEventListener('click', function() { navigate('enemy-new'); });
   document.getElementById('btn-import-enemy').addEventListener('click', function() {
-    importEnemy().then(function() { renderAdmin(); }).catch(function(e) { alert(e.message); });
+    importEnemy().then(function() { renderAdminPage(); }).catch(function(e) { alert(e.message); });
   });
   var expBtn = document.getElementById('btn-export-enemies');
   if (expBtn) expBtn.addEventListener('click', exportAllEnemies);
@@ -11123,11 +11604,152 @@ function renderAdmin() {
     card.querySelector('.btn-delete').addEventListener('click', function(e) {
       e.stopPropagation();
       var en = getEnemy(id);
-      if (confirm((currentLang === 'pt' ? 'Remover ' : 'Delete ') + (en ? en.name : '') + '?')) { deleteEnemy(id); renderAdmin(); }
+      if (confirm((currentLang === 'pt' ? 'Remover ' : 'Delete ') + (en ? en.name : '') + '?')) { deleteEnemy(id); renderAdminPage(); }
     });
     // Clicking the card (outside the action buttons) opens the live combat sheet
     card.addEventListener('click', function() { navigate('enemy-combat/' + id); });
   });
+}
+
+/**
+ * Render GM profile selector dropdown for admin page
+ */
+function renderGmProfileSelector() {
+  if (!isCloudReady()) return '';
+  
+  var profiles = window.CainFirebase.getGmProfiles();
+  var currentId = window.CainFirebase.getCurrentGmProfileId();
+  var hasProfiles = profiles.length > 0;
+  
+  var optionsHtml = profiles.map(function(p) {
+    var selected = p.id === currentId ? ' selected' : '';
+    return '<option value="' + p.id + '"' + selected + '>\uD83C\uDFAD ' + escHtml(p.name) + '</option>';
+  }).join('');
+  
+  if (!hasProfiles) {
+    optionsHtml = '<option value="" disabled selected>' + (currentLang === 'pt' ? '-- Nenhum perfil --' : '-- No profile --') + '</option>';
+  }
+  
+  // Delete button only when a profile is selected
+  var deleteBtn = currentId ? 
+    '<button id="gm-profile-delete-btn" class="btn btn-tiny btn-danger profile-delete" title="' + (currentLang === 'pt' ? 'Excluir Perfil' : 'Delete Profile') + '">\u00D7</button>' : '';
+  
+  return '<div class="profile-selector gm-profile-selector">' +
+    '<label class="profile-label">\uD83C\uDFAD ' + (currentLang === 'pt' ? 'Perfil GM:' : 'GM Profile:') + '</label>' +
+    '<select id="gm-profile-select" class="profile-dropdown"' + (hasProfiles ? '' : ' disabled') + '>' + optionsHtml + '</select>' +
+    '<button id="gm-profile-add-btn" class="btn btn-tiny profile-add" title="' + (currentLang === 'pt' ? 'Novo Perfil GM' : 'New GM Profile') + '">+</button>' +
+    deleteBtn +
+    '</div>';
+}
+
+/**
+ * Setup GM profile selector event handlers
+ */
+function setupGmProfileSelector() {
+  var select = document.getElementById('gm-profile-select');
+  var addBtn = document.getElementById('gm-profile-add-btn');
+  var deleteBtn = document.getElementById('gm-profile-delete-btn');
+  
+  if (select) {
+    select.addEventListener('change', function() {
+      window.CainFirebase.setCurrentGmProfile(this.value);
+      cloudEnemiesCache = null;
+      renderAdminPage();
+    });
+  }
+  
+  if (addBtn) {
+    addBtn.addEventListener('click', function() {
+      var name = prompt(currentLang === 'pt' ? 'Nome do novo perfil GM:' : 'New GM profile name:');
+      if (name && name.trim()) {
+        window.CainFirebase.createGmProfile(name.trim()).then(function(profile) {
+          if (profile) {
+            window.CainFirebase.setCurrentGmProfile(profile.id);
+            cloudEnemiesCache = null;
+            renderAdminPage();
+          }
+        });
+      }
+    });
+  }
+  
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', function() {
+      showDeleteGmProfileModal();
+    });
+  }
+}
+
+/**
+ * Show modal to delete GM profile with options for enemies
+ */
+async function showDeleteGmProfileModal() {
+  var currentId = window.CainFirebase.getCurrentGmProfileId();
+  var profiles = window.CainFirebase.getGmProfiles();
+  var currentProfile = profiles.find(function(p) { return p.id === currentId; });
+  var pt = currentLang === 'pt';
+  
+  if (!currentProfile) return;
+  
+  // Get enemies in this profile
+  var enemies = await getAllEnemiesAsync();
+  var hasEnemies = enemies.length > 0;
+  
+  var enemyListHtml = hasEnemies ? 
+    '<ul class="delete-profile-chars">' + enemies.slice(0, 10).map(function(e) { return '<li>' + escHtml(e.name || 'Sem nome') + '</li>'; }).join('') + 
+    (enemies.length > 10 ? '<li>... ' + (pt ? 'e mais ' + (enemies.length - 10) : 'and ' + (enemies.length - 10) + ' more') + '</li>' : '') +
+    '</ul>' : '';
+  
+  var modalHtml = '<div class="modal-overlay" id="delete-gm-profile-modal">' +
+    '<div class="modal-content">' +
+      '<h3>' + (pt ? 'Excluir Perfil GM' : 'Delete GM Profile') + '</h3>' +
+      '<p>' + (pt ? 'Tem certeza que deseja excluir o perfil' : 'Are you sure you want to delete the profile') + ' <strong>' + escHtml(currentProfile.name) + '</strong>?</p>' +
+      (hasEnemies ? 
+        '<p class="warning">' + (pt ? 'Este perfil contém ' + enemies.length + ' inimigo(s):' : 'This profile contains ' + enemies.length + ' enemy(ies):') + '</p>' +
+        enemyListHtml +
+        '<div class="delete-profile-options">' +
+          '<button class="btn btn-danger" id="btn-delete-enemies">' + (pt ? '\uD83D\uDDD1\uFE0F Excluir Inimigos' : '\uD83D\uDDD1\uFE0F Delete Enemies') + '</button>' +
+        '</div>'
+      : '<p class="muted">' + (pt ? 'Este perfil não contém inimigos.' : 'This profile has no enemies.') + '</p>' +
+        '<button class="btn btn-danger" id="btn-confirm-delete-gm">' + (pt ? 'Confirmar Exclusão' : 'Confirm Delete') + '</button>'
+      ) +
+      '<button class="btn btn-secondary" id="btn-cancel-delete-gm">' + (pt ? 'Cancelar' : 'Cancel') + '</button>' +
+    '</div>' +
+  '</div>';
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  var modal = document.getElementById('delete-gm-profile-modal');
+  
+  // Cancel button
+  document.getElementById('btn-cancel-delete-gm').addEventListener('click', function() {
+    modal.remove();
+  });
+  
+  // Click outside to close
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) modal.remove();
+  });
+  
+  if (hasEnemies) {
+    // Delete enemies button
+    document.getElementById('btn-delete-enemies').addEventListener('click', async function() {
+      if (confirm(pt ? 'Isso excluirá permanentemente ' + enemies.length + ' inimigo(s). Continuar?' : 'This will permanently delete ' + enemies.length + ' enemy(ies). Continue?')) {
+        await window.CainFirebase.deleteGmProfile(currentId, true);
+        modal.remove();
+        cloudEnemiesCache = null;
+        renderAdminPage();
+      }
+    });
+  } else {
+    // Just delete profile
+    document.getElementById('btn-confirm-delete-gm').addEventListener('click', async function() {
+      await window.CainFirebase.deleteGmProfile(currentId, false);
+      modal.remove();
+      cloudEnemiesCache = null;
+      renderAdminPage();
+    });
+  }
 }
 
 // Clone an official entry into the GM's editable bestiary.
@@ -12719,6 +13341,11 @@ route('sinmarks', renderSinMarks);
 route('kitshop', renderKitShop);
 route('cursedshop', renderCursedShop);
 route('recreation', renderRecreation);
-initRouter();
+
+// Initialize Firebase cloud sync, then start router
+(async function() {
+  await initCloudSync();
+  initRouter();
+})();
 
 })();
