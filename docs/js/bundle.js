@@ -7439,25 +7439,14 @@ function renderCharacterCard(char, allChars) {
   var access = canAccessCharacter(char);
   var blockedHtml = !access.ok ? '<p class="char-card-blocked">\u26A0 ' + t('exp_blocked_title') + ': ' + access.missing.map(getExpansionName).join(', ') + '</p>' : '';
   
-  // Show owner indicator and move option based on ownership
-  var ownerHtml = '';
+  // Move dropdown for all characters (shared system)
   var moveDropdown = '';
-  var isOwn = true;
-  
   if (isCloudReady()) {
-    isOwn = char.ownerId === window.CainFirebase.getUserId();
-    var currentProfileId = window.CainFirebase.getCurrentProfileId();
-    
-    if (!isOwn) {
-      ownerHtml = '<span class="char-owner-badge" title="' + (currentLang === 'pt' ? 'Personagem de outro jogador' : 'Another player\'s character') + '">\uD83D\uDC64</span>';
-    } else {
-      // Only show move option for own characters
-      moveDropdown = renderMoveToProfileDropdown(char.id, char.profileId || window.CainFirebase.GLOBAL_PROFILE_ID);
-    }
+    moveDropdown = renderMoveToProfileDropdown(char.id, char.profileId || window.CainFirebase.GLOBAL_PROFILE_ID);
   }
   
   return '<div class="char-card ' + (!access.ok ? 'blocked' : '') + '" data-id="' + char.id + '">' +
-    '<div class="char-card-header">' + '<img class="char-card-portrait" src="' + getPortrait(char) + '" alt="' + escAttr(char.name) + '">' + '<h3 class="char-name">' + (char.name || 'Unnamed Exorcist') + ownerHtml + '</h3><span class="char-cat">CAT ' + (char.category || 1) + '</span></div>' +
+    '<div class="char-card-header">' + '<img class="char-card-portrait" src="' + getPortrait(char) + '" alt="' + escAttr(char.name) + '">' + '<h3 class="char-name">' + (char.name || 'Unnamed Exorcist') + '</h3><span class="char-cat">CAT ' + (char.category || 1) + '</span></div>' +
     '<div class="char-card-body">' +
       '<p><span class="label">' + t('home_agenda') + ':</span> ' + agendaName + '</p>' +
       '<p><span class="label">' + t('home_blasphemy') + ':</span> ' + blasphemyNames + '</p>' +
@@ -7466,9 +7455,9 @@ function renderCharacterCard(char, allChars) {
     '</div>' +
     '<div class="char-card-actions">' +
       '<button class="btn btn-small btn-view">' + t('nav_view') + '</button>' +
-      (isOwn ? '<button class="btn btn-small btn-edit">' + t('nav_edit') + '</button>' : '') +
+      '<button class="btn btn-small btn-edit">' + t('nav_edit') + '</button>' +
       '<button class="btn btn-small btn-export">' + t('nav_export') + '</button>' +
-      (isOwn ? '<button class="btn btn-small btn-danger btn-delete">' + t('nav_delete') + '</button>' : '') +
+      '<button class="btn btn-small btn-danger btn-delete">' + t('nav_delete') + '</button>' +
       moveDropdown +
     '</div>' +
   '</div>';

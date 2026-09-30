@@ -125,16 +125,15 @@ function isReady() {
 // ════════════════════════════════════════════════════════════════════
 
 /**
- * Load user profiles from Firestore
+ * Load shared profiles from Firestore (global, not per-user)
  */
 async function loadProfiles() {
   if (!isReady()) return [];
   
-  var { collection, getDocs, query, where, orderBy } = window.__firestoreFns;
-  var userId = getUserId();
+  var { collection, getDocs } = window.__firestoreFns;
   
   try {
-    var profilesRef = collection(firebaseDb, 'users', userId, 'profiles');
+    var profilesRef = collection(firebaseDb, 'profiles');
     var snapshot = await getDocs(profilesRef);
     
     profiles = [];
@@ -191,13 +190,12 @@ function setCurrentProfile(profileId) {
 }
 
 /**
- * Create a new profile
+ * Create a new shared profile
  */
 async function createProfile(name) {
   if (!isReady()) return null;
   
   var { collection, doc, setDoc } = window.__firestoreFns;
-  var userId = getUserId();
   
   var profileId = 'profile_' + Date.now();
   var profile = {
@@ -207,7 +205,7 @@ async function createProfile(name) {
   };
   
   try {
-    var profileRef = doc(firebaseDb, 'users', userId, 'profiles', profileId);
+    var profileRef = doc(firebaseDb, 'profiles', profileId);
     await setDoc(profileRef, profile);
     
     profile.id = profileId;
@@ -222,28 +220,33 @@ async function createProfile(name) {
 }
 
 /**
- * Delete a profile (and optionally its characters)
+ * Delete a shared profile (and optionally its characters)
  */
 async function deleteProfile(profileId, deleteCharacters) {
   if (!isReady() || profileId === GLOBAL_PROFILE_ID) return false;
   
-  var { doc, deleteDoc, collection, getDocs, query, where } = window.__firestoreFns;
-  var userId = getUserId();
+  var { doc, deleteDoc, collection, getDocs, query, where, setDoc } = window.__firestoreFns;
   
   try {
-    // Optionally delete characters in this profile
-    if (deleteCharacters) {
-      var charsRef = collection(firebaseDb, 'characters');
-      var q = query(charsRef, where('ownerId', '==', userId), where('profileId', '==', profileId));
-      var snapshot = await getDocs(q);
-      
-      for (var charDoc of snapshot.docs) {
+    // Get characters in this profile
+    var charsRef = collection(firebaseDb, 'characters');
+    var q = query(charsRef, where('profileId', '==', profileId));
+    var snapshot = await getDocs(q);
+    
+    for (var charDoc of snapshot.docs) {
+      if (deleteCharacters) {
         await deleteDoc(charDoc.ref);
+      } else {
+        // Move to global (set profileId to null)
+        var charData = charDoc.data();
+        charData.profileId = null;
+        charData.updatedAt = new Date().toISOString();
+        await setDoc(charDoc.ref, charData);
       }
     }
     
     // Delete profile
-    var profileRef = doc(firebaseDb, 'users', userId, 'profiles', profileId);
+    var profileRef = doc(firebaseDb, 'profiles', profileId);
     await deleteDoc(profileRef);
     
     profiles = profiles.filter(function(p) { return p.id !== profileId; });
@@ -266,15 +269,14 @@ async function deleteProfile(profileId, deleteCharacters) {
 // ════════════════════════════════════════════════════════════════════
 
 /**
- * Get all characters for current profile
- * - Global profile: ALL characters from ALL users
- * - User profile: Only characters in that profile owned by current user
+ * Get all characters for current profile (shared - no user filter)
+ * - Global profile: ALL characters
+ * - Other profile: Characters in that profile
  */
 async function getCloudCharacters() {
   if (!isReady()) return [];
   
-  var { collection, getDocs, query, where, orderBy } = window.__firestoreFns;
-  var userId = getUserId();
+  var { collection, getDocs, query, where } = window.__firestoreFns;
   var profileId = getCurrentProfileId();
   
   try {
@@ -282,33 +284,18 @@ async function getCloudCharacters() {
     var q;
     
     if (profileId === GLOBAL_PROFILE_ID) {
-      // Global: get ALL characters (no filter)
-      q = query(charsRef, orderBy('updatedAt', 'desc'));
+      // Global: get ALL characters
+      q = query(charsRef);
     } else {
-      // User profile: get only this user's characters in this profile
-      // Note: Firestore requires composite index for this query
-      // If this fails, we fall back to client-side filtering
-      try {
-        q = query(charsRef, 
-          where('ownerId', '==', userId), 
-          where('profileId', '==', profileId)
-        );
-      } catch (indexError) {
-        console.warn('[Firebase] Index not ready, using client-side filter');
-        q = query(charsRef, where('ownerId', '==', userId));
-      }
+      // Specific profile: get characters in that profile
+      q = query(charsRef, where('profileId', '==', profileId));
     }
     
     var snapshot = await getDocs(q);
     var characters = [];
     
     snapshot.forEach(function(doc) {
-      var data = { id: doc.id, ...doc.data() };
-      // Client-side filter for profile if needed
-      if (profileId !== GLOBAL_PROFILE_ID && data.profileId !== profileId) {
-        return; // skip characters not in this profile
-      }
-      characters.push(data);
+      characters.push({ id: doc.id, ...doc.data() });
     });
     
     // Sort by updatedAt descending (client-side)
@@ -346,24 +333,25 @@ async function getCloudCharacter(charId) {
 }
 
 /**
- * Save a character to cloud
+ * Save a character to cloud (shared - no owner restriction)
  */
 async function saveCloudCharacter(character) {
   if (!isReady()) return false;
   
   var { doc, setDoc } = window.__firestoreFns;
-  var userId = getUserId();
   var profileId = getCurrentProfileId();
   
-  console.log('[Firebase] Saving character to profile:', profileId, '(global:', GLOBAL_PROFILE_ID, ')');
+  console.log('[Firebase] Saving character to profile:', profileId);
   
   // Prepare character data with metadata
   var charData = Object.assign({}, character, {
-    ownerId: userId,
     profileId: profileId === GLOBAL_PROFILE_ID ? null : profileId,
     updatedAt: new Date().toISOString(),
     syncedAt: new Date().toISOString()
   });
+  
+  // Remove ownerId if present (no longer used)
+  delete charData.ownerId;
   
   console.log('[Firebase] Character profileId set to:', charData.profileId);
   
@@ -385,27 +373,15 @@ async function saveCloudCharacter(character) {
 }
 
 /**
- * Delete a character from cloud
+ * Delete a character from cloud (shared - anyone can delete)
  */
 async function deleteCloudCharacter(charId) {
   if (!isReady()) return false;
   
-  var { doc, deleteDoc, getDoc } = window.__firestoreFns;
-  var userId = getUserId();
+  var { doc, deleteDoc } = window.__firestoreFns;
   
   try {
-    // Verify ownership before deleting
     var charRef = doc(firebaseDb, 'characters', charId);
-    var snapshot = await getDoc(charRef);
-    
-    if (snapshot.exists()) {
-      var charData = snapshot.data();
-      if (charData.ownerId !== userId) {
-        console.error('[Firebase] Cannot delete character owned by another user');
-        return false;
-      }
-    }
-    
     await deleteDoc(charRef);
     notifySyncListeners('character-deleted', charId);
     return true;
@@ -416,13 +392,12 @@ async function deleteCloudCharacter(charId) {
 }
 
 /**
- * Move character to a different profile
+ * Move character to a different profile (shared - anyone can move)
  */
 async function moveCharacterToProfile(charId, newProfileId) {
   if (!isReady()) return false;
   
   var { doc, getDoc, setDoc } = window.__firestoreFns;
-  var userId = getUserId();
   
   try {
     var charRef = doc(firebaseDb, 'characters', charId);
@@ -431,11 +406,6 @@ async function moveCharacterToProfile(charId, newProfileId) {
     if (!snapshot.exists()) return false;
     
     var charData = snapshot.data();
-    if (charData.ownerId !== userId) {
-      console.error('[Firebase] Cannot move character owned by another user');
-      return false;
-    }
-    
     charData.profileId = newProfileId === GLOBAL_PROFILE_ID ? null : newProfileId;
     charData.updatedAt = new Date().toISOString();
     
@@ -457,16 +427,15 @@ var currentGmProfileId = null;
 var gmProfiles = [];
 
 /**
- * Load GM profiles from Firestore
+ * Load shared GM profiles from Firestore
  */
 async function loadGmProfiles() {
   if (!isReady()) return [];
   
   var { collection, getDocs } = window.__firestoreFns;
-  var userId = getUserId();
   
   try {
-    var profilesRef = collection(firebaseDb, 'users', userId, 'gmProfiles');
+    var profilesRef = collection(firebaseDb, 'gmProfiles');
     var snapshot = await getDocs(profilesRef);
     
     gmProfiles = [];
@@ -522,13 +491,12 @@ function setCurrentGmProfile(profileId) {
 }
 
 /**
- * Create a new GM profile
+ * Create a new shared GM profile
  */
 async function createGmProfile(name) {
   if (!isReady()) return null;
   
   var { collection, doc, setDoc } = window.__firestoreFns;
-  var userId = getUserId();
   
   var profileId = 'gm_profile_' + Date.now();
   var profile = {
@@ -538,7 +506,7 @@ async function createGmProfile(name) {
   };
   
   try {
-    var profileRef = doc(firebaseDb, 'users', userId, 'gmProfiles', profileId);
+    var profileRef = doc(firebaseDb, 'gmProfiles', profileId);
     await setDoc(profileRef, profile);
     
     profile.id = profileId;
@@ -553,34 +521,33 @@ async function createGmProfile(name) {
 }
 
 /**
- * Delete a GM profile (and optionally its enemies)
+ * Delete a shared GM profile (and optionally its enemies)
  */
 async function deleteGmProfile(profileId, deleteEnemies) {
   if (!isReady()) return false;
   
-  var { doc, deleteDoc, collection, getDocs, query, where } = window.__firestoreFns;
-  var userId = getUserId();
+  var { doc, deleteDoc, collection, getDocs, query, where, setDoc } = window.__firestoreFns;
   
   try {
-    // Delete or orphan enemies in this profile
+    // Get enemies in this profile
     var enemiesRef = collection(firebaseDb, 'enemies');
-    var q = query(enemiesRef, where('ownerId', '==', userId), where('gmProfileId', '==', profileId));
+    var q = query(enemiesRef, where('gmProfileId', '==', profileId));
     var snapshot = await getDocs(q);
     
     for (var enemyDoc of snapshot.docs) {
       if (deleteEnemies) {
         await deleteDoc(enemyDoc.ref);
       } else {
-        // Just remove the profile association (orphan)
+        // Orphan the enemy (remove profile association)
         var enemyData = enemyDoc.data();
         enemyData.gmProfileId = null;
         enemyData.updatedAt = new Date().toISOString();
-        await window.__firestoreFns.setDoc(enemyDoc.ref, enemyData);
+        await setDoc(enemyDoc.ref, enemyData);
       }
     }
     
     // Delete profile
-    var profileRef = doc(firebaseDb, 'users', userId, 'gmProfiles', profileId);
+    var profileRef = doc(firebaseDb, 'gmProfiles', profileId);
     await deleteDoc(profileRef);
     
     gmProfiles = gmProfiles.filter(function(p) { return p.id !== profileId; });
@@ -608,13 +575,12 @@ async function deleteGmProfile(profileId, deleteEnemies) {
 // ════════════════════════════════════════════════════════════════════
 
 /**
- * Get all enemies for current GM profile
+ * Get all enemies for current GM profile (shared)
  */
 async function getCloudEnemies() {
   if (!isReady()) return [];
   
   var { collection, getDocs, query, where } = window.__firestoreFns;
-  var userId = getUserId();
   var gmProfileId = getCurrentGmProfileId();
   
   // If no GM profile selected, return empty
@@ -622,10 +588,7 @@ async function getCloudEnemies() {
   
   try {
     var enemiesRef = collection(firebaseDb, 'enemies');
-    var q = query(enemiesRef, 
-      where('ownerId', '==', userId),
-      where('gmProfileId', '==', gmProfileId)
-    );
+    var q = query(enemiesRef, where('gmProfileId', '==', gmProfileId));
     var snapshot = await getDocs(q);
     
     var enemies = [];
@@ -646,13 +609,12 @@ async function getCloudEnemies() {
 }
 
 /**
- * Save an enemy to cloud
+ * Save an enemy to cloud (shared)
  */
 async function saveCloudEnemy(enemy) {
   if (!isReady()) return false;
   
   var { doc, setDoc } = window.__firestoreFns;
-  var userId = getUserId();
   var gmProfileId = getCurrentGmProfileId();
   
   // Must have a GM profile to save enemies
@@ -662,7 +624,6 @@ async function saveCloudEnemy(enemy) {
   }
   
   var enemyData = Object.assign({}, enemy, {
-    ownerId: userId,
     gmProfileId: gmProfileId,
     updatedAt: new Date().toISOString(),
     syncedAt: new Date().toISOString()
@@ -685,26 +646,15 @@ async function saveCloudEnemy(enemy) {
 }
 
 /**
- * Delete an enemy from cloud
+ * Delete an enemy from cloud (shared - anyone can delete)
  */
 async function deleteCloudEnemy(enemyId) {
   if (!isReady()) return false;
   
-  var { doc, deleteDoc, getDoc } = window.__firestoreFns;
-  var userId = getUserId();
+  var { doc, deleteDoc } = window.__firestoreFns;
   
   try {
     var enemyRef = doc(firebaseDb, 'enemies', enemyId);
-    var snapshot = await getDoc(enemyRef);
-    
-    if (snapshot.exists()) {
-      var enemyData = snapshot.data();
-      if (enemyData.ownerId !== userId) {
-        console.error('[Firebase] Cannot delete enemy owned by another user');
-        return false;
-      }
-    }
-    
     await deleteDoc(enemyRef);
     notifySyncListeners('enemy-deleted', enemyId);
     return true;
